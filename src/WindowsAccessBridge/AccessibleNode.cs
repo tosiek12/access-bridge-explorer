@@ -1,0 +1,154 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using AccessBridgeExplorer.Model;
+
+namespace AccessBridgeExplorer.WindowsAccessBridge {
+  /// <summary>
+  /// Base class of all accessible nodes exposed by the <see cref="AccessBridge"/>.
+  /// </summary>
+  public abstract class AccessibleNode : IEquatable<AccessibleNode>, IDisposable {
+    private readonly AccessBridge _accessBridge;
+
+    public AccessibleNode(AccessBridge accessBridge) {
+      _accessBridge = accessBridge;
+    }
+
+    public AccessBridge AccessBridge {
+      get { return _accessBridge; }
+    }
+
+    public abstract int JvmId { get; }
+
+    public abstract int GetChildrenCount();
+
+    public virtual void Dispose() {
+      // Nothing by default
+    }
+
+    public abstract AccessibleNode GetParent();
+
+    public abstract AccessibleNode GetChildAt(int i);
+
+    public IEnumerable<AccessibleNode> GetChildren() {
+      return Enumerable.Range(0, GetChildrenCount()).Select(i => GetChildAt(i));
+    }
+
+    public abstract string GetTitle();
+
+    /// <summary>
+    /// Returns a <see cref="PropertyList"/> containings all the properties of
+    /// this node. Properties are split in groups. <paramref name="options"/>
+    /// determines which properties/group to include. This is required because
+    /// some properties are expensive to retrieve (e.g. flattened list of
+    /// descendents).
+    /// </summary>
+    public PropertyList GetProperties(PropertyOptions options) {
+      var result = new PropertyList();
+      AddProperties(result, options);
+      return result;
+    }
+
+    /// <summary>
+    /// Returns a <see cref="PropertyList"/> suitable for displaying in a tool
+    /// tip window.
+    /// </summary>
+    public PropertyList GetToolTipProperties() {
+      var result = new PropertyList();
+      AddToolTipProperties(result);
+      return result;
+    }
+
+    protected virtual void AddProperties(PropertyList list, PropertyOptions options) {
+    }
+
+    protected virtual void AddToolTipProperties(PropertyList list) {
+    }
+
+    /// <summary>
+    /// Return the screen rectangle of this node. Return <code>null</code> if
+    /// the node does not have any screen location information. Note that the
+    /// returned rectangle may be outside of the bounds of the physical screen
+    /// because either the node is virtualized inside a scrollable region (e.g.
+    /// an editor) or because there are multiple monitors attached to the
+    /// computer.
+    /// </summary>
+    public virtual Rectangle? GetScreenRectangle() {
+      return null;
+    }
+
+    /// <summary>
+    /// Return the <see cref="NodePath"/> of a node given a location on screen.
+    /// Return <code>null</code> if there is no node at that location.
+    /// </summary>
+    public virtual NodePath GetNodePathAt(Point screenPoint) {
+      // Bail early if this node is not visible
+      var rectangle = GetScreenRectangle();
+      if (rectangle == null)
+        return null;
+
+      // Look for candidate children first
+      var childPaths = GetChildren()
+        .Select(x => x.GetNodePathAt(screenPoint))
+        .Where(x => x != null)
+        .OrderBy(x => {
+          // Order by surface size so that smaller (i.e. more specific) nodes is picked first.
+          var rect = x.LeafNode.GetScreenRectangle();
+          if (rect == null)
+            return int.MaxValue;
+          return rect.Value.Width * rect.Value.Width;
+        })
+        .ToList();
+
+      // If no children, return our path if we contain the screenPoint.
+      if (childPaths.Count == 0) {
+        if (rectangle.Value.Contains(screenPoint)) {
+          var path = new NodePath();
+          path.AddParent(this);
+          return path;
+        }
+        return null;
+      } else {
+        // Note: childPaths are ordered by ascending surface, so picking the
+        // smallest one makes sense as it is most likely the most specific
+        // result.
+        var result = childPaths[0];
+        result.AddParent(this);
+        return result;
+      }
+    }
+
+    public override bool Equals(object obj) {
+      return Equals(obj as AccessibleNode);
+    }
+
+    public override int GetHashCode() {
+      return base.GetHashCode();
+    }
+
+    public virtual bool Equals(AccessibleNode other) {
+      if (other == null)
+        return false;
+
+      return JvmId == other.JvmId;
+    }
+
+    public virtual void FetchSubTree() {
+      // Nothing to do by default
+    }
+
+    /// <summary>
+    /// Return the index of this node in its parent, <code>-1</code> if the
+    /// value is unknown. This is useful when node equality does not work
+    /// because transient children may be the "same" even through the Java
+    /// instance is different.
+    /// </summary>
+    public virtual int GetIndexInParent() {
+      return -1;
+    }
+
+    public virtual void Refresh() {
+    }
+  }
+}

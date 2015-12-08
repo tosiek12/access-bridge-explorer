@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{902E9F38-EF1A-4ED5-86BC-25881DBDABED}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AccessBridgeExplorer</RootNamespace>
+    <AssemblyName>AccessBridgeExplorer</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <LangVersion>4</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccessibilityController.cs" />
+    <Compile Include="PropertyListViewWrapper.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="EventForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EventForm.Designer.cs">
+      <DependentUpon>EventForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TooltipWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TooltipWindow.Designer.cs">
+      <DependentUpon>TooltipWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OverlayWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OverlayWindow.Designer.cs">
+      <DependentUpon>OverlayWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\NodeModel.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Win32\NativeMethods.cs" />
+    <Compile Include="Model\AccessibleNodeModel.cs" />
+    <Compile Include="WindowsAccessBridge\AccessBridgeEvents.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessBridgeVersionInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleKeyBindingInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\GetAccessibleKeyBindingsPackage.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleIcons.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleIconInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\GetAccessibleIconsPackage.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleRelationSetInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleRelationInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\GetAccessibleRelationSetPackage.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleTextAttributesInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\VisibleChildrenInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleActions.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleActionInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\GetAccessibleActionsPackage.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\DoAccessibleActionsPackage.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleActionsToDo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleKeyBindings.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleTextRectInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleKeyCode.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleModifiers.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleTextSelectionInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleTextItemsInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleTextInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleContextInfo.cs" />
+    <Compile Include="WindowsAccessBridge\AccessibleContextNode.cs" />
+    <Compile Include="WindowsAccessBridge\AccessibleJvm.cs" />
+    <Compile Include="WindowsAccessBridge\AccessibleNode.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleInterfaces.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleTableCellInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleTableInfo.cs" />
+    <Compile Include="WindowsAccessBridge\AccessibleWindow.cs" />
+    <Compile Include="WindowsAccessBridge\AccessBridgeFunctions.cs" />
+    <Compile Include="WindowsAccessBridge\JavaObjectHandle.cs" />
+    <Compile Include="WindowsAccessBridge\AccessBridgeEventsNative.cs" />
+    <Compile Include="Model\PropertyGroup.cs" />
+    <Compile Include="Model\PropertyList.cs" />
+    <Compile Include="Model\PropertyNode.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\Constants.cs" />
+    <Compile Include="WindowsAccessBridge\NodePath.cs" />
+    <Compile Include="WindowsAccessBridge\PropertyOptions.cs" />
+    <Compile Include="Win32\UnmanagedLibrary.cs" />
+    <Compile Include="WindowsAccessBridge\AccessBridge.cs" />
+    <Compile Include="WindowsHotKeyHandler.cs" />
+    <EmbeddedResource Include="EventForm.resx">
+      <DependentUpon>EventForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TooltipWindow.resx">
+      <DependentUpon>TooltipWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OverlayWindow.resx">
+      <DependentUpon>OverlayWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Crosshair.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Minus.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
