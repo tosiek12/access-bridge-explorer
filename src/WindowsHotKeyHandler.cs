@@ -22,6 +22,10 @@ namespace AccessBridgeExplorer {
 
     public event EventHandler KeyPressed;
 
+    public void Dispose() {
+      Unregister();
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -50,7 +54,7 @@ namespace AccessBridgeExplorer {
 
         // Register the hotkey
         if (RegisterHotKey(control.Handle, id, (uint) modifiers, key & Keys.KeyCode) == 0) {
-          throw new Win32Exception(Marshal.GetLastWin32Error(), "Error registering global hotkey");
+          ThrowLastWin32Error("Error registering global hotkey");
         }
       } catch {
         Application.RemoveMessageFilter(this);
@@ -60,21 +64,29 @@ namespace AccessBridgeExplorer {
       _id = id;
     }
 
-    public void Dispose() {
-      Unregister();
-    }
-
     public void Unregister() {
       if (_control == null)
         return;
 
       if (UnregisterHotKey(_control.Handle, _id) == 0) {
-        throw new Win32Exception(Marshal.GetLastWin32Error(), "Error un-registering global hotkey");
+        ThrowLastWin32Error("Error unregistering global hotkey");
       }
 
       Application.RemoveMessageFilter(this);
       _control = null;
       _id = 0;
+    }
+
+    private static void ThrowLastWin32Error(string message) {
+      const int E_FAIL = (unchecked((int)0x80004005));
+      try {
+        var hr = Marshal.GetHRForLastWin32Error();
+        if (hr >= 0)
+          hr = E_FAIL;
+        Marshal.ThrowExceptionForHR(hr);
+      } catch (Exception e) {
+        throw new ApplicationException(message, e);
+      }
     }
 
     [DllImport("user32.dll", SetLastError = true)]

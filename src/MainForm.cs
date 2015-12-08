@@ -35,14 +35,20 @@ namespace AccessBridgeExplorer {
 
     private void MainForm_Shown(object sender, EventArgs e) {
       InvokeLater(() => {
+        _controller.Initialize();
+
         LogIntroMessages();
 
-        // OemPipe: Used for miscellaneous characters; it can vary by keyboard. For
-        // the US standard keyboard, the '\|' key
-        var keys = Keys.Control | Keys.OemPipe;
-        _hotKeyHandler.Register(this, 1, keys);
+        try {
+          // OemPipe: Used for miscellaneous characters; it can vary by keyboard. For
+          // the US standard keyboard, the '\|' key
+          var keys = Keys.Control | Keys.OemPipe;
+          _hotKeyHandler.Register(this, 1, keys);
+        } catch (Exception ex) {
+          _controller.LogErrorMessage(ex);
+        }
 
-        _controller.Initialize();
+        _controller.LogMessage("Ready!");
       });
     }
 

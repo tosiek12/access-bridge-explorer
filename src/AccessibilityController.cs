@@ -233,7 +233,6 @@ namespace AccessBridgeExplorer {
         // discover the list of JVMs by the time we enumerate all windows.
         _accessBridge.Initialize();
       });
-      LogMessage("Ready!");
     }
 
     public void Dispose() {
