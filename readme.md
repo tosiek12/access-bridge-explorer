@@ -11,3 +11,6 @@ AccessBridgeExplorer requires Windows 7 or later, and .NET 4.0 or later.
 
 Note: AccessBridgeExplorer is implemented in C# to ease dealing with the
 native DLLs related to Java Access Bridge.
+
+DISCLAIMER:
+This is not an official Google product.
