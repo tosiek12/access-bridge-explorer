@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -77,12 +78,72 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     public AccessibleNode FetchChildNode(int i) {
       ThrowIfDisposed();
+      var nodeInfo = _info.Value;
+      if ((nodeInfo.accessibleInterfaces & AccessibleInterfaces.cAccessibleTableInterface) != 0) {
+        // Note: The default implementation for table is incorrect due to an
+        // defect in JavaAccessBridge: instead of returning the
+        // AccessbleJTableCell, the AccessBridge implemenentation, for some
+        // reason, has a hard-coded reference to JTable and calls
+        // "getCellRendered" directly instead of calling
+        // AccessibleContext.GetAccessibleChild(). So we need to call a custom
+        // method for tables.
+        return FetchTableChildNode(i);
+      }
+
       var childContextPtr = AccessBridge.Functions.GetAccessibleChildFromContext(JvmId, _ac, i);
       if (childContextPtr == IntPtr.Zero) {
-        throw new ApplicationException("Error retrieving accessible context for child component");
+        throw new ApplicationException(string.Format("Error retrieving accessible context for child {0}", i));
       }
 
       return new AccessibleContextNode(AccessBridge, new JavaObjectHandle(JvmId, childContextPtr));
+    }
+
+    /// <summary>
+    /// The only way we found to get the right info for a cell in a table is to
+    /// set the selection to a single cell, then to get the accessible context
+    /// for the selection. A side effect of this, of course, is that the table
+    /// selection will change in the Java Application.
+    /// </summary>
+    private AccessibleNode FetchTableChildNode(int childIndex) {
+      // Get the current selection, just in case it contains "childIndex".
+      var childNode = FindNodeInSelection(childIndex);
+      if (childNode != null)
+        return childNode;
+
+      // Note that if the table only supports entire row selection, this call
+      // may end up selecting an entire row.
+      AccessBridge.Functions.ClearAccessibleSelectionFromContext(JvmId, _ac);
+      AccessBridge.Functions.AddAccessibleSelectionFromContext(JvmId, _ac, childIndex);
+      childNode = FindNodeInSelection(childIndex);
+      if (childNode != null)
+        return childNode;
+
+      var row = AccessBridge.Functions.GetAccessibleTableRow(JvmId, _ac, childIndex);
+      var col = AccessBridge.Functions.GetAccessibleTableColumn(JvmId, _ac, childIndex);
+
+      throw new ApplicationException(string.Format("Error retrieving accessible context for cell [{0},{1}]", row, col));
+    }
+
+    /// <summary>
+    /// Return the <see cref="AccessibleContextNode"/> of the current selection
+    /// that has its "indexInParent" equal to <paramref name="childIndex"/>. Returns
+    /// <code>null</code> if there is no such child in the selection.
+    /// </summary>
+    private AccessibleContextNode FindNodeInSelection(int childIndex) {
+      var selCount = AccessBridge.Functions.GetAccessibleSelectionCountFromContext(JvmId, _ac);
+      if (selCount > 0) {
+        for (var selIndex = 0; selIndex < selCount; selIndex++) {
+          var selectedContext = new JavaObjectHandle(JvmId,
+            AccessBridge.Functions.GetAccessibleSelectionFromContext(JvmId, _ac, selIndex));
+          if (!selectedContext.IsNull) {
+            var selectedNode = new AccessibleContextNode(AccessBridge, selectedContext);
+            if (selectedNode.GetInfo().indexInParent == childIndex) {
+              return selectedNode;
+            }
+          }
+        }
+      }
+      return null;
     }
 
     public override void Refresh() {
