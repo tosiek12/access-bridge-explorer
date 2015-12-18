@@ -362,18 +362,13 @@ namespace AccessBridgeExplorer {
       item.Text = _messageId.ToString();
       item.SubItems.Add(time.ToLongTimeString());
       item.SubItems.Add(string.Format(format, args));
-
-      AddMessage(item);
+      AddListViewItem(_messageList, item);
     }
 
     public void LogErrorMessage(Exception error) {
       for (var current = error; current != null; current = current.InnerException) {
         LogMessage("{0}{1}", (current == error ? "ERROR: " : "      "), current.Message);
       }
-    }
-
-    private void AddMessage(ListViewItem item) {
-      AddListViewItem(_messageList, item);
     }
 
     private static void AddListViewItem(ListView listview, ListViewItem item) {
