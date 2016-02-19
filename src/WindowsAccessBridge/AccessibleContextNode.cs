@@ -689,6 +689,9 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         list.AddProperty("accessibleSelection", info.accessibleSelection);
         list.AddProperty("accessibleText", info.accessibleText);
         list.AddProperty("accessibleInterfaces", info.accessibleInterfaces);
+
+        var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
+        list.AddProperty("Object Depth", depth);
       }
     }
 
