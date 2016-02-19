@@ -39,6 +39,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       base.AddToolTipProperties(list);
     }
 
+    protected override void AddProperties(PropertyList list, PropertyOptions options) {
+      list.AddProperty("WindowHandle", _hWnd);
+      base.AddProperties(list, options);
+    }
+
     public string GetDisplaySortString() {
       var info = GetInfo();
 
