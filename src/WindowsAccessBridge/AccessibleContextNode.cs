@@ -551,8 +551,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
                   var cellGroup = cellsGroup.AddGroup(string.Format("Cell[Row={0},Column={1}]", rowIndex, colunmnIndex));
 
                   AccessibleTableCellInfo tableCellInfo;
-                  if (
-                    Failed(AccessBridge.Functions.GetAccessibleTableCellInfo(tableInfo.AccessibleTable.JvmId,
+                  if (Failed(AccessBridge.Functions.GetAccessibleTableCellInfo(tableInfo.AccessibleTable.JvmId,
                       tableInfo.AccessibleTable, rowIndex, colunmnIndex, out tableCellInfo))) {
                     cellGroup.AddProperty("Error", "Error retrieving cell info");
                   } else {
@@ -602,6 +601,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             group.AddProperty("Selected text", textSelection.selectedText);
           }
 
+          AddHyperTextProperties(group.Children);
+
           /* ===== AccessibleText information at the mouse point ===== */
 
           var mouseGroup = group.AddGroup(string.Format("Mouse point at index {0} attributes", textInfo.indexAtPoint));
@@ -612,6 +613,36 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           var caretGroup = group.AddGroup(string.Format("Caret at index {0} attributes", textInfo.caretIndex));
           AddTextAttributeAtIndex(caretGroup.Children, textInfo.caretIndex);
         }
+      }
+    }
+
+    private void AddHyperTextProperties(PropertyList list) {
+      var group = list.AddGroup("Accessible Hyper Text");
+      group.Expanded = false;
+
+      AccessibleHypertextInfo hyperTextInfo;
+#if true
+      if (Failed(AccessBridge.Functions.GetAccessibleHypertextExt(JvmId, _ac, 0, out hyperTextInfo))) {
+        group.AddProperty("Error", "No hyper text data");
+        return;
+      }
+#else
+      // Note: This call does *not* return any value in the "hyperTextInfo.links" array
+      if (Failed(AccessBridge.Functions.GetAccessibleHypertext(JvmId, _ac, out hyperTextInfo))) {
+        group.AddProperty("Error", "No hyper text data");
+        return;
+      }
+#endif
+      var hyperText = new JavaObjectHandle(JvmId, hyperTextInfo.accessibleHypertext);
+      var linksGroup = group.AddGroup("Hyperlinks", hyperTextInfo.linkCount);
+      for (var i = 0; i < hyperTextInfo.linkCount; i++) {
+        var hyperlinkHandle = new JavaObjectHandle(JvmId, hyperTextInfo.links[i].accessibleHyperlink);
+
+        var linkGroup = linksGroup.AddGroup(string.Format("Hyperlink #{0}", i + 1));
+        var hyperLink = new JavaObjectHandle(JvmId, hyperTextInfo.links[i].accessibleHyperlink);
+        linkGroup.AddProperty("Start index", hyperTextInfo.links[i].startIndex);
+        linkGroup.AddProperty("End index", hyperTextInfo.links[i].endIndex);
+        linkGroup.AddProperty("Text", hyperTextInfo.links[i].text);
       }
     }
 

@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All Rights Reserved.
+﻿// Copyright 2015 Google Inc. All Rights Reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,19 +13,25 @@
 // limitations under the License.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
+using jint = System.Int32;
+using AccessibleContextPtr = System.IntPtr;
 
 namespace AccessBridgeExplorer.WindowsAccessBridge.NativeStructures {
+  /// <summary>
+  /// Hypertext information
+  /// </summary>
   [SuppressMessage("ReSharper", "InconsistentNaming")]
-  public static class Constants {
-    public const int MAX_STRING_SIZE = 1024;
-    public const int SHORT_STRING_SIZE = 256;
-    public const int MAX_RELATIONS = 5;
-    public const int MAX_VISIBLE_CHILDREN = 256;
-    public const int MAX_ACTION_INFO = 256;
-    public const int MAX_ACTIONS_TO_DO = 32;
-    public const int MAX_KEY_BINDINGS = 10;
-    public const int MAX_ICON_INFO = 8;
-    public const int MAX_RELATION_TARGETS = 25;
-    public const int MAX_HYPERLINKS = 64; // maximum number of hyperlinks returned
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+  public struct AccessibleHypertextInfo {
+    /// <summary>number of hyperlinks</summary>
+    public jint linkCount;
+
+    /// <summary>the hyperlinks</summary>
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_HYPERLINKS)]
+    public AccessibleHyperlinkInfo[] links;
+
+    /// <summary>AccessibleHypertext object</summary>
+    public AccessibleContextPtr accessibleHypertext;
   }
 }

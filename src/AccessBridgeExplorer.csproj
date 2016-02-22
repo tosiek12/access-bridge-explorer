@@ -98,6 +98,8 @@
     <Compile Include="WindowsAccessBridge\AccessBridgeEvents.cs" />
     <Compile Include="WindowsAccessBridge\NativeStructures\AccessBridgeVersionInfo.cs" />
     <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleKeyBindingInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleHyperlinkInfo.cs" />
+    <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleHypertextInfo.cs" />
     <Compile Include="WindowsAccessBridge\NativeStructures\GetAccessibleKeyBindingsPackage.cs" />
     <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleIcons.cs" />
     <Compile Include="WindowsAccessBridge\NativeStructures\AccessibleIconInfo.cs" />

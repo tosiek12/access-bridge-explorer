@@ -27,6 +27,7 @@ using AccessibleContextHandle = AccessBridgeExplorer.WindowsAccessBridge.JavaObj
 using AccessibleTextHandle = AccessBridgeExplorer.WindowsAccessBridge.JavaObjectHandle;
 using AccessibleValueHandle = AccessBridgeExplorer.WindowsAccessBridge.JavaObjectHandle;
 using AccessibleSelectionHandle = AccessBridgeExplorer.WindowsAccessBridge.JavaObjectHandle;
+using AccessibleHyperlink = AccessBridgeExplorer.WindowsAccessBridge.JavaObjectHandle;
 // ReSharper disable InconsistentNaming
 
 namespace AccessBridgeExplorer.WindowsAccessBridge {
@@ -81,6 +82,24 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
 
     /* AccessibleHypertext */
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleHypertextFP(int vmID, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL ActivateAccessibleHyperlinkFP(int vmID, JavaObjectHandle accessibleContext, AccessibleHyperlink accessibleHyperlink);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate jint GetAccessibleHyperlinkCountFP(int vmID, JavaObjectHandle accessibleContext);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleHypertextExtFP(int vmID, JavaObjectHandle accessibleContext, jint nStartIndex, out AccessibleHypertextInfo hypertextInfo);
+
+      [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate jint GetAccessibleHypertextLinkIndexFP(int vmID, JavaObjectHandle hypertext, jint nIndex);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleHyperlinkFP(int vmID, JavaObjectHandle hypertext, jint nIndex, out AccessibleHyperlinkInfo hyperlinkInfo);
+
 
     /* Accessible KeyBindings, Icons and Actions */
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -325,18 +344,54 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public GetAccessibleTableIndexFP GetAccessibleTableIndex { get; set; }
     #endregion
 
-    /* AccessibleRelationSet */
+    #region AccessibleRelationSet
     public GetAccessibleRelationSetFP GetAccessibleRelationSet { get; set; }
+    #endregion
 
-    /* AccessibleHypertext */
+    #region AccessibleHypertext
+    /// <summary>
+    /// Returns hypertext information associated with a component.
+    /// </summary>
+    public GetAccessibleHypertextFP GetAccessibleHypertext { get; set; }
+    /// <summary>
+    /// Requests that a hyperlink be activated.
+    /// </summary>
+    public ActivateAccessibleHyperlinkFP ActivateAccessibleHyperlink { get; set; }
+    /// <summary>
+    /// Returns the number of hyperlinks in a component.
+    /// Maps to AccessibleHypertext.getLinkCount.
+    /// Returns -1 on error.
+    /// </summary>
+    public GetAccessibleHyperlinkCountFP GetAccessibleHyperlinkCount { get; set; }
+    /// <summary>
+    /// This method is used to iterate through the hyperlinks in a component.  It
+    /// returns hypertext information for a component starting at hyperlink index
+    /// nStartIndex. No more than MAX_HYPERLINKS AccessibleHypertextInfo objects will
+    /// be returned for each call to this method.
+    /// Returns FALSE on error.
+    /// </summary>
+    public GetAccessibleHypertextExtFP GetAccessibleHypertextExt { get; set; }
+    /// <summary>
+    /// Returns the index into an array of hyperlinks that is associated with
+    /// a character index in document.
+    /// Maps to AccessibleHypertext.getLinkIndex
+    /// Returns -1 on error.
+    /// </summary>
+    public GetAccessibleHypertextLinkIndexFP GetAccessibleHypertextLinkIndex { get; set; }
+    /// <summary>
+    /// Returns the nth hyperlink in a document.
+    //  Maps to AccessibleHypertext.getLink.
+    //  Returns FALSE on error
+    /// </summary>
+    public GetAccessibleHyperlinkFP GetAccessibleHyperlink { get; set; }
+    #endregion
 
-    /* Accessible KeyBindings, Icons and Actions */
+    #region Accessible KeyBindings, Icons and Actions */
     public GetAccessibleKeyBindingsFP GetAccessibleKeyBindings { get; set; }
     public GetAccessibleIconsFP GetAccessibleIcons { get; set; }
     public GetAccessibleActionsFP GetAccessibleActions { get; set; }
     public DoAccessibleActionsFP DoAccessibleActions { get; set; }
-
-    /* AccessibleText */
+    #endregion
 
     #region Additional utility methods
     //public SetTextContentsFP SetTextContents { get; set; }
