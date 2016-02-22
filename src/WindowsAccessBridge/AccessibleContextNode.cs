@@ -252,6 +252,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AddContextProperties(list, options);
       AddTopLevelWindowProperties(list, options);
       AddParentContextProperties(list, options);
+      AddActiveDescendentProperties(list, options);
       AddSelectionProperties(list, options);
       AddKeyBindingsProperties(list, options);
       AddIconsProperties(list, options);
@@ -281,6 +282,17 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           var group = list.AddGroup("Parent");
           group.Expanded = false;
           AddSubContextProperties(group.Children, options, parentContext);
+        }
+      }
+    }
+
+    private void AddActiveDescendentProperties(PropertyList list, PropertyOptions options) {
+      if ((options & PropertyOptions.ActiveDescendent) != 0) {
+        var context = new JavaObjectHandle(JvmId, AccessBridge.Functions.GetActiveDescendent(JvmId, _ac));
+        if (!context.IsNull) {
+          var group = list.AddGroup("Active Descendent");
+          group.Expanded = false;
+          AddSubContextProperties(group.Children, options, context);
         }
       }
     }
