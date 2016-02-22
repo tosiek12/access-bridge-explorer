@@ -361,10 +361,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     private void AddVisibleDescendentsProperties(PropertyList list, PropertyOptions options) {
-      if ((options & PropertyOptions.VisibleDescendents) != 0) {
+      if ((options & PropertyOptions.VisibleChildren) != 0) {
         var visibleCount = AccessBridge.Functions.GetVisibleChildrenCount(JvmId, _ac);
         if (visibleCount > 0) {
-          var group = list.AddGroup("Visible Descendents", visibleCount);
+          var group = list.AddGroup("Visible Children", visibleCount);
           group.Expanded = false;
           VisibleChildrenInfo childrenInfo;
           if (AccessBridge.Functions.GetVisibleChildren(JvmId, _ac, 0, out childrenInfo) != 0) {
@@ -376,7 +376,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             var childNodes = handles.Select(x => new AccessibleContextNode(AccessBridge, x)).ToList();
             var childIndex = 0;
             foreach (var childNode in childNodes) {
-              var childGroup = group.AddGroup(string.Format("Descendent {0} of {1}", childIndex + 1, childNodes.Count));
+              var childGroup = group.AddGroup(string.Format("Child {0} of {1}", childIndex + 1, childNodes.Count));
               AddSubContextProperties(childGroup.Children, options, childNode);
               childIndex++;
             }
@@ -705,6 +705,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     private void AddContextProperties(PropertyList list, PropertyOptions options) {
+      if ((options & PropertyOptions.ObjectDepth) != 0) {
+        var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
+        list.AddProperty("Object Depth", depth);
+      }
+
       if ((options & PropertyOptions.AccessibleContextInfo) != 0) {
         var info = GetInfo();
         list.AddProperty("Name", info.name ?? "-");
@@ -715,18 +720,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         list.AddProperty("Role_en_US", info.role_en_US ?? "-");
         list.AddProperty("States", info.states ?? "-");
         list.AddProperty("States_en_US", info.states_en_US ?? "-");
-        list.AddProperty("childrenCount", info.childrenCount);
-        list.AddProperty("indexInParent", info.indexInParent);
-        list.AddProperty("accessibleComponent", info.accessibleComponent);
-        list.AddProperty("accessibleAction", info.accessibleAction);
-        list.AddProperty("accessibleSelection", info.accessibleSelection);
-        list.AddProperty("accessibleText", info.accessibleText);
-        list.AddProperty("accessibleInterfaces", info.accessibleInterfaces);
-      }
-
-      if ((options & PropertyOptions.ObjectDepth) != 0) {
-          var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
-        list.AddProperty("Object Depth", depth);
+        list.AddProperty("Children count", info.childrenCount);
+        list.AddProperty("Index in parent", info.indexInParent);
+        list.AddProperty("AccessibleComponent supported", info.accessibleComponent);
+        list.AddProperty("AccessibleAction supported", info.accessibleAction);
+        list.AddProperty("AccessibleSelection supported", info.accessibleSelection);
+        list.AddProperty("AccessibleText supported", info.accessibleText);
+        list.AddProperty("AccessibleInterfaces supported", info.accessibleInterfaces);
       }
     }
 
@@ -737,6 +737,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     private void AddSubContextProperties(PropertyList list, PropertyOptions options, AccessibleContextNode contextNode) {
       try {
+        if ((options & PropertyOptions.ObjectDepth) != 0) {
+          var depth = AccessBridge.Functions.GetObjectDepth(contextNode.JvmId, contextNode._ac);
+          list.AddProperty("Object Depth", depth);
+        }
+
         var info = contextNode.GetInfo();
         list.AddProperty("Name", info.name);
         list.AddProperty("Description", info.description);
@@ -746,10 +751,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         list.AddProperty("Index in parent", info.indexInParent);
         list.AddProperty("accessibleInterfaces", info.accessibleInterfaces);
 
-        if ((options & PropertyOptions.ObjectDepth) != 0) {
-          var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
-          list.AddProperty("Object Depth", depth);
-        }
       } catch (Exception e) {
         list.AddProperty("Error", e.Message);
       }
