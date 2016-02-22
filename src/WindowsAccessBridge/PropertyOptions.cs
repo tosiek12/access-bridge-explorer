@@ -33,5 +33,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     AccessibleSelection = 0x0400,
     AccessibleTable = 0x0800,
     AccessibleTableCells = 0x1000,
+    AccessibleHyperText = 0x2000,
+    ObjectDepth = 0x4000,
   }
 }

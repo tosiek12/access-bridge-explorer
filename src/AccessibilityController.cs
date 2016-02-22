@@ -78,8 +78,10 @@ namespace AccessBridgeExplorer {
         PropertyOptions.AccessibleKeyBindings |
         PropertyOptions.AccessibleRelationSet |
         PropertyOptions.ParentContext |
+        PropertyOptions.ObjectDepth |
         PropertyOptions.TopLevelWindowInfo |
         PropertyOptions.AccessibleText |
+        PropertyOptions.AccessibleHyperText |
         PropertyOptions.AccessibleValue |
         PropertyOptions.AccessibleSelection |
         PropertyOptions.AccessibleTable |
