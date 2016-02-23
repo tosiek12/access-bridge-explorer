@@ -61,7 +61,6 @@ namespace AccessBridgeExplorer {
       _propertyOptionsMenu = propertyOptionsMenu;
       _overlayWindowEnabled = true;
 
-      _accessibilityTree.BeforeSelect += AccessibilityTreeOnBeforeSelect;
       _accessibilityTree.AfterSelect += AccessibilityTreeAfterSelect;
       _accessibilityTree.BeforeExpand += AccessibilityTreeBeforeExpand;
       _accessibilityTree.KeyDown += AccessibilityTreeOnKeyDown;
@@ -453,17 +452,6 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private void AccessibilityTreeOnBeforeSelect(object sender, TreeViewCancelEventArgs e) {
-      var treeNode = e.Node;
-      if (treeNode == null)
-        return;
-
-      var nodeModel = treeNode.Tag as AccessibleNodeModel;
-      if (nodeModel == null)
-        return;
-
-    }
-
     private void AccessibilityTreeAfterSelect(object sender, TreeViewEventArgs e) {
       var treeNode = e.Node;
       if (treeNode == null)
@@ -486,9 +474,12 @@ namespace AccessBridgeExplorer {
 
       EnsureTreeNodeVisible(treeNode);
       UpdateOverlayWindow();
-      _navigation.AddNavigationAction(() => {
-        SelectTreeNode(nodeModel.AccessibleNode);
-      });
+
+      var navigationEntry = new NavigationEntry {
+        Description = string.Format("Navigate to \"{0}\"", nodeModel.AccessibleNode.GetTitle()),
+        Action = () => SelectTreeNode(nodeModel.AccessibleNode),
+      };
+      _navigation.AddNavigationAction(navigationEntry);
     }
 
     private void AccessibilityTreeOnKeyDown(object sender, KeyEventArgs keyEventArgs) {

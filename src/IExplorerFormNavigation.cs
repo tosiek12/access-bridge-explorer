@@ -13,15 +13,25 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 
 namespace AccessBridgeExplorer {
   public interface IExplorerFormNavigation {
+    int Version { get; }
     bool ForwardAvailable { get; }
     bool BackwardAvailable { get; }
 
+    IEnumerable<NavigationEntry> BackwardEntries { get; }
+    IEnumerable<NavigationEntry> ForwardEntries { get; }
+
     void Clear();
-    void AddNavigationAction(Action action);
+    void AddNavigationAction(NavigationEntry entry);
     void NavigateForward();
     void NavigateBackward();
+  }
+
+  public class NavigationEntry {
+    public string Description { get; set; }
+    public Action Action { get; set; }
   }
 }

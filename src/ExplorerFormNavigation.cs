@@ -18,37 +18,53 @@ using System.Collections.Generic;
 namespace AccessBridgeExplorer {
   public class ExplorerFormNavigation : IExplorerFormNavigation {
     /// <summary>The current action, or "null" if the navigation stack is empty.</summary>
-    private Action _currentAction;
-    /// <summary>Stack of actions before <see cref="_currentAction"/></summary>
-    private readonly Stack<Action> _backwardActions = new Stack<Action>();
-    /// <summary>Stack of actions after <see cref="_currentAction"/></summary>
-    private readonly Stack<Action> _forwardActions = new Stack<Action>();
-
+    private NavigationEntry _currentEntry;
+    /// <summary>Stack of actions before <see cref="_currentEntry"/></summary>
+    private readonly Stack<NavigationEntry> _backwardEntries = new Stack<NavigationEntry>();
+    /// <summary>Stack of actions after <see cref="_currentEntry"/></summary>
+    private readonly Stack<NavigationEntry> _forwardEntries = new Stack<NavigationEntry>();
     private int _navigationNesting;
+    private int _version;
+
+    public int Version {
+      get {
+       return _version;
+      }
+    }
 
     public bool ForwardAvailable {
-      get { return _forwardActions.Count > 0; }
+      get { return _forwardEntries.Count > 0; }
     }
 
     public bool BackwardAvailable {
-      get { return _backwardActions.Count > 0; }
+      get { return _backwardEntries.Count > 0; }
+    }
+
+    public IEnumerable<NavigationEntry> BackwardEntries {
+      get { return _backwardEntries; }
+    }
+
+    public IEnumerable<NavigationEntry> ForwardEntries {
+      get { return _forwardEntries; }
     }
 
     public void Clear() {
-      _backwardActions.Clear();
-      _forwardActions.Clear();
-      _currentAction = null;
+      _backwardEntries.Clear();
+      _forwardEntries.Clear();
+      _currentEntry = null;
+      _version++;
     }
 
-    public void AddNavigationAction(Action action) {
+    public void AddNavigationAction(NavigationEntry entry) {
       if (_navigationNesting >= 1)
         return;
 
-      _forwardActions.Clear();
-      if (_currentAction != null) {
-        _backwardActions.Push(_currentAction);
+      _forwardEntries.Clear();
+      if (_currentEntry != null) {
+        _backwardEntries.Push(_currentEntry);
       }
-      _currentAction = action;
+      _currentEntry = entry;
+      _version++;
     }
 
     public void NavigateForward() {
@@ -58,11 +74,12 @@ namespace AccessBridgeExplorer {
       if (!ForwardAvailable)
         return;
 
-      if (_currentAction != null) {
-        _backwardActions.Push(_currentAction);
+      if (_currentEntry != null) {
+        _backwardEntries.Push(_currentEntry);
       }
-      _currentAction = _forwardActions.Pop();
-      DoNavigateAction(_currentAction);
+      _currentEntry = _forwardEntries.Pop();
+      DoNavigateAction(_currentEntry);
+      _version++;
     }
 
     public void NavigateBackward() {
@@ -72,17 +89,18 @@ namespace AccessBridgeExplorer {
       if (!BackwardAvailable)
         return;
 
-      if (_currentAction != null) {
-        _forwardActions.Push(_currentAction);
+      if (_currentEntry != null) {
+        _forwardEntries.Push(_currentEntry);
       }
-      _currentAction = _backwardActions.Pop();
-      DoNavigateAction(_currentAction);
+      _currentEntry = _backwardEntries.Pop();
+      DoNavigateAction(_currentEntry);
+      _version++;
     }
 
-    private void DoNavigateAction(Action action) {
+    private void DoNavigateAction(NavigationEntry entry) {
       _navigationNesting++;
       try {
-        action();
+        entry.Action();
       } finally {
         _navigationNesting--;
       }

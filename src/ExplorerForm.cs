@@ -22,6 +22,7 @@ namespace AccessBridgeExplorer {
     private readonly WindowsHotKeyHandler _hotKeyHandler;
     private readonly ExplorerFormController _controller;
     private bool _capturing;
+    private int _navigationVersion = int.MinValue;
 
     public ExplorerForm() {
       InitializeComponent();
@@ -72,11 +73,27 @@ namespace AccessBridgeExplorer {
     }
 
     private void UpdateNavigationState() {
+      if (_navigationVersion == _controller.Navigation.Version)
+        return;
+      _navigationVersion = _controller.Navigation.Version;
+
       navigateBackwardButton.Enabled = _controller.Navigation.BackwardAvailable;
       navigateBackwardToolStripMenuItem.Enabled = _controller.Navigation.BackwardAvailable;
 
+      navigateBackwardButton.DropDownItems.Clear();
+      foreach (var entry in _controller.Navigation.BackwardEntries) {
+        //var item = new ToolStripDrpoItem();
+        navigateBackwardButton.DropDownItems.Add(entry.Description);
+      }
+
       navigateForwardButton.Enabled = _controller.Navigation.ForwardAvailable;
       navigateForwardToolStripMenuItem.Enabled = _controller.Navigation.ForwardAvailable;
+
+      navigateForwardButton.DropDownItems.Clear();
+      foreach (var entry in _controller.Navigation.ForwardEntries) {
+        //var item = new ToolStripDrpoItem();
+        navigateForwardButton.DropDownItems.Add(entry.Description);
+      }
     }
 
     private void HotKeyHandlerOnKeyPressed(object sender, EventArgs eventArgs) {

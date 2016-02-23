@@ -40,8 +40,8 @@
       this.statusBarStrip = new System.Windows.Forms.StatusStrip();
       this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.mainToolStrip = new System.Windows.Forms.ToolStrip();
-      this.navigateBackwardButton = new System.Windows.Forms.ToolStripDropDownButton();
-      this.navigateForwardButton = new System.Windows.Forms.ToolStripDropDownButton();
+      this.navigateBackwardButton = new System.Windows.Forms.ToolStripSplitButton();
+      this.navigateForwardButton = new System.Windows.Forms.ToolStripSplitButton();
       this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
       this.refreshButton = new System.Windows.Forms.ToolStripButton();
       this.findComponentButton = new System.Windows.Forms.ToolStripButton();
@@ -249,10 +249,10 @@
       this.navigateBackwardButton.Image = ((System.Drawing.Image)(resources.GetObject("navigateBackwardButton.Image")));
       this.navigateBackwardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.navigateBackwardButton.Name = "navigateBackwardButton";
-      this.navigateBackwardButton.Size = new System.Drawing.Size(24, 24);
+      this.navigateBackwardButton.Size = new System.Drawing.Size(36, 24);
       this.navigateBackwardButton.Text = "Navigate Backward";
       this.navigateBackwardButton.ToolTipText = "Navigate Backward";
-      this.navigateBackwardButton.Click += new System.EventHandler(this.navigateBackwardButton_Click);
+      this.navigateBackwardButton.ButtonClick += new System.EventHandler(this.navigateBackwardButton_Click);
       // 
       // navigateForwardButton
       // 
@@ -260,10 +260,10 @@
       this.navigateForwardButton.Image = ((System.Drawing.Image)(resources.GetObject("navigateForwardButton.Image")));
       this.navigateForwardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.navigateForwardButton.Name = "navigateForwardButton";
-      this.navigateForwardButton.Size = new System.Drawing.Size(24, 24);
+      this.navigateForwardButton.Size = new System.Drawing.Size(36, 24);
       this.navigateForwardButton.Text = "Nagivate Forward";
       this.navigateForwardButton.ToolTipText = "Nagivate Forward";
-      this.navigateForwardButton.Click += new System.EventHandler(this.navigateForwardButton_Click);
+      this.navigateForwardButton.ButtonClick += new System.EventHandler(this.navigateForwardButton_Click);
       // 
       // toolStripSeparator3
       // 
@@ -534,9 +534,9 @@
       // 
       this.eventsPage.Controls.Add(this.eventList);
       this.eventsPage.Controls.Add(this.eventsToolStrip);
-      this.eventsPage.Location = new System.Drawing.Point(4, 24);
+      this.eventsPage.Location = new System.Drawing.Point(4, 22);
       this.eventsPage.Name = "eventsPage";
-      this.eventsPage.Size = new System.Drawing.Size(1173, 199);
+      this.eventsPage.Size = new System.Drawing.Size(1173, 201);
       this.eventsPage.TabIndex = 0;
       this.eventsPage.Text = "Accessibility events";
       this.eventsPage.UseVisualStyleBackColor = true;
@@ -557,7 +557,7 @@
       this.eventList.Location = new System.Drawing.Point(25, 0);
       this.eventList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this.eventList.Name = "eventList";
-      this.eventList.Size = new System.Drawing.Size(1148, 199);
+      this.eventList.Size = new System.Drawing.Size(1148, 201);
       this.eventList.TabIndex = 5;
       this.eventList.UseCompatibleStateImageBehavior = false;
       this.eventList.View = System.Windows.Forms.View.Details;
@@ -605,7 +605,7 @@
             this.clearEventsButton});
       this.eventsToolStrip.Location = new System.Drawing.Point(0, 0);
       this.eventsToolStrip.Name = "eventsToolStrip";
-      this.eventsToolStrip.Size = new System.Drawing.Size(25, 199);
+      this.eventsToolStrip.Size = new System.Drawing.Size(25, 201);
       this.eventsToolStrip.TabIndex = 0;
       this.eventsToolStrip.Text = "toolStrip2";
       this.eventsToolStrip.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
@@ -730,8 +730,8 @@
     private System.Windows.Forms.ToolStripMenuItem navigateBackwardToolStripMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
     private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
-    private System.Windows.Forms.ToolStripDropDownButton navigateBackwardButton;
-    private System.Windows.Forms.ToolStripDropDownButton navigateForwardButton;
+    private System.Windows.Forms.ToolStripSplitButton navigateBackwardButton;
+    private System.Windows.Forms.ToolStripSplitButton navigateForwardButton;
     private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
   }
 }
