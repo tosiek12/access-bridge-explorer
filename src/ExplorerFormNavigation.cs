@@ -28,7 +28,7 @@ namespace AccessBridgeExplorer {
 
     public int Version {
       get {
-       return _version;
+        return _version;
       }
     }
 
@@ -95,6 +95,26 @@ namespace AccessBridgeExplorer {
       _currentEntry = _backwardEntries.Pop();
       DoNavigateAction(_currentEntry);
       _version++;
+    }
+
+    public void NavigateTo(NavigationEntry entry) {
+      if (_currentEntry == entry)
+        return;
+
+      if (_backwardEntries.Contains(entry)) {
+        while(BackwardAvailable) {
+          NavigateBackward();
+          if (_currentEntry == entry)
+            break;
+        }
+      }
+      if (_forwardEntries.Contains(entry)) {
+        while (ForwardAvailable) {
+          NavigateForward();
+          if (_currentEntry == entry)
+            break;
+        }
+      }
     }
 
     private void DoNavigateAction(NavigationEntry entry) {

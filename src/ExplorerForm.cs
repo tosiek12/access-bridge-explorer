@@ -81,19 +81,25 @@ namespace AccessBridgeExplorer {
       navigateBackwardToolStripMenuItem.Enabled = _controller.Navigation.BackwardAvailable;
 
       navigateBackwardButton.DropDownItems.Clear();
-      foreach (var entry in _controller.Navigation.BackwardEntries) {
-        //var item = new ToolStripDrpoItem();
-        navigateBackwardButton.DropDownItems.Add(entry.Description);
-      }
+      _controller.Navigation.BackwardEntries.ForEach(entry => {
+        var item = navigateBackwardButton.DropDownItems.Add(entry.Description);
+        item.Click += (sender, args) => {
+          _controller.Navigation.NavigateTo(entry);
+          UpdateNavigationState();
+        };
+      });
 
       navigateForwardButton.Enabled = _controller.Navigation.ForwardAvailable;
       navigateForwardToolStripMenuItem.Enabled = _controller.Navigation.ForwardAvailable;
 
       navigateForwardButton.DropDownItems.Clear();
-      foreach (var entry in _controller.Navigation.ForwardEntries) {
-        //var item = new ToolStripDrpoItem();
-        navigateForwardButton.DropDownItems.Add(entry.Description);
-      }
+      _controller.Navigation.ForwardEntries.ForEach(entry => {
+        var item = navigateForwardButton.DropDownItems.Add(entry.Description);
+        item.Click += (sender, args) => {
+          _controller.Navigation.NavigateTo(entry);
+          UpdateNavigationState();
+        };
+      });
     }
 
     private void HotKeyHandlerOnKeyPressed(object sender, EventArgs eventArgs) {

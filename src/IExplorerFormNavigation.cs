@@ -28,6 +28,7 @@ namespace AccessBridgeExplorer {
     void AddNavigationAction(NavigationEntry entry);
     void NavigateForward();
     void NavigateBackward();
+    void NavigateTo(NavigationEntry entry);
   }
 
   public class NavigationEntry {
