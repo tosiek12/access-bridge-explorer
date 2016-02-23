@@ -222,7 +222,8 @@
       // 
       // EventForm
       // 
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1272, 723);
       this.Controls.Add(this.closeButton);
       this.Controls.Add(this.topSplitContainer);

@@ -40,8 +40,8 @@
       this.statusBarStrip = new System.Windows.Forms.StatusStrip();
       this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.mainToolStrip = new System.Windows.Forms.ToolStrip();
-      this.navigateBackwardButton = new System.Windows.Forms.ToolStripButton();
-      this.navigateForwardButton = new System.Windows.Forms.ToolStripButton();
+      this.navigateBackwardButton = new System.Windows.Forms.ToolStripDropDownButton();
+      this.navigateForwardButton = new System.Windows.Forms.ToolStripDropDownButton();
       this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
       this.refreshButton = new System.Windows.Forms.ToolStripButton();
       this.findComponentButton = new System.Windows.Forms.ToolStripButton();
@@ -534,9 +534,9 @@
       // 
       this.eventsPage.Controls.Add(this.eventList);
       this.eventsPage.Controls.Add(this.eventsToolStrip);
-      this.eventsPage.Location = new System.Drawing.Point(4, 22);
+      this.eventsPage.Location = new System.Drawing.Point(4, 24);
       this.eventsPage.Name = "eventsPage";
-      this.eventsPage.Size = new System.Drawing.Size(1173, 201);
+      this.eventsPage.Size = new System.Drawing.Size(1173, 199);
       this.eventsPage.TabIndex = 0;
       this.eventsPage.Text = "Accessibility events";
       this.eventsPage.UseVisualStyleBackColor = true;
@@ -557,7 +557,7 @@
       this.eventList.Location = new System.Drawing.Point(25, 0);
       this.eventList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this.eventList.Name = "eventList";
-      this.eventList.Size = new System.Drawing.Size(1148, 201);
+      this.eventList.Size = new System.Drawing.Size(1148, 199);
       this.eventList.TabIndex = 5;
       this.eventList.UseCompatibleStateImageBehavior = false;
       this.eventList.View = System.Windows.Forms.View.Details;
@@ -605,7 +605,7 @@
             this.clearEventsButton});
       this.eventsToolStrip.Location = new System.Drawing.Point(0, 0);
       this.eventsToolStrip.Name = "eventsToolStrip";
-      this.eventsToolStrip.Size = new System.Drawing.Size(25, 201);
+      this.eventsToolStrip.Size = new System.Drawing.Size(25, 199);
       this.eventsToolStrip.TabIndex = 0;
       this.eventsToolStrip.Text = "toolStrip2";
       this.eventsToolStrip.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
@@ -623,7 +623,8 @@
       // 
       // ExplorerForm
       // 
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1181, 704);
       this.Controls.Add(this.mainSplitContainer);
       this.Controls.Add(this.mainToolStrip);
@@ -729,8 +730,8 @@
     private System.Windows.Forms.ToolStripMenuItem navigateBackwardToolStripMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
     private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
-    private System.Windows.Forms.ToolStripButton navigateBackwardButton;
-    private System.Windows.Forms.ToolStripButton navigateForwardButton;
+    private System.Windows.Forms.ToolStripDropDownButton navigateBackwardButton;
+    private System.Windows.Forms.ToolStripDropDownButton navigateForwardButton;
     private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
   }
 }

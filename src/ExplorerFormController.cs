@@ -453,23 +453,24 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private void AccessibilityTreeOnBeforeSelect(object sender, TreeViewCancelEventArgs treeViewCancelEventArgs) {
-      var selectedNode = _accessibilityTree.SelectedNode;
-      if (selectedNode == null)
+    private void AccessibilityTreeOnBeforeSelect(object sender, TreeViewCancelEventArgs e) {
+      var treeNode = e.Node;
+      if (treeNode == null)
         return;
 
-      var node = selectedNode.Tag as AccessibleNodeModel;
-      if (node == null)
+      var nodeModel = treeNode.Tag as AccessibleNodeModel;
+      if (nodeModel == null)
         return;
 
-      _navigation.AddNavigationAction(() => {
-        SelectTreeNode(node.AccessibleNode);
-      });
     }
 
     private void AccessibilityTreeAfterSelect(object sender, TreeViewEventArgs e) {
-      var node = e.Node.Tag as AccessibleNodeModel;
-      if (node == null) {
+      var treeNode = e.Node;
+      if (treeNode == null)
+        return;
+
+      var nodeModel = treeNode.Tag as AccessibleNodeModel;
+      if (nodeModel == null) {
         _overlayWindowRectangle = null;
         UpdateOverlayWindow();
         _acessibleContextPropertyListWrapper.Clear();
@@ -478,13 +479,16 @@ namespace AccessBridgeExplorer {
 
       _overlayWindowRectangle = null;
       UiAction(() => {
-        _overlayWindowRectangle = node.AccessibleNode.GetScreenRectangle();
-        var propertyList = node.AccessibleNode.GetProperties(PropertyOptions);
+        _overlayWindowRectangle = nodeModel.AccessibleNode.GetScreenRectangle();
+        var propertyList = nodeModel.AccessibleNode.GetProperties(PropertyOptions);
         _acessibleContextPropertyListWrapper.SetPropertyList(propertyList);
       });
 
-      EnsureNodeVisible(e.Node);
+      EnsureTreeNodeVisible(treeNode);
       UpdateOverlayWindow();
+      _navigation.AddNavigationAction(() => {
+        SelectTreeNode(nodeModel.AccessibleNode);
+      });
     }
 
     private void AccessibilityTreeOnKeyDown(object sender, KeyEventArgs keyEventArgs) {
@@ -522,7 +526,7 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private void EnsureNodeVisible(TreeNode node) {
+    private void EnsureTreeNodeVisible(TreeNode node) {
       if (node.Level >= 2) {
         node.EnsureVisible();
       }
@@ -653,7 +657,7 @@ namespace AccessBridgeExplorer {
 
       if (lastFoundTreeNode != null) {
         _accessibilityTree.SelectedNode = lastFoundTreeNode;
-        EnsureNodeVisible(lastFoundTreeNode);
+        EnsureTreeNodeVisible(lastFoundTreeNode);
       }
     }
 

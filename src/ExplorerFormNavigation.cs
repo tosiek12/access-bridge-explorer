@@ -17,8 +17,14 @@ using System.Collections.Generic;
 
 namespace AccessBridgeExplorer {
   public class ExplorerFormNavigation : IExplorerFormNavigation {
+    /// <summary>The current action, or "null" if the navigation stack is empty.</summary>
+    private Action _currentAction;
+    /// <summary>Stack of actions before <see cref="_currentAction"/></summary>
     private readonly Stack<Action> _backwardActions = new Stack<Action>();
+    /// <summary>Stack of actions after <see cref="_currentAction"/></summary>
     private readonly Stack<Action> _forwardActions = new Stack<Action>();
+
+    private int _navigationNesting;
 
     public bool ForwardAvailable {
       get { return _forwardActions.Count > 0; }
@@ -31,29 +37,55 @@ namespace AccessBridgeExplorer {
     public void Clear() {
       _backwardActions.Clear();
       _forwardActions.Clear();
+      _currentAction = null;
     }
 
     public void AddNavigationAction(Action action) {
+      if (_navigationNesting >= 1)
+        return;
+
       _forwardActions.Clear();
-      _backwardActions.Push(action);
+      if (_currentAction != null) {
+        _backwardActions.Push(_currentAction);
+      }
+      _currentAction = action;
     }
 
     public void NavigateForward() {
+      if (_navigationNesting >= 1)
+        return;
+
       if (!ForwardAvailable)
         return;
 
-      var action = _forwardActions.Pop();
-      _backwardActions.Push(action);
-      action();
+      if (_currentAction != null) {
+        _backwardActions.Push(_currentAction);
+      }
+      _currentAction = _forwardActions.Pop();
+      DoNavigateAction(_currentAction);
     }
 
     public void NavigateBackward() {
+      if (_navigationNesting >= 1)
+        return;
+
       if (!BackwardAvailable)
         return;
 
-      var action = _backwardActions.Pop();
-      _forwardActions.Push(action);
-      action();
+      if (_currentAction != null) {
+        _forwardActions.Push(_currentAction);
+      }
+      _currentAction = _backwardActions.Pop();
+      DoNavigateAction(_currentAction);
+    }
+
+    private void DoNavigateAction(Action action) {
+      _navigationNesting++;
+      try {
+        action();
+      } finally {
+        _navigationNesting--;
+      }
     }
   }
 }
