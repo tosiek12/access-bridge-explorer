@@ -63,7 +63,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccessibilityController.cs" />
+    <Compile Include="ExplorerFormNavigation.cs" />
+    <Compile Include="ExplorerFormController.cs" />
+    <Compile Include="IExplorerFormNavigation.cs" />
+    <Compile Include="IUIThreadInvoker.cs" />
     <Compile Include="PropertyListViewWrapper.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="EventForm.cs">
@@ -84,11 +87,11 @@
     <Compile Include="OverlayWindow.Designer.cs">
       <DependentUpon>OverlayWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainForm.cs">
+    <Compile Include="ExplorerForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <Compile Include="ExplorerForm.Designer.cs">
+      <DependentUpon>ExplorerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\NodeModel.cs" />
     <Compile Include="Program.cs" />
@@ -151,8 +154,8 @@
     <EmbeddedResource Include="OverlayWindow.resx">
       <DependentUpon>OverlayWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <EmbeddedResource Include="ExplorerForm.resx">
+      <DependentUpon>ExplorerForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

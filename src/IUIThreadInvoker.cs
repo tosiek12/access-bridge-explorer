@@ -1,4 +1,4 @@
-﻿// Copyright 2015 Google Inc. All Rights Reserved.
+// Copyright 2015 Google Inc. All Rights Reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,15 +16,9 @@ using System;
 using System.Windows.Forms;
 
 namespace AccessBridgeExplorer {
-  static class Program {
-    /// <summary>
-    /// The main entry point for the application.
-    /// </summary>
-    [STAThread]
-    static void Main() {
-      Application.EnableVisualStyles();
-      Application.SetCompatibleTextRenderingDefault(false);
-      Application.Run(new ExplorerForm());
-    }
+  public interface IUIThreadInvoker : IWin32Window {
+    void InvokeLater(Action action);
+    void Invoke(Action action);
+    T Compute<T>(Func<T> function);
   }
 }

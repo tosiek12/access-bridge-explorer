@@ -13,18 +13,15 @@
 // limitations under the License.
 
 using System;
-using System.Windows.Forms;
 
 namespace AccessBridgeExplorer {
-  static class Program {
-    /// <summary>
-    /// The main entry point for the application.
-    /// </summary>
-    [STAThread]
-    static void Main() {
-      Application.EnableVisualStyles();
-      Application.SetCompatibleTextRenderingDefault(false);
-      Application.Run(new ExplorerForm());
-    }
+  public interface IExplorerFormNavigation {
+    bool ForwardAvailable { get; }
+    bool BackwardAvailable { get; }
+
+    void Clear();
+    void AddNavigationAction(Action action);
+    void NavigateForward();
+    void NavigateBackward();
   }
 }

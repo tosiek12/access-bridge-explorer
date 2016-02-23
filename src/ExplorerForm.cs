@@ -18,16 +18,16 @@ using System.Reflection;
 using System.Windows.Forms;
 
 namespace AccessBridgeExplorer {
-  public partial class MainForm : Form, IUiThreadInvoker {
+  public partial class ExplorerForm : Form, IUIThreadInvoker {
     private readonly WindowsHotKeyHandler _hotKeyHandler;
-    private readonly AccessibilityController _controller;
+    private readonly ExplorerFormController _controller;
     private bool _capturing;
 
-    public MainForm() {
+    public ExplorerForm() {
       InitializeComponent();
 
       var accessibleContextPropertyListWrapper = new PropertyListViewWrapper(accessibleContextPropertyList, propertyImageList);
-      _controller = new AccessibilityController(this, accessibilityTree, accessibleContextPropertyListWrapper, statusLabel, eventList, messageList, eventsMenu, optionsToolStripMenuItem);
+      _controller = new ExplorerFormController(this, accessibilityTree, accessibleContextPropertyListWrapper, statusLabel, eventList, messageList, eventsMenu, optionsToolStripMenuItem);
       _hotKeyHandler = new WindowsHotKeyHandler();
       _hotKeyHandler.KeyPressed += HotKeyHandlerOnKeyPressed;
       SetDoubleBuffered(accessibilityTree, true);
@@ -63,7 +63,20 @@ namespace AccessBridgeExplorer {
         }
 
         _controller.LogMessage("Ready!");
+        Application.Idle += ApplicationOnIdle;
       });
+    }
+
+    private void ApplicationOnIdle(object sender, EventArgs eventArgs) {
+      UpdateNavigationState();
+    }
+
+    private void UpdateNavigationState() {
+      navigateBackwardButton.Enabled = _controller.Navigation.BackwardAvailable;
+      navigateBackwardToolStripMenuItem.Enabled = _controller.Navigation.BackwardAvailable;
+
+      navigateForwardButton.Enabled = _controller.Navigation.ForwardAvailable;
+      navigateForwardToolStripMenuItem.Enabled = _controller.Navigation.ForwardAvailable;
     }
 
     private void HotKeyHandlerOnKeyPressed(object sender, EventArgs eventArgs) {
@@ -147,6 +160,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+      Application.Idle -= ApplicationOnIdle;
       _controller.Dispose();
       _hotKeyHandler.Dispose();
     }
@@ -204,6 +218,26 @@ namespace AccessBridgeExplorer {
 
     public T Compute<T>(Func<T> function) {
       return (T)base.Invoke(function);
+    }
+
+    private void navigateForwardButton_Click(object sender, EventArgs e) {
+      _controller.Navigation.NavigateForward();
+      UpdateNavigationState();
+    }
+
+    private void navigateForwardToolStripMenuItem_Click(object sender, EventArgs e) {
+      _controller.Navigation.NavigateForward();
+      UpdateNavigationState();
+    }
+
+    private void navigateBackwardButton_Click(object sender, EventArgs e) {
+      _controller.Navigation.NavigateBackward();
+      UpdateNavigationState();
+    }
+
+    private void navigateBackwardToolStripMenuItem_Click(object sender, EventArgs e) {
+      _controller.Navigation.NavigateBackward();
+      UpdateNavigationState();
     }
   }
 }

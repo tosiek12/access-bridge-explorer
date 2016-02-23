@@ -1,5 +1,5 @@
 ﻿namespace AccessBridgeExplorer {
-  partial class MainForm {
+  partial class ExplorerForm {
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -24,12 +24,15 @@
     /// </summary>
     private void InitializeComponent() {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExplorerForm));
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
       this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.navigateForwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.navigateBackwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+      this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.eventsMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -37,6 +40,9 @@
       this.statusBarStrip = new System.Windows.Forms.StatusStrip();
       this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.mainToolStrip = new System.Windows.Forms.ToolStrip();
+      this.navigateBackwardButton = new System.Windows.Forms.ToolStripButton();
+      this.navigateForwardButton = new System.Windows.Forms.ToolStripButton();
+      this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
       this.refreshButton = new System.Windows.Forms.ToolStripButton();
       this.findComponentButton = new System.Windows.Forms.ToolStripButton();
       this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -101,6 +107,7 @@
       this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
       this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.viewToolStripMenuItem,
             this.optionsToolStripMenuItem,
             this.eventsMenu,
             this.helpToolStripMenuItem});
@@ -114,33 +121,61 @@
       // fileToolStripMenuItem
       // 
       this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.refreshToolStripMenuItem,
-            this.toolStripMenuItem1,
             this.exitToolStripMenuItem});
       this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
       this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
       this.fileToolStripMenuItem.Text = "&File";
       // 
-      // refreshToolStripMenuItem
-      // 
-      this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-      this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-      this.refreshToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
-      this.refreshToolStripMenuItem.Text = "Refresh";
-      this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
-      // 
-      // toolStripMenuItem1
-      // 
-      this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-      this.toolStripMenuItem1.Size = new System.Drawing.Size(129, 6);
-      // 
       // exitToolStripMenuItem
       // 
       this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
       this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.X)));
-      this.exitToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+      this.exitToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
       this.exitToolStripMenuItem.Text = "E&xit";
       this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+      // 
+      // viewToolStripMenuItem
+      // 
+      this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.navigateForwardToolStripMenuItem,
+            this.navigateBackwardToolStripMenuItem,
+            this.toolStripMenuItem2,
+            this.refreshToolStripMenuItem});
+      this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+      this.viewToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+      this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+      this.viewToolStripMenuItem.Text = "View";
+      // 
+      // navigateForwardToolStripMenuItem
+      // 
+      this.navigateForwardToolStripMenuItem.Name = "navigateForwardToolStripMenuItem";
+      this.navigateForwardToolStripMenuItem.ShortcutKeyDisplayString = "";
+      this.navigateForwardToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Right)));
+      this.navigateForwardToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+      this.navigateForwardToolStripMenuItem.Text = "Navigate Forward";
+      this.navigateForwardToolStripMenuItem.Click += new System.EventHandler(this.navigateForwardToolStripMenuItem_Click);
+      // 
+      // navigateBackwardToolStripMenuItem
+      // 
+      this.navigateBackwardToolStripMenuItem.Name = "navigateBackwardToolStripMenuItem";
+      this.navigateBackwardToolStripMenuItem.ShortcutKeyDisplayString = "";
+      this.navigateBackwardToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Left)));
+      this.navigateBackwardToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+      this.navigateBackwardToolStripMenuItem.Text = "Navigate Backward";
+      this.navigateBackwardToolStripMenuItem.Click += new System.EventHandler(this.navigateBackwardToolStripMenuItem_Click);
+      // 
+      // toolStripMenuItem2
+      // 
+      this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+      this.toolStripMenuItem2.Size = new System.Drawing.Size(222, 6);
+      // 
+      // refreshToolStripMenuItem
+      // 
+      this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+      this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+      this.refreshToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+      this.refreshToolStripMenuItem.Text = "Refresh";
+      this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
       // 
       // optionsToolStripMenuItem
       // 
@@ -193,6 +228,9 @@
       this.mainToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
       this.mainToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
       this.mainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.navigateBackwardButton,
+            this.navigateForwardButton,
+            this.toolStripSeparator3,
             this.refreshButton,
             this.findComponentButton,
             this.toolStripSeparator2,
@@ -204,6 +242,33 @@
       this.mainToolStrip.Size = new System.Drawing.Size(1181, 27);
       this.mainToolStrip.TabIndex = 3;
       this.mainToolStrip.Text = "toolStrip1";
+      // 
+      // navigateBackwardButton
+      // 
+      this.navigateBackwardButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.navigateBackwardButton.Image = ((System.Drawing.Image)(resources.GetObject("navigateBackwardButton.Image")));
+      this.navigateBackwardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.navigateBackwardButton.Name = "navigateBackwardButton";
+      this.navigateBackwardButton.Size = new System.Drawing.Size(24, 24);
+      this.navigateBackwardButton.Text = "Navigate Backward";
+      this.navigateBackwardButton.ToolTipText = "Navigate Backward";
+      this.navigateBackwardButton.Click += new System.EventHandler(this.navigateBackwardButton_Click);
+      // 
+      // navigateForwardButton
+      // 
+      this.navigateForwardButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.navigateForwardButton.Image = ((System.Drawing.Image)(resources.GetObject("navigateForwardButton.Image")));
+      this.navigateForwardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.navigateForwardButton.Name = "navigateForwardButton";
+      this.navigateForwardButton.Size = new System.Drawing.Size(24, 24);
+      this.navigateForwardButton.Text = "Nagivate Forward";
+      this.navigateForwardButton.ToolTipText = "Nagivate Forward";
+      this.navigateForwardButton.Click += new System.EventHandler(this.navigateForwardButton_Click);
+      // 
+      // toolStripSeparator3
+      // 
+      this.toolStripSeparator3.Name = "toolStripSeparator3";
+      this.toolStripSeparator3.Size = new System.Drawing.Size(6, 27);
       // 
       // refreshButton
       // 
@@ -556,7 +621,7 @@
       this.clearEventsButton.TextAlign = System.Drawing.ContentAlignment.TopLeft;
       this.clearEventsButton.Click += new System.EventHandler(this.clearEventsButton_Click);
       // 
-      // MainForm
+      // ExplorerForm
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.ClientSize = new System.Drawing.Size(1181, 704);
@@ -568,7 +633,7 @@
       this.Font = new System.Drawing.Font("Candara", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.MainMenuStrip = this.menuStrip1;
       this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-      this.Name = "MainForm";
+      this.Name = "ExplorerForm";
       this.Text = "Access Bridge Explorer";
       this.Activated += new System.EventHandler(this.MainForm_Activated);
       this.Deactivate += new System.EventHandler(this.MainForm_Deactivate);
@@ -614,7 +679,6 @@
 
     private System.Windows.Forms.MenuStrip menuStrip1;
     private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-    private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
     private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
     private System.Windows.Forms.StatusStrip statusBarStrip;
     private System.Windows.Forms.ToolStripStatusLabel statusLabel;
@@ -638,7 +702,6 @@
     private System.Windows.Forms.ColumnHeader eventNewValue;
     private System.Windows.Forms.ToolStrip eventsToolStrip;
     private System.Windows.Forms.ToolStripButton clearEventsButton;
-    private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
     private System.Windows.Forms.TabPage messagesPage;
     private System.Windows.Forms.ListView messageList;
     private System.Windows.Forms.ColumnHeader messageIdColumn;
@@ -661,6 +724,14 @@
     private System.Windows.Forms.ToolStripMenuItem viewHelpToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
     private System.Windows.Forms.ImageList propertyImageList;
+    private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem navigateForwardToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem navigateBackwardToolStripMenuItem;
+    private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+    private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
+    private System.Windows.Forms.ToolStripButton navigateBackwardButton;
+    private System.Windows.Forms.ToolStripButton navigateForwardButton;
+    private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
   }
 }
 

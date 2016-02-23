@@ -22,15 +22,9 @@ using AccessBridgeExplorer.Model;
 using AccessBridgeExplorer.WindowsAccessBridge;
 
 namespace AccessBridgeExplorer {
-
-  public interface IUiThreadInvoker : IWin32Window {
-    void InvokeLater(Action action);
-    void Invoke(Action action);
-    T Compute<T>(Func<T> function);
-  }
-
-  public class AccessibilityController : IDisposable {
-    private readonly IUiThreadInvoker _invoker;
+  public class ExplorerFormController : IDisposable {
+    private readonly IExplorerFormNavigation _navigation;
+    private readonly IUIThreadInvoker _invoker;
     private readonly TreeView _accessibilityTree;
     private readonly PropertyListViewWrapper _acessibleContextPropertyListWrapper;
     private readonly ToolStripStatusLabel _statusLabel;
@@ -47,8 +41,8 @@ namespace AccessBridgeExplorer {
     private int _eventId;
     private int _messageId;
 
-    public AccessibilityController(
-      IUiThreadInvoker invoker,
+    public ExplorerFormController(
+      IUIThreadInvoker invoker,
       TreeView accessibilityTree,
       PropertyListViewWrapper accessibleContextPropertyListWrapper,
       ToolStripStatusLabel statusLabel,
@@ -56,6 +50,7 @@ namespace AccessBridgeExplorer {
       ListView messageList,
       ToolStripMenuItem eventsMenu,
       ToolStripMenuItem propertyOptionsMenu) {
+      _navigation = new ExplorerFormNavigation();
       _invoker = invoker;
       _accessibilityTree = accessibilityTree;
       _acessibleContextPropertyListWrapper = accessibleContextPropertyListWrapper;
@@ -66,6 +61,7 @@ namespace AccessBridgeExplorer {
       _propertyOptionsMenu = propertyOptionsMenu;
       _overlayWindowEnabled = true;
 
+      _accessibilityTree.BeforeSelect += AccessibilityTreeOnBeforeSelect;
       _accessibilityTree.AfterSelect += AccessibilityTreeAfterSelect;
       _accessibilityTree.BeforeExpand += AccessibilityTreeBeforeExpand;
       _accessibilityTree.KeyDown += AccessibilityTreeOnKeyDown;
@@ -92,6 +88,10 @@ namespace AccessBridgeExplorer {
     }
 
     public PropertyOptions PropertyOptions { get; set; }
+
+    public IExplorerFormNavigation Navigation {
+      get { return _navigation; }
+    }
 
     private void AccessibilityEventListOnKeyDown(object sender, KeyEventArgs e) {
       if (_accessibilityEventList.SelectedItems.Count == 0)
@@ -416,6 +416,7 @@ namespace AccessBridgeExplorer {
         _statusLabel.Text = "Ready.";
         HideOverlayWindow();
         HideToolTip();
+        _navigation.Clear();
       });
     }
 
@@ -449,6 +450,20 @@ namespace AccessBridgeExplorer {
         return;
       UiAction(() => {
         node.BeforeExpand(sender, e);
+      });
+    }
+
+    private void AccessibilityTreeOnBeforeSelect(object sender, TreeViewCancelEventArgs treeViewCancelEventArgs) {
+      var selectedNode = _accessibilityTree.SelectedNode;
+      if (selectedNode == null)
+        return;
+
+      var node = selectedNode.Tag as AccessibleNodeModel;
+      if (node == null)
+        return;
+
+      _navigation.AddNavigationAction(() => {
+        SelectTreeNode(node.AccessibleNode);
       });
     }
 
