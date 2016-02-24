@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
@@ -79,22 +80,21 @@ namespace AccessBridgeExplorer {
 
       navigateBackwardButton.Enabled = _controller.Navigation.BackwardAvailable;
       navigateBackwardToolStripMenuItem.Enabled = _controller.Navigation.BackwardAvailable;
-
-      navigateBackwardButton.DropDownItems.Clear();
-      _controller.Navigation.BackwardEntries.ForEach(entry => {
-        var item = navigateBackwardButton.DropDownItems.Add(entry.Description);
-        item.Click += (sender, args) => {
-          _controller.Navigation.NavigateTo(entry);
-          UpdateNavigationState();
-        };
-      });
+      AddDropDownEntries(navigateBackwardButton.DropDownItems, _controller.Navigation.BackwardEntries);
 
       navigateForwardButton.Enabled = _controller.Navigation.ForwardAvailable;
       navigateForwardToolStripMenuItem.Enabled = _controller.Navigation.ForwardAvailable;
+      AddDropDownEntries(navigateForwardButton.DropDownItems, _controller.Navigation.ForwardEntries);
+    }
 
-      navigateForwardButton.DropDownItems.Clear();
-      _controller.Navigation.ForwardEntries.ForEach(entry => {
-        var item = navigateForwardButton.DropDownItems.Add(entry.Description);
+    private void AddDropDownEntries(ToolStripItemCollection items, IEnumerable<NavigationEntry> entries) {
+      items.Clear();
+      var index = 0;
+      entries.ForEach(entry => {
+        if (index++ >= 20)
+          return;
+
+        var item = items.Add(entry.Description);
         item.Click += (sender, args) => {
           _controller.Navigation.NavigateTo(entry);
           UpdateNavigationState();
