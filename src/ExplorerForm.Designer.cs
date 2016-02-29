@@ -133,7 +133,7 @@
       // 
       this.exitMenuItem.Name = "exitMenuItem";
       this.exitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.X)));
-      this.exitMenuItem.Size = new System.Drawing.Size(129, 22);
+      this.exitMenuItem.Size = new System.Drawing.Size(152, 22);
       this.exitMenuItem.Text = "E&xit";
       this.exitMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
       // 
@@ -147,7 +147,7 @@
       this.viewMenu.Name = "viewMenu";
       this.viewMenu.ShortcutKeys = System.Windows.Forms.Keys.F5;
       this.viewMenu.Size = new System.Drawing.Size(44, 20);
-      this.viewMenu.Text = "View";
+      this.viewMenu.Text = "&View";
       // 
       // navigateForwardMenuItem
       // 
@@ -155,7 +155,7 @@
       this.navigateForwardMenuItem.ShortcutKeyDisplayString = "";
       this.navigateForwardMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Right)));
       this.navigateForwardMenuItem.Size = new System.Drawing.Size(225, 22);
-      this.navigateForwardMenuItem.Text = "Navigate Forward";
+      this.navigateForwardMenuItem.Text = "Navigate &Forward";
       this.navigateForwardMenuItem.Click += new System.EventHandler(this.navigateForwardToolStripMenuItem_Click);
       // 
       // navigateBackwardMenuItem
@@ -164,7 +164,7 @@
       this.navigateBackwardMenuItem.ShortcutKeyDisplayString = "";
       this.navigateBackwardMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Left)));
       this.navigateBackwardMenuItem.Size = new System.Drawing.Size(225, 22);
-      this.navigateBackwardMenuItem.Text = "Navigate Backward";
+      this.navigateBackwardMenuItem.Text = "Navigate &Backward";
       this.navigateBackwardMenuItem.Click += new System.EventHandler(this.navigateBackwardToolStripMenuItem_Click);
       // 
       // separator1
@@ -177,7 +177,7 @@
       this.refreshMenuItem.Name = "refreshMenuItem";
       this.refreshMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
       this.refreshMenuItem.Size = new System.Drawing.Size(225, 22);
-      this.refreshMenuItem.Text = "Refresh";
+      this.refreshMenuItem.Text = "&Refresh";
       this.refreshMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
       // 
       // optionsMenu
@@ -189,32 +189,32 @@
             this.showOverlayMenuItem});
       this.optionsMenu.Name = "optionsMenu";
       this.optionsMenu.Size = new System.Drawing.Size(61, 20);
-      this.optionsMenu.Text = "Options";
+      this.optionsMenu.Text = "&Options";
       // 
-      // propertiesMenu
+      // _propertiesMenu
       // 
       this._propertiesMenu.Name = "_propertiesMenu";
-      this._propertiesMenu.Size = new System.Drawing.Size(146, 22);
-      this._propertiesMenu.Text = "Properties";
+      this._propertiesMenu.Size = new System.Drawing.Size(152, 22);
+      this._propertiesMenu.Text = "&Properties";
       this._propertiesMenu.ToolTipText = "Properties to show in the component property list";
       // 
-      // eventsMenu
+      // _eventsMenu
       // 
       this._eventsMenu.Name = "_eventsMenu";
-      this._eventsMenu.Size = new System.Drawing.Size(146, 22);
+      this._eventsMenu.Size = new System.Drawing.Size(152, 22);
       this._eventsMenu.Text = "&Events";
       this._eventsMenu.ToolTipText = "Events to capture and display in the events window";
       // 
       // separator5
       // 
       this.separator5.Name = "separator5";
-      this.separator5.Size = new System.Drawing.Size(143, 6);
+      this.separator5.Size = new System.Drawing.Size(149, 6);
       // 
       // showOverlayMenuItem
       // 
       this.showOverlayMenuItem.Name = "showOverlayMenuItem";
-      this.showOverlayMenuItem.Size = new System.Drawing.Size(146, 22);
-      this.showOverlayMenuItem.Text = "Show Overlay";
+      this.showOverlayMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.showOverlayMenuItem.Text = "Show &Overlay";
       this.showOverlayMenuItem.ToolTipText = "Toggle selected component overlay window";
       this.showOverlayMenuItem.Click += new System.EventHandler(this.showOverlayMenuItem_Click);
       // 
@@ -224,14 +224,14 @@
             this.viewHelpMenuItem});
       this.helpMenu.Name = "helpMenu";
       this.helpMenu.Size = new System.Drawing.Size(44, 20);
-      this.helpMenu.Text = "Help";
+      this.helpMenu.Text = "&Help";
       // 
       // viewHelpMenuItem
       // 
       this.viewHelpMenuItem.Name = "viewHelpMenuItem";
       this.viewHelpMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
       this.viewHelpMenuItem.Size = new System.Drawing.Size(173, 22);
-      this.viewHelpMenuItem.Text = "View Help";
+      this.viewHelpMenuItem.Text = "View &Help";
       this.viewHelpMenuItem.Click += new System.EventHandler(this.viewHelpToolStripMenuItem_Click);
       // 
       // statusBarStrip
@@ -246,7 +246,7 @@
       this.statusBarStrip.TabIndex = 1;
       this.statusBarStrip.Text = "statusStrip1";
       // 
-      // statusLabel
+      // _statusLabel
       // 
       this._statusLabel.Name = "_statusLabel";
       this._statusLabel.Size = new System.Drawing.Size(42, 17);
@@ -300,10 +300,10 @@
       this.separator4.Name = "separator4";
       this.separator4.Size = new System.Drawing.Size(6, 27);
       // 
-      // refreshButton
+      // _refreshButton
       // 
       this._refreshButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this._refreshButton.Image = ((System.Drawing.Image)(resources.GetObject("refreshButton.Image")));
+      this._refreshButton.Image = ((System.Drawing.Image)(resources.GetObject("_refreshButton.Image")));
       this._refreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this._refreshButton.Name = "_refreshButton";
       this._refreshButton.Size = new System.Drawing.Size(24, 24);
@@ -311,7 +311,7 @@
       this._refreshButton.ToolTipText = "Refresh the list of accessible windows";
       this._refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
       // 
-      // findComponentButton
+      // _findComponentButton
       // 
       this._findComponentButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
       this._findComponentButton.Image = global::AccessBridgeExplorer.Properties.Resources.Crosshair;
@@ -327,7 +327,7 @@
       this.separator2.Name = "separator2";
       this.separator2.Size = new System.Drawing.Size(6, 27);
       // 
-      // overlayEnableButton
+      // _overlayEnableButton
       // 
       this._overlayEnableButton.BackColor = System.Drawing.SystemColors.ButtonFace;
       this._overlayEnableButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
@@ -378,7 +378,7 @@
       this.topSplitContainer.TabIndex = 0;
       this.topSplitContainer.TabStop = false;
       // 
-      // topLevelTabControl
+      // _topLevelTabControl
       // 
       this._topLevelTabControl.Controls.Add(this._accessibilityTreePage);
       this._topLevelTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -388,7 +388,7 @@
       this._topLevelTabControl.Size = new System.Drawing.Size(546, 400);
       this._topLevelTabControl.TabIndex = 0;
       // 
-      // accessibilityTreePage
+      // _accessibilityTreePage
       // 
       this._accessibilityTreePage.Controls.Add(this._accessibilityTree);
       this._accessibilityTreePage.Location = new System.Drawing.Point(4, 24);
@@ -398,7 +398,7 @@
       this._accessibilityTreePage.Text = "Accessibility Tree";
       this._accessibilityTreePage.UseVisualStyleBackColor = true;
       // 
-      // accessibilityTree
+      // _accessibilityTree
       // 
       this._accessibilityTree.Dock = System.Windows.Forms.DockStyle.Fill;
       this._accessibilityTree.FullRowSelect = true;
@@ -409,7 +409,7 @@
       this._accessibilityTree.Size = new System.Drawing.Size(538, 372);
       this._accessibilityTree.TabIndex = 2;
       // 
-      // accessibleComponentTabControl
+      // _accessibleComponentTabControl
       // 
       this._accessibleComponentTabControl.Controls.Add(this.accessibleComponentTabPage);
       this._accessibleComponentTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -429,7 +429,7 @@
       this.accessibleComponentTabPage.Text = "Accessible Component";
       this.accessibleComponentTabPage.UseVisualStyleBackColor = true;
       // 
-      // accessibleContextPropertyList
+      // _accessibleContextPropertyList
       // 
       this._accessibleContextPropertyList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.propertyHeader,
@@ -458,7 +458,7 @@
       this.valueHeader.Text = "Value";
       this.valueHeader.Width = 300;
       // 
-      // propertyImageList
+      // _propertyImageList
       // 
       this._propertyImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("_propertyImageList.ImageStream")));
       this._propertyImageList.TransparentColor = System.Drawing.Color.Transparent;
@@ -484,7 +484,7 @@
       this.mainSplitContainer.TabIndex = 4;
       this.mainSplitContainer.TabStop = false;
       // 
-      // bottomTabControl
+      // _bottomTabControl
       // 
       this._bottomTabControl.Controls.Add(this._messageListPage);
       this._bottomTabControl.Controls.Add(this._eventListPage);
@@ -495,7 +495,7 @@
       this._bottomTabControl.Size = new System.Drawing.Size(1181, 227);
       this._bottomTabControl.TabIndex = 0;
       // 
-      // messagesPage
+      // _messageListPage
       // 
       this._messageListPage.Controls.Add(this._messageList);
       this._messageListPage.Controls.Add(this.messagesToolStrip);
@@ -506,7 +506,7 @@
       this._messageListPage.Text = "Messages";
       this._messageListPage.UseVisualStyleBackColor = true;
       // 
-      // messageList
+      // _messageList
       // 
       this._messageList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.messageIdColumn,
@@ -562,7 +562,7 @@
       this.clearMessagesButton.TextAlign = System.Drawing.ContentAlignment.TopLeft;
       this.clearMessagesButton.Click += new System.EventHandler(this.clearMessagesButton_Click);
       // 
-      // eventsPage
+      // _eventListPage
       // 
       this._eventListPage.Controls.Add(this._eventList);
       this._eventListPage.Controls.Add(this.eventsToolStrip);
@@ -573,7 +573,7 @@
       this._eventListPage.Text = "Accessibility events";
       this._eventListPage.UseVisualStyleBackColor = true;
       // 
-      // eventList
+      // _eventList
       // 
       this._eventList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.eventId,

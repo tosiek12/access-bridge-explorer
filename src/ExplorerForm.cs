@@ -20,6 +20,12 @@ using System.Windows.Forms;
 
 namespace AccessBridgeExplorer {
   public partial class ExplorerForm : Form, IExplorerFormView, IMessageQueue {
+    /// <summary>
+    /// Capture the "Ctrl+\" keyboard combination
+    /// Note: OemPipe: Used for miscellaneous characters; it can vary by keyboard.
+    /// For the US standard keyboard, the '\|' key
+    /// </summary>
+    private const Keys CaptureKey = Keys.Control | Keys.OemPipe;
     private readonly WindowsHotKeyHandler _hotKeyHandler;
     private readonly ExplorerFormController _controller;
     private readonly PropertyListView _accessibleComponentPropertyListView;
@@ -49,10 +55,7 @@ namespace AccessBridgeExplorer {
         _controller.LogIntroMessages();
 
         try {
-          // OemPipe: Used for miscellaneous characters; it can vary by keyboard. For
-          // the US standard keyboard, the '\|' key
-          var keys = Keys.Control | Keys.OemPipe;
-          _hotKeyHandler.Register(this, 1, keys);
+          _hotKeyHandler.Register(this, 1, CaptureKey);
         } catch (Exception ex) {
           _controller.LogErrorMessage(ex);
         }
