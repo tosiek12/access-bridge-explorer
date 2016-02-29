@@ -46,33 +46,33 @@
       this.navigateBackwardButton = new System.Windows.Forms.ToolStripSplitButton();
       this.navigateForwardButton = new System.Windows.Forms.ToolStripSplitButton();
       this.separator4 = new System.Windows.Forms.ToolStripSeparator();
-      this.refreshButton = new System.Windows.Forms.ToolStripButton();
-      this.findComponentButton = new System.Windows.Forms.ToolStripButton();
+      this._refreshButton = new System.Windows.Forms.ToolStripButton();
+      this._findComponentButton = new System.Windows.Forms.ToolStripButton();
       this.separator2 = new System.Windows.Forms.ToolStripSeparator();
-      this.overlayEnableButton = new System.Windows.Forms.ToolStripButton();
+      this._overlayEnableButton = new System.Windows.Forms.ToolStripButton();
       this.separator3 = new System.Windows.Forms.ToolStripSeparator();
       this.showHelpButton = new System.Windows.Forms.ToolStripButton();
       this.refreshTimer = new System.Windows.Forms.Timer(this.components);
       this.topSplitContainer = new System.Windows.Forms.SplitContainer();
-      this.topLevelTabControl = new System.Windows.Forms.TabControl();
-      this.accessibilityTreePage = new System.Windows.Forms.TabPage();
+      this._topLevelTabControl = new System.Windows.Forms.TabControl();
+      this._accessibilityTreePage = new System.Windows.Forms.TabPage();
       this._accessibilityTree = new System.Windows.Forms.TreeView();
-      this.accessibleComponentTabControl = new System.Windows.Forms.TabControl();
+      this._accessibleComponentTabControl = new System.Windows.Forms.TabControl();
       this.accessibleComponentTabPage = new System.Windows.Forms.TabPage();
-      this.accessibleContextPropertyList = new System.Windows.Forms.ListView();
+      this._accessibleContextPropertyList = new System.Windows.Forms.ListView();
       this.propertyHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.valueHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.propertyImageList = new System.Windows.Forms.ImageList(this.components);
+      this._propertyImageList = new System.Windows.Forms.ImageList(this.components);
       this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
-      this.bottomTabControl = new System.Windows.Forms.TabControl();
-      this.messagesPage = new System.Windows.Forms.TabPage();
+      this._bottomTabControl = new System.Windows.Forms.TabControl();
+      this._messageListPage = new System.Windows.Forms.TabPage();
       this._messageList = new System.Windows.Forms.ListView();
       this.messageIdColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.messageTimeColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.messageTextColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.messagesToolStrip = new System.Windows.Forms.ToolStrip();
       this.clearMessagesButton = new System.Windows.Forms.ToolStripButton();
-      this.eventsPage = new System.Windows.Forms.TabPage();
+      this._eventListPage = new System.Windows.Forms.TabPage();
       this._eventList = new System.Windows.Forms.ListView();
       this.eventId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.eventTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -91,18 +91,18 @@
       this.topSplitContainer.Panel1.SuspendLayout();
       this.topSplitContainer.Panel2.SuspendLayout();
       this.topSplitContainer.SuspendLayout();
-      this.topLevelTabControl.SuspendLayout();
-      this.accessibilityTreePage.SuspendLayout();
-      this.accessibleComponentTabControl.SuspendLayout();
+      this._topLevelTabControl.SuspendLayout();
+      this._accessibilityTreePage.SuspendLayout();
+      this._accessibleComponentTabControl.SuspendLayout();
       this.accessibleComponentTabPage.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).BeginInit();
       this.mainSplitContainer.Panel1.SuspendLayout();
       this.mainSplitContainer.Panel2.SuspendLayout();
       this.mainSplitContainer.SuspendLayout();
-      this.bottomTabControl.SuspendLayout();
-      this.messagesPage.SuspendLayout();
+      this._bottomTabControl.SuspendLayout();
+      this._messageListPage.SuspendLayout();
       this.messagesToolStrip.SuspendLayout();
-      this.eventsPage.SuspendLayout();
+      this._eventListPage.SuspendLayout();
       this.eventsToolStrip.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -260,10 +260,10 @@
             this.navigateBackwardButton,
             this.navigateForwardButton,
             this.separator4,
-            this.refreshButton,
-            this.findComponentButton,
+            this._refreshButton,
+            this._findComponentButton,
             this.separator2,
-            this.overlayEnableButton,
+            this._overlayEnableButton,
             this.separator3,
             this.showHelpButton});
       this.mainToolStrip.Location = new System.Drawing.Point(0, 24);
@@ -302,25 +302,25 @@
       // 
       // refreshButton
       // 
-      this.refreshButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.refreshButton.Image = ((System.Drawing.Image)(resources.GetObject("refreshButton.Image")));
-      this.refreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.refreshButton.Name = "refreshButton";
-      this.refreshButton.Size = new System.Drawing.Size(24, 24);
-      this.refreshButton.Text = "Refresh";
-      this.refreshButton.ToolTipText = "Refresh the list of accessible windows";
-      this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
+      this._refreshButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this._refreshButton.Image = ((System.Drawing.Image)(resources.GetObject("refreshButton.Image")));
+      this._refreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this._refreshButton.Name = "_refreshButton";
+      this._refreshButton.Size = new System.Drawing.Size(24, 24);
+      this._refreshButton.Text = "Refresh";
+      this._refreshButton.ToolTipText = "Refresh the list of accessible windows";
+      this._refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
       // 
       // findComponentButton
       // 
-      this.findComponentButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.findComponentButton.Image = global::AccessBridgeExplorer.Properties.Resources.Crosshair;
-      this.findComponentButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.findComponentButton.Name = "findComponentButton";
-      this.findComponentButton.Size = new System.Drawing.Size(24, 24);
-      this.findComponentButton.Text = "Find Component";
-      this.findComponentButton.ToolTipText = "Find accessibility elements using the mouse pointer";
-      this.findComponentButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.catpureButton_MouseDown);
+      this._findComponentButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this._findComponentButton.Image = global::AccessBridgeExplorer.Properties.Resources.Crosshair;
+      this._findComponentButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this._findComponentButton.Name = "_findComponentButton";
+      this._findComponentButton.Size = new System.Drawing.Size(24, 24);
+      this._findComponentButton.Text = "Find Component";
+      this._findComponentButton.ToolTipText = "Find accessibility elements using the mouse pointer";
+      this._findComponentButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.catpureButton_MouseDown);
       // 
       // separator2
       // 
@@ -329,15 +329,15 @@
       // 
       // overlayEnableButton
       // 
-      this.overlayEnableButton.BackColor = System.Drawing.SystemColors.ButtonFace;
-      this.overlayEnableButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
-      this.overlayEnableButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-      this.overlayEnableButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.overlayEnableButton.Name = "overlayEnableButton";
-      this.overlayEnableButton.Size = new System.Drawing.Size(23, 24);
-      this.overlayEnableButton.Text = "Overlay";
-      this.overlayEnableButton.ToolTipText = "Enable/Disable the accessibility window overlay";
-      this.overlayEnableButton.Click += new System.EventHandler(this.overlayEnableButton_Click);
+      this._overlayEnableButton.BackColor = System.Drawing.SystemColors.ButtonFace;
+      this._overlayEnableButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
+      this._overlayEnableButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+      this._overlayEnableButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this._overlayEnableButton.Name = "_overlayEnableButton";
+      this._overlayEnableButton.Size = new System.Drawing.Size(23, 24);
+      this._overlayEnableButton.Text = "Overlay";
+      this._overlayEnableButton.ToolTipText = "Enable/Disable the accessibility window overlay";
+      this._overlayEnableButton.Click += new System.EventHandler(this.overlayEnableButton_Click);
       // 
       // separator3
       // 
@@ -368,11 +368,11 @@
       // 
       // topSplitContainer.Panel1
       // 
-      this.topSplitContainer.Panel1.Controls.Add(this.topLevelTabControl);
+      this.topSplitContainer.Panel1.Controls.Add(this._topLevelTabControl);
       // 
       // topSplitContainer.Panel2
       // 
-      this.topSplitContainer.Panel2.Controls.Add(this.accessibleComponentTabControl);
+      this.topSplitContainer.Panel2.Controls.Add(this._accessibleComponentTabControl);
       this.topSplitContainer.Size = new System.Drawing.Size(1181, 400);
       this.topSplitContainer.SplitterDistance = 546;
       this.topSplitContainer.TabIndex = 0;
@@ -380,23 +380,23 @@
       // 
       // topLevelTabControl
       // 
-      this.topLevelTabControl.Controls.Add(this.accessibilityTreePage);
-      this.topLevelTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.topLevelTabControl.Location = new System.Drawing.Point(0, 0);
-      this.topLevelTabControl.Name = "topLevelTabControl";
-      this.topLevelTabControl.SelectedIndex = 0;
-      this.topLevelTabControl.Size = new System.Drawing.Size(546, 400);
-      this.topLevelTabControl.TabIndex = 0;
+      this._topLevelTabControl.Controls.Add(this._accessibilityTreePage);
+      this._topLevelTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._topLevelTabControl.Location = new System.Drawing.Point(0, 0);
+      this._topLevelTabControl.Name = "_topLevelTabControl";
+      this._topLevelTabControl.SelectedIndex = 0;
+      this._topLevelTabControl.Size = new System.Drawing.Size(546, 400);
+      this._topLevelTabControl.TabIndex = 0;
       // 
       // accessibilityTreePage
       // 
-      this.accessibilityTreePage.Controls.Add(this._accessibilityTree);
-      this.accessibilityTreePage.Location = new System.Drawing.Point(4, 24);
-      this.accessibilityTreePage.Name = "accessibilityTreePage";
-      this.accessibilityTreePage.Size = new System.Drawing.Size(538, 372);
-      this.accessibilityTreePage.TabIndex = 0;
-      this.accessibilityTreePage.Text = "Accessibility Tree";
-      this.accessibilityTreePage.UseVisualStyleBackColor = true;
+      this._accessibilityTreePage.Controls.Add(this._accessibilityTree);
+      this._accessibilityTreePage.Location = new System.Drawing.Point(4, 24);
+      this._accessibilityTreePage.Name = "_accessibilityTreePage";
+      this._accessibilityTreePage.Size = new System.Drawing.Size(538, 372);
+      this._accessibilityTreePage.TabIndex = 0;
+      this._accessibilityTreePage.Text = "Accessibility Tree";
+      this._accessibilityTreePage.UseVisualStyleBackColor = true;
       // 
       // accessibilityTree
       // 
@@ -411,17 +411,17 @@
       // 
       // accessibleComponentTabControl
       // 
-      this.accessibleComponentTabControl.Controls.Add(this.accessibleComponentTabPage);
-      this.accessibleComponentTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.accessibleComponentTabControl.Location = new System.Drawing.Point(0, 0);
-      this.accessibleComponentTabControl.Name = "accessibleComponentTabControl";
-      this.accessibleComponentTabControl.SelectedIndex = 0;
-      this.accessibleComponentTabControl.Size = new System.Drawing.Size(631, 400);
-      this.accessibleComponentTabControl.TabIndex = 0;
+      this._accessibleComponentTabControl.Controls.Add(this.accessibleComponentTabPage);
+      this._accessibleComponentTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._accessibleComponentTabControl.Location = new System.Drawing.Point(0, 0);
+      this._accessibleComponentTabControl.Name = "_accessibleComponentTabControl";
+      this._accessibleComponentTabControl.SelectedIndex = 0;
+      this._accessibleComponentTabControl.Size = new System.Drawing.Size(631, 400);
+      this._accessibleComponentTabControl.TabIndex = 0;
       // 
       // accessibleComponentTabPage
       // 
-      this.accessibleComponentTabPage.Controls.Add(this.accessibleContextPropertyList);
+      this.accessibleComponentTabPage.Controls.Add(this._accessibleContextPropertyList);
       this.accessibleComponentTabPage.Location = new System.Drawing.Point(4, 24);
       this.accessibleComponentTabPage.Name = "accessibleComponentTabPage";
       this.accessibleComponentTabPage.Size = new System.Drawing.Size(623, 372);
@@ -431,22 +431,22 @@
       // 
       // accessibleContextPropertyList
       // 
-      this.accessibleContextPropertyList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+      this._accessibleContextPropertyList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.propertyHeader,
             this.valueHeader});
-      this.accessibleContextPropertyList.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.accessibleContextPropertyList.FullRowSelect = true;
-      this.accessibleContextPropertyList.GridLines = true;
-      this.accessibleContextPropertyList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-      this.accessibleContextPropertyList.Location = new System.Drawing.Point(0, 0);
-      this.accessibleContextPropertyList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-      this.accessibleContextPropertyList.MultiSelect = false;
-      this.accessibleContextPropertyList.Name = "accessibleContextPropertyList";
-      this.accessibleContextPropertyList.Size = new System.Drawing.Size(623, 372);
-      this.accessibleContextPropertyList.SmallImageList = this.propertyImageList;
-      this.accessibleContextPropertyList.TabIndex = 1;
-      this.accessibleContextPropertyList.UseCompatibleStateImageBehavior = false;
-      this.accessibleContextPropertyList.View = System.Windows.Forms.View.Details;
+      this._accessibleContextPropertyList.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._accessibleContextPropertyList.FullRowSelect = true;
+      this._accessibleContextPropertyList.GridLines = true;
+      this._accessibleContextPropertyList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+      this._accessibleContextPropertyList.Location = new System.Drawing.Point(0, 0);
+      this._accessibleContextPropertyList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+      this._accessibleContextPropertyList.MultiSelect = false;
+      this._accessibleContextPropertyList.Name = "_accessibleContextPropertyList";
+      this._accessibleContextPropertyList.Size = new System.Drawing.Size(623, 372);
+      this._accessibleContextPropertyList.SmallImageList = this._propertyImageList;
+      this._accessibleContextPropertyList.TabIndex = 1;
+      this._accessibleContextPropertyList.UseCompatibleStateImageBehavior = false;
+      this._accessibleContextPropertyList.View = System.Windows.Forms.View.Details;
       // 
       // propertyHeader
       // 
@@ -460,10 +460,10 @@
       // 
       // propertyImageList
       // 
-      this.propertyImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("propertyImageList.ImageStream")));
-      this.propertyImageList.TransparentColor = System.Drawing.Color.Transparent;
-      this.propertyImageList.Images.SetKeyName(0, "Plus.png");
-      this.propertyImageList.Images.SetKeyName(1, "Minus.png");
+      this._propertyImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("_propertyImageList.ImageStream")));
+      this._propertyImageList.TransparentColor = System.Drawing.Color.Transparent;
+      this._propertyImageList.Images.SetKeyName(0, "Plus.png");
+      this._propertyImageList.Images.SetKeyName(1, "Minus.png");
       // 
       // mainSplitContainer
       // 
@@ -478,7 +478,7 @@
       // 
       // mainSplitContainer.Panel2
       // 
-      this.mainSplitContainer.Panel2.Controls.Add(this.bottomTabControl);
+      this.mainSplitContainer.Panel2.Controls.Add(this._bottomTabControl);
       this.mainSplitContainer.Size = new System.Drawing.Size(1181, 631);
       this.mainSplitContainer.SplitterDistance = 400;
       this.mainSplitContainer.TabIndex = 4;
@@ -486,25 +486,25 @@
       // 
       // bottomTabControl
       // 
-      this.bottomTabControl.Controls.Add(this.messagesPage);
-      this.bottomTabControl.Controls.Add(this.eventsPage);
-      this.bottomTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.bottomTabControl.Location = new System.Drawing.Point(0, 0);
-      this.bottomTabControl.Name = "bottomTabControl";
-      this.bottomTabControl.SelectedIndex = 0;
-      this.bottomTabControl.Size = new System.Drawing.Size(1181, 227);
-      this.bottomTabControl.TabIndex = 0;
+      this._bottomTabControl.Controls.Add(this._messageListPage);
+      this._bottomTabControl.Controls.Add(this._eventListPage);
+      this._bottomTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._bottomTabControl.Location = new System.Drawing.Point(0, 0);
+      this._bottomTabControl.Name = "_bottomTabControl";
+      this._bottomTabControl.SelectedIndex = 0;
+      this._bottomTabControl.Size = new System.Drawing.Size(1181, 227);
+      this._bottomTabControl.TabIndex = 0;
       // 
       // messagesPage
       // 
-      this.messagesPage.Controls.Add(this._messageList);
-      this.messagesPage.Controls.Add(this.messagesToolStrip);
-      this.messagesPage.Location = new System.Drawing.Point(4, 24);
-      this.messagesPage.Name = "messagesPage";
-      this.messagesPage.Size = new System.Drawing.Size(1173, 199);
-      this.messagesPage.TabIndex = 1;
-      this.messagesPage.Text = "Messages";
-      this.messagesPage.UseVisualStyleBackColor = true;
+      this._messageListPage.Controls.Add(this._messageList);
+      this._messageListPage.Controls.Add(this.messagesToolStrip);
+      this._messageListPage.Location = new System.Drawing.Point(4, 24);
+      this._messageListPage.Name = "_messageListPage";
+      this._messageListPage.Size = new System.Drawing.Size(1173, 199);
+      this._messageListPage.TabIndex = 1;
+      this._messageListPage.Text = "Messages";
+      this._messageListPage.UseVisualStyleBackColor = true;
       // 
       // messageList
       // 
@@ -564,14 +564,14 @@
       // 
       // eventsPage
       // 
-      this.eventsPage.Controls.Add(this._eventList);
-      this.eventsPage.Controls.Add(this.eventsToolStrip);
-      this.eventsPage.Location = new System.Drawing.Point(4, 22);
-      this.eventsPage.Name = "eventsPage";
-      this.eventsPage.Size = new System.Drawing.Size(1173, 201);
-      this.eventsPage.TabIndex = 0;
-      this.eventsPage.Text = "Accessibility events";
-      this.eventsPage.UseVisualStyleBackColor = true;
+      this._eventListPage.Controls.Add(this._eventList);
+      this._eventListPage.Controls.Add(this.eventsToolStrip);
+      this._eventListPage.Location = new System.Drawing.Point(4, 22);
+      this._eventListPage.Name = "_eventListPage";
+      this._eventListPage.Size = new System.Drawing.Size(1173, 201);
+      this._eventListPage.TabIndex = 0;
+      this._eventListPage.Text = "Accessibility events";
+      this._eventListPage.UseVisualStyleBackColor = true;
       // 
       // eventList
       // 
@@ -677,7 +677,6 @@
       this.Activated += new System.EventHandler(this.MainForm_Activated);
       this.Deactivate += new System.EventHandler(this.MainForm_Deactivate);
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-      this.Load += new System.EventHandler(this.MainForm_Load);
       this.Shown += new System.EventHandler(this.MainForm_Shown);
       this.MouseCaptureChanged += new System.EventHandler(this.MainForm_MouseCaptureChanged);
       this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseMove);
@@ -692,21 +691,21 @@
       this.topSplitContainer.Panel2.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.topSplitContainer)).EndInit();
       this.topSplitContainer.ResumeLayout(false);
-      this.topLevelTabControl.ResumeLayout(false);
-      this.accessibilityTreePage.ResumeLayout(false);
-      this.accessibleComponentTabControl.ResumeLayout(false);
+      this._topLevelTabControl.ResumeLayout(false);
+      this._accessibilityTreePage.ResumeLayout(false);
+      this._accessibleComponentTabControl.ResumeLayout(false);
       this.accessibleComponentTabPage.ResumeLayout(false);
       this.mainSplitContainer.Panel1.ResumeLayout(false);
       this.mainSplitContainer.Panel2.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).EndInit();
       this.mainSplitContainer.ResumeLayout(false);
-      this.bottomTabControl.ResumeLayout(false);
-      this.messagesPage.ResumeLayout(false);
-      this.messagesPage.PerformLayout();
+      this._bottomTabControl.ResumeLayout(false);
+      this._messageListPage.ResumeLayout(false);
+      this._messageListPage.PerformLayout();
       this.messagesToolStrip.ResumeLayout(false);
       this.messagesToolStrip.PerformLayout();
-      this.eventsPage.ResumeLayout(false);
-      this.eventsPage.PerformLayout();
+      this._eventListPage.ResumeLayout(false);
+      this._eventListPage.PerformLayout();
       this.eventsToolStrip.ResumeLayout(false);
       this.eventsToolStrip.PerformLayout();
       this.ResumeLayout(false);
@@ -722,14 +721,14 @@
     private System.Windows.Forms.StatusStrip statusBarStrip;
     private System.Windows.Forms.ToolStripStatusLabel _statusLabel;
     private System.Windows.Forms.ToolStrip mainToolStrip;
-    private System.Windows.Forms.ToolStripButton refreshButton;
-    private System.Windows.Forms.ToolStripButton findComponentButton;
+    private System.Windows.Forms.ToolStripButton _refreshButton;
+    private System.Windows.Forms.ToolStripButton _findComponentButton;
     private System.Windows.Forms.Timer refreshTimer;
     private System.Windows.Forms.SplitContainer topSplitContainer;
     private System.Windows.Forms.SplitContainer mainSplitContainer;
     private System.Windows.Forms.ToolStripMenuItem _eventsMenu;
-    private System.Windows.Forms.TabControl bottomTabControl;
-    private System.Windows.Forms.TabPage eventsPage;
+    private System.Windows.Forms.TabControl _bottomTabControl;
+    private System.Windows.Forms.TabPage _eventListPage;
     private System.Windows.Forms.ListView _eventList;
     private System.Windows.Forms.ColumnHeader eventId;
     private System.Windows.Forms.ColumnHeader eventTime;
@@ -740,27 +739,27 @@
     private System.Windows.Forms.ColumnHeader eventNewValue;
     private System.Windows.Forms.ToolStrip eventsToolStrip;
     private System.Windows.Forms.ToolStripButton clearEventsButton;
-    private System.Windows.Forms.TabPage messagesPage;
+    private System.Windows.Forms.TabPage _messageListPage;
     private System.Windows.Forms.ListView _messageList;
     private System.Windows.Forms.ColumnHeader messageIdColumn;
     private System.Windows.Forms.ColumnHeader messageTimeColumn;
     private System.Windows.Forms.ColumnHeader messageTextColumn;
     private System.Windows.Forms.ToolStrip messagesToolStrip;
     private System.Windows.Forms.ToolStripButton clearMessagesButton;
-    private System.Windows.Forms.TabControl topLevelTabControl;
-    private System.Windows.Forms.TabPage accessibilityTreePage;
+    private System.Windows.Forms.TabControl _topLevelTabControl;
+    private System.Windows.Forms.TabPage _accessibilityTreePage;
     private System.Windows.Forms.TreeView _accessibilityTree;
     private System.Windows.Forms.ToolStripSeparator separator2;
     private System.Windows.Forms.ToolStripSeparator separator3;
     private System.Windows.Forms.ToolStripButton showHelpButton;
-    private System.Windows.Forms.TabControl accessibleComponentTabControl;
+    private System.Windows.Forms.TabControl _accessibleComponentTabControl;
     private System.Windows.Forms.TabPage accessibleComponentTabPage;
-    private System.Windows.Forms.ListView accessibleContextPropertyList;
+    private System.Windows.Forms.ListView _accessibleContextPropertyList;
     private System.Windows.Forms.ColumnHeader propertyHeader;
     private System.Windows.Forms.ColumnHeader valueHeader;
     private System.Windows.Forms.ToolStripMenuItem helpMenu;
     private System.Windows.Forms.ToolStripMenuItem viewHelpMenuItem;
-    private System.Windows.Forms.ImageList propertyImageList;
+    private System.Windows.Forms.ImageList _propertyImageList;
     private System.Windows.Forms.ToolStripMenuItem viewMenu;
     private System.Windows.Forms.ToolStripMenuItem navigateForwardMenuItem;
     private System.Windows.Forms.ToolStripMenuItem navigateBackwardMenuItem;
@@ -774,7 +773,7 @@
     private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
     private System.Windows.Forms.ToolStripSeparator separator5;
     private System.Windows.Forms.ToolStripMenuItem showOverlayMenuItem;
-    private System.Windows.Forms.ToolStripButton overlayEnableButton;
+    private System.Windows.Forms.ToolStripButton _overlayEnableButton;
   }
 }
 

@@ -16,13 +16,21 @@ using System.Windows.Forms;
 
 namespace AccessBridgeExplorer {
   public interface IExplorerFormView {
+    string Caption { get; }
+
     IMessageQueue MessageQueue { get; }
 
+    ToolStripButton RefreshButton { get; }
+    ToolStripButton FindComponentButton { get; }
+
+    TabPage AccessibilityTreePage { get; }
     TreeView AccessibilityTree { get; }
 
     PropertyListView AccessibleComponentPropertyList { get; }
 
+    TabPage MessageListPage { get; }
     ListView MessageList { get; }
+    TabPage EventListPage { get; }
     ListView EventList { get; }
 
     ToolStripMenuItem PropertiesMenu { get; }
@@ -32,5 +40,6 @@ namespace AccessBridgeExplorer {
 
     void ShowMessageBox(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon);
     void ShowDialog(Form form);
+    void FocusMessageList();
   }
 }

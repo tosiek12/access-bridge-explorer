@@ -15,6 +15,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Net.Mime;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -257,6 +258,25 @@ namespace AccessBridgeExplorer {
       });
     }
 
+
+    public void ShowHelp() {
+      _view.MessageList.Items.Clear();
+      LogIntroMessages();
+      foreach (ListViewItem item in _view.MessageList.Items) {
+        item.Selected = true;
+      }
+      _view.FocusMessageList();
+    }
+
+    public void LogIntroMessages() {
+      LogMessage("{0} allows exploring and interacting with accessibility features of Java applications.", _view.Caption);
+      LogMessage("Use the \"{0}\" window to explore accessible components of active Java application windows.", _view.AccessibilityTreePage.Text);
+      LogMessage("Use the \"{0}\" toolbar button to refresh the content of the \"{1}\" window.", _view.RefreshButton.Text, _view.AccessibilityTreePage.Text);
+      LogMessage("Use the \"{0}\" menu to select event types to capture and display in the \"{1}\" window.", _view.EventsMenu.Text.Replace("&", ""), _view.EventListPage.Text);
+      LogMessage("Use the \"{0}\" toolbar button to {1}.", _view.FindComponentButton.Text, _view.FindComponentButton.ToolTipText);
+      LogMessage("Use the \"Ctrl+\\\" key in any Java application window to capture the accessible component located at the mouse cursor.");
+    }
+
     public class EventInfo {
       public EventInfo() {
       }
@@ -390,7 +410,7 @@ namespace AccessBridgeExplorer {
         } finally {
           _view.AccessibilityTree.EndUpdate();
         }
-        _view.StatusLabel.Text = "Ready.";
+        _view.StatusLabel.Text = @"Ready.";
         HideOverlayWindow();
         HideToolTip();
         _navigation.Clear();

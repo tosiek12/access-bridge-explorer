@@ -22,42 +22,31 @@ namespace AccessBridgeExplorer {
   public partial class ExplorerForm : Form, IExplorerFormView, IMessageQueue {
     private readonly WindowsHotKeyHandler _hotKeyHandler;
     private readonly ExplorerFormController _controller;
-    private PropertyListView _accessibleContextPropertyList;
+    private readonly PropertyListView _accessibleComponentPropertyListView;
     private bool _capturing;
     private int _navigationVersion = int.MinValue;
 
     public ExplorerForm() {
       InitializeComponent();
       mainToolStrip.Renderer = new OverlayButtonRenderer(this);
-
-      _accessibleContextPropertyList = new PropertyListView(accessibleContextPropertyList, propertyImageList);
+      _accessibleComponentPropertyListView = new PropertyListView(_accessibleContextPropertyList, _propertyImageList);
       _controller = new ExplorerFormController(this);
       _hotKeyHandler = new WindowsHotKeyHandler();
       _hotKeyHandler.KeyPressed += HotKeyHandlerOnKeyPressed;
       SetDoubleBuffered(_accessibilityTree, true);
       SetDoubleBuffered(_messageList, true);
-      SetDoubleBuffered(accessibleContextPropertyList, true);
-      SetDoubleBuffered(topLevelTabControl, true);
-      SetDoubleBuffered(accessibleComponentTabControl, true);
-      SetDoubleBuffered(bottomTabControl, true);
+      SetDoubleBuffered(_accessibleContextPropertyList, true);
+      SetDoubleBuffered(_topLevelTabControl, true);
+      SetDoubleBuffered(_accessibleComponentTabControl, true);
+      SetDoubleBuffered(_bottomTabControl, true);
 
-      overlayEnableButton_Click(overlayEnableButton, new EventArgs());
-    }
-
-    private void MainForm_Load(object sender, EventArgs e) {
-      //accessibleContextPropertyList.SizeChanged += (o, args) => SizeLastColumn(accessibleContextPropertyList);
-      //SizeLastColumn(accessibleContextPropertyList);
-      //eventList.SizeChanged += (o, args) => SizeLastColumn(eventList);
-      //SizeLastColumn(eventList);
-      //messageList.SizeChanged += (o, args) => SizeLastColumn(messageList);
-      //SizeLastColumn(messageList);
+      overlayEnableButton_Click(_overlayEnableButton, new EventArgs());
     }
 
     private void MainForm_Shown(object sender, EventArgs e) {
       InvokeLater(() => {
         _controller.Initialize();
-
-        LogIntroMessages();
+        _controller.LogIntroMessages();
 
         try {
           // OemPipe: Used for miscellaneous characters; it can vary by keyboard. For
@@ -126,15 +115,6 @@ namespace AccessBridgeExplorer {
       _controller.RefreshTree();
     }
 
-    private void LogIntroMessages() {
-      _controller.LogMessage("{0} allows exploring and interacting with accessibility features of Java applications.", Text);
-      _controller.LogMessage("Use the \"{0}\" window to explore accessible components of active Java application windows.", accessibilityTreePage.Text);
-      _controller.LogMessage("Use the \"{0}\" toolbar button to refresh the content of the \"{1}\" window.", refreshButton.Text, accessibilityTreePage.Text);
-      _controller.LogMessage("Use the \"{0}\" menu to select event types to capture and display in the \"{1}\" window.", _eventsMenu.Text.Replace("&", ""), eventsPage.Text);
-      _controller.LogMessage("Use the \"{0}\" toolbar button to {1}.", findComponentButton.Text, findComponentButton.ToolTipText);
-      _controller.LogMessage("Use the \"Ctrl+\\\" key in any Java application window to capture the accessible component located at the mouse cursor.");
-    }
-
     private void overlayEnableButton_Click(object sender, EventArgs e) {
       var button = (ToolStripButton)sender;
       var enable = !button.Checked;
@@ -158,17 +138,16 @@ namespace AccessBridgeExplorer {
       protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e) {
         base.OnRenderButtonBackground(e);
 
-        var btn = e.Item as ToolStripButton;
-        if (object.Equals(btn, _explorerForm.overlayEnableButton)) {
+        if (ReferenceEquals(e.Item, _explorerForm._overlayEnableButton)) {
           var bounds = new Rectangle(Point.Empty, e.Item.Size);
           bounds.Inflate(-1, -1);
-          e.Graphics.FillRectangle(new SolidBrush(btn.ForeColor), bounds);
+          e.Graphics.FillRectangle(new SolidBrush(e.Item.ForeColor), bounds);
         }
       }
     }
 
     private void showOverlayMenuItem_Click(object sender, EventArgs e) {
-      overlayEnableButton_Click(overlayEnableButton, new EventArgs());
+      overlayEnableButton_Click(_overlayEnableButton, new EventArgs());
     }
 
     private void catpureButton_MouseDown(object sender, MouseEventArgs e) {
@@ -224,10 +203,6 @@ namespace AccessBridgeExplorer {
       _controller.OnFocusLost();
     }
 
-    private void SizeLastColumn(ListView lv) {
-      lv.Columns[lv.Columns.Count - 1].Width = -2;
-    }
-
     private void clearEventsButton_Click(object sender, EventArgs e) {
       _eventList.Items.Clear();
     }
@@ -245,13 +220,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void ShowHelp() {
-      _messageList.Items.Clear();
-      LogIntroMessages();
-      bottomTabControl.SelectedTab = messagesPage;
-      foreach (ListViewItem item in _messageList.Items) {
-        item.Selected = true;
-      }
-      _messageList.Focus();
+      _controller.ShowHelp();
     }
 
     public static void SetDoubleBuffered(Control control, bool enable) {
@@ -264,7 +233,7 @@ namespace AccessBridgeExplorer {
     }
 
     public void InvokeLater(Action action) {
-      base.BeginInvoke(action);
+      BeginInvoke(action);
     }
 
     public T Compute<T>(Func<T> function) {
@@ -292,8 +261,25 @@ namespace AccessBridgeExplorer {
     }
 
     #region IExplorerFormView
+
+    string IExplorerFormView.Caption {
+      get { return Text; }
+    }
+
     IMessageQueue IExplorerFormView.MessageQueue {
       get { return this; }
+    }
+
+    ToolStripButton IExplorerFormView.RefreshButton {
+      get { return _refreshButton; }
+    }
+
+    ToolStripButton IExplorerFormView.FindComponentButton {
+      get { return _findComponentButton; }
+    }
+
+    TabPage IExplorerFormView.AccessibilityTreePage {
+      get { return _accessibilityTreePage; }
     }
 
     TreeView IExplorerFormView.AccessibilityTree {
@@ -301,11 +287,19 @@ namespace AccessBridgeExplorer {
     }
 
     PropertyListView IExplorerFormView.AccessibleComponentPropertyList {
-      get { return _accessibleContextPropertyList; }
+      get { return _accessibleComponentPropertyListView; }
+    }
+
+    TabPage IExplorerFormView.MessageListPage {
+      get { return _messageListPage; }
     }
 
     ListView IExplorerFormView.MessageList {
       get { return _messageList; }
+    }
+
+    TabPage IExplorerFormView.EventListPage {
+      get { return _eventListPage; }
     }
 
     ListView IExplorerFormView.EventList {
@@ -331,6 +325,12 @@ namespace AccessBridgeExplorer {
     void IExplorerFormView.ShowDialog(Form form) {
       form.ShowDialog(this);
     }
+
+    void IExplorerFormView.FocusMessageList() {
+      _bottomTabControl.SelectedTab = _messageListPage;
+      _messageList.Focus();
+    }
+
     #endregion
   }
 }
