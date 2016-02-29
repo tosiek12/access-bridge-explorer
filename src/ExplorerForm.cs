@@ -27,9 +27,10 @@ namespace AccessBridgeExplorer {
 
     public ExplorerForm() {
       InitializeComponent();
+      mainToolStrip.Renderer = new OverlayButtonRenderer(this);
 
       var accessibleContextPropertyListWrapper = new PropertyListViewWrapper(accessibleContextPropertyList, propertyImageList);
-      _controller = new ExplorerFormController(this, accessibilityTree, accessibleContextPropertyListWrapper, statusLabel, eventList, messageList, eventsMenu, optionsToolStripMenuItem);
+      _controller = new ExplorerFormController(this, accessibilityTree, accessibleContextPropertyListWrapper, statusLabel, eventList, messageList, eventsMenu, propertiesMenu);
       _hotKeyHandler = new WindowsHotKeyHandler();
       _hotKeyHandler.KeyPressed += HotKeyHandlerOnKeyPressed;
       SetDoubleBuffered(accessibilityTree, true);
@@ -38,6 +39,8 @@ namespace AccessBridgeExplorer {
       SetDoubleBuffered(topLevelTabControl, true);
       SetDoubleBuffered(accessibleComponentTabControl, true);
       SetDoubleBuffered(bottomTabControl, true);
+
+      overlayEnableButton_Click(overlayEnableButton, new EventArgs());
     }
 
     private void MainForm_Load(object sender, EventArgs e) {
@@ -79,11 +82,11 @@ namespace AccessBridgeExplorer {
       _navigationVersion = _controller.Navigation.Version;
 
       navigateBackwardButton.Enabled = _controller.Navigation.BackwardAvailable;
-      navigateBackwardToolStripMenuItem.Enabled = _controller.Navigation.BackwardAvailable;
+      navigateBackwardMenuItem.Enabled = _controller.Navigation.BackwardAvailable;
       AddDropDownEntries(navigateBackwardButton.DropDownItems, _controller.Navigation.BackwardEntries);
 
       navigateForwardButton.Enabled = _controller.Navigation.ForwardAvailable;
-      navigateForwardToolStripMenuItem.Enabled = _controller.Navigation.ForwardAvailable;
+      navigateForwardMenuItem.Enabled = _controller.Navigation.ForwardAvailable;
       AddDropDownEntries(navigateForwardButton.DropDownItems, _controller.Navigation.ForwardEntries);
     }
 
@@ -133,14 +136,38 @@ namespace AccessBridgeExplorer {
 
     private void overlayEnableButton_Click(object sender, EventArgs e) {
       var button = (ToolStripButton)sender;
-      if (button.Checked) {
-        button.Checked = false;
-        button.ForeColor = SystemColors.ButtonFace;
+      var enable = !button.Checked;
+      button.Checked = enable;
+      showOverlayMenuItem.Checked = enable;
+      if (enable) {
+        button.ForeColor = Color.FromArgb(128, 255, 128);
       } else {
-        button.Checked = true;
-        button.ForeColor = Color.FromArgb(192, 255, 192);
+        button.ForeColor = SystemColors.InactiveCaption;
       }
-      _controller.EnableOverlayWindow(!button.Checked);
+      _controller.EnableOverlayWindow(enable);
+    }
+
+    private class OverlayButtonRenderer : ToolStripProfessionalRenderer {
+      private readonly ExplorerForm _explorerForm;
+
+      public OverlayButtonRenderer(ExplorerForm explorerForm) {
+        _explorerForm = explorerForm;
+      }
+
+      protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e) {
+        base.OnRenderButtonBackground(e);
+
+        var btn = e.Item as ToolStripButton;
+        if (object.Equals(btn, _explorerForm.overlayEnableButton)) {
+          var bounds = new Rectangle(Point.Empty, e.Item.Size);
+          bounds.Inflate(-1, -1);
+          e.Graphics.FillRectangle(new SolidBrush(btn.ForeColor), bounds);
+        }
+      }
+    }
+
+    private void showOverlayMenuItem_Click(object sender, EventArgs e) {
+      overlayEnableButton_Click(overlayEnableButton, new EventArgs());
     }
 
     private void catpureButton_MouseDown(object sender, MouseEventArgs e) {
