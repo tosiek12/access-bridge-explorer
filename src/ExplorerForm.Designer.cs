@@ -34,14 +34,14 @@
       this.separator1 = new System.Windows.Forms.ToolStripSeparator();
       this.refreshMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.optionsMenu = new System.Windows.Forms.ToolStripMenuItem();
-      this.propertiesMenu = new System.Windows.Forms.ToolStripMenuItem();
-      this.eventsMenu = new System.Windows.Forms.ToolStripMenuItem();
+      this._propertiesMenu = new System.Windows.Forms.ToolStripMenuItem();
+      this._eventsMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.separator5 = new System.Windows.Forms.ToolStripSeparator();
       this.showOverlayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.viewHelpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.statusBarStrip = new System.Windows.Forms.StatusStrip();
-      this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+      this._statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.mainToolStrip = new System.Windows.Forms.ToolStrip();
       this.navigateBackwardButton = new System.Windows.Forms.ToolStripSplitButton();
       this.navigateForwardButton = new System.Windows.Forms.ToolStripSplitButton();
@@ -56,7 +56,7 @@
       this.topSplitContainer = new System.Windows.Forms.SplitContainer();
       this.topLevelTabControl = new System.Windows.Forms.TabControl();
       this.accessibilityTreePage = new System.Windows.Forms.TabPage();
-      this.accessibilityTree = new System.Windows.Forms.TreeView();
+      this._accessibilityTree = new System.Windows.Forms.TreeView();
       this.accessibleComponentTabControl = new System.Windows.Forms.TabControl();
       this.accessibleComponentTabPage = new System.Windows.Forms.TabPage();
       this.accessibleContextPropertyList = new System.Windows.Forms.ListView();
@@ -66,14 +66,14 @@
       this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
       this.bottomTabControl = new System.Windows.Forms.TabControl();
       this.messagesPage = new System.Windows.Forms.TabPage();
-      this.messageList = new System.Windows.Forms.ListView();
+      this._messageList = new System.Windows.Forms.ListView();
       this.messageIdColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.messageTimeColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.messageTextColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.messagesToolStrip = new System.Windows.Forms.ToolStrip();
       this.clearMessagesButton = new System.Windows.Forms.ToolStripButton();
       this.eventsPage = new System.Windows.Forms.TabPage();
-      this.eventList = new System.Windows.Forms.ListView();
+      this._eventList = new System.Windows.Forms.ListView();
       this.eventId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.eventTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.eventJvmId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -183,8 +183,8 @@
       // optionsMenu
       // 
       this.optionsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.propertiesMenu,
-            this.eventsMenu,
+            this._propertiesMenu,
+            this._eventsMenu,
             this.separator5,
             this.showOverlayMenuItem});
       this.optionsMenu.Name = "optionsMenu";
@@ -193,17 +193,17 @@
       // 
       // propertiesMenu
       // 
-      this.propertiesMenu.Name = "propertiesMenu";
-      this.propertiesMenu.Size = new System.Drawing.Size(146, 22);
-      this.propertiesMenu.Text = "Properties";
-      this.propertiesMenu.ToolTipText = "Properties to show in the component property list";
+      this._propertiesMenu.Name = "_propertiesMenu";
+      this._propertiesMenu.Size = new System.Drawing.Size(146, 22);
+      this._propertiesMenu.Text = "Properties";
+      this._propertiesMenu.ToolTipText = "Properties to show in the component property list";
       // 
       // eventsMenu
       // 
-      this.eventsMenu.Name = "eventsMenu";
-      this.eventsMenu.Size = new System.Drawing.Size(146, 22);
-      this.eventsMenu.Text = "&Events";
-      this.eventsMenu.ToolTipText = "Events to capture and display in the events window";
+      this._eventsMenu.Name = "_eventsMenu";
+      this._eventsMenu.Size = new System.Drawing.Size(146, 22);
+      this._eventsMenu.Text = "&Events";
+      this._eventsMenu.ToolTipText = "Events to capture and display in the events window";
       // 
       // separator5
       // 
@@ -238,7 +238,7 @@
       // 
       this.statusBarStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
       this.statusBarStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel});
+            this._statusLabel});
       this.statusBarStrip.Location = new System.Drawing.Point(0, 682);
       this.statusBarStrip.Name = "statusBarStrip";
       this.statusBarStrip.Padding = new System.Windows.Forms.Padding(1, 0, 17, 0);
@@ -248,9 +248,9 @@
       // 
       // statusLabel
       // 
-      this.statusLabel.Name = "statusLabel";
-      this.statusLabel.Size = new System.Drawing.Size(42, 17);
-      this.statusLabel.Text = "Ready.";
+      this._statusLabel.Name = "_statusLabel";
+      this._statusLabel.Size = new System.Drawing.Size(42, 17);
+      this._statusLabel.Text = "Ready.";
       // 
       // mainToolStrip
       // 
@@ -390,7 +390,7 @@
       // 
       // accessibilityTreePage
       // 
-      this.accessibilityTreePage.Controls.Add(this.accessibilityTree);
+      this.accessibilityTreePage.Controls.Add(this._accessibilityTree);
       this.accessibilityTreePage.Location = new System.Drawing.Point(4, 24);
       this.accessibilityTreePage.Name = "accessibilityTreePage";
       this.accessibilityTreePage.Size = new System.Drawing.Size(538, 372);
@@ -400,14 +400,14 @@
       // 
       // accessibilityTree
       // 
-      this.accessibilityTree.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.accessibilityTree.FullRowSelect = true;
-      this.accessibilityTree.HideSelection = false;
-      this.accessibilityTree.Location = new System.Drawing.Point(0, 0);
-      this.accessibilityTree.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-      this.accessibilityTree.Name = "accessibilityTree";
-      this.accessibilityTree.Size = new System.Drawing.Size(538, 372);
-      this.accessibilityTree.TabIndex = 2;
+      this._accessibilityTree.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._accessibilityTree.FullRowSelect = true;
+      this._accessibilityTree.HideSelection = false;
+      this._accessibilityTree.Location = new System.Drawing.Point(0, 0);
+      this._accessibilityTree.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+      this._accessibilityTree.Name = "_accessibilityTree";
+      this._accessibilityTree.Size = new System.Drawing.Size(538, 372);
+      this._accessibilityTree.TabIndex = 2;
       // 
       // accessibleComponentTabControl
       // 
@@ -497,7 +497,7 @@
       // 
       // messagesPage
       // 
-      this.messagesPage.Controls.Add(this.messageList);
+      this.messagesPage.Controls.Add(this._messageList);
       this.messagesPage.Controls.Add(this.messagesToolStrip);
       this.messagesPage.Location = new System.Drawing.Point(4, 24);
       this.messagesPage.Name = "messagesPage";
@@ -508,20 +508,20 @@
       // 
       // messageList
       // 
-      this.messageList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+      this._messageList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.messageIdColumn,
             this.messageTimeColumn,
             this.messageTextColumn});
-      this.messageList.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.messageList.FullRowSelect = true;
-      this.messageList.GridLines = true;
-      this.messageList.Location = new System.Drawing.Point(25, 0);
-      this.messageList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-      this.messageList.Name = "messageList";
-      this.messageList.Size = new System.Drawing.Size(1148, 199);
-      this.messageList.TabIndex = 7;
-      this.messageList.UseCompatibleStateImageBehavior = false;
-      this.messageList.View = System.Windows.Forms.View.Details;
+      this._messageList.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._messageList.FullRowSelect = true;
+      this._messageList.GridLines = true;
+      this._messageList.Location = new System.Drawing.Point(25, 0);
+      this._messageList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+      this._messageList.Name = "_messageList";
+      this._messageList.Size = new System.Drawing.Size(1148, 199);
+      this._messageList.TabIndex = 7;
+      this._messageList.UseCompatibleStateImageBehavior = false;
+      this._messageList.View = System.Windows.Forms.View.Details;
       // 
       // messageIdColumn
       // 
@@ -564,7 +564,7 @@
       // 
       // eventsPage
       // 
-      this.eventsPage.Controls.Add(this.eventList);
+      this.eventsPage.Controls.Add(this._eventList);
       this.eventsPage.Controls.Add(this.eventsToolStrip);
       this.eventsPage.Location = new System.Drawing.Point(4, 22);
       this.eventsPage.Name = "eventsPage";
@@ -575,7 +575,7 @@
       // 
       // eventList
       // 
-      this.eventList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+      this._eventList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.eventId,
             this.eventTime,
             this.eventJvmId,
@@ -583,16 +583,16 @@
             this.eventSource,
             this.eventOldValue,
             this.eventNewValue});
-      this.eventList.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.eventList.FullRowSelect = true;
-      this.eventList.GridLines = true;
-      this.eventList.Location = new System.Drawing.Point(25, 0);
-      this.eventList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-      this.eventList.Name = "eventList";
-      this.eventList.Size = new System.Drawing.Size(1148, 201);
-      this.eventList.TabIndex = 5;
-      this.eventList.UseCompatibleStateImageBehavior = false;
-      this.eventList.View = System.Windows.Forms.View.Details;
+      this._eventList.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._eventList.FullRowSelect = true;
+      this._eventList.GridLines = true;
+      this._eventList.Location = new System.Drawing.Point(25, 0);
+      this._eventList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+      this._eventList.Name = "_eventList";
+      this._eventList.Size = new System.Drawing.Size(1148, 201);
+      this._eventList.TabIndex = 5;
+      this._eventList.UseCompatibleStateImageBehavior = false;
+      this._eventList.View = System.Windows.Forms.View.Details;
       // 
       // eventId
       // 
@@ -720,17 +720,17 @@
     private System.Windows.Forms.ToolStripMenuItem fileMenu;
     private System.Windows.Forms.ToolStripMenuItem exitMenuItem;
     private System.Windows.Forms.StatusStrip statusBarStrip;
-    private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+    private System.Windows.Forms.ToolStripStatusLabel _statusLabel;
     private System.Windows.Forms.ToolStrip mainToolStrip;
     private System.Windows.Forms.ToolStripButton refreshButton;
     private System.Windows.Forms.ToolStripButton findComponentButton;
     private System.Windows.Forms.Timer refreshTimer;
     private System.Windows.Forms.SplitContainer topSplitContainer;
     private System.Windows.Forms.SplitContainer mainSplitContainer;
-    private System.Windows.Forms.ToolStripMenuItem eventsMenu;
+    private System.Windows.Forms.ToolStripMenuItem _eventsMenu;
     private System.Windows.Forms.TabControl bottomTabControl;
     private System.Windows.Forms.TabPage eventsPage;
-    private System.Windows.Forms.ListView eventList;
+    private System.Windows.Forms.ListView _eventList;
     private System.Windows.Forms.ColumnHeader eventId;
     private System.Windows.Forms.ColumnHeader eventTime;
     private System.Windows.Forms.ColumnHeader eventJvmId;
@@ -741,7 +741,7 @@
     private System.Windows.Forms.ToolStrip eventsToolStrip;
     private System.Windows.Forms.ToolStripButton clearEventsButton;
     private System.Windows.Forms.TabPage messagesPage;
-    private System.Windows.Forms.ListView messageList;
+    private System.Windows.Forms.ListView _messageList;
     private System.Windows.Forms.ColumnHeader messageIdColumn;
     private System.Windows.Forms.ColumnHeader messageTimeColumn;
     private System.Windows.Forms.ColumnHeader messageTextColumn;
@@ -749,7 +749,7 @@
     private System.Windows.Forms.ToolStripButton clearMessagesButton;
     private System.Windows.Forms.TabControl topLevelTabControl;
     private System.Windows.Forms.TabPage accessibilityTreePage;
-    private System.Windows.Forms.TreeView accessibilityTree;
+    private System.Windows.Forms.TreeView _accessibilityTree;
     private System.Windows.Forms.ToolStripSeparator separator2;
     private System.Windows.Forms.ToolStripSeparator separator3;
     private System.Windows.Forms.ToolStripButton showHelpButton;
@@ -770,7 +770,7 @@
     private System.Windows.Forms.ToolStripSplitButton navigateForwardButton;
     private System.Windows.Forms.ToolStripSeparator separator4;
     private System.Windows.Forms.ToolStripMenuItem optionsMenu;
-    private System.Windows.Forms.ToolStripMenuItem propertiesMenu;
+    private System.Windows.Forms.ToolStripMenuItem _propertiesMenu;
     private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
     private System.Windows.Forms.ToolStripSeparator separator5;
     private System.Windows.Forms.ToolStripMenuItem showOverlayMenuItem;

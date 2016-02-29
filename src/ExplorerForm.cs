@@ -19,9 +19,10 @@ using System.Reflection;
 using System.Windows.Forms;
 
 namespace AccessBridgeExplorer {
-  public partial class ExplorerForm : Form, IUIThreadInvoker {
+  public partial class ExplorerForm : Form, IExplorerFormView, IUIThreadInvoker {
     private readonly WindowsHotKeyHandler _hotKeyHandler;
     private readonly ExplorerFormController _controller;
+    private PropertyListViewWrapper _accessibleContextPropertyListWrapper;
     private bool _capturing;
     private int _navigationVersion = int.MinValue;
 
@@ -29,12 +30,12 @@ namespace AccessBridgeExplorer {
       InitializeComponent();
       mainToolStrip.Renderer = new OverlayButtonRenderer(this);
 
-      var accessibleContextPropertyListWrapper = new PropertyListViewWrapper(accessibleContextPropertyList, propertyImageList);
-      _controller = new ExplorerFormController(this, accessibilityTree, accessibleContextPropertyListWrapper, statusLabel, eventList, messageList, eventsMenu, propertiesMenu);
+      _accessibleContextPropertyListWrapper = new PropertyListViewWrapper(accessibleContextPropertyList, propertyImageList);
+      _controller = new ExplorerFormController(this);
       _hotKeyHandler = new WindowsHotKeyHandler();
       _hotKeyHandler.KeyPressed += HotKeyHandlerOnKeyPressed;
-      SetDoubleBuffered(accessibilityTree, true);
-      SetDoubleBuffered(messageList, true);
+      SetDoubleBuffered(_accessibilityTree, true);
+      SetDoubleBuffered(_messageList, true);
       SetDoubleBuffered(accessibleContextPropertyList, true);
       SetDoubleBuffered(topLevelTabControl, true);
       SetDoubleBuffered(accessibleComponentTabControl, true);
@@ -129,7 +130,7 @@ namespace AccessBridgeExplorer {
       _controller.LogMessage("{0} allows exploring and interacting with accessibility features of Java applications.", Text);
       _controller.LogMessage("Use the \"{0}\" window to explore accessible components of active Java application windows.", accessibilityTreePage.Text);
       _controller.LogMessage("Use the \"{0}\" toolbar button to refresh the content of the \"{1}\" window.", refreshButton.Text, accessibilityTreePage.Text);
-      _controller.LogMessage("Use the \"{0}\" menu to select event types to capture and display in the \"{1}\" window.", eventsMenu.Text.Replace("&", ""), eventsPage.Text);
+      _controller.LogMessage("Use the \"{0}\" menu to select event types to capture and display in the \"{1}\" window.", _eventsMenu.Text.Replace("&", ""), eventsPage.Text);
       _controller.LogMessage("Use the \"{0}\" toolbar button to {1}.", findComponentButton.Text, findComponentButton.ToolTipText);
       _controller.LogMessage("Use the \"Ctrl+\\\" key in any Java application window to capture the accessible component located at the mouse cursor.");
     }
@@ -228,11 +229,11 @@ namespace AccessBridgeExplorer {
     }
 
     private void clearEventsButton_Click(object sender, EventArgs e) {
-      eventList.Items.Clear();
+      _eventList.Items.Clear();
     }
 
     private void clearMessagesButton_Click(object sender, EventArgs e) {
-      messageList.Items.Clear();
+      _messageList.Items.Clear();
     }
 
     private void showHelpButton_Click(object sender, EventArgs e) {
@@ -244,13 +245,13 @@ namespace AccessBridgeExplorer {
     }
 
     private void ShowHelp() {
-      messageList.Items.Clear();
+      _messageList.Items.Clear();
       LogIntroMessages();
       bottomTabControl.SelectedTab = messagesPage;
-      foreach (ListViewItem item in messageList.Items) {
+      foreach (ListViewItem item in _messageList.Items) {
         item.Selected = true;
       }
-      messageList.Focus();
+      _messageList.Focus();
     }
 
     public static void SetDoubleBuffered(Control control, bool enable) {
@@ -289,5 +290,47 @@ namespace AccessBridgeExplorer {
       _controller.Navigation.NavigateBackward();
       UpdateNavigationState();
     }
+
+    #region IExplorerFormView
+    IUIThreadInvoker IExplorerFormView.MessageQueue {
+      get { return this; }
+    }
+
+    TreeView IExplorerFormView.AccessibilityTree {
+      get { return _accessibilityTree; }
+    }
+
+    PropertyListViewWrapper IExplorerFormView.ComponentPropertyList {
+      get { return _accessibleContextPropertyListWrapper; }
+    }
+
+    ListView IExplorerFormView.MessageList {
+      get { return _messageList; }
+    }
+
+    ListView IExplorerFormView.EventList {
+      get { return _eventList; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.PropertiesMenu {
+      get { return _propertiesMenu; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.EventsMenu {
+      get { return _eventsMenu; }
+    }
+
+    ToolStripStatusLabel IExplorerFormView.StatusLabel {
+      get { return _statusLabel; }
+    }
+
+    void IExplorerFormView.ShowMessageBox(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon) {
+      MessageBox.Show(this, message, title, buttons, icon);
+    }
+
+    void IExplorerFormView.ShowDialog(Form form) {
+      form.ShowDialog(this);
+    }
+    #endregion
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All Rights Reserved.
+// Copyright 2016 Google Inc. All Rights Reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,13 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Windows.Forms;
 
 namespace AccessBridgeExplorer {
-  public interface IUIThreadInvoker {
-    void InvokeLater(Action action);
-    void Invoke(Action action);
-    T Compute<T>(Func<T> function);
+  public interface IExplorerFormView {
+    IUIThreadInvoker MessageQueue { get; }
+
+    TreeView AccessibilityTree { get; }
+
+    PropertyListViewWrapper ComponentPropertyList { get; }
+
+    ListView MessageList { get; }
+    ListView EventList { get; }
+
+    ToolStripMenuItem PropertiesMenu { get; }
+    ToolStripMenuItem EventsMenu { get; }
+
+    ToolStripStatusLabel StatusLabel { get; }
+
+    void ShowMessageBox(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon);
+    void ShowDialog(Form form);
   }
 }

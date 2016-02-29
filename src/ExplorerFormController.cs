@@ -23,15 +23,8 @@ using AccessBridgeExplorer.WindowsAccessBridge;
 
 namespace AccessBridgeExplorer {
   public class ExplorerFormController : IDisposable {
+    private readonly IExplorerFormView _view;
     private readonly IExplorerFormNavigation _navigation;
-    private readonly IUIThreadInvoker _invoker;
-    private readonly TreeView _accessibilityTree;
-    private readonly PropertyListViewWrapper _acessibleContextPropertyListWrapper;
-    private readonly ToolStripStatusLabel _statusLabel;
-    private readonly ListView _accessibilityEventList;
-    private readonly ListView _messageList;
-    private readonly ToolStripMenuItem _eventsMenu;
-    private readonly ToolStripMenuItem _propertyOptionsMenu;
     private readonly AccessBridge _accessBridge = new AccessBridge();
     private readonly OverlayWindow _overlayWindow = new OverlayWindow();
     private readonly TooltipWindow _tooltipWindow = new TooltipWindow();
@@ -41,32 +34,17 @@ namespace AccessBridgeExplorer {
     private int _eventId;
     private int _messageId;
 
-    public ExplorerFormController(
-      IUIThreadInvoker invoker,
-      TreeView accessibilityTree,
-      PropertyListViewWrapper accessibleContextPropertyListWrapper,
-      ToolStripStatusLabel statusLabel,
-      ListView accessibilityEventList,
-      ListView messageList,
-      ToolStripMenuItem eventsMenu,
-      ToolStripMenuItem propertyOptionsMenu) {
+    public ExplorerFormController(IExplorerFormView explorerFormView) {
       _navigation = new ExplorerFormNavigation();
-      _invoker = invoker;
-      _accessibilityTree = accessibilityTree;
-      _acessibleContextPropertyListWrapper = accessibleContextPropertyListWrapper;
-      _statusLabel = statusLabel;
-      _accessibilityEventList = accessibilityEventList;
-      _messageList = messageList;
-      _eventsMenu = eventsMenu;
-      _propertyOptionsMenu = propertyOptionsMenu;
+      _view = explorerFormView;
       _overlayWindowEnabled = true;
 
-      _accessibilityTree.AfterSelect += AccessibilityTreeAfterSelect;
-      _accessibilityTree.BeforeExpand += AccessibilityTreeBeforeExpand;
-      _accessibilityTree.KeyDown += AccessibilityTreeOnKeyDown;
+      _view.AccessibilityTree.AfterSelect += AccessibilityTreeAfterSelect;
+      _view.AccessibilityTree.BeforeExpand += AccessibilityTreeBeforeExpand;
+      _view.AccessibilityTree.KeyDown += AccessibilityTreeOnKeyDown;
 
-      _accessibilityEventList.MouseDoubleClick += AccessibilityEventListOnMouseDoubleClick;
-      _accessibilityEventList.KeyDown += AccessibilityEventListOnKeyDown;
+      _view.EventList.MouseDoubleClick += AccessibilityEventListOnMouseDoubleClick;
+      _view.EventList.KeyDown += AccessibilityEventListOnKeyDown;
 
       PropertyOptions = PropertyOptions.AccessibleContextInfo |
         PropertyOptions.AccessibleIcons |
@@ -93,12 +71,12 @@ namespace AccessBridgeExplorer {
     }
 
     private void AccessibilityEventListOnKeyDown(object sender, KeyEventArgs e) {
-      if (_accessibilityEventList.SelectedItems.Count == 0)
+      if (_view.EventList.SelectedItems.Count == 0)
         return;
 
       switch (e.KeyCode & Keys.KeyCode) {
         case Keys.Return:
-          foreach (ListViewItem item in _accessibilityEventList.SelectedItems) {
+          foreach (ListViewItem item in _view.EventList.SelectedItems) {
             ShowEvent(item);
           }
           break;
@@ -106,7 +84,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void AccessibilityEventListOnMouseDoubleClick(object sender, MouseEventArgs e) {
-      ListViewHitTestInfo info = _accessibilityEventList.HitTest(e.X, e.Y);
+      ListViewHitTestInfo info = _view.EventList.HitTest(e.X, e.Y);
       if (info.Location == ListViewHitTestLocations.None)
         return;
       ShowEvent(info.Item);
@@ -124,7 +102,7 @@ namespace AccessBridgeExplorer {
         eventInfo.OnDisplay();
       } catch (Exception e) {
         LogErrorMessage(e);
-        MessageBox.Show(_invoker, e.Message, @"Error displaying event data", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        _view.ShowMessageBox(e.Message, @"Error displaying event data", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
     }
 
@@ -132,7 +110,7 @@ namespace AccessBridgeExplorer {
       var form = new EventForm();
       form.SetContextNodePropertyList(accessibleContextNode.GetProperties(PropertyOptions));
       form.ContextNodeSelect += (sender, args) => SelectTreeNode(accessibleContextNode);
-      form.ShowDialog(_invoker);
+      _view.ShowDialog(form);
     }
 
     private void ShowEventDialog(AccessibleContextNode accessibleContextNode, AccessibleContextNode oldNode, AccessibleContextNode newNode) {
@@ -143,7 +121,7 @@ namespace AccessBridgeExplorer {
       form.ContextNodeSelect += (sender, args) => SelectTreeNode(accessibleContextNode);
       form.OldValueSelect += (sender, args) => SelectTreeNode(oldNode);
       form.NewValueSelect += (sender, args) => SelectTreeNode(newNode);
-      form.ShowDialog(_invoker);
+      _view.ShowDialog(form);
     }
 
     private void ShowEventDialog(AccessibleContextNode accessibleContextNode, string oldValueName, string oldValue, string newValueName, string newValue) {
@@ -152,7 +130,7 @@ namespace AccessBridgeExplorer {
       form.SetOldValuePropertyList(new PropertyList { new PropertyNode(oldValueName, oldValue) });
       form.SetNewValuePropertyList(new PropertyList { new PropertyNode(newValueName, newValue) });
       form.ContextNodeSelect += (sender, args) => SelectTreeNode(accessibleContextNode);
-      form.ShowDialog(_invoker);
+      _view.ShowDialog(form);
     }
 
     private void CreateEventMenuItems() {
@@ -170,12 +148,12 @@ namespace AccessBridgeExplorer {
 
       // Create menu item (fixed font for alignment)
       var item = new ToolStripMenuItem();
-      item.Font = new Font("Lucida Console", _eventsMenu.Font.SizeInPoints, _eventsMenu.Font.Style, GraphicsUnit.Point);
+      item.Font = new Font("Lucida Console", _view.EventsMenu.Font.SizeInPoints, _view.EventsMenu.Font.Style, GraphicsUnit.Point);
       char mnemonicCharacter = (char)(index < 10 ? '0' + index : 'A' + index - 10);
       item.Text = string.Format("&{0} - {1}", mnemonicCharacter, name);
       item.CheckOnClick = true;
       item.CheckState = CheckState.Unchecked;
-      _eventsMenu.DropDownItems.Add(item);
+      _view.EventsMenu.DropDownItems.Add(item);
 
       // Find event handler
       var handlerMethod = GetType().GetMethod("EventsOn" + evt.Name, privateMembers);
@@ -211,12 +189,12 @@ namespace AccessBridgeExplorer {
 
       // Create menu item (fixed font for alignment)
       var item = new ToolStripMenuItem();
-      item.Font = new Font("Lucida Console", _eventsMenu.Font.SizeInPoints, _eventsMenu.Font.Style, GraphicsUnit.Point);
+      item.Font = new Font("Lucida Console", _view.PropertiesMenu.Font.SizeInPoints, _view.PropertiesMenu.Font.Style, GraphicsUnit.Point);
       char mnemonicCharacter = (char)(index < 10 ? '0' + index : 'A' + index - 10);
       item.Text = string.Format("&{0} - {1}", mnemonicCharacter, name);
       item.CheckOnClick = true;
       item.CheckState = ((PropertyOptions & value) == 0 ? CheckState.Unchecked : CheckState.Checked);
-      _propertyOptionsMenu.DropDownItems.Add(item);
+      _view.PropertiesMenu.DropDownItems.Add(item);
 
       // Create click handler
       item.CheckedChanged += (sender, args) => {
@@ -233,13 +211,13 @@ namespace AccessBridgeExplorer {
       _overlayWindow.Visible = true;
       _overlayWindow.Size = new Size(0, 0);
       _overlayWindow.Location = new Point(-10, -10);
-      _overlayWindow.Shown += (sender, args) => _accessibilityTree.Focus();
+      _overlayWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
 
       _tooltipWindow.TopMost = true;
       _tooltipWindow.Visible = true;
       _tooltipWindow.Size = new Size(0, 0);
       _tooltipWindow.Location = new Point(-10, -10);
-      _tooltipWindow.Shown += (sender, args) => _accessibilityTree.Focus();
+      _tooltipWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
 
       LogMessage("Initializing Java Access Bridge and enumerating active Java application windows.");
       UiAction(() => {
@@ -253,13 +231,13 @@ namespace AccessBridgeExplorer {
       if (_disposed)
         return;
 
-      DisposeTreeNodeList(_accessibilityTree.Nodes);
+      DisposeTreeNodeList(_view.AccessibilityTree.Nodes);
       _accessBridge.Dispose();
       _disposed = true;
     }
 
     public void UiAction(Action action) {
-      _invoker.Invoke(() => {
+      _view.MessageQueue.Invoke(() => {
         try {
           action();
         } catch (Exception e) {
@@ -269,7 +247,7 @@ namespace AccessBridgeExplorer {
     }
 
     public T UiCompute<T>(Func<T> function) {
-      return _invoker.Compute(() => {
+      return _view.MessageQueue.Compute(() => {
         try {
           return function();
         } catch (Exception e) {
@@ -353,7 +331,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void AddEvent(ListViewItem item) {
-      AddListViewItem(_accessibilityEventList, item);
+      AddListViewItem(_view.EventList, item);
     }
 
     public void LogMessage(string format, params object[] args) {
@@ -363,7 +341,7 @@ namespace AccessBridgeExplorer {
       item.Text = _messageId.ToString();
       item.SubItems.Add(time.ToLongTimeString());
       item.SubItems.Add(string.Format(format, args));
-      AddListViewItem(_messageList, item);
+      AddListViewItem(_view.MessageList, item);
     }
 
     public void LogErrorMessage(Exception error) {
@@ -395,24 +373,24 @@ namespace AccessBridgeExplorer {
 
       UiAction(() => {
         var windows = _accessBridge.EnumWindows();
-        _accessibilityTree.BeginUpdate();
+        _view.AccessibilityTree.BeginUpdate();
         try {
-          DisposeTreeNodeList(_accessibilityTree.Nodes);
-          _accessibilityTree.Nodes.Clear();
+          DisposeTreeNodeList(_view.AccessibilityTree.Nodes);
+          _view.AccessibilityTree.Nodes.Clear();
           if (!windows.Any()) {
-            _accessibilityTree.Nodes.Add("No JVM/Java window found. Try Refresh Again?");
+            _view.AccessibilityTree.Nodes.Add("No JVM/Java window found. Try Refresh Again?");
             return;
           }
           var topLevelNodes = windows.Select(x => new AccessibleNodeModel(x));
           topLevelNodes.ForEach(x => {
             var node = x.CreateTreeNode();
-            _accessibilityTree.Nodes.Add(node);
+            _view.AccessibilityTree.Nodes.Add(node);
             node.Expand();
           });
         } finally {
-          _accessibilityTree.EndUpdate();
+          _view.AccessibilityTree.EndUpdate();
         }
-        _statusLabel.Text = "Ready.";
+        _view.StatusLabel.Text = "Ready.";
         HideOverlayWindow();
         HideToolTip();
         _navigation.Clear();
@@ -434,12 +412,12 @@ namespace AccessBridgeExplorer {
     }
 
     public void ClearSelectedNode() {
-      var node = _accessibilityTree.SelectedNode;
+      var node = _view.AccessibilityTree.SelectedNode;
       if (node != null) {
-        _accessibilityTree.SelectedNode = null;
+        _view.AccessibilityTree.SelectedNode = null;
         _overlayWindowRectangle = null;
         UpdateOverlayWindow();
-        _acessibleContextPropertyListWrapper.Clear();
+        _view.ComponentPropertyList.Clear();
       }
     }
 
@@ -461,7 +439,7 @@ namespace AccessBridgeExplorer {
       if (nodeModel == null) {
         _overlayWindowRectangle = null;
         UpdateOverlayWindow();
-        _acessibleContextPropertyListWrapper.Clear();
+        _view.ComponentPropertyList.Clear();
         return;
       }
 
@@ -469,7 +447,7 @@ namespace AccessBridgeExplorer {
       UiAction(() => {
         _overlayWindowRectangle = nodeModel.AccessibleNode.GetScreenRectangle();
         var propertyList = nodeModel.AccessibleNode.GetProperties(PropertyOptions);
-        _acessibleContextPropertyListWrapper.SetPropertyList(propertyList);
+        _view.ComponentPropertyList.SetPropertyList(propertyList);
       });
 
       EnsureTreeNodeVisible(treeNode);
@@ -485,11 +463,11 @@ namespace AccessBridgeExplorer {
     private void AccessibilityTreeOnKeyDown(object sender, KeyEventArgs keyEventArgs) {
       if (keyEventArgs.KeyCode != Keys.Return)
         return;
-      var treeNode = _accessibilityTree.SelectedNode;
+      var treeNode = _view.AccessibilityTree.SelectedNode;
       if (treeNode == null)
         return;
 
-      var nodeModel = _accessibilityTree.SelectedNode.Tag as AccessibleNodeModel;
+      var nodeModel = _view.AccessibilityTree.SelectedNode.Tag as AccessibleNodeModel;
       if (nodeModel == null)
         return;
 
@@ -509,7 +487,7 @@ namespace AccessBridgeExplorer {
 
         // Update the property list
         var propertyList = nodeModel.AccessibleNode.GetProperties(PropertyOptions);
-        _acessibleContextPropertyListWrapper.SetPropertyList(propertyList);
+        _view.ComponentPropertyList.SetPropertyList(propertyList);
 
         // Update the overlay window
         _overlayWindowRectangle = nodeModel.AccessibleNode.GetScreenRectangle();
@@ -575,7 +553,7 @@ namespace AccessBridgeExplorer {
     /// </summary>
     public NodePath GetNodePathAt(Point screenPoint) {
       return UiCompute(() => {
-        foreach (TreeNode treeNode in _accessibilityTree.Nodes) {
+        foreach (TreeNode treeNode in _view.AccessibilityTree.Nodes) {
           var node = treeNode.Tag as AccessibleNodeModel;
           if (node == null)
             continue;
@@ -595,7 +573,7 @@ namespace AccessBridgeExplorer {
     }
 
     public void RefreshTick() {
-      if (_accessibilityTree.Nodes.Count == 0)
+      if (_view.AccessibilityTree.Nodes.Count == 0)
         RefreshTree();
     }
 
@@ -606,7 +584,7 @@ namespace AccessBridgeExplorer {
         return;
       }
       SelectTreeNode(nodePath);
-      _accessibilityTree.Focus();
+      _view.AccessibilityTree.Focus();
     }
 
     public void SelectTreeNode(AccessibleNode childNode) {
@@ -623,7 +601,7 @@ namespace AccessBridgeExplorer {
     public void SelectTreeNode(NodePath nodePath) {
       TreeNode lastFoundTreeNode = null;
       // Pop each node and find it in the corresponding collection
-      var parentNodeList = _accessibilityTree.Nodes;
+      var parentNodeList = _view.AccessibilityTree.Nodes;
       while (nodePath.Count > 0) {
         var childNode = nodePath.Pop();
 
@@ -647,7 +625,7 @@ namespace AccessBridgeExplorer {
       }
 
       if (lastFoundTreeNode != null) {
-        _accessibilityTree.SelectedNode = lastFoundTreeNode;
+        _view.AccessibilityTree.SelectedNode = lastFoundTreeNode;
         EnsureTreeNodeVisible(lastFoundTreeNode);
       }
     }
