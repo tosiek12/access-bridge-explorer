@@ -20,7 +20,7 @@ namespace AccessBridgeExplorer {
 
     TreeView AccessibilityTree { get; }
 
-    PropertyListView ComponentPropertyList { get; }
+    PropertyListView AccessibleComponentPropertyList { get; }
 
     ListView MessageList { get; }
     ListView EventList { get; }

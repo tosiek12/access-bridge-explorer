@@ -300,7 +300,7 @@ namespace AccessBridgeExplorer {
       get { return _accessibilityTree; }
     }
 
-    PropertyListView IExplorerFormView.ComponentPropertyList {
+    PropertyListView IExplorerFormView.AccessibleComponentPropertyList {
       get { return _accessibleContextPropertyList; }
     }
 

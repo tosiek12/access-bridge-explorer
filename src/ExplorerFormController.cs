@@ -417,7 +417,7 @@ namespace AccessBridgeExplorer {
         _view.AccessibilityTree.SelectedNode = null;
         _overlayWindowRectangle = null;
         UpdateOverlayWindow();
-        _view.ComponentPropertyList.Clear();
+        _view.AccessibleComponentPropertyList.Clear();
       }
     }
 
@@ -439,7 +439,7 @@ namespace AccessBridgeExplorer {
       if (nodeModel == null) {
         _overlayWindowRectangle = null;
         UpdateOverlayWindow();
-        _view.ComponentPropertyList.Clear();
+        _view.AccessibleComponentPropertyList.Clear();
         return;
       }
 
@@ -447,7 +447,7 @@ namespace AccessBridgeExplorer {
       UiAction(() => {
         _overlayWindowRectangle = nodeModel.AccessibleNode.GetScreenRectangle();
         var propertyList = nodeModel.AccessibleNode.GetProperties(PropertyOptions);
-        _view.ComponentPropertyList.SetPropertyList(propertyList);
+        _view.AccessibleComponentPropertyList.SetPropertyList(propertyList);
       });
 
       EnsureTreeNodeVisible(treeNode);
@@ -487,7 +487,7 @@ namespace AccessBridgeExplorer {
 
         // Update the property list
         var propertyList = nodeModel.AccessibleNode.GetProperties(PropertyOptions);
-        _view.ComponentPropertyList.SetPropertyList(propertyList);
+        _view.AccessibleComponentPropertyList.SetPropertyList(propertyList);
 
         // Update the overlay window
         _overlayWindowRectangle = nodeModel.AccessibleNode.GetScreenRectangle();
