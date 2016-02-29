@@ -19,7 +19,7 @@ issues of such Java applications without having to rely on a screen reader.
 
 **Note**: [Access Bridge Explorer](https://github.com/google/access-bridge-explorer)
 should not considered a screen reader, as it is merely a debugging tools
-useful to developers of Java applications who want to validated/ensure
+useful for developers of Java applications who want to validated/ensure
 holistic support for screen readers in their application.
 
 
