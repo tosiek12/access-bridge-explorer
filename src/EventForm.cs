@@ -18,15 +18,15 @@ using AccessBridgeExplorer.Model;
 
 namespace AccessBridgeExplorer {
   public partial class EventForm : Form {
-    private readonly PropertyListViewWrapper _accessibleContextPropertyListWrapper;
-    private readonly PropertyListViewWrapper _oldValuePropertyListWrapper;
-    private readonly PropertyListViewWrapper _newValuePropertyListWrapper;
+    private readonly PropertyListView _accessibleContextPropertyList;
+    private readonly PropertyListView _oldValuePropertyList;
+    private readonly PropertyListView _newValuePropertyList;
 
     public EventForm() {
       InitializeComponent();
-      _accessibleContextPropertyListWrapper = new PropertyListViewWrapper(accessibleContextPropertyList, propertyImageList);
-      _oldValuePropertyListWrapper = new PropertyListViewWrapper(oldValuePropertyList, propertyImageList);
-      _newValuePropertyListWrapper = new PropertyListViewWrapper(newValuePropertyList, propertyImageList);
+      _accessibleContextPropertyList = new PropertyListView(accessibleContextPropertyList, propertyImageList);
+      _oldValuePropertyList = new PropertyListView(oldValuePropertyList, propertyImageList);
+      _newValuePropertyList = new PropertyListView(newValuePropertyList, propertyImageList);
 
       //accessibleContextTabPage.Enter += (sender, args) => OnContextNodeSelect();
       //oldValuePage.Enter += (sender, args) => OnOldValueSelect();
@@ -38,15 +38,15 @@ namespace AccessBridgeExplorer {
     public event EventHandler NewValueSelect;
 
     public void SetContextNodePropertyList(PropertyList propertyList) {
-      _accessibleContextPropertyListWrapper.SetPropertyList(propertyList);
+      _accessibleContextPropertyList.SetPropertyList(propertyList);
     }
 
     public void SetOldValuePropertyList(PropertyList propertyList) {
-      _oldValuePropertyListWrapper.SetPropertyList(propertyList);
+      _oldValuePropertyList.SetPropertyList(propertyList);
     }
 
     public void SetNewValuePropertyList(PropertyList propertyList) {
-      _newValuePropertyListWrapper.SetPropertyList(propertyList);
+      _newValuePropertyList.SetPropertyList(propertyList);
     }
 
     protected virtual void OnContextNodeSelect() {

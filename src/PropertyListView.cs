@@ -24,7 +24,7 @@ namespace AccessBridgeExplorer {
   /// property list. The <see cref="Clear"/> method must be called to clear the
   /// contents of the listview.
   /// </summary>
-  public class PropertyListViewWrapper {
+  public class PropertyListView {
     private readonly ListView _listView;
     private readonly ExpandedNodeState _nodeState = new ExpandedNodeState();
     private PropertyList _currentPropertyList;
@@ -33,7 +33,7 @@ namespace AccessBridgeExplorer {
     /// Setup event handlers and image list. Can be called in the Forms
     /// constructor, just after <code>InitializeComponent</code>.
     /// </summary>
-    public PropertyListViewWrapper(ListView listView, ImageList stateImageList) {
+    public PropertyListView(ListView listView, ImageList stateImageList) {
       _listView = listView;
 
       listView.FullRowSelect = true;

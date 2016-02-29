@@ -67,8 +67,8 @@
     <Compile Include="ExplorerFormController.cs" />
     <Compile Include="IExplorerFormNavigation.cs" />
     <Compile Include="IExplorerFormView.cs" />
-    <Compile Include="IUIThreadInvoker.cs" />
-    <Compile Include="PropertyListViewWrapper.cs" />
+    <Compile Include="IMessageQueue.cs" />
+    <Compile Include="PropertyListView.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="EventForm.cs">
       <SubType>Form</SubType>

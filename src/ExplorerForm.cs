@@ -19,10 +19,10 @@ using System.Reflection;
 using System.Windows.Forms;
 
 namespace AccessBridgeExplorer {
-  public partial class ExplorerForm : Form, IExplorerFormView, IUIThreadInvoker {
+  public partial class ExplorerForm : Form, IExplorerFormView, IMessageQueue {
     private readonly WindowsHotKeyHandler _hotKeyHandler;
     private readonly ExplorerFormController _controller;
-    private PropertyListViewWrapper _accessibleContextPropertyListWrapper;
+    private PropertyListView _accessibleContextPropertyList;
     private bool _capturing;
     private int _navigationVersion = int.MinValue;
 
@@ -30,7 +30,7 @@ namespace AccessBridgeExplorer {
       InitializeComponent();
       mainToolStrip.Renderer = new OverlayButtonRenderer(this);
 
-      _accessibleContextPropertyListWrapper = new PropertyListViewWrapper(accessibleContextPropertyList, propertyImageList);
+      _accessibleContextPropertyList = new PropertyListView(accessibleContextPropertyList, propertyImageList);
       _controller = new ExplorerFormController(this);
       _hotKeyHandler = new WindowsHotKeyHandler();
       _hotKeyHandler.KeyPressed += HotKeyHandlerOnKeyPressed;
@@ -292,7 +292,7 @@ namespace AccessBridgeExplorer {
     }
 
     #region IExplorerFormView
-    IUIThreadInvoker IExplorerFormView.MessageQueue {
+    IMessageQueue IExplorerFormView.MessageQueue {
       get { return this; }
     }
 
@@ -300,8 +300,8 @@ namespace AccessBridgeExplorer {
       get { return _accessibilityTree; }
     }
 
-    PropertyListViewWrapper IExplorerFormView.ComponentPropertyList {
-      get { return _accessibleContextPropertyListWrapper; }
+    PropertyListView IExplorerFormView.ComponentPropertyList {
+      get { return _accessibleContextPropertyList; }
     }
 
     ListView IExplorerFormView.MessageList {

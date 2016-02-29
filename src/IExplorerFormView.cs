@@ -16,11 +16,11 @@ using System.Windows.Forms;
 
 namespace AccessBridgeExplorer {
   public interface IExplorerFormView {
-    IUIThreadInvoker MessageQueue { get; }
+    IMessageQueue MessageQueue { get; }
 
     TreeView AccessibilityTree { get; }
 
-    PropertyListViewWrapper ComponentPropertyList { get; }
+    PropertyListView ComponentPropertyList { get; }
 
     ListView MessageList { get; }
     ListView EventList { get; }

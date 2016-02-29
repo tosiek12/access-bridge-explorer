@@ -13,10 +13,9 @@
 // limitations under the License.
 
 using System;
-using System.Windows.Forms;
 
 namespace AccessBridgeExplorer {
-  public interface IUIThreadInvoker {
+  public interface IMessageQueue {
     void InvokeLater(Action action);
     void Invoke(Action action);
     T Compute<T>(Func<T> function);
