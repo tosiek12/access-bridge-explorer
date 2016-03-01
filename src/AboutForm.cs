@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using AccessBridgeExplorer.WindowsAccessBridge;
@@ -52,6 +51,10 @@ namespace AccessBridgeExplorer {
         return true;
       }
       return base.ProcessDialogKey(keyData);
+    }
+
+    private void githubUrlLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+      System.Diagnostics.Process.Start(githubUrlLinkLabel.Text);
     }
   }
 }
