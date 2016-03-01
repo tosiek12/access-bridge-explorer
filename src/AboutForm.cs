@@ -28,12 +28,11 @@ namespace AccessBridgeExplorer {
       applicationCopyrightText.Text = GetAttribute<AssemblyCopyrightAttribute>(application).Copyright;
       applicationVersionText.Text = string.Format("Version {0}", application.GetName().Version);
 
-      accessBridgeNameText.Text = @"Access Bridge info:";
       try {
         var libraryVersion = accessBridge.Library.Version;
-        accessBridgeProductText.Text = string.Format("Product: {0}", libraryVersion.ProductName);
-        accessBridgeVersionText.Text = string.Format("Version: {0}", libraryVersion.FileVersion);
-        accessBridgePathText.Text = string.Format("Path: {0}", libraryVersion.FileName);
+        accessBridgeProductText.Text = string.Format("{0}", libraryVersion.ProductName);
+        accessBridgeVersionText.Text = string.Format("{0}", libraryVersion.FileVersion);
+        accessBridgePathText.Text = string.Format("{0}", libraryVersion.FileName);
       } catch (Exception e) {
         accessBridgeProductText.Text = @"<Error loading Access Bridge>";
         accessBridgeVersionText.Text = e.Message;
