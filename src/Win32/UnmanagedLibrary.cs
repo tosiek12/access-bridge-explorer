@@ -13,9 +13,11 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Text;
 using Microsoft.Win32.SafeHandles;
 
 namespace AccessBridgeExplorer.Win32 {
@@ -47,6 +49,26 @@ namespace AccessBridgeExplorer.Win32 {
           throw new Exception(string.Format("Error loading library \"{0}\"", fileName), e);
         }
       }
+    }
+
+    public string Path {
+      get {
+        if (_libraryHandle.IsInvalid) {
+          throw new InvalidOperationException("Cannot retrieve path because no library has been loaded yet");
+        }
+
+        var sb = new StringBuilder(4096);
+        var size = NativeMethods.GetModuleFileName(_libraryHandle, sb, (uint)sb.Capacity);
+        if (size == 0) {
+          throw new InvalidOperationException("Error retrieving library path");
+        }
+
+        return sb.ToString(0, (int)size);
+      }
+    }
+
+    public FileVersionInfo Version {
+      get { return FileVersionInfo.GetVersionInfo(Path); }
     }
 
     /// <summary>
@@ -115,6 +137,7 @@ namespace AccessBridgeExplorer.Win32 {
 
     static class NativeMethods {
       const string SKernel = "kernel32";
+
       [DllImport(SKernel, CharSet = CharSet.Auto, BestFitMapping = false, SetLastError = true)]
       public static extern SafeLibraryHandle LoadLibrary(string fileName);
 
@@ -125,6 +148,12 @@ namespace AccessBridgeExplorer.Win32 {
 
       [DllImport(SKernel)]
       public static extern IntPtr GetProcAddress(SafeLibraryHandle hModule, string procname);
+
+      [DllImport(SKernel, CharSet = CharSet.Auto, BestFitMapping = false, SetLastError = true)]
+      public static extern uint GetModuleFileName(
+        [In]SafeLibraryHandle hModule,
+        [Out]StringBuilder lpFilename,
+        [In]uint nSize);
     }
   }
 }

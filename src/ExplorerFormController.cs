@@ -15,7 +15,6 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Net.Mime;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -269,6 +268,12 @@ namespace AccessBridgeExplorer {
         item.Selected = true;
       }
       _view.FocusMessageList();
+    }
+
+    public void ShowAbout() {
+      var form = new AboutForm();
+      form.FillForm(Assembly.GetExecutingAssembly(), _accessBridge);
+      _view.ShowDialog(form);
     }
 
     public void LogIntroMessages() {

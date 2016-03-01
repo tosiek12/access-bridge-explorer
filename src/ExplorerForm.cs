@@ -335,5 +335,9 @@ namespace AccessBridgeExplorer {
     }
 
     #endregion
+
+    private void aboutMenuItem_Click(object sender, EventArgs e) {
+      _controller.ShowAbout();
+    }
   }
 }

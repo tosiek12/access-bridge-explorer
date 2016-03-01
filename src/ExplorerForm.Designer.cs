@@ -1,4 +1,18 @@
-﻿namespace AccessBridgeExplorer {
+﻿// Copyright 2016 Google Inc. All Rights Reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+namespace AccessBridgeExplorer {
   partial class ExplorerForm {
     /// <summary>
     /// Required designer variable.
@@ -84,6 +98,8 @@
       this.eventsToolStrip = new System.Windows.Forms.ToolStrip();
       this.clearEventsButton = new System.Windows.Forms.ToolStripButton();
       this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
       this.mainToolStrip.SuspendLayout();
@@ -133,7 +149,7 @@
       // 
       this.exitMenuItem.Name = "exitMenuItem";
       this.exitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.X)));
-      this.exitMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.exitMenuItem.Size = new System.Drawing.Size(129, 22);
       this.exitMenuItem.Text = "E&xit";
       this.exitMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
       // 
@@ -194,26 +210,26 @@
       // _propertiesMenu
       // 
       this._propertiesMenu.Name = "_propertiesMenu";
-      this._propertiesMenu.Size = new System.Drawing.Size(152, 22);
+      this._propertiesMenu.Size = new System.Drawing.Size(146, 22);
       this._propertiesMenu.Text = "&Properties";
       this._propertiesMenu.ToolTipText = "Properties to show in the component property list";
       // 
       // _eventsMenu
       // 
       this._eventsMenu.Name = "_eventsMenu";
-      this._eventsMenu.Size = new System.Drawing.Size(152, 22);
+      this._eventsMenu.Size = new System.Drawing.Size(146, 22);
       this._eventsMenu.Text = "&Events";
       this._eventsMenu.ToolTipText = "Events to capture and display in the events window";
       // 
       // separator5
       // 
       this.separator5.Name = "separator5";
-      this.separator5.Size = new System.Drawing.Size(149, 6);
+      this.separator5.Size = new System.Drawing.Size(143, 6);
       // 
       // showOverlayMenuItem
       // 
       this.showOverlayMenuItem.Name = "showOverlayMenuItem";
-      this.showOverlayMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.showOverlayMenuItem.Size = new System.Drawing.Size(146, 22);
       this.showOverlayMenuItem.Text = "Show &Overlay";
       this.showOverlayMenuItem.ToolTipText = "Toggle selected component overlay window";
       this.showOverlayMenuItem.Click += new System.EventHandler(this.showOverlayMenuItem_Click);
@@ -221,7 +237,9 @@
       // helpMenu
       // 
       this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.viewHelpMenuItem});
+            this.viewHelpMenuItem,
+            this.toolStripMenuItem1,
+            this.aboutMenuItem});
       this.helpMenu.Name = "helpMenu";
       this.helpMenu.Size = new System.Drawing.Size(44, 20);
       this.helpMenu.Text = "&Help";
@@ -659,6 +677,18 @@
       this.testToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
       this.testToolStripMenuItem.Text = "Test";
       // 
+      // aboutMenuItem
+      // 
+      this.aboutMenuItem.Name = "aboutMenuItem";
+      this.aboutMenuItem.Size = new System.Drawing.Size(173, 22);
+      this.aboutMenuItem.Text = "&About";
+      this.aboutMenuItem.Click += new System.EventHandler(this.aboutMenuItem_Click);
+      // 
+      // toolStripMenuItem1
+      // 
+      this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(170, 6);
+      // 
       // ExplorerForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -774,6 +804,8 @@
     private System.Windows.Forms.ToolStripSeparator separator5;
     private System.Windows.Forms.ToolStripMenuItem showOverlayMenuItem;
     private System.Windows.Forms.ToolStripButton _overlayEnableButton;
+    private System.Windows.Forms.ToolStripMenuItem aboutMenuItem;
+    private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
   }
 }
 

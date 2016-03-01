@@ -27,22 +27,34 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   public class AccessBridge : IDisposable {
     private UnmanagedLibrary _library;
     private AccessBridgeFunctions _functions;
-    private readonly AccessBridgeEvents _events;
+    private AccessBridgeEvents _events;
     private bool _disposed;
 
     public AccessBridge() {
-      _events = new AccessBridgeEvents(this);
     }
 
     public AccessBridgeFunctions Functions {
       get {
+        ThrowIfDisposed();
         Initialize();
         return _functions;
       }
     }
 
     public AccessBridgeEvents Events {
-      get { return _events; }
+      get {
+        ThrowIfDisposed();
+        Initialize();
+        return _events;
+      }
+    }
+
+    public UnmanagedLibrary Library {
+      get {
+        ThrowIfDisposed();
+        Initialize();
+        return _library;
+      }
     }
 
     public void Initialize() {
@@ -52,8 +64,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
       var library = LoadLibrary();
       var functions = LoadFunctions(library);
+      var events = new AccessBridgeEvents(this);
+
+      // Everything is initialized correctly, save to member variables.
       _library = library;
       _functions = functions;
+      _events = events;
       _events.SetHandlers();
       _functions.Windows_run();
     }
@@ -77,7 +93,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     private void ThrowIfDisposed() {
       if (_disposed)
-        throw new ObjectDisposedException("access bridge");
+        throw new ObjectDisposedException("Access Bridge library has been disposed");
     }
 
     public List<AccessibleJvm> EnumWindows() {
