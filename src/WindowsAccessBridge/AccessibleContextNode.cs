@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -31,6 +30,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     private readonly JavaObjectHandle _ac;
     private Lazy<AccessibleContextInfo> _info;
     private readonly List<Lazy<AccessibleNode>> _childList = new List<Lazy<AccessibleNode>>();
+    private bool _isManagedDescendant;
 
     public AccessibleContextNode(AccessBridge accessBridge, JavaObjectHandle ac) : base(accessBridge) {
       _ac = ac;
@@ -39,6 +39,14 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     public override int JvmId {
       get { return _ac.JvmId; }
+    }
+
+    public override bool IsManagedDescendant {
+      get { return _isManagedDescendant; }
+    }
+
+    public void SetManagedDescendant(bool value) {
+      _isManagedDescendant = value;
     }
 
     public override void Dispose() {
@@ -67,17 +75,19 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     public AccessibleContextInfo FetchNodeInfo() {
       ThrowIfDisposed();
+      _childList.Clear();
+
       AccessibleContextInfo info;
       if (Failed(AccessBridge.Functions.GetAccessibleContextInfo(JvmId, _ac, out info))) {
         throw new ApplicationException("Error retrieving accessible context info");
       }
-      _childList.Clear();
       _childList.AddRange(Enumerable.Range(0, info.childrenCount).Select(i => new Lazy<AccessibleNode>(() => FetchChildNode(i))));
       return info;
     }
 
     public AccessibleNode FetchChildNode(int i) {
       ThrowIfDisposed();
+#if false
       var nodeInfo = _info.Value;
       if ((nodeInfo.accessibleInterfaces & AccessibleInterfaces.cAccessibleTableInterface) != 0) {
         // Note: The default implementation for table is incorrect due to an
@@ -89,13 +99,18 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         // method for tables.
         return FetchTableChildNode(i);
       }
+#endif
 
       var childContextPtr = AccessBridge.Functions.GetAccessibleChildFromContext(JvmId, _ac, i);
       if (childContextPtr == IntPtr.Zero) {
         throw new ApplicationException(string.Format("Error retrieving accessible context for child {0}", i));
       }
 
-      return new AccessibleContextNode(AccessBridge, new JavaObjectHandle(JvmId, childContextPtr));
+      var result = new AccessibleContextNode(AccessBridge, new JavaObjectHandle(JvmId, childContextPtr));
+      if (_isManagedDescendant || _info.Value.states.Contains("manages descendants")) {
+        result.SetManagedDescendant(true);
+      }
+      return result;
     }
 
     /// <summary>
@@ -233,19 +248,29 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     public override string GetTitle() {
       var info = GetInfo();
-      string text;
-      if (!string.IsNullOrEmpty(info.name))
-        text = info.name;
-      else if (!string.IsNullOrEmpty(info.description))
-        text = info.description;
-      else
-        text = "";
 
-      if (string.IsNullOrEmpty(text))
-        text = string.Format("{0}", info.role ?? "");
-      else
-        text = string.Format("{0}: {1}", info.role ?? "", text);
-      return text;
+      var sb = new StringBuilder();
+      // Append role (if exists)
+      if (!string.IsNullOrEmpty(info.role)) {
+        if (sb.Length > 0)
+          sb.Append(" ");
+        sb.Append(info.role);
+      }
+
+      // Append name or description
+      var caption = !string.IsNullOrEmpty(info.name) ? info.name : info.description;
+      if (!string.IsNullOrEmpty(caption)) {
+        if (sb.Length > 0)
+          sb.Append(": ");
+        sb.Append(caption);
+      }
+
+      // Append ephemeral state (if exists)
+      if (_isManagedDescendant) {
+        sb.Append("*");
+      }
+
+      return sb.ToString();
     }
 
     protected override void AddProperties(PropertyList list, PropertyOptions options) {

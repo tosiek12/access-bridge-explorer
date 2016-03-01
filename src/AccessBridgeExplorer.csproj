@@ -68,6 +68,7 @@
     <Compile Include="IExplorerFormNavigation.cs" />
     <Compile Include="IExplorerFormView.cs" />
     <Compile Include="IMessageQueue.cs" />
+    <Compile Include="Model\AccessibleNodeModelResources.cs" />
     <Compile Include="PropertyListView.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="EventForm.cs">

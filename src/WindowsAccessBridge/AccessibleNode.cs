@@ -45,6 +45,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     public abstract AccessibleNode GetChildAt(int i);
 
+    /// <summary>
+    /// Return true if the node is valid for a short period of time only,
+    /// e.g. if the parent has the "manages descendants" state.
+    /// </summary>
+    public virtual bool IsManagedDescendant { get { return false; } }
+
     public IEnumerable<AccessibleNode> GetChildren() {
       return Enumerable.Range(0, GetChildrenCount()).Select(i => GetChildAt(i));
     }

@@ -18,9 +18,11 @@ using AccessBridgeExplorer.WindowsAccessBridge;
 
 namespace AccessBridgeExplorer.Model {
   public class AccessibleNodeModel : NodeModel {
+    private readonly AccessibleNodeModelResources _resources;
     private readonly AccessibleNode _accessibleNode;
 
-    public AccessibleNodeModel(AccessibleNode accessibleNode) {
+    public AccessibleNodeModel(AccessibleNodeModelResources resources, AccessibleNode accessibleNode) {
+      _resources = resources;
       _accessibleNode = accessibleNode;
     }
 
@@ -30,7 +32,7 @@ namespace AccessBridgeExplorer.Model {
 
     public override void AddChildren(TreeNode node) {
       _accessibleNode.GetChildren()
-        .Select(x => new AccessibleNodeModel(x))
+        .Select(x => new AccessibleNodeModel(_resources, x))
         .ForEach(x => {
           node.Nodes.Add(x.CreateTreeNode());
         });
@@ -43,6 +45,9 @@ namespace AccessBridgeExplorer.Model {
       }
 
       node.Text = _accessibleNode.GetTitle();
+      if (_accessibleNode.IsManagedDescendant) { 
+        node.NodeFont = _resources.ManagedDescendantFont;
+      }
     }
   }
 }

@@ -26,6 +26,7 @@ namespace AccessBridgeExplorer {
   public class ExplorerFormController : IDisposable {
     private readonly IExplorerFormView _view;
     private readonly IExplorerFormNavigation _navigation;
+    private readonly AccessibleNodeModelResources _accessibleNodeModelResources;
     private readonly AccessBridge _accessBridge = new AccessBridge();
     private readonly OverlayWindow _overlayWindow = new OverlayWindow();
     private readonly TooltipWindow _tooltipWindow = new TooltipWindow();
@@ -38,6 +39,7 @@ namespace AccessBridgeExplorer {
     public ExplorerFormController(IExplorerFormView explorerFormView) {
       _navigation = new ExplorerFormNavigation();
       _view = explorerFormView;
+      _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
       _overlayWindowEnabled = true;
 
       _view.AccessibilityTree.AfterSelect += AccessibilityTreeAfterSelect;
@@ -54,6 +56,7 @@ namespace AccessBridgeExplorer {
         PropertyOptions.ParentContext |
         PropertyOptions.ObjectDepth |
         PropertyOptions.TopLevelWindowInfo |
+        PropertyOptions.ActiveDescendent |
         PropertyOptions.AccessibleText |
         PropertyOptions.AccessibleHyperText |
         PropertyOptions.AccessibleValue |
@@ -401,7 +404,7 @@ namespace AccessBridgeExplorer {
             _view.AccessibilityTree.Nodes.Add("No JVM/Java window found. Try Refresh Again?");
             return;
           }
-          var topLevelNodes = windows.Select(x => new AccessibleNodeModel(x));
+          var topLevelNodes = windows.Select(x => new AccessibleNodeModel(_accessibleNodeModelResources, x));
           topLevelNodes.ForEach(x => {
             var node = x.CreateTreeNode();
             _view.AccessibilityTree.Nodes.Add(node);
