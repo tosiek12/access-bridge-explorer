@@ -54,6 +54,8 @@ namespace AccessBridgeExplorer {
       this.showOverlayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.viewHelpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+      this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.statusBarStrip = new System.Windows.Forms.StatusStrip();
       this._statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.mainToolStrip = new System.Windows.Forms.ToolStrip();
@@ -98,8 +100,6 @@ namespace AccessBridgeExplorer {
       this.eventsToolStrip = new System.Windows.Forms.ToolStrip();
       this.clearEventsButton = new System.Windows.Forms.ToolStripButton();
       this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
       this.mainToolStrip.SuspendLayout();
@@ -133,7 +133,7 @@ namespace AccessBridgeExplorer {
       this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
       this.mainMenuStrip.Name = "mainMenuStrip";
       this.mainMenuStrip.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
-      this.mainMenuStrip.Size = new System.Drawing.Size(1181, 24);
+      this.mainMenuStrip.Size = new System.Drawing.Size(1008, 24);
       this.mainMenuStrip.TabIndex = 0;
       this.mainMenuStrip.Text = "menuStrip1";
       // 
@@ -210,15 +210,15 @@ namespace AccessBridgeExplorer {
       // _propertiesMenu
       // 
       this._propertiesMenu.Name = "_propertiesMenu";
-      this._propertiesMenu.Size = new System.Drawing.Size(146, 22);
-      this._propertiesMenu.Text = "&Properties";
-      this._propertiesMenu.ToolTipText = "Properties to show in the component property list";
+      this._propertiesMenu.Size = new System.Drawing.Size(168, 22);
+      this._propertiesMenu.Text = "Display &Properties";
+      this._propertiesMenu.ToolTipText = "Properties to show in Component Properties";
       // 
       // _eventsMenu
       // 
       this._eventsMenu.Name = "_eventsMenu";
-      this._eventsMenu.Size = new System.Drawing.Size(146, 22);
-      this._eventsMenu.Text = "&Events";
+      this._eventsMenu.Size = new System.Drawing.Size(168, 22);
+      this._eventsMenu.Text = "Capture &Events";
       this._eventsMenu.ToolTipText = "Events to capture and display in the events window";
       // 
       // separator5
@@ -252,15 +252,27 @@ namespace AccessBridgeExplorer {
       this.viewHelpMenuItem.Text = "View &Help";
       this.viewHelpMenuItem.Click += new System.EventHandler(this.viewHelpToolStripMenuItem_Click);
       // 
+      // toolStripMenuItem1
+      // 
+      this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(170, 6);
+      // 
+      // aboutMenuItem
+      // 
+      this.aboutMenuItem.Name = "aboutMenuItem";
+      this.aboutMenuItem.Size = new System.Drawing.Size(173, 22);
+      this.aboutMenuItem.Text = "&About";
+      this.aboutMenuItem.Click += new System.EventHandler(this.aboutMenuItem_Click);
+      // 
       // statusBarStrip
       // 
       this.statusBarStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
       this.statusBarStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._statusLabel});
-      this.statusBarStrip.Location = new System.Drawing.Point(0, 682);
+      this.statusBarStrip.Location = new System.Drawing.Point(0, 711);
       this.statusBarStrip.Name = "statusBarStrip";
       this.statusBarStrip.Padding = new System.Windows.Forms.Padding(1, 0, 17, 0);
-      this.statusBarStrip.Size = new System.Drawing.Size(1181, 22);
+      this.statusBarStrip.Size = new System.Drawing.Size(1008, 22);
       this.statusBarStrip.TabIndex = 1;
       this.statusBarStrip.Text = "statusStrip1";
       // 
@@ -286,7 +298,7 @@ namespace AccessBridgeExplorer {
             this.showHelpButton});
       this.mainToolStrip.Location = new System.Drawing.Point(0, 24);
       this.mainToolStrip.Name = "mainToolStrip";
-      this.mainToolStrip.Size = new System.Drawing.Size(1181, 27);
+      this.mainToolStrip.Size = new System.Drawing.Size(1008, 27);
       this.mainToolStrip.TabIndex = 3;
       this.mainToolStrip.TabStop = true;
       this.mainToolStrip.Text = "toolStrip1";
@@ -391,8 +403,8 @@ namespace AccessBridgeExplorer {
       // topSplitContainer.Panel2
       // 
       this.topSplitContainer.Panel2.Controls.Add(this._accessibleComponentTabControl);
-      this.topSplitContainer.Size = new System.Drawing.Size(1181, 400);
-      this.topSplitContainer.SplitterDistance = 546;
+      this.topSplitContainer.Size = new System.Drawing.Size(1008, 418);
+      this.topSplitContainer.SplitterDistance = 466;
       this.topSplitContainer.TabIndex = 0;
       this.topSplitContainer.TabStop = false;
       // 
@@ -403,7 +415,7 @@ namespace AccessBridgeExplorer {
       this._topLevelTabControl.Location = new System.Drawing.Point(0, 0);
       this._topLevelTabControl.Name = "_topLevelTabControl";
       this._topLevelTabControl.SelectedIndex = 0;
-      this._topLevelTabControl.Size = new System.Drawing.Size(546, 400);
+      this._topLevelTabControl.Size = new System.Drawing.Size(466, 418);
       this._topLevelTabControl.TabIndex = 0;
       // 
       // _accessibilityTreePage
@@ -411,7 +423,7 @@ namespace AccessBridgeExplorer {
       this._accessibilityTreePage.Controls.Add(this._accessibilityTree);
       this._accessibilityTreePage.Location = new System.Drawing.Point(4, 24);
       this._accessibilityTreePage.Name = "_accessibilityTreePage";
-      this._accessibilityTreePage.Size = new System.Drawing.Size(538, 372);
+      this._accessibilityTreePage.Size = new System.Drawing.Size(458, 390);
       this._accessibilityTreePage.TabIndex = 0;
       this._accessibilityTreePage.Text = "Accessibility Tree";
       this._accessibilityTreePage.UseVisualStyleBackColor = true;
@@ -424,7 +436,7 @@ namespace AccessBridgeExplorer {
       this._accessibilityTree.Location = new System.Drawing.Point(0, 0);
       this._accessibilityTree.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this._accessibilityTree.Name = "_accessibilityTree";
-      this._accessibilityTree.Size = new System.Drawing.Size(538, 372);
+      this._accessibilityTree.Size = new System.Drawing.Size(458, 390);
       this._accessibilityTree.TabIndex = 2;
       // 
       // _accessibleComponentTabControl
@@ -434,7 +446,7 @@ namespace AccessBridgeExplorer {
       this._accessibleComponentTabControl.Location = new System.Drawing.Point(0, 0);
       this._accessibleComponentTabControl.Name = "_accessibleComponentTabControl";
       this._accessibleComponentTabControl.SelectedIndex = 0;
-      this._accessibleComponentTabControl.Size = new System.Drawing.Size(631, 400);
+      this._accessibleComponentTabControl.Size = new System.Drawing.Size(538, 418);
       this._accessibleComponentTabControl.TabIndex = 0;
       // 
       // accessibleComponentTabPage
@@ -442,9 +454,9 @@ namespace AccessBridgeExplorer {
       this.accessibleComponentTabPage.Controls.Add(this._accessibleContextPropertyList);
       this.accessibleComponentTabPage.Location = new System.Drawing.Point(4, 24);
       this.accessibleComponentTabPage.Name = "accessibleComponentTabPage";
-      this.accessibleComponentTabPage.Size = new System.Drawing.Size(623, 372);
+      this.accessibleComponentTabPage.Size = new System.Drawing.Size(530, 390);
       this.accessibleComponentTabPage.TabIndex = 0;
-      this.accessibleComponentTabPage.Text = "Accessible Component";
+      this.accessibleComponentTabPage.Text = "Component Properties";
       this.accessibleComponentTabPage.UseVisualStyleBackColor = true;
       // 
       // _accessibleContextPropertyList
@@ -460,7 +472,7 @@ namespace AccessBridgeExplorer {
       this._accessibleContextPropertyList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this._accessibleContextPropertyList.MultiSelect = false;
       this._accessibleContextPropertyList.Name = "_accessibleContextPropertyList";
-      this._accessibleContextPropertyList.Size = new System.Drawing.Size(623, 372);
+      this._accessibleContextPropertyList.Size = new System.Drawing.Size(530, 390);
       this._accessibleContextPropertyList.SmallImageList = this._propertyImageList;
       this._accessibleContextPropertyList.TabIndex = 1;
       this._accessibleContextPropertyList.UseCompatibleStateImageBehavior = false;
@@ -497,8 +509,8 @@ namespace AccessBridgeExplorer {
       // mainSplitContainer.Panel2
       // 
       this.mainSplitContainer.Panel2.Controls.Add(this._bottomTabControl);
-      this.mainSplitContainer.Size = new System.Drawing.Size(1181, 631);
-      this.mainSplitContainer.SplitterDistance = 400;
+      this.mainSplitContainer.Size = new System.Drawing.Size(1008, 660);
+      this.mainSplitContainer.SplitterDistance = 418;
       this.mainSplitContainer.TabIndex = 4;
       this.mainSplitContainer.TabStop = false;
       // 
@@ -510,7 +522,7 @@ namespace AccessBridgeExplorer {
       this._bottomTabControl.Location = new System.Drawing.Point(0, 0);
       this._bottomTabControl.Name = "_bottomTabControl";
       this._bottomTabControl.SelectedIndex = 0;
-      this._bottomTabControl.Size = new System.Drawing.Size(1181, 227);
+      this._bottomTabControl.Size = new System.Drawing.Size(1008, 238);
       this._bottomTabControl.TabIndex = 0;
       // 
       // _messageListPage
@@ -519,7 +531,7 @@ namespace AccessBridgeExplorer {
       this._messageListPage.Controls.Add(this.messagesToolStrip);
       this._messageListPage.Location = new System.Drawing.Point(4, 24);
       this._messageListPage.Name = "_messageListPage";
-      this._messageListPage.Size = new System.Drawing.Size(1173, 199);
+      this._messageListPage.Size = new System.Drawing.Size(1000, 210);
       this._messageListPage.TabIndex = 1;
       this._messageListPage.Text = "Messages";
       this._messageListPage.UseVisualStyleBackColor = true;
@@ -536,7 +548,7 @@ namespace AccessBridgeExplorer {
       this._messageList.Location = new System.Drawing.Point(25, 0);
       this._messageList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this._messageList.Name = "_messageList";
-      this._messageList.Size = new System.Drawing.Size(1148, 199);
+      this._messageList.Size = new System.Drawing.Size(975, 210);
       this._messageList.TabIndex = 7;
       this._messageList.UseCompatibleStateImageBehavior = false;
       this._messageList.View = System.Windows.Forms.View.Details;
@@ -564,7 +576,7 @@ namespace AccessBridgeExplorer {
             this.clearMessagesButton});
       this.messagesToolStrip.Location = new System.Drawing.Point(0, 0);
       this.messagesToolStrip.Name = "messagesToolStrip";
-      this.messagesToolStrip.Size = new System.Drawing.Size(25, 199);
+      this.messagesToolStrip.Size = new System.Drawing.Size(25, 210);
       this.messagesToolStrip.TabIndex = 6;
       this.messagesToolStrip.Text = "toolStrip3";
       this.messagesToolStrip.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
@@ -584,11 +596,11 @@ namespace AccessBridgeExplorer {
       // 
       this._eventListPage.Controls.Add(this._eventList);
       this._eventListPage.Controls.Add(this.eventsToolStrip);
-      this._eventListPage.Location = new System.Drawing.Point(4, 22);
+      this._eventListPage.Location = new System.Drawing.Point(4, 24);
       this._eventListPage.Name = "_eventListPage";
-      this._eventListPage.Size = new System.Drawing.Size(1173, 201);
+      this._eventListPage.Size = new System.Drawing.Size(1173, 199);
       this._eventListPage.TabIndex = 0;
-      this._eventListPage.Text = "Accessibility events";
+      this._eventListPage.Text = "Events";
       this._eventListPage.UseVisualStyleBackColor = true;
       // 
       // _eventList
@@ -607,7 +619,7 @@ namespace AccessBridgeExplorer {
       this._eventList.Location = new System.Drawing.Point(25, 0);
       this._eventList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this._eventList.Name = "_eventList";
-      this._eventList.Size = new System.Drawing.Size(1148, 201);
+      this._eventList.Size = new System.Drawing.Size(1148, 199);
       this._eventList.TabIndex = 5;
       this._eventList.UseCompatibleStateImageBehavior = false;
       this._eventList.View = System.Windows.Forms.View.Details;
@@ -655,7 +667,7 @@ namespace AccessBridgeExplorer {
             this.clearEventsButton});
       this.eventsToolStrip.Location = new System.Drawing.Point(0, 0);
       this.eventsToolStrip.Name = "eventsToolStrip";
-      this.eventsToolStrip.Size = new System.Drawing.Size(25, 201);
+      this.eventsToolStrip.Size = new System.Drawing.Size(25, 199);
       this.eventsToolStrip.TabIndex = 0;
       this.eventsToolStrip.Text = "toolStrip2";
       this.eventsToolStrip.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
@@ -677,23 +689,11 @@ namespace AccessBridgeExplorer {
       this.testToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
       this.testToolStripMenuItem.Text = "Test";
       // 
-      // aboutMenuItem
-      // 
-      this.aboutMenuItem.Name = "aboutMenuItem";
-      this.aboutMenuItem.Size = new System.Drawing.Size(173, 22);
-      this.aboutMenuItem.Text = "&About";
-      this.aboutMenuItem.Click += new System.EventHandler(this.aboutMenuItem_Click);
-      // 
-      // toolStripMenuItem1
-      // 
-      this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-      this.toolStripMenuItem1.Size = new System.Drawing.Size(170, 6);
-      // 
       // ExplorerForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1181, 704);
+      this.ClientSize = new System.Drawing.Size(1008, 733);
       this.Controls.Add(this.mainSplitContainer);
       this.Controls.Add(this.mainToolStrip);
       this.Controls.Add(this.statusBarStrip);

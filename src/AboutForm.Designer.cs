@@ -45,12 +45,12 @@ namespace AccessBridgeExplorer {
       this.githubUrlLinkLabel = new System.Windows.Forms.LinkLabel();
       this.disclaimerText = new System.Windows.Forms.TextBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.accessBridgeProductText = new System.Windows.Forms.TextBox();
-      this.accessBridgePathText = new System.Windows.Forms.TextBox();
-      this.accessBridgeVersionText = new System.Windows.Forms.TextBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
+      this.label2 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
+      this.accessBridgeVersionText = new System.Windows.Forms.TextBox();
+      this.accessBridgePathText = new System.Windows.Forms.TextBox();
+      this.accessBridgeProductText = new System.Windows.Forms.TextBox();
       this.panel1.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -99,8 +99,8 @@ namespace AccessBridgeExplorer {
       this.applicationCopyrightText.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.applicationCopyrightText.Cursor = System.Windows.Forms.Cursors.IBeam;
       this.applicationCopyrightText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.applicationCopyrightText.Location = new System.Drawing.Point(16, 96);
-      this.applicationCopyrightText.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+      this.applicationCopyrightText.Location = new System.Drawing.Point(16, 101);
+      this.applicationCopyrightText.Margin = new System.Windows.Forms.Padding(0);
       this.applicationCopyrightText.Name = "applicationCopyrightText";
       this.applicationCopyrightText.ReadOnly = true;
       this.applicationCopyrightText.Size = new System.Drawing.Size(526, 13);
@@ -115,8 +115,8 @@ namespace AccessBridgeExplorer {
       this.applicationVersionText.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.applicationVersionText.Cursor = System.Windows.Forms.Cursors.IBeam;
       this.applicationVersionText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.applicationVersionText.Location = new System.Drawing.Point(16, 77);
-      this.applicationVersionText.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+      this.applicationVersionText.Location = new System.Drawing.Point(16, 82);
+      this.applicationVersionText.Margin = new System.Windows.Forms.Padding(0);
       this.applicationVersionText.Name = "applicationVersionText";
       this.applicationVersionText.ReadOnly = true;
       this.applicationVersionText.Size = new System.Drawing.Size(526, 13);
@@ -125,7 +125,7 @@ namespace AccessBridgeExplorer {
       // 
       // githubUrlLinkLabel
       // 
-      this.githubUrlLinkLabel.Location = new System.Drawing.Point(13, 56);
+      this.githubUrlLinkLabel.Location = new System.Drawing.Point(13, 61);
       this.githubUrlLinkLabel.Margin = new System.Windows.Forms.Padding(0);
       this.githubUrlLinkLabel.Name = "githubUrlLinkLabel";
       this.githubUrlLinkLabel.Size = new System.Drawing.Size(526, 18);
@@ -142,8 +142,8 @@ namespace AccessBridgeExplorer {
       this.disclaimerText.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.disclaimerText.Cursor = System.Windows.Forms.Cursors.IBeam;
       this.disclaimerText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.disclaimerText.Location = new System.Drawing.Point(16, 115);
-      this.disclaimerText.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+      this.disclaimerText.Location = new System.Drawing.Point(16, 120);
+      this.disclaimerText.Margin = new System.Windows.Forms.Padding(0);
       this.disclaimerText.Name = "disclaimerText";
       this.disclaimerText.ReadOnly = true;
       this.disclaimerText.Size = new System.Drawing.Size(526, 13);
@@ -165,35 +165,32 @@ namespace AccessBridgeExplorer {
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Access Bridge version information";
       // 
-      // accessBridgeProductText
+      // label3
       // 
-      this.accessBridgeProductText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.accessBridgeProductText.BackColor = System.Drawing.SystemColors.Control;
-      this.accessBridgeProductText.BorderStyle = System.Windows.Forms.BorderStyle.None;
-      this.accessBridgeProductText.Cursor = System.Windows.Forms.Cursors.IBeam;
-      this.accessBridgeProductText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.accessBridgeProductText.Location = new System.Drawing.Point(57, 38);
-      this.accessBridgeProductText.Name = "accessBridgeProductText";
-      this.accessBridgeProductText.ReadOnly = true;
-      this.accessBridgeProductText.Size = new System.Drawing.Size(475, 13);
-      this.accessBridgeProductText.TabIndex = 3;
-      this.accessBridgeProductText.Text = "(accessbridge product)";
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(3, 57);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(45, 13);
+      this.label3.TabIndex = 4;
+      this.label3.Text = "Version:";
       // 
-      // accessBridgePathText
+      // label2
       // 
-      this.accessBridgePathText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.accessBridgePathText.BackColor = System.Drawing.SystemColors.Control;
-      this.accessBridgePathText.BorderStyle = System.Windows.Forms.BorderStyle.None;
-      this.accessBridgePathText.Cursor = System.Windows.Forms.Cursors.IBeam;
-      this.accessBridgePathText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.accessBridgePathText.Location = new System.Drawing.Point(57, 19);
-      this.accessBridgePathText.Name = "accessBridgePathText";
-      this.accessBridgePathText.ReadOnly = true;
-      this.accessBridgePathText.Size = new System.Drawing.Size(475, 13);
-      this.accessBridgePathText.TabIndex = 1;
-      this.accessBridgePathText.Text = "(accessbridge path)";
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(3, 38);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(47, 13);
+      this.label2.TabIndex = 2;
+      this.label2.Text = "Product:";
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(3, 19);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(32, 13);
+      this.label1.TabIndex = 0;
+      this.label1.Text = "Path:";
       // 
       // accessBridgeVersionText
       // 
@@ -210,32 +207,35 @@ namespace AccessBridgeExplorer {
       this.accessBridgeVersionText.TabIndex = 5;
       this.accessBridgeVersionText.Text = "(accessbridge version)";
       // 
-      // label1
+      // accessBridgePathText
       // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(3, 19);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(32, 13);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Path:";
+      this.accessBridgePathText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.accessBridgePathText.BackColor = System.Drawing.SystemColors.Control;
+      this.accessBridgePathText.BorderStyle = System.Windows.Forms.BorderStyle.None;
+      this.accessBridgePathText.Cursor = System.Windows.Forms.Cursors.IBeam;
+      this.accessBridgePathText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.accessBridgePathText.Location = new System.Drawing.Point(57, 19);
+      this.accessBridgePathText.Name = "accessBridgePathText";
+      this.accessBridgePathText.ReadOnly = true;
+      this.accessBridgePathText.Size = new System.Drawing.Size(475, 13);
+      this.accessBridgePathText.TabIndex = 1;
+      this.accessBridgePathText.Text = "(accessbridge path)";
       // 
-      // label2
+      // accessBridgeProductText
       // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(3, 38);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(47, 13);
-      this.label2.TabIndex = 2;
-      this.label2.Text = "Product:";
-      // 
-      // label3
-      // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(3, 57);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(45, 13);
-      this.label3.TabIndex = 4;
-      this.label3.Text = "Version:";
+      this.accessBridgeProductText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.accessBridgeProductText.BackColor = System.Drawing.SystemColors.Control;
+      this.accessBridgeProductText.BorderStyle = System.Windows.Forms.BorderStyle.None;
+      this.accessBridgeProductText.Cursor = System.Windows.Forms.Cursors.IBeam;
+      this.accessBridgeProductText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.accessBridgeProductText.Location = new System.Drawing.Point(57, 38);
+      this.accessBridgeProductText.Name = "accessBridgeProductText";
+      this.accessBridgeProductText.ReadOnly = true;
+      this.accessBridgeProductText.Size = new System.Drawing.Size(475, 13);
+      this.accessBridgeProductText.TabIndex = 3;
+      this.accessBridgeProductText.Text = "(accessbridge product)";
       // 
       // AboutForm
       // 

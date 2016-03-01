@@ -83,8 +83,8 @@ namespace AccessBridgeExplorer {
       // topSplitContainer.Panel2
       // 
       this.topSplitContainer.Panel2.Controls.Add(this.oldNewTabControl);
-      this.topSplitContainer.Size = new System.Drawing.Size(1272, 659);
-      this.topSplitContainer.SplitterDistance = 628;
+      this.topSplitContainer.Size = new System.Drawing.Size(1008, 669);
+      this.topSplitContainer.SplitterDistance = 497;
       this.topSplitContainer.TabIndex = 2;
       // 
       // topLevelTabControl
@@ -94,7 +94,7 @@ namespace AccessBridgeExplorer {
       this.topLevelTabControl.Location = new System.Drawing.Point(0, 0);
       this.topLevelTabControl.Name = "topLevelTabControl";
       this.topLevelTabControl.SelectedIndex = 0;
-      this.topLevelTabControl.Size = new System.Drawing.Size(628, 659);
+      this.topLevelTabControl.Size = new System.Drawing.Size(497, 669);
       this.topLevelTabControl.TabIndex = 0;
       // 
       // accessibleContextTabPage
@@ -102,9 +102,9 @@ namespace AccessBridgeExplorer {
       this.accessibleContextTabPage.Controls.Add(this.accessibleContextPropertyList);
       this.accessibleContextTabPage.Location = new System.Drawing.Point(4, 24);
       this.accessibleContextTabPage.Name = "accessibleContextTabPage";
-      this.accessibleContextTabPage.Size = new System.Drawing.Size(620, 631);
+      this.accessibleContextTabPage.Size = new System.Drawing.Size(489, 641);
       this.accessibleContextTabPage.TabIndex = 3;
-      this.accessibleContextTabPage.Text = "Accessible Context";
+      this.accessibleContextTabPage.Text = "Component Properties";
       this.accessibleContextTabPage.UseVisualStyleBackColor = true;
       // 
       // accessibleContextPropertyList
@@ -118,7 +118,7 @@ namespace AccessBridgeExplorer {
       this.accessibleContextPropertyList.Location = new System.Drawing.Point(0, 0);
       this.accessibleContextPropertyList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this.accessibleContextPropertyList.Name = "accessibleContextPropertyList";
-      this.accessibleContextPropertyList.Size = new System.Drawing.Size(620, 631);
+      this.accessibleContextPropertyList.Size = new System.Drawing.Size(489, 641);
       this.accessibleContextPropertyList.TabIndex = 0;
       this.accessibleContextPropertyList.UseCompatibleStateImageBehavior = false;
       this.accessibleContextPropertyList.View = System.Windows.Forms.View.Details;
@@ -141,7 +141,7 @@ namespace AccessBridgeExplorer {
       this.oldNewTabControl.Location = new System.Drawing.Point(0, 0);
       this.oldNewTabControl.Name = "oldNewTabControl";
       this.oldNewTabControl.SelectedIndex = 0;
-      this.oldNewTabControl.Size = new System.Drawing.Size(640, 659);
+      this.oldNewTabControl.Size = new System.Drawing.Size(507, 669);
       this.oldNewTabControl.TabIndex = 0;
       // 
       // oldValuePage
@@ -149,7 +149,7 @@ namespace AccessBridgeExplorer {
       this.oldValuePage.Controls.Add(this.oldValuePropertyList);
       this.oldValuePage.Location = new System.Drawing.Point(4, 24);
       this.oldValuePage.Name = "oldValuePage";
-      this.oldValuePage.Size = new System.Drawing.Size(632, 631);
+      this.oldValuePage.Size = new System.Drawing.Size(499, 641);
       this.oldValuePage.TabIndex = 5;
       this.oldValuePage.Text = "Old Value";
       this.oldValuePage.UseVisualStyleBackColor = true;
@@ -165,7 +165,7 @@ namespace AccessBridgeExplorer {
       this.oldValuePropertyList.Location = new System.Drawing.Point(0, 0);
       this.oldValuePropertyList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this.oldValuePropertyList.Name = "oldValuePropertyList";
-      this.oldValuePropertyList.Size = new System.Drawing.Size(632, 631);
+      this.oldValuePropertyList.Size = new System.Drawing.Size(499, 641);
       this.oldValuePropertyList.TabIndex = 0;
       this.oldValuePropertyList.UseCompatibleStateImageBehavior = false;
       this.oldValuePropertyList.View = System.Windows.Forms.View.Details;
@@ -220,7 +220,7 @@ namespace AccessBridgeExplorer {
       // 
       this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.closeButton.Location = new System.Drawing.Point(1174, 677);
+      this.closeButton.Location = new System.Drawing.Point(910, 687);
       this.closeButton.Name = "closeButton";
       this.closeButton.Size = new System.Drawing.Size(86, 34);
       this.closeButton.TabIndex = 0;
@@ -238,7 +238,7 @@ namespace AccessBridgeExplorer {
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1272, 723);
+      this.ClientSize = new System.Drawing.Size(1008, 733);
       this.Controls.Add(this.closeButton);
       this.Controls.Add(this.topSplitContainer);
       this.DoubleBuffered = true;
