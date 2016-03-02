@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -62,9 +63,6 @@ namespace AccessBridgeExplorer {
         PropertyOptions.AccessibleSelection |
         PropertyOptions.AccessibleTable |
         PropertyOptions.AccessibleActions;
-
-      CreateEventMenuItems();
-      CreatePropertyOptionsMenuItems();
     }
 
     public PropertyOptions PropertyOptions { get; set; }
@@ -227,6 +225,10 @@ namespace AccessBridgeExplorer {
         //TODO: We initialize now so that the access bridge DLL has time to
         // discover the list of JVMs by the time we enumerate all windows.
         _accessBridge.Initialize();
+
+        CreateEventMenuItems();
+        CreatePropertyOptionsMenuItems();
+        LogMessage("Ready!");
       });
     }
 
@@ -400,29 +402,40 @@ namespace AccessBridgeExplorer {
         return;
 
       UiAction(() => {
-        var windows = _accessBridge.EnumWindows();
-        _view.AccessibilityTree.BeginUpdate();
         try {
-          DisposeTreeNodeList(_view.AccessibilityTree.Nodes);
-          _view.AccessibilityTree.Nodes.Clear();
-          if (!windows.Any()) {
-            _view.AccessibilityTree.Nodes.Add("No JVM/Java window found. Try Refresh Again?");
-            return;
-          }
-          var topLevelNodes = windows.Select(x => new AccessibleNodeModel(_accessibleNodeModelResources, x));
-          topLevelNodes.ForEach(x => {
-            var node = x.CreateTreeNode();
-            _view.AccessibilityTree.Nodes.Add(node);
-            node.Expand();
-          });
-        } finally {
-          _view.AccessibilityTree.EndUpdate();
+          _accessBridge.Initialize();
+          var windows = _accessBridge.EnumWindows();
+          RefreshTree(windows);
+        } catch {
+          RefreshTree(new List<AccessibleJvm>());
+          throw;
         }
-        _view.StatusLabel.Text = @"Ready.";
-        HideOverlayWindow();
-        HideToolTip();
-        _navigation.Clear();
       });
+    }
+
+    private void RefreshTree(List<AccessibleJvm> windows) {
+      _view.AccessibilityTree.BeginUpdate();
+      try {
+        DisposeTreeNodeList(_view.AccessibilityTree.Nodes);
+        _view.AccessibilityTree.Nodes.Clear();
+
+        var topLevelNodes = windows.Select(x => new AccessibleNodeModel(_accessibleNodeModelResources, x));
+        topLevelNodes.ForEach(x => {
+          var node = x.CreateTreeNode();
+          _view.AccessibilityTree.Nodes.Add(node);
+          node.Expand();
+        });
+
+        if (_view.AccessibilityTree.Nodes.Count == 0) {
+          _view.AccessibilityTree.Nodes.Add("No JVM/Java window found. Try Refresh Again?");
+        }
+      } finally {
+        _view.AccessibilityTree.EndUpdate();
+      }
+      _view.StatusLabel.Text = @"Ready.";
+      HideOverlayWindow();
+      HideToolTip();
+      _navigation.Clear();
     }
 
     private static void DisposeTreeNodeList(TreeNodeCollection list) {

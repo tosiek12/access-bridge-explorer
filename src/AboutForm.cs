@@ -34,9 +34,9 @@ namespace AccessBridgeExplorer {
         accessBridgeVersionText.Text = string.Format("{0}", libraryVersion.FileVersion);
         accessBridgePathText.Text = string.Format("{0}", libraryVersion.FileName);
       } catch (Exception e) {
-        accessBridgeProductText.Text = @"<Error loading Access Bridge>";
-        accessBridgeVersionText.Text = e.Message;
-        accessBridgePathText.Text = "";
+        accessBridgePathText.Text = e.Message;
+        accessBridgeProductText.Text = @"<Error>";
+        accessBridgeVersionText.Text = @"<Error>";
       }
     }
 

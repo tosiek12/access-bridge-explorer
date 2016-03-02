@@ -57,6 +57,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
+    public bool IsLoaded { get { return _library != null; } }
+
     public void Initialize() {
       ThrowIfDisposed();
       if (_library != null)
@@ -97,7 +99,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     public List<AccessibleJvm> EnumWindows() {
-      Initialize();
+      if (_library == null)
+        return new List<AccessibleJvm>();
 
       var windows = new List<AccessibleWindow>();
       var success = Win32.NativeMethods.EnumWindows((hWnd, lParam) => {
@@ -126,16 +129,19 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     private static UnmanagedLibrary LoadLibrary() {
-      UnmanagedLibrary library;
-      if (IntPtr.Size == 4) {
-        library = new UnmanagedLibrary("WindowsAccessBridge-32.dll");
-      } else if (IntPtr.Size == 8) {
-        library = new UnmanagedLibrary("WindowsAccessBridge-64.dll");
-      } else {
-        throw new InvalidOperationException("Unknown platform.");
+      try {
+        UnmanagedLibrary library;
+        if (IntPtr.Size == 4) {
+          library = new UnmanagedLibrary("WindowsAccessBridge-32.dll");
+        } else if (IntPtr.Size == 8) {
+          library = new UnmanagedLibrary("WindowsAccessBridge-64.dll");
+        } else {
+          throw new InvalidOperationException("Unknown platform.");
+        }
+        return library;
+      } catch (Exception e) {
+        throw new ApplicationException("Error loading Java Access Bridge DLL. Please install Java Runtime 7 or later.", e);
       }
-
-      return library;
     }
 
     private static AccessBridgeFunctions LoadFunctions(UnmanagedLibrary library) {

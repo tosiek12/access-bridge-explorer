@@ -49,6 +49,9 @@ namespace AccessBridgeExplorer {
     }
 
     public void Clear() {
+      if (_currentEntry == null)
+        return;
+
       _backwardEntries.Clear();
       _forwardEntries.Clear();
       _currentEntry = null;

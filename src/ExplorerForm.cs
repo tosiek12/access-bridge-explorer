@@ -51,16 +51,13 @@ namespace AccessBridgeExplorer {
 
     private void MainForm_Shown(object sender, EventArgs e) {
       InvokeLater(() => {
-        _controller.Initialize();
         _controller.LogIntroMessages();
-
+        _controller.Initialize();
         try {
           _hotKeyHandler.Register(this, 1, CaptureKey);
         } catch (Exception ex) {
           _controller.LogErrorMessage(ex);
         }
-
-        _controller.LogMessage("Ready!");
         Application.Idle += ApplicationOnIdle;
       });
     }
