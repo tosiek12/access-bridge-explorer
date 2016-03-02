@@ -22,6 +22,9 @@ should not considered a screen reader, as it is merely a debugging tools
 useful for developers of Java applications who want to validated/ensure
 holistic support for screen readers in their application.
 
+## Screenshot
+
+![Access Bridge Explorer](/screenshots/AccessBridgeExplorer.png?raw=true "Access Bridge Explorer")
 
 ## Requirements
 
