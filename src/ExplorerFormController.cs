@@ -404,9 +404,9 @@ namespace AccessBridgeExplorer {
       UiAction(() => {
         try {
           _accessBridge.Initialize();
-          var windows = _accessBridge.EnumWindows();
-          RefreshTree(windows);
-          if (windows.Count == 0) {
+          var jvms = _accessBridge.EnumJvms();
+          RefreshTree(jvms);
+          if (jvms.Count == 0) {
             var sb = new StringBuilder();
             sb.Append("No Java application using the Java Access Bridge has been detected.  ");
             sb.Append("This can happen if no application is currently running, or if the " + 
@@ -415,7 +415,7 @@ namespace AccessBridgeExplorer {
             _view.AddNotification(new NotificationPanelEntry {
               Text = sb.ToString(),
               Icon = NotificationPanelIcon.Info,
-              IsExpired = () => _accessBridge.EnumWindows().Count > 0
+              IsExpired = () => _accessBridge.EnumJvms().Count > 0
             });
           }
         } catch (Exception e) {
@@ -439,7 +439,7 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private void RefreshTree(List<AccessibleJvm> windows) {
+    private void RefreshTree(List<AccessibleJvm> jvms) {
       _view.AccessibilityTree.BeginUpdate();
       try {
         // Cleanup previous tree
@@ -447,7 +447,7 @@ namespace AccessBridgeExplorer {
         _view.AccessibilityTree.Nodes.Clear();
 
         // Add nodes for new tree, one node per JVM ID, expanded to the second level (windows).
-        var topLevelNodes = windows.Select(x => new AccessibleNodeModel(_accessibleNodeModelResources, x));
+        var topLevelNodes = jvms.Select(x => new AccessibleNodeModel(_accessibleNodeModelResources, x));
         topLevelNodes.ForEach(x => {
           var node = x.CreateTreeNode();
           _view.AccessibilityTree.Nodes.Add(node);

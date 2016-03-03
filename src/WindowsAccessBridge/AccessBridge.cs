@@ -99,7 +99,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         throw new ObjectDisposedException("Access Bridge library has been disposed");
     }
 
-    public List<AccessibleJvm> EnumWindows() {
+    public List<AccessibleJvm> EnumJvms() {
       if (_library == null)
         return new List<AccessibleJvm>();
 
