@@ -415,7 +415,8 @@ namespace AccessBridgeExplorer {
             _view.AddNotification(new NotificationPanelEntry {
               Text = sb.ToString(),
               Icon = NotificationPanelIcon.Info,
-              IsExpired = () => _accessBridge.EnumJvms().Count > 0
+              IsExpired = () => _view.AccessibilityTree.Nodes.Count > 0 &&
+                ((_view.AccessibilityTree.Nodes[0].Tag as AccessibleNodeModel) != null)
             });
           }
         } catch (Exception e) {
