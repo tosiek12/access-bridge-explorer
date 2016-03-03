@@ -266,6 +266,20 @@ namespace AccessBridgeExplorer {
       UpdateNavigationState();
     }
 
+    private void aboutMenuItem_Click(object sender, EventArgs e) {
+      _controller.ShowAbout();
+    }
+
+    private void showNotificationMenuItem_Click(object sender, EventArgs e) {
+      if (showNotificationMenuItem.Checked) {
+        notificationPanel.HideNotification();
+        showNotificationMenuItem.Checked = false;
+      } else {
+        notificationPanel.ShowNotification();
+        showNotificationMenuItem.Checked = true;
+      }
+    }
+
     #region IExplorerFormView
 
     string IExplorerFormView.Caption {
@@ -338,19 +352,5 @@ namespace AccessBridgeExplorer {
     }
 
     #endregion
-
-    private void aboutMenuItem_Click(object sender, EventArgs e) {
-      _controller.ShowAbout();
-    }
-
-    private void showNotificationMenuItem_Click(object sender, EventArgs e) {
-      if (showNotificationMenuItem.Checked) {
-        notificationPanel.HideNotification();
-        showNotificationMenuItem.Checked = false;
-      } else {
-        notificationPanel.ShowNotification();
-        showNotificationMenuItem.Checked = true;
-      }
-    }
   }
 }
