@@ -59,15 +59,10 @@ namespace AccessBridgeExplorer {
       this.statusBarStrip = new System.Windows.Forms.StatusStrip();
       this._statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.mainToolStrip = new System.Windows.Forms.ToolStrip();
-      this.navigateBackwardButton = new System.Windows.Forms.ToolStripSplitButton();
-      this.navigateForwardButton = new System.Windows.Forms.ToolStripSplitButton();
       this.separator4 = new System.Windows.Forms.ToolStripSeparator();
-      this._refreshButton = new System.Windows.Forms.ToolStripButton();
-      this._findComponentButton = new System.Windows.Forms.ToolStripButton();
       this.separator2 = new System.Windows.Forms.ToolStripSeparator();
       this._overlayEnableButton = new System.Windows.Forms.ToolStripButton();
       this.separator3 = new System.Windows.Forms.ToolStripSeparator();
-      this.showHelpButton = new System.Windows.Forms.ToolStripButton();
       this.refreshTimer = new System.Windows.Forms.Timer(this.components);
       this.topSplitContainer = new System.Windows.Forms.SplitContainer();
       this._topLevelTabControl = new System.Windows.Forms.TabControl();
@@ -87,7 +82,6 @@ namespace AccessBridgeExplorer {
       this.messageTimeColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.messageTextColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.messagesToolStrip = new System.Windows.Forms.ToolStrip();
-      this.clearMessagesButton = new System.Windows.Forms.ToolStripButton();
       this._eventListPage = new System.Windows.Forms.TabPage();
       this._eventList = new System.Windows.Forms.ListView();
       this.eventId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -98,8 +92,15 @@ namespace AccessBridgeExplorer {
       this.eventOldValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.eventNewValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.eventsToolStrip = new System.Windows.Forms.ToolStrip();
-      this.clearEventsButton = new System.Windows.Forms.ToolStripButton();
       this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.clearMessagesButton = new System.Windows.Forms.ToolStripButton();
+      this.clearEventsButton = new System.Windows.Forms.ToolStripButton();
+      this.navigateBackwardButton = new System.Windows.Forms.ToolStripSplitButton();
+      this.navigateForwardButton = new System.Windows.Forms.ToolStripSplitButton();
+      this._refreshButton = new System.Windows.Forms.ToolStripButton();
+      this._findComponentButton = new System.Windows.Forms.ToolStripButton();
+      this.showHelpButton = new System.Windows.Forms.ToolStripButton();
+      this.notificationPanel = new AccessBridgeExplorer.NotificationPanel();
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
       this.mainToolStrip.SuspendLayout();
@@ -224,12 +225,12 @@ namespace AccessBridgeExplorer {
       // separator5
       // 
       this.separator5.Name = "separator5";
-      this.separator5.Size = new System.Drawing.Size(143, 6);
+      this.separator5.Size = new System.Drawing.Size(165, 6);
       // 
       // showOverlayMenuItem
       // 
       this.showOverlayMenuItem.Name = "showOverlayMenuItem";
-      this.showOverlayMenuItem.Size = new System.Drawing.Size(146, 22);
+      this.showOverlayMenuItem.Size = new System.Drawing.Size(168, 22);
       this.showOverlayMenuItem.Text = "Show &Overlay";
       this.showOverlayMenuItem.ToolTipText = "Toggle selected component overlay window";
       this.showOverlayMenuItem.Click += new System.EventHandler(this.showOverlayMenuItem_Click);
@@ -273,7 +274,7 @@ namespace AccessBridgeExplorer {
       this.statusBarStrip.Name = "statusBarStrip";
       this.statusBarStrip.Padding = new System.Windows.Forms.Padding(1, 0, 17, 0);
       this.statusBarStrip.Size = new System.Drawing.Size(1008, 22);
-      this.statusBarStrip.TabIndex = 1;
+      this.statusBarStrip.TabIndex = 4;
       this.statusBarStrip.Text = "statusStrip1";
       // 
       // _statusLabel
@@ -299,58 +300,14 @@ namespace AccessBridgeExplorer {
       this.mainToolStrip.Location = new System.Drawing.Point(0, 24);
       this.mainToolStrip.Name = "mainToolStrip";
       this.mainToolStrip.Size = new System.Drawing.Size(1008, 27);
-      this.mainToolStrip.TabIndex = 3;
+      this.mainToolStrip.TabIndex = 1;
       this.mainToolStrip.TabStop = true;
       this.mainToolStrip.Text = "toolStrip1";
-      // 
-      // navigateBackwardButton
-      // 
-      this.navigateBackwardButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.navigateBackwardButton.Image = ((System.Drawing.Image)(resources.GetObject("navigateBackwardButton.Image")));
-      this.navigateBackwardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.navigateBackwardButton.Name = "navigateBackwardButton";
-      this.navigateBackwardButton.Size = new System.Drawing.Size(36, 24);
-      this.navigateBackwardButton.Text = "Navigate Backward";
-      this.navigateBackwardButton.ToolTipText = "Navigate Backward";
-      this.navigateBackwardButton.ButtonClick += new System.EventHandler(this.navigateBackwardButton_Click);
-      // 
-      // navigateForwardButton
-      // 
-      this.navigateForwardButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.navigateForwardButton.Image = ((System.Drawing.Image)(resources.GetObject("navigateForwardButton.Image")));
-      this.navigateForwardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.navigateForwardButton.Name = "navigateForwardButton";
-      this.navigateForwardButton.Size = new System.Drawing.Size(36, 24);
-      this.navigateForwardButton.Text = "Nagivate Forward";
-      this.navigateForwardButton.ToolTipText = "Nagivate Forward";
-      this.navigateForwardButton.ButtonClick += new System.EventHandler(this.navigateForwardButton_Click);
       // 
       // separator4
       // 
       this.separator4.Name = "separator4";
       this.separator4.Size = new System.Drawing.Size(6, 27);
-      // 
-      // _refreshButton
-      // 
-      this._refreshButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this._refreshButton.Image = ((System.Drawing.Image)(resources.GetObject("_refreshButton.Image")));
-      this._refreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this._refreshButton.Name = "_refreshButton";
-      this._refreshButton.Size = new System.Drawing.Size(24, 24);
-      this._refreshButton.Text = "Refresh";
-      this._refreshButton.ToolTipText = "Refresh the list of accessible windows";
-      this._refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
-      // 
-      // _findComponentButton
-      // 
-      this._findComponentButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this._findComponentButton.Image = global::AccessBridgeExplorer.Properties.Resources.Crosshair;
-      this._findComponentButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this._findComponentButton.Name = "_findComponentButton";
-      this._findComponentButton.Size = new System.Drawing.Size(24, 24);
-      this._findComponentButton.Text = "Find Component";
-      this._findComponentButton.ToolTipText = "Find accessibility elements using the mouse pointer";
-      this._findComponentButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.catpureButton_MouseDown);
       // 
       // separator2
       // 
@@ -374,16 +331,6 @@ namespace AccessBridgeExplorer {
       this.separator3.Name = "separator3";
       this.separator3.Size = new System.Drawing.Size(6, 27);
       // 
-      // showHelpButton
-      // 
-      this.showHelpButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.showHelpButton.Image = ((System.Drawing.Image)(resources.GetObject("showHelpButton.Image")));
-      this.showHelpButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.showHelpButton.Name = "showHelpButton";
-      this.showHelpButton.Size = new System.Drawing.Size(24, 24);
-      this.showHelpButton.Text = "Help";
-      this.showHelpButton.Click += new System.EventHandler(this.showHelpButton_Click);
-      // 
       // refreshTimer
       // 
       this.refreshTimer.Enabled = true;
@@ -403,8 +350,8 @@ namespace AccessBridgeExplorer {
       // topSplitContainer.Panel2
       // 
       this.topSplitContainer.Panel2.Controls.Add(this._accessibleComponentTabControl);
-      this.topSplitContainer.Size = new System.Drawing.Size(1008, 418);
-      this.topSplitContainer.SplitterDistance = 466;
+      this.topSplitContainer.Size = new System.Drawing.Size(1008, 450);
+      this.topSplitContainer.SplitterDistance = 465;
       this.topSplitContainer.TabIndex = 0;
       this.topSplitContainer.TabStop = false;
       // 
@@ -415,7 +362,7 @@ namespace AccessBridgeExplorer {
       this._topLevelTabControl.Location = new System.Drawing.Point(0, 0);
       this._topLevelTabControl.Name = "_topLevelTabControl";
       this._topLevelTabControl.SelectedIndex = 0;
-      this._topLevelTabControl.Size = new System.Drawing.Size(466, 418);
+      this._topLevelTabControl.Size = new System.Drawing.Size(465, 450);
       this._topLevelTabControl.TabIndex = 0;
       // 
       // _accessibilityTreePage
@@ -423,7 +370,7 @@ namespace AccessBridgeExplorer {
       this._accessibilityTreePage.Controls.Add(this._accessibilityTree);
       this._accessibilityTreePage.Location = new System.Drawing.Point(4, 24);
       this._accessibilityTreePage.Name = "_accessibilityTreePage";
-      this._accessibilityTreePage.Size = new System.Drawing.Size(458, 390);
+      this._accessibilityTreePage.Size = new System.Drawing.Size(457, 422);
       this._accessibilityTreePage.TabIndex = 0;
       this._accessibilityTreePage.Text = "Accessibility Tree";
       this._accessibilityTreePage.UseVisualStyleBackColor = true;
@@ -436,8 +383,8 @@ namespace AccessBridgeExplorer {
       this._accessibilityTree.Location = new System.Drawing.Point(0, 0);
       this._accessibilityTree.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this._accessibilityTree.Name = "_accessibilityTree";
-      this._accessibilityTree.Size = new System.Drawing.Size(458, 390);
-      this._accessibilityTree.TabIndex = 2;
+      this._accessibilityTree.Size = new System.Drawing.Size(457, 422);
+      this._accessibilityTree.TabIndex = 0;
       // 
       // _accessibleComponentTabControl
       // 
@@ -446,7 +393,7 @@ namespace AccessBridgeExplorer {
       this._accessibleComponentTabControl.Location = new System.Drawing.Point(0, 0);
       this._accessibleComponentTabControl.Name = "_accessibleComponentTabControl";
       this._accessibleComponentTabControl.SelectedIndex = 0;
-      this._accessibleComponentTabControl.Size = new System.Drawing.Size(538, 418);
+      this._accessibleComponentTabControl.Size = new System.Drawing.Size(539, 450);
       this._accessibleComponentTabControl.TabIndex = 0;
       // 
       // accessibleComponentTabPage
@@ -454,7 +401,7 @@ namespace AccessBridgeExplorer {
       this.accessibleComponentTabPage.Controls.Add(this._accessibleContextPropertyList);
       this.accessibleComponentTabPage.Location = new System.Drawing.Point(4, 24);
       this.accessibleComponentTabPage.Name = "accessibleComponentTabPage";
-      this.accessibleComponentTabPage.Size = new System.Drawing.Size(530, 390);
+      this.accessibleComponentTabPage.Size = new System.Drawing.Size(531, 422);
       this.accessibleComponentTabPage.TabIndex = 0;
       this.accessibleComponentTabPage.Text = "Component Properties";
       this.accessibleComponentTabPage.UseVisualStyleBackColor = true;
@@ -472,9 +419,9 @@ namespace AccessBridgeExplorer {
       this._accessibleContextPropertyList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this._accessibleContextPropertyList.MultiSelect = false;
       this._accessibleContextPropertyList.Name = "_accessibleContextPropertyList";
-      this._accessibleContextPropertyList.Size = new System.Drawing.Size(530, 390);
+      this._accessibleContextPropertyList.Size = new System.Drawing.Size(531, 422);
       this._accessibleContextPropertyList.SmallImageList = this._propertyImageList;
-      this._accessibleContextPropertyList.TabIndex = 1;
+      this._accessibleContextPropertyList.TabIndex = 0;
       this._accessibleContextPropertyList.UseCompatibleStateImageBehavior = false;
       this._accessibleContextPropertyList.View = System.Windows.Forms.View.Details;
       // 
@@ -498,7 +445,7 @@ namespace AccessBridgeExplorer {
       // mainSplitContainer
       // 
       this.mainSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.mainSplitContainer.Location = new System.Drawing.Point(0, 51);
+      this.mainSplitContainer.Location = new System.Drawing.Point(0, 0);
       this.mainSplitContainer.Name = "mainSplitContainer";
       this.mainSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
       // 
@@ -509,8 +456,8 @@ namespace AccessBridgeExplorer {
       // mainSplitContainer.Panel2
       // 
       this.mainSplitContainer.Panel2.Controls.Add(this._bottomTabControl);
-      this.mainSplitContainer.Size = new System.Drawing.Size(1008, 660);
-      this.mainSplitContainer.SplitterDistance = 418;
+      this.mainSplitContainer.Size = new System.Drawing.Size(1008, 711);
+      this.mainSplitContainer.SplitterDistance = 450;
       this.mainSplitContainer.TabIndex = 4;
       this.mainSplitContainer.TabStop = false;
       // 
@@ -522,7 +469,7 @@ namespace AccessBridgeExplorer {
       this._bottomTabControl.Location = new System.Drawing.Point(0, 0);
       this._bottomTabControl.Name = "_bottomTabControl";
       this._bottomTabControl.SelectedIndex = 0;
-      this._bottomTabControl.Size = new System.Drawing.Size(1008, 238);
+      this._bottomTabControl.Size = new System.Drawing.Size(1008, 257);
       this._bottomTabControl.TabIndex = 0;
       // 
       // _messageListPage
@@ -531,7 +478,7 @@ namespace AccessBridgeExplorer {
       this._messageListPage.Controls.Add(this.messagesToolStrip);
       this._messageListPage.Location = new System.Drawing.Point(4, 24);
       this._messageListPage.Name = "_messageListPage";
-      this._messageListPage.Size = new System.Drawing.Size(1000, 210);
+      this._messageListPage.Size = new System.Drawing.Size(1000, 229);
       this._messageListPage.TabIndex = 1;
       this._messageListPage.Text = "Messages";
       this._messageListPage.UseVisualStyleBackColor = true;
@@ -548,7 +495,7 @@ namespace AccessBridgeExplorer {
       this._messageList.Location = new System.Drawing.Point(25, 0);
       this._messageList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this._messageList.Name = "_messageList";
-      this._messageList.Size = new System.Drawing.Size(975, 210);
+      this._messageList.Size = new System.Drawing.Size(975, 229);
       this._messageList.TabIndex = 7;
       this._messageList.UseCompatibleStateImageBehavior = false;
       this._messageList.View = System.Windows.Forms.View.Details;
@@ -576,21 +523,10 @@ namespace AccessBridgeExplorer {
             this.clearMessagesButton});
       this.messagesToolStrip.Location = new System.Drawing.Point(0, 0);
       this.messagesToolStrip.Name = "messagesToolStrip";
-      this.messagesToolStrip.Size = new System.Drawing.Size(25, 210);
+      this.messagesToolStrip.Size = new System.Drawing.Size(25, 229);
       this.messagesToolStrip.TabIndex = 6;
       this.messagesToolStrip.Text = "toolStrip3";
       this.messagesToolStrip.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
-      // 
-      // clearMessagesButton
-      // 
-      this.clearMessagesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.clearMessagesButton.Image = ((System.Drawing.Image)(resources.GetObject("clearMessagesButton.Image")));
-      this.clearMessagesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.clearMessagesButton.Name = "clearMessagesButton";
-      this.clearMessagesButton.Size = new System.Drawing.Size(22, 24);
-      this.clearMessagesButton.Text = "Clear";
-      this.clearMessagesButton.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-      this.clearMessagesButton.Click += new System.EventHandler(this.clearMessagesButton_Click);
       // 
       // _eventListPage
       // 
@@ -598,7 +534,7 @@ namespace AccessBridgeExplorer {
       this._eventListPage.Controls.Add(this.eventsToolStrip);
       this._eventListPage.Location = new System.Drawing.Point(4, 24);
       this._eventListPage.Name = "_eventListPage";
-      this._eventListPage.Size = new System.Drawing.Size(1173, 199);
+      this._eventListPage.Size = new System.Drawing.Size(1000, 229);
       this._eventListPage.TabIndex = 0;
       this._eventListPage.Text = "Events";
       this._eventListPage.UseVisualStyleBackColor = true;
@@ -619,7 +555,7 @@ namespace AccessBridgeExplorer {
       this._eventList.Location = new System.Drawing.Point(25, 0);
       this._eventList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this._eventList.Name = "_eventList";
-      this._eventList.Size = new System.Drawing.Size(1148, 199);
+      this._eventList.Size = new System.Drawing.Size(975, 229);
       this._eventList.TabIndex = 5;
       this._eventList.UseCompatibleStateImageBehavior = false;
       this._eventList.View = System.Windows.Forms.View.Details;
@@ -667,10 +603,27 @@ namespace AccessBridgeExplorer {
             this.clearEventsButton});
       this.eventsToolStrip.Location = new System.Drawing.Point(0, 0);
       this.eventsToolStrip.Name = "eventsToolStrip";
-      this.eventsToolStrip.Size = new System.Drawing.Size(25, 199);
+      this.eventsToolStrip.Size = new System.Drawing.Size(25, 229);
       this.eventsToolStrip.TabIndex = 0;
       this.eventsToolStrip.Text = "toolStrip2";
       this.eventsToolStrip.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
+      // 
+      // testToolStripMenuItem
+      // 
+      this.testToolStripMenuItem.Name = "testToolStripMenuItem";
+      this.testToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.testToolStripMenuItem.Text = "Test";
+      // 
+      // clearMessagesButton
+      // 
+      this.clearMessagesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.clearMessagesButton.Image = ((System.Drawing.Image)(resources.GetObject("clearMessagesButton.Image")));
+      this.clearMessagesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.clearMessagesButton.Name = "clearMessagesButton";
+      this.clearMessagesButton.Size = new System.Drawing.Size(22, 24);
+      this.clearMessagesButton.Text = "Clear";
+      this.clearMessagesButton.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+      this.clearMessagesButton.Click += new System.EventHandler(this.clearMessagesButton_Click);
       // 
       // clearEventsButton
       // 
@@ -683,21 +636,80 @@ namespace AccessBridgeExplorer {
       this.clearEventsButton.TextAlign = System.Drawing.ContentAlignment.TopLeft;
       this.clearEventsButton.Click += new System.EventHandler(this.clearEventsButton_Click);
       // 
-      // testToolStripMenuItem
+      // navigateBackwardButton
       // 
-      this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-      this.testToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-      this.testToolStripMenuItem.Text = "Test";
+      this.navigateBackwardButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.navigateBackwardButton.Image = ((System.Drawing.Image)(resources.GetObject("navigateBackwardButton.Image")));
+      this.navigateBackwardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.navigateBackwardButton.Name = "navigateBackwardButton";
+      this.navigateBackwardButton.Size = new System.Drawing.Size(36, 24);
+      this.navigateBackwardButton.Text = "Navigate Backward";
+      this.navigateBackwardButton.ToolTipText = "Navigate Backward";
+      this.navigateBackwardButton.ButtonClick += new System.EventHandler(this.navigateBackwardButton_Click);
+      // 
+      // navigateForwardButton
+      // 
+      this.navigateForwardButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.navigateForwardButton.Image = ((System.Drawing.Image)(resources.GetObject("navigateForwardButton.Image")));
+      this.navigateForwardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.navigateForwardButton.Name = "navigateForwardButton";
+      this.navigateForwardButton.Size = new System.Drawing.Size(36, 24);
+      this.navigateForwardButton.Text = "Nagivate Forward";
+      this.navigateForwardButton.ToolTipText = "Nagivate Forward";
+      this.navigateForwardButton.ButtonClick += new System.EventHandler(this.navigateForwardButton_Click);
+      // 
+      // _refreshButton
+      // 
+      this._refreshButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this._refreshButton.Image = ((System.Drawing.Image)(resources.GetObject("_refreshButton.Image")));
+      this._refreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this._refreshButton.Name = "_refreshButton";
+      this._refreshButton.Size = new System.Drawing.Size(24, 24);
+      this._refreshButton.Text = "Refresh";
+      this._refreshButton.ToolTipText = "Refresh the list of accessible windows";
+      this._refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
+      // 
+      // _findComponentButton
+      // 
+      this._findComponentButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this._findComponentButton.Image = global::AccessBridgeExplorer.Properties.Resources.Crosshair;
+      this._findComponentButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this._findComponentButton.Name = "_findComponentButton";
+      this._findComponentButton.Size = new System.Drawing.Size(24, 24);
+      this._findComponentButton.Text = "Find Component";
+      this._findComponentButton.ToolTipText = "Find accessibility elements using the mouse pointer";
+      this._findComponentButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.catpureButton_MouseDown);
+      // 
+      // showHelpButton
+      // 
+      this.showHelpButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.showHelpButton.Image = ((System.Drawing.Image)(resources.GetObject("showHelpButton.Image")));
+      this.showHelpButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.showHelpButton.Name = "showHelpButton";
+      this.showHelpButton.Size = new System.Drawing.Size(24, 24);
+      this.showHelpButton.Text = "Help";
+      this.showHelpButton.Click += new System.EventHandler(this.showHelpButton_Click);
+      // 
+      // notificationPanel
+      // 
+      this.notificationPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.notificationPanel.BackColor = System.Drawing.Color.LightYellow;
+      this.notificationPanel.Location = new System.Drawing.Point(594, 0);
+      this.notificationPanel.Margin = new System.Windows.Forms.Padding(0);
+      this.notificationPanel.Name = "notificationPanel";
+      this.notificationPanel.Size = new System.Drawing.Size(413, 122);
+      this.notificationPanel.TabIndex = 2;
       // 
       // ExplorerForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1008, 733);
+      this.Controls.Add(this.notificationPanel);
       this.Controls.Add(this.mainSplitContainer);
       this.Controls.Add(this.mainToolStrip);
-      this.Controls.Add(this.statusBarStrip);
       this.Controls.Add(this.mainMenuStrip);
+      this.Controls.Add(this.statusBarStrip);
       this.DoubleBuffered = true;
       this.Font = new System.Drawing.Font("Candara", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.MainMenuStrip = this.mainMenuStrip;
@@ -806,6 +818,7 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripButton _overlayEnableButton;
     private System.Windows.Forms.ToolStripMenuItem aboutMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+    private NotificationPanel notificationPanel;
   }
 }
 

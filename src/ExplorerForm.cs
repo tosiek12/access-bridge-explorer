@@ -113,6 +113,12 @@ namespace AccessBridgeExplorer {
 
     private void refreshButton_Click(object sender, EventArgs e) {
       _controller.RefreshTree();
+      notificationPanel.ShowNotification(
+        DateTime.Now +
+        "homepage: https://github.com/google/access-bridge-explorer/releases/latest " +
+        "Hello World! this is a very long message that should not be that long." +
+        "Hello World! this is a very long message that should not be that long." +
+        "Hello World! this is a very long message that should not be that long.");
     }
 
     private void overlayEnableButton_Click(object sender, EventArgs e) {
