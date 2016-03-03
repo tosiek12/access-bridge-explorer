@@ -46,6 +46,7 @@ namespace AccessBridgeExplorer {
       this.navigateForwardMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.navigateBackwardMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.separator1 = new System.Windows.Forms.ToolStripSeparator();
+      this.showNotificationMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.refreshMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.optionsMenu = new System.Windows.Forms.ToolStripMenuItem();
       this._propertiesMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -100,7 +101,6 @@ namespace AccessBridgeExplorer {
       this.eventsToolStrip = new System.Windows.Forms.ToolStrip();
       this.clearEventsButton = new System.Windows.Forms.ToolStripButton();
       this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.showNotificationMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.notificationPanel = new AccessBridgeExplorer.NotificationPanel();
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
@@ -190,6 +190,13 @@ namespace AccessBridgeExplorer {
       // 
       this.separator1.Name = "separator1";
       this.separator1.Size = new System.Drawing.Size(222, 6);
+      // 
+      // showNotificationMenuItem
+      // 
+      this.showNotificationMenuItem.Name = "showNotificationMenuItem";
+      this.showNotificationMenuItem.Size = new System.Drawing.Size(225, 22);
+      this.showNotificationMenuItem.Text = "&Last notification";
+      this.showNotificationMenuItem.Click += new System.EventHandler(this.showNotificationMenuItem_Click);
       // 
       // refreshMenuItem
       // 
@@ -692,21 +699,15 @@ namespace AccessBridgeExplorer {
       this.testToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
       this.testToolStripMenuItem.Text = "Test";
       // 
-      // showNotificationMenuItem
-      // 
-      this.showNotificationMenuItem.Name = "showNotificationMenuItem";
-      this.showNotificationMenuItem.Size = new System.Drawing.Size(225, 22);
-      this.showNotificationMenuItem.Text = "&Last notification";
-      this.showNotificationMenuItem.Click += new System.EventHandler(this.showNotificationMenuItem_Click);
-      // 
       // notificationPanel
       // 
       this.notificationPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.notificationPanel.BackColor = System.Drawing.Color.LightYellow;
-      this.notificationPanel.Location = new System.Drawing.Point(594, 4);
+      this.notificationPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+      this.notificationPanel.Location = new System.Drawing.Point(440, 2);
       this.notificationPanel.Margin = new System.Windows.Forms.Padding(0);
       this.notificationPanel.Name = "notificationPanel";
-      this.notificationPanel.Size = new System.Drawing.Size(413, 122);
+      this.notificationPanel.Size = new System.Drawing.Size(566, 68);
       this.notificationPanel.TabIndex = 2;
       // 
       // ExplorerForm

@@ -18,6 +18,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using AccessBridgeExplorer.Win32;
 
 namespace AccessBridgeExplorer.WindowsAccessBridge {
@@ -140,7 +141,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         }
         return library;
       } catch (Exception e) {
-        throw new ApplicationException("Error loading Java Access Bridge DLL. Please install Java Runtime 7 or later.", e);
+        var sb = new StringBuilder();
+        sb.Append("Error loading the Java Access Bridge DLL. This usually happens if the Java Access Bridge is not installed. ");
+        if (IntPtr.Size == 8)
+          sb.Append("Please make sure to install the 64-bit version of the Java SE Runtime Environment version 7 or later.");
+        else
+          sb.Append("Please make sure to install the 32-bit version of the Java SE Runtime Environment version 7 or later.");
+        throw new ApplicationException(sb.ToString(), e);
       }
     }
 

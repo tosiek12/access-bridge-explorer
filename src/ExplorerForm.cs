@@ -192,7 +192,8 @@ namespace AccessBridgeExplorer {
     }
 
     private void refreshTimer_Tick(object sender, EventArgs e) {
-      _controller.RefreshTick();
+      refreshTimer.Stop();
+      _controller.RefreshTree();
     }
 
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -349,6 +350,11 @@ namespace AccessBridgeExplorer {
     void IExplorerFormView.FocusMessageList() {
       _bottomTabControl.SelectedTab = _messageListPage;
       _messageList.Focus();
+    }
+
+    void IExplorerFormView.AddNotification(string text, NotificationPanelIcon icon) {
+      notificationPanel.AddNotification(text, icon);
+      notificationPanel.ShowNotification();
     }
 
     #endregion

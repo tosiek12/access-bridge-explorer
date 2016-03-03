@@ -39,8 +39,10 @@ namespace AccessBridgeExplorer {
     private void InitializeComponent() {
       this.textBox = new System.Windows.Forms.RichTextBox();
       this.panel1 = new System.Windows.Forms.Panel();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.closeButton = new AccessBridgeExplorer.RoundButton();
       this.panel1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // textBox
@@ -51,11 +53,11 @@ namespace AccessBridgeExplorer {
       this.textBox.BackColor = System.Drawing.SystemColors.Window;
       this.textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.textBox.Cursor = System.Windows.Forms.Cursors.Arrow;
-      this.textBox.Location = new System.Drawing.Point(4, 4);
-      this.textBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+      this.textBox.Location = new System.Drawing.Point(28, 4);
+      this.textBox.Margin = new System.Windows.Forms.Padding(0);
       this.textBox.Name = "textBox";
       this.textBox.ReadOnly = true;
-      this.textBox.Size = new System.Drawing.Size(459, 102);
+      this.textBox.Size = new System.Drawing.Size(441, 104);
       this.textBox.TabIndex = 0;
       this.textBox.Text = "";
       this.textBox.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.textBox_LinkClicked);
@@ -63,16 +65,26 @@ namespace AccessBridgeExplorer {
       // panel1
       // 
       this.panel1.BackColor = System.Drawing.SystemColors.Window;
-      this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+      this.panel1.Controls.Add(this.pictureBox1);
       this.panel1.Controls.Add(this.closeButton);
       this.panel1.Controls.Add(this.textBox);
       this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.panel1.Location = new System.Drawing.Point(0, 0);
-      this.panel1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+      this.panel1.Margin = new System.Windows.Forms.Padding(0);
       this.panel1.Name = "panel1";
       this.panel1.Padding = new System.Windows.Forms.Padding(4);
-      this.panel1.Size = new System.Drawing.Size(488, 114);
+      this.panel1.Size = new System.Drawing.Size(486, 112);
       this.panel1.TabIndex = 2;
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = global::AccessBridgeExplorer.Properties.Resources.InfoIcon;
+      this.pictureBox1.Location = new System.Drawing.Point(4, 4);
+      this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(24, 24);
+      this.pictureBox1.TabIndex = 4;
+      this.pictureBox1.TabStop = false;
       // 
       // closeButton
       // 
@@ -82,7 +94,7 @@ namespace AccessBridgeExplorer {
       this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.closeButton.ForeColor = System.Drawing.SystemColors.AppWorkspace;
       this.closeButton.Image = global::AccessBridgeExplorer.Properties.Resources.SmallCloseButton;
-      this.closeButton.Location = new System.Drawing.Point(467, 0);
+      this.closeButton.Location = new System.Drawing.Point(469, 0);
       this.closeButton.Margin = new System.Windows.Forms.Padding(0);
       this.closeButton.Name = "closeButton";
       this.closeButton.Size = new System.Drawing.Size(16, 16);
@@ -94,11 +106,13 @@ namespace AccessBridgeExplorer {
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.Controls.Add(this.panel1);
       this.Margin = new System.Windows.Forms.Padding(0);
       this.Name = "NotificationPanel";
-      this.Size = new System.Drawing.Size(488, 114);
+      this.Size = new System.Drawing.Size(486, 112);
       this.panel1.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -108,5 +122,6 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.RichTextBox textBox;
     private System.Windows.Forms.Panel panel1;
     private RoundButton closeButton;
+    private System.Windows.Forms.PictureBox pictureBox1;
   }
 }

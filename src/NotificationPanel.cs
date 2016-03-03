@@ -36,8 +36,21 @@ namespace AccessBridgeExplorer {
       };
     }
 
-    public void SetNotificationText(string text) {
+    public void AddNotification(string text, NotificationPanelIcon icon) {
+      text = text.TrimEnd('\r', '\n');
       textBox.Text = text;
+      switch (icon) {
+        case NotificationPanelIcon.Error:
+          pictureBox1.Image = AccessBridgeExplorer.Properties.Resources.ErrorIcon;
+          break;
+        case NotificationPanelIcon.Warning:
+          pictureBox1.Image = AccessBridgeExplorer.Properties.Resources.WarningIcon;
+          break;
+        case NotificationPanelIcon.Info:
+        default:
+          pictureBox1.Image = AccessBridgeExplorer.Properties.Resources.InfoIcon;
+          break;
+      }
     }
 
     public void ShowNotification() {
@@ -99,5 +112,11 @@ namespace AccessBridgeExplorer {
     private void textBox_LinkClicked(object sender, LinkClickedEventArgs e) {
       System.Diagnostics.Process.Start(e.LinkText);
     }
+  }
+
+  public enum NotificationPanelIcon {
+    Info,
+    Warning,
+    Error,
   }
 }
