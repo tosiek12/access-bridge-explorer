@@ -28,12 +28,34 @@ namespace AccessBridgeExplorer {
       };
       this.Load += (sender, args) => {
         if (!DesignMode) {
-          Height = 0;
+          HideNotification();
         }
       };
       this.Resize += (sender, args) => {
         SetHeightFromText();
       };
+    }
+
+    public void SetNotificationText(string text) {
+      textBox.Text = text;
+    }
+
+    public void ShowNotification() {
+      _shown = true;
+      SetHeightFromText();
+    }
+
+    public void HideNotification() {
+      _shown = false;
+      Height = 0;
+    }
+
+    public string NotificationText {
+      get { return textBox.Text; }
+    }
+
+    public bool NotificationShown {
+      get { return _shown; }
     }
 
     public override Color ForeColor {
@@ -70,15 +92,10 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    public void ShowNotification(string text) {
-      _shown = true;
-      textBox.Text = text;
+    private void closeButton_Click(object sender, EventArgs e) {
+      HideNotification();
     }
 
-    private void closeButton_Click(object sender, EventArgs e) {
-      _shown = false;
-      Height = 0;
-    }
     private void textBox_LinkClicked(object sender, LinkClickedEventArgs e) {
       System.Diagnostics.Process.Start(e.LinkText);
     }

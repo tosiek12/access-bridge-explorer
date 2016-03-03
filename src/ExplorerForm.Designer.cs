@@ -100,6 +100,7 @@ namespace AccessBridgeExplorer {
       this.eventsToolStrip = new System.Windows.Forms.ToolStrip();
       this.clearEventsButton = new System.Windows.Forms.ToolStripButton();
       this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.showNotificationMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.notificationPanel = new AccessBridgeExplorer.NotificationPanel();
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
@@ -160,6 +161,7 @@ namespace AccessBridgeExplorer {
             this.navigateForwardMenuItem,
             this.navigateBackwardMenuItem,
             this.separator1,
+            this.showNotificationMenuItem,
             this.refreshMenuItem});
       this.viewMenu.Name = "viewMenu";
       this.viewMenu.ShortcutKeys = System.Windows.Forms.Keys.F5;
@@ -690,6 +692,13 @@ namespace AccessBridgeExplorer {
       this.testToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
       this.testToolStripMenuItem.Text = "Test";
       // 
+      // showNotificationMenuItem
+      // 
+      this.showNotificationMenuItem.Name = "showNotificationMenuItem";
+      this.showNotificationMenuItem.Size = new System.Drawing.Size(225, 22);
+      this.showNotificationMenuItem.Text = "&Last notification";
+      this.showNotificationMenuItem.Click += new System.EventHandler(this.showNotificationMenuItem_Click);
+      // 
       // notificationPanel
       // 
       this.notificationPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -819,6 +828,7 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripMenuItem aboutMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
     private NotificationPanel notificationPanel;
+    private System.Windows.Forms.ToolStripMenuItem showNotificationMenuItem;
   }
 }
 

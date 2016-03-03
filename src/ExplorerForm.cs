@@ -64,6 +64,12 @@ namespace AccessBridgeExplorer {
 
     private void ApplicationOnIdle(object sender, EventArgs eventArgs) {
       UpdateNavigationState();
+      UpdateNotificationMenu();
+    }
+
+    private void UpdateNotificationMenu() {
+      showNotificationMenuItem.Checked = notificationPanel.NotificationShown;
+      showNotificationMenuItem.Enabled = notificationPanel.NotificationText.Length > 0;
     }
 
     private void UpdateNavigationState() {
@@ -113,12 +119,6 @@ namespace AccessBridgeExplorer {
 
     private void refreshButton_Click(object sender, EventArgs e) {
       _controller.RefreshTree();
-      notificationPanel.ShowNotification(
-        DateTime.Now +
-        "homepage: https://github.com/google/access-bridge-explorer/releases/latest " +
-        "Hello World! this is a very long message that should not be that long." +
-        "Hello World! this is a very long message that should not be that long." +
-        "Hello World! this is a very long message that should not be that long.");
     }
 
     private void overlayEnableButton_Click(object sender, EventArgs e) {
@@ -341,6 +341,16 @@ namespace AccessBridgeExplorer {
 
     private void aboutMenuItem_Click(object sender, EventArgs e) {
       _controller.ShowAbout();
+    }
+
+    private void showNotificationMenuItem_Click(object sender, EventArgs e) {
+      if (showNotificationMenuItem.Checked) {
+        notificationPanel.HideNotification();
+        showNotificationMenuItem.Checked = false;
+      } else {
+        notificationPanel.ShowNotification();
+        showNotificationMenuItem.Checked = true;
+      }
     }
   }
 }
