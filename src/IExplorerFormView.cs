@@ -41,6 +41,6 @@ namespace AccessBridgeExplorer {
     void ShowMessageBox(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon);
     void ShowDialog(Form form);
     void FocusMessageList();
-    void AddNotification(string text, NotificationPanelIcon icon);
+    void AddNotification(NotificationPanelEntry entry);
   }
 }

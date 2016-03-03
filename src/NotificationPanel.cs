@@ -20,6 +20,7 @@ namespace AccessBridgeExplorer {
   public partial class NotificationPanel : UserControl {
     private bool _shown;
     private bool _resizing;
+    private NotificationPanelEntry _currentEntry;
 
     public NotificationPanel() {
       InitializeComponent();
@@ -36,10 +37,11 @@ namespace AccessBridgeExplorer {
       };
     }
 
-    public void AddNotification(string text, NotificationPanelIcon icon) {
-      text = text.TrimEnd('\r', '\n');
+    public void AddNotification(NotificationPanelEntry entry) {
+      _currentEntry = entry;
+      var text = entry.Text.TrimEnd('\r', '\n');
       textBox.Text = text;
-      switch (icon) {
+      switch (entry.Icon) {
         case NotificationPanelIcon.Error:
           pictureBox1.Image = AccessBridgeExplorer.Properties.Resources.ErrorIcon;
           break;
@@ -112,11 +114,20 @@ namespace AccessBridgeExplorer {
     private void textBox_LinkClicked(object sender, LinkClickedEventArgs e) {
       System.Diagnostics.Process.Start(e.LinkText);
     }
-  }
 
-  public enum NotificationPanelIcon {
-    Info,
-    Warning,
-    Error,
+    private void dismissTimer_Tick(object sender, EventArgs e) {
+      if (_currentEntry == null)
+        return;
+
+      if (_currentEntry.IsExpired == null)
+        return;
+
+      if (_currentEntry.IsExpired()) {
+        _currentEntry = null;
+        HideNotification();
+        textBox.Text = "";
+        pictureBox1.Image = AccessBridgeExplorer.Properties.Resources.InfoIcon;
+      }
+    }
   }
 }

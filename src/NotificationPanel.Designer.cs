@@ -37,9 +37,11 @@ namespace AccessBridgeExplorer {
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent() {
+      this.components = new System.ComponentModel.Container();
       this.textBox = new System.Windows.Forms.RichTextBox();
       this.panel1 = new System.Windows.Forms.Panel();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      this.dismissTimer = new System.Windows.Forms.Timer(this.components);
       this.closeButton = new AccessBridgeExplorer.RoundButton();
       this.panel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -86,6 +88,12 @@ namespace AccessBridgeExplorer {
       this.pictureBox1.TabIndex = 4;
       this.pictureBox1.TabStop = false;
       // 
+      // dismissTimer
+      // 
+      this.dismissTimer.Enabled = true;
+      this.dismissTimer.Interval = 200;
+      this.dismissTimer.Tick += new System.EventHandler(this.dismissTimer_Tick);
+      // 
       // closeButton
       // 
       this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -123,5 +131,6 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.Panel panel1;
     private RoundButton closeButton;
     private System.Windows.Forms.PictureBox pictureBox1;
+    private System.Windows.Forms.Timer dismissTimer;
   }
 }

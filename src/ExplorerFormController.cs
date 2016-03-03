@@ -409,11 +409,17 @@ namespace AccessBridgeExplorer {
           if (windows.Count == 0) {
             var sb = new StringBuilder();
             sb.Append("No Java application using the Java Access Bridge has been detected.  ");
-            sb.Append("This can happen if no application is currently running, or if the Java Access Bridge has not been enabled.  ");
+            sb.Append("This can happen if no application is currently running, or if the " + 
+              "Java Access Bridge has not been enabled.  ");
             sb.Append("See http://docs.oracle.com/javase/8/docs/technotes/guides/access/enable_and_test.html.");
-            _view.AddNotification(sb.ToString(), NotificationPanelIcon.Info);
+            _view.AddNotification(new NotificationPanelEntry {
+              Text = sb.ToString(),
+              Icon = NotificationPanelIcon.Info,
+              IsExpired = () => _accessBridge.EnumWindows().Count > 0
+            });
           }
         } catch (Exception e) {
+          LogErrorMessage(e);
           RefreshTree(new List<AccessibleJvm>());
           var sb = new StringBuilder();
           sb.Append(e.Message);
@@ -424,7 +430,11 @@ namespace AccessBridgeExplorer {
             sb.AppendFormat("   * {0}", ex.Message);
             sb.AppendLine();
           }
-          _view.AddNotification(sb.ToString(), NotificationPanelIcon.Error);
+          _view.AddNotification(new NotificationPanelEntry {
+            Text = sb.ToString(),
+            Icon = NotificationPanelIcon.Error,
+            IsExpired = () => _accessBridge.IsLoaded
+          });
         }
       });
     }

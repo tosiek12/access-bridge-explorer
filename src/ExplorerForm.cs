@@ -352,8 +352,8 @@ namespace AccessBridgeExplorer {
       _messageList.Focus();
     }
 
-    void IExplorerFormView.AddNotification(string text, NotificationPanelIcon icon) {
-      notificationPanel.AddNotification(text, icon);
+    void IExplorerFormView.AddNotification(NotificationPanelEntry entry) {
+      notificationPanel.AddNotification(entry);
       notificationPanel.ShowNotification();
     }
 
