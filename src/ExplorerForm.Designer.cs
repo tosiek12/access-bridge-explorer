@@ -606,9 +606,9 @@ namespace AccessBridgeExplorer {
       // 
       this._eventListPage.Controls.Add(this._eventList);
       this._eventListPage.Controls.Add(this.eventsToolStrip);
-      this._eventListPage.Location = new System.Drawing.Point(4, 24);
+      this._eventListPage.Location = new System.Drawing.Point(4, 22);
       this._eventListPage.Name = "_eventListPage";
-      this._eventListPage.Size = new System.Drawing.Size(1000, 211);
+      this._eventListPage.Size = new System.Drawing.Size(1000, 213);
       this._eventListPage.TabIndex = 0;
       this._eventListPage.Text = "Events";
       this._eventListPage.UseVisualStyleBackColor = true;
@@ -629,7 +629,7 @@ namespace AccessBridgeExplorer {
       this._eventList.Location = new System.Drawing.Point(25, 0);
       this._eventList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this._eventList.Name = "_eventList";
-      this._eventList.Size = new System.Drawing.Size(975, 211);
+      this._eventList.Size = new System.Drawing.Size(975, 213);
       this._eventList.TabIndex = 5;
       this._eventList.UseCompatibleStateImageBehavior = false;
       this._eventList.View = System.Windows.Forms.View.Details;
@@ -677,7 +677,7 @@ namespace AccessBridgeExplorer {
             this.clearEventsButton});
       this.eventsToolStrip.Location = new System.Drawing.Point(0, 0);
       this.eventsToolStrip.Name = "eventsToolStrip";
-      this.eventsToolStrip.Size = new System.Drawing.Size(25, 211);
+      this.eventsToolStrip.Size = new System.Drawing.Size(25, 213);
       this.eventsToolStrip.TabIndex = 0;
       this.eventsToolStrip.Text = "toolStrip2";
       this.eventsToolStrip.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
@@ -724,6 +724,7 @@ namespace AccessBridgeExplorer {
       this.Font = new System.Drawing.Font("Candara", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.MainMenuStrip = this.mainMenuStrip;
       this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+      this.MinimumSize = new System.Drawing.Size(600, 400);
       this.Name = "ExplorerForm";
       this.Text = "Access Bridge Explorer";
       this.Activated += new System.EventHandler(this.MainForm_Activated);
