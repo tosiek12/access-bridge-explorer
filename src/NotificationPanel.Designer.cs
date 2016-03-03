@@ -82,7 +82,7 @@ namespace AccessBridgeExplorer {
       this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.closeButton.ForeColor = System.Drawing.SystemColors.AppWorkspace;
       this.closeButton.Image = global::AccessBridgeExplorer.Properties.Resources.SmallCloseButton;
-      this.closeButton.Location = new System.Drawing.Point(466, 0);
+      this.closeButton.Location = new System.Drawing.Point(467, 0);
       this.closeButton.Margin = new System.Windows.Forms.Padding(0);
       this.closeButton.Name = "closeButton";
       this.closeButton.Size = new System.Drawing.Size(16, 16);
