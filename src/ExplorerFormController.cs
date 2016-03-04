@@ -421,6 +421,7 @@ namespace AccessBridgeExplorer {
         var currentRefreshCallId = _refreshCallId;
         try {
           var jvms = _accessBridge.EnumJvms();
+          RefreshTree(jvms);
           if (jvms.Count == 0) {
             var sb = new StringBuilder();
             sb.Append("No Java application using the Java Access Bridge has been detected.  ");
