@@ -469,6 +469,7 @@ namespace AccessBridgeExplorer {
       // 
       // _accessibilityTree
       // 
+      this._accessibilityTree.AccessibleName = "Accessibility Tree";
       this._accessibilityTree.Dock = System.Windows.Forms.DockStyle.Fill;
       this._accessibilityTree.FullRowSelect = true;
       this._accessibilityTree.HideSelection = false;
@@ -500,6 +501,7 @@ namespace AccessBridgeExplorer {
       // 
       // _accessibleContextPropertyList
       // 
+      this._accessibleContextPropertyList.AccessibleName = "Component Properties";
       this._accessibleContextPropertyList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.propertyHeader,
             this.valueHeader});
@@ -577,6 +579,7 @@ namespace AccessBridgeExplorer {
       // 
       // _messageList
       // 
+      this._messageList.AccessibleName = "Messages";
       this._messageList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.messageIdColumn,
             this.messageTimeColumn,
@@ -617,7 +620,8 @@ namespace AccessBridgeExplorer {
       this.messagesToolStrip.Name = "messagesToolStrip";
       this.messagesToolStrip.Size = new System.Drawing.Size(25, 211);
       this.messagesToolStrip.TabIndex = 6;
-      this.messagesToolStrip.Text = "toolStrip3";
+      this.messagesToolStrip.TabStop = true;
+      this.messagesToolStrip.Text = "Messages";
       this.messagesToolStrip.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
       // 
       // clearMessagesButton
@@ -635,15 +639,16 @@ namespace AccessBridgeExplorer {
       // 
       this._eventListPage.Controls.Add(this._eventList);
       this._eventListPage.Controls.Add(this.eventsToolStrip);
-      this._eventListPage.Location = new System.Drawing.Point(4, 22);
+      this._eventListPage.Location = new System.Drawing.Point(4, 24);
       this._eventListPage.Name = "_eventListPage";
-      this._eventListPage.Size = new System.Drawing.Size(1000, 213);
+      this._eventListPage.Size = new System.Drawing.Size(1000, 211);
       this._eventListPage.TabIndex = 0;
       this._eventListPage.Text = "Events";
       this._eventListPage.UseVisualStyleBackColor = true;
       // 
       // _eventList
       // 
+      this._eventList.AccessibleName = "Events";
       this._eventList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.eventId,
             this.eventTime,
@@ -658,7 +663,7 @@ namespace AccessBridgeExplorer {
       this._eventList.Location = new System.Drawing.Point(25, 0);
       this._eventList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this._eventList.Name = "_eventList";
-      this._eventList.Size = new System.Drawing.Size(975, 213);
+      this._eventList.Size = new System.Drawing.Size(975, 211);
       this._eventList.TabIndex = 5;
       this._eventList.UseCompatibleStateImageBehavior = false;
       this._eventList.View = System.Windows.Forms.View.Details;
@@ -706,9 +711,9 @@ namespace AccessBridgeExplorer {
             this.clearEventsButton});
       this.eventsToolStrip.Location = new System.Drawing.Point(0, 0);
       this.eventsToolStrip.Name = "eventsToolStrip";
-      this.eventsToolStrip.Size = new System.Drawing.Size(25, 213);
+      this.eventsToolStrip.Size = new System.Drawing.Size(25, 211);
       this.eventsToolStrip.TabIndex = 0;
-      this.eventsToolStrip.Text = "toolStrip2";
+      this.eventsToolStrip.Text = "Events";
       this.eventsToolStrip.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
       // 
       // clearEventsButton
@@ -730,11 +735,13 @@ namespace AccessBridgeExplorer {
       // 
       // notificationPanel
       // 
+      this.notificationPanel.AccessibleName = "Notification Panel";
       this.notificationPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.notificationPanel.BackColor = System.Drawing.Color.LightYellow;
       this.notificationPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.notificationPanel.Location = new System.Drawing.Point(440, 2);
       this.notificationPanel.Margin = new System.Windows.Forms.Padding(0);
+      this.notificationPanel.MinimumSize = new System.Drawing.Size(100, 20);
       this.notificationPanel.Name = "notificationPanel";
       this.notificationPanel.Size = new System.Drawing.Size(566, 68);
       this.notificationPanel.TabIndex = 2;

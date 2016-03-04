@@ -60,6 +60,7 @@ namespace AccessBridgeExplorer {
       _shown = true;
       Visible = true;
       SetHeightFromText();
+      textBox.Focus();
     }
 
     public void HidePanel() {

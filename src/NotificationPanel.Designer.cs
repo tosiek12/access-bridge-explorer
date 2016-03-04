@@ -40,15 +40,16 @@ namespace AccessBridgeExplorer {
       this.components = new System.ComponentModel.Container();
       this.textBox = new System.Windows.Forms.RichTextBox();
       this.panel1 = new System.Windows.Forms.Panel();
-      this.dismissTimer = new System.Windows.Forms.Timer(this.components);
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.closeButton = new AccessBridgeExplorer.RoundButton();
+      this.dismissTimer = new System.Windows.Forms.Timer(this.components);
       this.panel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // textBox
       // 
+      this.textBox.AccessibleName = "Notification Text";
       this.textBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -78,14 +79,9 @@ namespace AccessBridgeExplorer {
       this.panel1.Size = new System.Drawing.Size(486, 112);
       this.panel1.TabIndex = 2;
       // 
-      // dismissTimer
-      // 
-      this.dismissTimer.Enabled = true;
-      this.dismissTimer.Interval = 200;
-      this.dismissTimer.Tick += new System.EventHandler(this.dismissTimer_Tick);
-      // 
       // pictureBox1
       // 
+      this.pictureBox1.AccessibleName = "Icon";
       this.pictureBox1.Image = global::AccessBridgeExplorer.Properties.Resources.InfoIcon;
       this.pictureBox1.Location = new System.Drawing.Point(4, 4);
       this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
@@ -96,6 +92,7 @@ namespace AccessBridgeExplorer {
       // 
       // closeButton
       // 
+      this.closeButton.AccessibleName = "Close";
       this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.closeButton.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.closeButton.FlatAppearance.BorderSize = 0;
@@ -109,6 +106,12 @@ namespace AccessBridgeExplorer {
       this.closeButton.TabIndex = 3;
       this.closeButton.UseVisualStyleBackColor = false;
       this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
+      // 
+      // dismissTimer
+      // 
+      this.dismissTimer.Enabled = true;
+      this.dismissTimer.Interval = 200;
+      this.dismissTimer.Tick += new System.EventHandler(this.dismissTimer_Tick);
       // 
       // NotificationPanel
       // 
