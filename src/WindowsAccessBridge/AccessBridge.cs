@@ -103,30 +103,34 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       if (_library == null)
         return new List<AccessibleJvm>();
 
-      var windows = new List<AccessibleWindow>();
-      var success = Win32.NativeMethods.EnumWindows((hWnd, lParam) => {
-        var rc = Functions.IsJavaWindow(hWnd);
-        if (rc != 0) {
-          int vmId;
-          JOBJECT64 ac;
-          if (Functions.GetAccessibleContextFromHWND(hWnd, out vmId, out ac) != 0) {
-            windows.Add(new AccessibleWindow(this, hWnd, new JavaObjectHandle(vmId, ac)));
+      try {
+        var windows = new List<AccessibleWindow>();
+        var success = Win32.NativeMethods.EnumWindows((hWnd, lParam) => {
+          var rc = Functions.IsJavaWindow(hWnd);
+          if (rc != 0) {
+            int vmId;
+            JOBJECT64 ac;
+            if (Functions.GetAccessibleContextFromHWND(hWnd, out vmId, out ac) != 0) {
+              windows.Add(new AccessibleWindow(this, hWnd, new JavaObjectHandle(vmId, ac)));
+            }
           }
+          return true;
+        }, IntPtr.Zero);
+
+        if (!success) {
+          var hr = Marshal.GetHRForLastWin32Error();
+          Marshal.ThrowExceptionForHR(hr);
         }
-        return true;
-      }, IntPtr.Zero);
 
-      if (!success) {
-        var hr = Marshal.GetHRForLastWin32Error();
-        Marshal.ThrowExceptionForHR(hr);
+        // Group windows by JVM id
+        return windows.GroupBy(x => x.JvmId).Select(g => {
+          var result = new AccessibleJvm(this, g.Key);
+          result.Windows.AddRange(g.OrderBy(x => x.GetDisplaySortString()));
+          return result;
+        }).OrderBy(x => x.JvmId).ToList();
+      } catch (Exception e) {
+        throw new ApplicationException("Error detecting running applications", e);
       }
-
-      // Group windows by JVM id
-      return windows.GroupBy(x => x.JvmId).Select(g => {
-        var result = new AccessibleJvm(this, g.Key);
-        result.Windows.AddRange(g.OrderBy(x => x.GetDisplaySortString()));
-        return result;
-      }).OrderBy(x => x.JvmId).ToList();
     }
 
     private static UnmanagedLibrary LoadLibrary() {
@@ -142,11 +146,18 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         return library;
       } catch (Exception e) {
         var sb = new StringBuilder();
-        sb.Append("Error loading the Java Access Bridge DLL. This usually happens if the Java Access Bridge is not installed. ");
-        if (IntPtr.Size == 8)
-          sb.Append("Please make sure to install the 64-bit version of the Java SE Runtime Environment version 7 or later.");
-        else
-          sb.Append("Please make sure to install the 32-bit version of the Java SE Runtime Environment version 7 or later.");
+        sb.AppendLine("Error loading the Java Access Bridge DLL.");
+        sb.AppendLine("This usually happens if the Java Access Bridge is not installed.");
+        if (IntPtr.Size == 8) {
+          sb.Append("Please make sure to install the 64-bit version of the " +
+            "Java SE Runtime Environment version 7 or later. ");
+          sb.AppendFormat("Alternatively, try running the 32-bit version of {0} " + 
+            "if a 32-bit version of the JRE is installed.", Assembly.GetEntryAssembly().GetName().Name);
+        } else {
+          sb.Append(
+            "Please make sure to install the 32-bit version of the " +
+            "Java SE Runtime Environment version 7 or later.");
+        }
         throw new ApplicationException(sb.ToString(), e);
       }
     }

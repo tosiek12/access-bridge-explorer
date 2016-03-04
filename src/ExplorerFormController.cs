@@ -397,35 +397,48 @@ namespace AccessBridgeExplorer {
       }
     }
 
+    private int _refreshCallId = 0;
     public void RefreshTree() {
       if (_disposed)
         return;
 
+      _refreshCallId++;
       UiAction(() => {
+        // Try initializing Access Bridge.
         try {
           _accessBridge.Initialize();
-          var jvms = _accessBridge.EnumJvms();
-          RefreshTree(jvms);
-          if (jvms.Count == 0) {
-            var sb = new StringBuilder();
-            sb.Append("No Java application using the Java Access Bridge has been detected.  ");
-            sb.Append("This can happen if no application is currently running, or if the " + 
-              "Java Access Bridge has not been enabled.  ");
-            sb.Append("See http://docs.oracle.com/javase/8/docs/technotes/guides/access/enable_and_test.html.");
-            _view.ShowNotification(new NotificationPanelEntry {
-              Text = sb.ToString(),
-              Icon = NotificationPanelIcon.Info,
-              IsExpired = () => _view.AccessibilityTree.Nodes.Count > 0 &&
-                ((_view.AccessibilityTree.Nodes[0].Tag as AccessibleNodeModel) != null)
-            });
-          }
         } catch (Exception e) {
-          LogErrorMessage(e);
           RefreshTree(new List<AccessibleJvm>());
           _view.ShowNotification(new NotificationPanelEntry {
             Text = ExceptionUtils.FormatExceptionMessage(e),
             Icon = NotificationPanelIcon.Error,
             IsExpired = () => _accessBridge.IsLoaded
+          });
+          return;
+        }
+
+        // Enumerate JVMs/Windows and update the accessibility tree.
+        var currentRefreshCallId = _refreshCallId;
+        try {
+          var jvms = _accessBridge.EnumJvms();
+          if (jvms.Count == 0) {
+            var sb = new StringBuilder();
+            sb.Append("No Java application using the Java Access Bridge has been detected.  ");
+            sb.Append("This can happen if no application is currently running, or if the " +
+                      "Java Access Bridge has not been enabled.  ");
+            sb.Append("See http://docs.oracle.com/javase/8/docs/technotes/guides/access/enable_and_test.html.");
+            _view.ShowNotification(new NotificationPanelEntry {
+              Text = sb.ToString(),
+              Icon = NotificationPanelIcon.Info,
+              IsExpired = () => _refreshCallId != currentRefreshCallId
+            });
+          }
+        } catch (Exception e) {
+          RefreshTree(new List<AccessibleJvm>());
+          _view.ShowNotification(new NotificationPanelEntry {
+            Text = ExceptionUtils.FormatExceptionMessage(e),
+            Icon = NotificationPanelIcon.Error,
+            IsExpired = () => _refreshCallId != currentRefreshCallId
           });
         }
       });
@@ -447,7 +460,7 @@ namespace AccessBridgeExplorer {
         });
 
         if (_view.AccessibilityTree.Nodes.Count == 0) {
-          _view.AccessibilityTree.Nodes.Add("No Java application using the Access Bridge has been detected. Press Refresh again?");
+          _view.AccessibilityTree.Nodes.Add("No application detected. Try presssing Refresh again.");
         }
       } finally {
         _view.AccessibilityTree.EndUpdate();
