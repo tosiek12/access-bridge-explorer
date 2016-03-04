@@ -1,4 +1,4 @@
-﻿// Copyright 2015 Google Inc. All Rights Reserved.
+// Copyright 2016 Google Inc. All Rights Reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,26 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using jint = System.Int32;
-using AccessibleContext = AccessBridgeExplorer.WindowsAccessBridge.JOBJECT64;
 
-namespace AccessBridgeExplorer.WindowsAccessBridge.NativeStructures {
+namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// <summary>
-  /// Hypertext information
+  /// Wrapper around a 64-bit integer. This makes code slightly more typesafe
+  /// than using Int64 values directly.
   /// </summary>
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleHypertextInfo {
-    /// <summary>number of hyperlinks</summary>
-    public jint linkCount;
+  public struct JOBJECT64 {
+    public Int64 Value;
 
-    /// <summary>the hyperlinks</summary>
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_HYPERLINKS)]
-    public AccessibleHyperlinkInfo[] links;
+    public static JOBJECT64 Zero = default(JOBJECT64);
 
-    /// <summary>AccessibleHypertext object</summary>
-    public AccessibleContext accessibleHypertext;
+    public static bool operator ==(JOBJECT64 x, JOBJECT64 y) {
+      return x.Value == y.Value;
+    }
+
+    public static bool operator !=(JOBJECT64 x, JOBJECT64 y) {
+      return x.Value == y.Value;
+    }
+
+    public override bool Equals(object obj) {
+      if (obj is JOBJECT64) {
+        return this == (JOBJECT64) obj;
+      }
+      return false;
+    }
+
+    public override int GetHashCode() {
+      return Value.GetHashCode();
+    }
   }
 }

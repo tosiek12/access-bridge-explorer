@@ -14,7 +14,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using AccessibleContext = System.IntPtr;
+using AccessibleContext = AccessBridgeExplorer.WindowsAccessBridge.JOBJECT64;
 using jint = System.Int32;
 using jboolean = System.Byte;
 

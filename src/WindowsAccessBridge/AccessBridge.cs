@@ -108,7 +108,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         var rc = Functions.IsJavaWindow(hWnd);
         if (rc != 0) {
           int vmId;
-          IntPtr ac;
+          JOBJECT64 ac;
           if (Functions.GetAccessibleContextFromHWND(hWnd, out vmId, out ac) != 0) {
             windows.Add(new AccessibleWindow(this, hWnd, new JavaObjectHandle(vmId, ac)));
           }

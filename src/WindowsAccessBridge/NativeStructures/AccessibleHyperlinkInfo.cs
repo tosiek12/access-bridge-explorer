@@ -15,7 +15,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using jint = System.Int32;
-using AccessibleContextPtr = System.IntPtr;
+using AccessibleContext = AccessBridgeExplorer.WindowsAccessBridge.JOBJECT64;
 
 namespace AccessBridgeExplorer.WindowsAccessBridge.NativeStructures {
   /// <summary>
@@ -35,6 +35,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge.NativeStructures {
     public jint endIndex;
 
     /// <summary>AccessibleHyperlink object</summary>
-    public AccessibleContextPtr accessibleHyperlink;
+    public AccessibleContext accessibleHyperlink;
   }
 }

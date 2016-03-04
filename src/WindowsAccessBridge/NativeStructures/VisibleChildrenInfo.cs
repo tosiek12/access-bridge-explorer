@@ -14,7 +14,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using AccessibleContext = System.IntPtr;
+using AccessibleContext = AccessBridgeExplorer.WindowsAccessBridge.JOBJECT64;
 
 namespace AccessBridgeExplorer.WindowsAccessBridge.NativeStructures {
   [SuppressMessage("ReSharper", "InconsistentNaming")]

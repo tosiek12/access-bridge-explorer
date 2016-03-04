@@ -19,15 +19,8 @@ using System.Text;
 using AccessBridgeExplorer.WindowsAccessBridge.NativeStructures;
 using BOOL = System.Int32;
 using HWND = System.IntPtr;
-using AccessibleContext = System.IntPtr;
-using AccessibleTableHandle = AccessBridgeExplorer.WindowsAccessBridge.JavaObjectHandle;
+using AccessibleContext = AccessBridgeExplorer.WindowsAccessBridge.JOBJECT64;
 using jint = System.Int32;
-using JOBJECT64 = System.IntPtr;
-using AccessibleContextHandle = AccessBridgeExplorer.WindowsAccessBridge.JavaObjectHandle;
-using AccessibleTextHandle = AccessBridgeExplorer.WindowsAccessBridge.JavaObjectHandle;
-using AccessibleValueHandle = AccessBridgeExplorer.WindowsAccessBridge.JavaObjectHandle;
-using AccessibleSelectionHandle = AccessBridgeExplorer.WindowsAccessBridge.JavaObjectHandle;
-using AccessibleHyperlink = AccessBridgeExplorer.WindowsAccessBridge.JavaObjectHandle;
 // ReSharper disable InconsistentNaming
 
 namespace AccessBridgeExplorer.WindowsAccessBridge {
@@ -52,11 +45,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL IsJavaWindowFP(HWND window);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL IsSameObjectFP(int vmID, JavaObjectHandle obj1, JavaObjectHandle obj2);
+    public delegate BOOL IsSameObjectFP(int vmID, JOBJECT64 obj1, JOBJECT64 obj2);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleContextFromHWNDFP(HWND window, out int vmID, out AccessibleContext ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate HWND GetHWNDFromAccessibleContextFP(int vmID, JavaObjectHandle ac);
+    public delegate HWND GetHWNDFromAccessibleContextFP(int vmID, JOBJECT64 ac);
 
     /// <summary>
     /// Returns the deepest accessible context at screen location (x,y) using
@@ -66,171 +59,171 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     /// <code>false</code> in case of serious error.
     /// </summary>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextAtFP(int vmID, JavaObjectHandle acParent, jint x, jint y, out AccessibleContext ac);
+    public delegate BOOL GetAccessibleContextAtFP(int vmID, JOBJECT64 acParent, jint x, jint y, out AccessibleContext ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleContextWithFocusFP(HWND window, out int vmID, out AccessibleContext ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextInfoFP(int vmID, JavaObjectHandle ac, out AccessibleContextInfo info);
+    public delegate BOOL GetAccessibleContextInfoFP(int vmID, JOBJECT64 ac, out AccessibleContextInfo info);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate AccessibleContext GetAccessibleChildFromContextFP(int vmID, JavaObjectHandle ac, jint i);
+    public delegate AccessibleContext GetAccessibleChildFromContextFP(int vmID, JOBJECT64 ac, jint i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate AccessibleContext GetAccessibleParentFromContextFP(int vmID, JavaObjectHandle ac);
+    public delegate AccessibleContext GetAccessibleParentFromContextFP(int vmID, JOBJECT64 ac);
 
     /* AccessibleRelationSet */
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleRelationSetFP(int vmID, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo);
+    public delegate BOOL GetAccessibleRelationSetFP(int vmID, JOBJECT64 accessibleContext, out AccessibleRelationSetInfo relationSetInfo);
 
 
     /* AccessibleHypertext */
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleHypertextFP(int vmID, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo);
+    public delegate BOOL GetAccessibleHypertextFP(int vmID, JOBJECT64 accessibleContext, out AccessibleHypertextInfo hypertextInfo);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL ActivateAccessibleHyperlinkFP(int vmID, JavaObjectHandle accessibleContext, AccessibleHyperlink accessibleHyperlink);
+    public delegate BOOL ActivateAccessibleHyperlinkFP(int vmID, JOBJECT64 accessibleContext, JOBJECT64 accessibleHyperlink);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate jint GetAccessibleHyperlinkCountFP(int vmID, JavaObjectHandle accessibleContext);
+    public delegate jint GetAccessibleHyperlinkCountFP(int vmID, JOBJECT64 accessibleContext);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleHypertextExtFP(int vmID, JavaObjectHandle accessibleContext, jint nStartIndex, out AccessibleHypertextInfo hypertextInfo);
+    public delegate BOOL GetAccessibleHypertextExtFP(int vmID, JOBJECT64 accessibleContext, jint nStartIndex, out AccessibleHypertextInfo hypertextInfo);
 
       [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate jint GetAccessibleHypertextLinkIndexFP(int vmID, JavaObjectHandle hypertext, jint nIndex);
+    public delegate jint GetAccessibleHypertextLinkIndexFP(int vmID, JOBJECT64 hypertext, jint nIndex);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleHyperlinkFP(int vmID, JavaObjectHandle hypertext, jint nIndex, out AccessibleHyperlinkInfo hyperlinkInfo);
+    public delegate BOOL GetAccessibleHyperlinkFP(int vmID, JOBJECT64 hypertext, jint nIndex, out AccessibleHyperlinkInfo hyperlinkInfo);
 
 
     /* Accessible KeyBindings, Icons and Actions */
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleKeyBindingsFP(int vmID, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings);
+    public delegate BOOL GetAccessibleKeyBindingsFP(int vmID, JOBJECT64 accessibleContext, out AccessibleKeyBindings keyBindings);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleIconsFP(int vmID, JavaObjectHandle accessibleContext, out AccessibleIcons icons);
+    public delegate BOOL GetAccessibleIconsFP(int vmID, JOBJECT64 accessibleContext, out AccessibleIcons icons);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleActionsFP(int vmID, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions);
+    public delegate BOOL GetAccessibleActionsFP(int vmID, JOBJECT64 accessibleContext, [Out]AccessibleActions actions);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL DoAccessibleActionsFP(int vmID, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out jint failure);
+    public delegate BOOL DoAccessibleActionsFP(int vmID, JOBJECT64 accessibleContext, ref AccessibleActionsToDo actionsToDo, out jint failure);
 
     /* AccessibleText */
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextInfoFP(int vmID, JavaObjectHandle at, out AccessibleTextInfo textInfo, jint x, jint y);
+    public delegate BOOL GetAccessibleTextInfoFP(int vmID, JOBJECT64 at, out AccessibleTextInfo textInfo, jint x, jint y);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextItemsFP(int vmID, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, jint index);
+    public delegate BOOL GetAccessibleTextItemsFP(int vmID, JOBJECT64 at, out AccessibleTextItemsInfo textItems, jint index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmID, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection);
+    public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmID, JOBJECT64 at, out AccessibleTextSelectionInfo textSelection);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextAttributesFP(int vmID, JavaObjectHandle at, jint index, out AccessibleTextAttributesInfo attributes);
+    public delegate BOOL GetAccessibleTextAttributesFP(int vmID, JOBJECT64 at, jint index, out AccessibleTextAttributesInfo attributes);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextRectFP(int vmID, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, jint index);
+    public delegate BOOL GetAccessibleTextRectFP(int vmID, JOBJECT64 at, out AccessibleTextRectInfo rectInfo, jint index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextLineBoundsFP(int vmID, JavaObjectHandle at, jint index, out jint startIndex, out jint endIndex);
+    public delegate BOOL GetAccessibleTextLineBoundsFP(int vmID, JOBJECT64 at, jint index, out jint startIndex, out jint endIndex);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextRangeFP(int vmID, JavaObjectHandle at, jint start, jint end, StringBuilder text, short len);
+    public delegate BOOL GetAccessibleTextRangeFP(int vmID, JOBJECT64 at, jint start, jint end, StringBuilder text, short len);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetCurrentAccessibleValueFromContextFP(int vmID, JavaObjectHandle av, StringBuilder value, short len);
+    public delegate BOOL GetCurrentAccessibleValueFromContextFP(int vmID, JOBJECT64 av, StringBuilder value, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetMaximumAccessibleValueFromContextFP(int vmID, JavaObjectHandle av, StringBuilder value, short len);
+    public delegate BOOL GetMaximumAccessibleValueFromContextFP(int vmID, JOBJECT64 av, StringBuilder value, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetMinimumAccessibleValueFromContextFP(int vmID, JavaObjectHandle av, StringBuilder value, short len);
+    public delegate BOOL GetMinimumAccessibleValueFromContextFP(int vmID, JOBJECT64 av, StringBuilder value, short len);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void AddAccessibleSelectionFromContextFP(int vmID, JavaObjectHandle asel, int i);
+    public delegate void AddAccessibleSelectionFromContextFP(int vmID, JOBJECT64 asel, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void ClearAccessibleSelectionFromContextFP(int vmID, JavaObjectHandle asel);
+    public delegate void ClearAccessibleSelectionFromContextFP(int vmID, JOBJECT64 asel);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetAccessibleSelectionFromContextFP(int vmID, JavaObjectHandle asel, int i);
+    public delegate JOBJECT64 GetAccessibleSelectionFromContextFP(int vmID, JOBJECT64 asel, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleSelectionCountFromContextFP(int vmID, JavaObjectHandle asel);
+    public delegate int GetAccessibleSelectionCountFromContextFP(int vmID, JOBJECT64 asel);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL IsAccessibleChildSelectedFromContextFP(int vmID, JavaObjectHandle asel, int i);
+    public delegate BOOL IsAccessibleChildSelectedFromContextFP(int vmID, JOBJECT64 asel, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void RemoveAccessibleSelectionFromContextFP(int vmID, JavaObjectHandle asel, int i);
+    public delegate void RemoveAccessibleSelectionFromContextFP(int vmID, JOBJECT64 asel, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void SelectAllAccessibleSelectionFromContextFP(int vmID, JavaObjectHandle asel);
+    public delegate void SelectAllAccessibleSelectionFromContextFP(int vmID, JOBJECT64 asel);
 
     /* begin AccessibleTable */
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableInfoFP(int vmID, JavaObjectHandle ac, out AccessibleTableInfo tableInfo);
+    public delegate BOOL GetAccessibleTableInfoFP(int vmID, JOBJECT64 ac, out AccessibleTableInfo tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableCellInfoFP(int vmID, JavaObjectHandle accessibleTable,
+    public delegate BOOL GetAccessibleTableCellInfoFP(int vmID, JOBJECT64 accessibleTable,
     jint row, jint column, out AccessibleTableCellInfo tableCellInfo);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableRowHeaderFP(int vmID, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
+    public delegate BOOL GetAccessibleTableRowHeaderFP(int vmID, JOBJECT64 acParent, out AccessibleTableInfo tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableColumnHeaderFP(int vmID, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
+    public delegate BOOL GetAccessibleTableColumnHeaderFP(int vmID, JOBJECT64 acParent, out AccessibleTableInfo tableInfo);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate AccessibleContext GetAccessibleTableRowDescriptionFP(int vmID, JavaObjectHandle acParent, jint row);
+    public delegate AccessibleContext GetAccessibleTableRowDescriptionFP(int vmID, JOBJECT64 acParent, jint row);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate AccessibleContext GetAccessibleTableColumnDescriptionFP(int vmID, JavaObjectHandle acParent, jint column);
+    public delegate AccessibleContext GetAccessibleTableColumnDescriptionFP(int vmID, JOBJECT64 acParent, jint column);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate jint GetAccessibleTableRowSelectionCountFP(int vmID, JavaObjectHandle table);
+    public delegate jint GetAccessibleTableRowSelectionCountFP(int vmID, JOBJECT64 table);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL IsAccessibleTableRowSelectedFP(int vmID, JavaObjectHandle table, jint row);
+    public delegate BOOL IsAccessibleTableRowSelectedFP(int vmID, JOBJECT64 table, jint row);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableRowSelectionsFP(int vmID, JavaObjectHandle table, jint count,
+    public delegate BOOL GetAccessibleTableRowSelectionsFP(int vmID, JOBJECT64 table, jint count,
       [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] jint[] selections);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate jint GetAccessibleTableColumnSelectionCountFP(int vmID, JavaObjectHandle table);
+    public delegate jint GetAccessibleTableColumnSelectionCountFP(int vmID, JOBJECT64 table);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL IsAccessibleTableColumnSelectedFP(int vmID, JavaObjectHandle table, jint column);
+    public delegate BOOL IsAccessibleTableColumnSelectedFP(int vmID, JOBJECT64 table, jint column);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableColumnSelectionsFP(int vmID, JavaObjectHandle table, jint count,
+    public delegate BOOL GetAccessibleTableColumnSelectionsFP(int vmID, JOBJECT64 table, jint count,
       [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]jint[] selections);
 
     /// <summary>
     /// Return the row number for a cell at a given index
     /// </summary>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate jint GetAccessibleTableRowFP(int vmID, JavaObjectHandle table, jint index);
+    public delegate jint GetAccessibleTableRowFP(int vmID, JOBJECT64 table, jint index);
     /// <summary>
     /// Return the column number for a cell at a given index
     /// </summary>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate jint GetAccessibleTableColumnFP(int vmID, JavaObjectHandle table, jint index);
+    public delegate jint GetAccessibleTableColumnFP(int vmID, JOBJECT64 table, jint index);
     /// <summary>
     /// Return the index of a cell at a given row and column
     /// </summary>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate jint GetAccessibleTableIndexFP(int vmID, JavaObjectHandle table, jint row, jint column);
+    public delegate jint GetAccessibleTableIndexFP(int vmID, JOBJECT64 table, jint row, jint column);
     /* end AccessibleTable */
 
     /* Additional utility methods */
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL SetTextContentsFP(int vmID, AccessibleContext ac, string text);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate AccessibleContext GetParentWithRoleFP(int vmID, JavaObjectHandle ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
+    public delegate AccessibleContext GetParentWithRoleFP(int vmID, JOBJECT64 ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate AccessibleContext GetParentWithRoleElseRootFP(int vmID, JavaObjectHandle ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
+    public delegate AccessibleContext GetParentWithRoleElseRootFP(int vmID, JOBJECT64 ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate AccessibleContext GetTopLevelObjectFP(int vmID, JavaObjectHandle ac);
+    public delegate AccessibleContext GetTopLevelObjectFP(int vmID, JOBJECT64 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetObjectDepthFP(int vmID, JavaObjectHandle ac);
+    public delegate int GetObjectDepthFP(int vmID, JOBJECT64 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate AccessibleContext GetActiveDescendentFP(int vmID, JavaObjectHandle ac);
+    public delegate AccessibleContext GetActiveDescendentFP(int vmID, JOBJECT64 ac);
 
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetVirtualAccessibleNameFP(int vmID, JavaObjectHandle ac, StringBuilder name, int len);
+    public delegate BOOL GetVirtualAccessibleNameFP(int vmID, JOBJECT64 ac, StringBuilder name, int len);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetTextAttributesInRangeFP(int vmID, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len);
+    public delegate BOOL GetTextAttributesInRangeFP(int vmID, JOBJECT64 accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetCaretLocationFP(int vmID, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, jint index);
+    public delegate BOOL GetCaretLocationFP(int vmID, JOBJECT64 ac, out AccessibleTextRectInfo rectInfo, jint index);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetVisibleChildrenCountFP(int vmID, JavaObjectHandle accessibleContext);
+    public delegate int GetVisibleChildrenCountFP(int vmID, JOBJECT64 accessibleContext);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetVisibleChildrenFP(int vmID, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children);
+    public delegate BOOL GetVisibleChildrenFP(int vmID, JOBJECT64 accessibleContext, int startIndex, out VisibleChildrenInfo children);
 
     /* end additional utility methods */
 

@@ -14,46 +14,76 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 
 namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// <summary>
-  /// Safe handle for all java objects returned from the WindowAccessBridge dll.
+  /// Handle for objects returned from the WindowAccessBridge-XX dll.
   /// This ensures that all java objects references are released when not used
   /// by any C# object.
+  /// 
+  /// Note we cannot use the <see cref="SafeHandle"/> class, because
+  /// the 32-bit version of WindowAccessBridge uses 64-bit pointers
+  /// for object handles (<see cref="SafeHandle"/> uses the <see cref="IntPtr"/>
+  /// type, which is 32-bit on 32-bit platforms).
   /// </summary>
-  public class JavaObjectHandle : SafeHandleZeroOrMinusOneIsInvalid {
+  public class JavaObjectHandle : IDisposable {
     private readonly int _jvmId;
+    private readonly JOBJECT64 _handle;
+    private bool _disposed;
 
-    public JavaObjectHandle(int jvmId, IntPtr handle) : base(true) {
+    public JavaObjectHandle(int jvmId, JOBJECT64 handle) {
       _jvmId = jvmId;
-      this.handle = handle;
+      _handle = handle;
     }
 
-    public bool IsNull { get { return IsInvalid; } }
+    ~JavaObjectHandle() {
+      Dispose(false);
+    }
+
+    public void Dispose() {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    public void Dispose(bool disposing) {
+      if (_disposed)
+        return;
+
+      if (_handle.Value != 0) {
+        // Note: We need the "ReleaseXxx" method to be static, as we can't depend
+        // on any other managed object for calling into the WindowsAccessBridge
+        // DLL. Also, we depend on the fact the CLR tries to load the method from
+        // the DLL only when the method is actually called. This allows us to work
+        // correctly on either a 64-bit or 32-bit.
+        if (IntPtr.Size == 4) {
+          ReleaseJavaObjectFP_32(_jvmId, _handle);
+        } else {
+          ReleaseJavaObjectFP_64(_jvmId, _handle);
+        }
+      }
+      _disposed = true;
+    }
 
     public int JvmId {
       get { return _jvmId; }
     }
 
-    protected override bool ReleaseHandle() {
-      // Note: We need the "ReleaseXxx" method to be static, as we can't depend
-      // on any other managed object for calling into the WindowsAccessBridge
-      // DLL. Also, we depend on the fact the CLR tries to load the method from
-      // the DLL only when the method is actually called. This allows us to work
-      // correctly on either a 64-bit or 32-bit.
-      if (IntPtr.Size == 4) {
-        ReleaseJavaObjectFP_32(_jvmId, handle);
-      } else {
-        ReleaseJavaObjectFP_64(_jvmId, handle);
-      }
-      return true;
+    public JOBJECT64 Handle {
+      get { return _handle; }
+    }
+
+    public bool IsClosed {
+      get { return _disposed; }
+    }
+
+    public bool IsNull { get 
+        { return _handle.Value == 0; }
     }
 
     [DllImport("WindowsAccessBridge-32.dll", EntryPoint = "releaseJavaObject", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void ReleaseJavaObjectFP_32(int jvmId, IntPtr javaObject);
+    private static extern void ReleaseJavaObjectFP_32(int jvmId, JOBJECT64 javaObject);
 
     [DllImport("WindowsAccessBridge-64.dll", EntryPoint = "releaseJavaObject", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void ReleaseJavaObjectFP_64(int jvmId, IntPtr javaObject);
+    private static extern void ReleaseJavaObjectFP_64(int jvmId, JOBJECT64 javaObject);
   }
 }
