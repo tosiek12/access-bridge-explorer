@@ -56,6 +56,9 @@ namespace AccessBridgeExplorer {
       this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.viewHelpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+      this.checkForUpdateMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.automaticallyCheckForUpdatesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
       this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.statusBarStrip = new System.Windows.Forms.StatusStrip();
       this._statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -102,6 +105,7 @@ namespace AccessBridgeExplorer {
       this.clearEventsButton = new System.Windows.Forms.ToolStripButton();
       this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.notificationPanel = new AccessBridgeExplorer.NotificationPanel();
+      this.updateChecker = new AccessBridgeExplorer.UpdateChecker(this.components);
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
       this.mainToolStrip.SuspendLayout();
@@ -249,6 +253,9 @@ namespace AccessBridgeExplorer {
       this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.viewHelpMenuItem,
             this.toolStripMenuItem1,
+            this.checkForUpdateMenuItem,
+            this.automaticallyCheckForUpdatesMenuItem,
+            this.toolStripMenuItem2,
             this.aboutMenuItem});
       this.helpMenu.Name = "helpMenu";
       this.helpMenu.Size = new System.Drawing.Size(44, 20);
@@ -258,19 +265,41 @@ namespace AccessBridgeExplorer {
       // 
       this.viewHelpMenuItem.Name = "viewHelpMenuItem";
       this.viewHelpMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
-      this.viewHelpMenuItem.Size = new System.Drawing.Size(173, 22);
+      this.viewHelpMenuItem.Size = new System.Drawing.Size(245, 22);
       this.viewHelpMenuItem.Text = "View &Help";
       this.viewHelpMenuItem.Click += new System.EventHandler(this.viewHelpToolStripMenuItem_Click);
       // 
       // toolStripMenuItem1
       // 
       this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-      this.toolStripMenuItem1.Size = new System.Drawing.Size(170, 6);
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(242, 6);
+      // 
+      // checkForUpdateMenuItem
+      // 
+      this.checkForUpdateMenuItem.Name = "checkForUpdateMenuItem";
+      this.checkForUpdateMenuItem.Size = new System.Drawing.Size(245, 22);
+      this.checkForUpdateMenuItem.Text = "&Check for update";
+      this.checkForUpdateMenuItem.Click += new System.EventHandler(this.checkForUpdateMenuItem_Click);
+      // 
+      // automaticallyCheckForUpdatesMenuItem
+      // 
+      this.automaticallyCheckForUpdatesMenuItem.Checked = true;
+      this.automaticallyCheckForUpdatesMenuItem.CheckOnClick = true;
+      this.automaticallyCheckForUpdatesMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.automaticallyCheckForUpdatesMenuItem.Name = "automaticallyCheckForUpdatesMenuItem";
+      this.automaticallyCheckForUpdatesMenuItem.Size = new System.Drawing.Size(245, 22);
+      this.automaticallyCheckForUpdatesMenuItem.Text = "Automatically check for updates";
+      this.automaticallyCheckForUpdatesMenuItem.CheckedChanged += new System.EventHandler(this.automaticallyCheckForUpdatesMenuItem_CheckedChanged);
+      // 
+      // toolStripMenuItem2
+      // 
+      this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+      this.toolStripMenuItem2.Size = new System.Drawing.Size(242, 6);
       // 
       // aboutMenuItem
       // 
       this.aboutMenuItem.Name = "aboutMenuItem";
-      this.aboutMenuItem.Size = new System.Drawing.Size(173, 22);
+      this.aboutMenuItem.Size = new System.Drawing.Size(245, 22);
       this.aboutMenuItem.Text = "&About";
       this.aboutMenuItem.Click += new System.EventHandler(this.aboutMenuItem_Click);
       // 
@@ -710,6 +739,13 @@ namespace AccessBridgeExplorer {
       this.notificationPanel.Size = new System.Drawing.Size(566, 68);
       this.notificationPanel.TabIndex = 2;
       // 
+      // updateChecker
+      // 
+      this.updateChecker.Enabled = true;
+      this.updateChecker.Url = "https://google.github.io/access-bridge-explorer/latest_version.txt";
+      this.updateChecker.UpdateInfoAvailable += new System.EventHandler<AccessBridgeExplorer.UpdateInfoArgs>(this.updateChecker_UpdateInfoAvailable);
+      this.updateChecker.UpdateInfoError += new System.EventHandler<System.IO.ErrorEventArgs>(this.updateChecker_UpdateInfoError);
+      // 
       // ExplorerForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -831,6 +867,10 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
     private NotificationPanel notificationPanel;
     private System.Windows.Forms.ToolStripMenuItem showNotificationMenuItem;
+    private UpdateChecker updateChecker;
+    private System.Windows.Forms.ToolStripMenuItem checkForUpdateMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem automaticallyCheckForUpdatesMenuItem;
+    private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
   }
 }
 

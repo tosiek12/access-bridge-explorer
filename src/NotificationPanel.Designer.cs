@@ -40,8 +40,8 @@ namespace AccessBridgeExplorer {
       this.components = new System.ComponentModel.Container();
       this.textBox = new System.Windows.Forms.RichTextBox();
       this.panel1 = new System.Windows.Forms.Panel();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.dismissTimer = new System.Windows.Forms.Timer(this.components);
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.closeButton = new AccessBridgeExplorer.RoundButton();
       this.panel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -55,11 +55,11 @@ namespace AccessBridgeExplorer {
       this.textBox.BackColor = System.Drawing.SystemColors.Window;
       this.textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.textBox.Cursor = System.Windows.Forms.Cursors.Arrow;
-      this.textBox.Location = new System.Drawing.Point(28, 4);
+      this.textBox.Location = new System.Drawing.Point(20, 4);
       this.textBox.Margin = new System.Windows.Forms.Padding(0);
       this.textBox.Name = "textBox";
       this.textBox.ReadOnly = true;
-      this.textBox.Size = new System.Drawing.Size(441, 104);
+      this.textBox.Size = new System.Drawing.Size(449, 104);
       this.textBox.TabIndex = 0;
       this.textBox.Text = "";
       this.textBox.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.textBox_LinkClicked);
@@ -78,21 +78,21 @@ namespace AccessBridgeExplorer {
       this.panel1.Size = new System.Drawing.Size(486, 112);
       this.panel1.TabIndex = 2;
       // 
+      // dismissTimer
+      // 
+      this.dismissTimer.Enabled = true;
+      this.dismissTimer.Interval = 200;
+      this.dismissTimer.Tick += new System.EventHandler(this.dismissTimer_Tick);
+      // 
       // pictureBox1
       // 
       this.pictureBox1.Image = global::AccessBridgeExplorer.Properties.Resources.InfoIcon;
       this.pictureBox1.Location = new System.Drawing.Point(4, 4);
       this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
       this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(24, 24);
+      this.pictureBox1.Size = new System.Drawing.Size(16, 16);
       this.pictureBox1.TabIndex = 4;
       this.pictureBox1.TabStop = false;
-      // 
-      // dismissTimer
-      // 
-      this.dismissTimer.Enabled = true;
-      this.dismissTimer.Interval = 200;
-      this.dismissTimer.Tick += new System.EventHandler(this.dismissTimer_Tick);
       // 
       // closeButton
       // 
@@ -117,6 +117,7 @@ namespace AccessBridgeExplorer {
       this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.Controls.Add(this.panel1);
       this.Margin = new System.Windows.Forms.Padding(0);
+      this.MinimumSize = new System.Drawing.Size(100, 20);
       this.Name = "NotificationPanel";
       this.Size = new System.Drawing.Size(486, 112);
       this.panel1.ResumeLayout(false);

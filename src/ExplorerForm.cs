@@ -47,6 +47,7 @@ namespace AccessBridgeExplorer {
       SetDoubleBuffered(_bottomTabControl, true);
 
       overlayEnableButton_Click(_overlayEnableButton, new EventArgs());
+      automaticallyCheckForUpdatesMenuItem_CheckedChanged(automaticallyCheckForUpdatesMenuItem, EventArgs.Empty);
     }
 
     private void MainForm_Shown(object sender, EventArgs e) {
@@ -68,7 +69,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void UpdateNotificationMenu() {
-      showNotificationMenuItem.Checked = notificationPanel.NotificationShown;
+      showNotificationMenuItem.Checked = notificationPanel.Visible;
       showNotificationMenuItem.Enabled = notificationPanel.NotificationText.Length > 0;
     }
 
@@ -119,6 +120,44 @@ namespace AccessBridgeExplorer {
 
     private void refreshButton_Click(object sender, EventArgs e) {
       _controller.RefreshTree();
+    }
+
+    private bool _updateNotificationShown;
+    private void checkForUpdateMenuItem_Click(object sender, EventArgs e) {
+      _updateNotificationShown = false;
+      updateChecker.CheckNow();
+      if (!_updateNotificationShown) {
+        notificationPanel.ShowNotification(new NotificationPanelEntry {
+          Text = string.Format("{0} is up to date.", Assembly.GetEntryAssembly().GetName().Name),
+          Icon = NotificationPanelIcon.Info,
+        });
+      }
+    }
+
+    private void automaticallyCheckForUpdatesMenuItem_CheckedChanged(object sender, EventArgs e) {
+      updateChecker.Enabled = automaticallyCheckForUpdatesMenuItem.Checked;
+    }
+
+    private void updateChecker_UpdateInfoAvailable(object sender, UpdateInfoArgs e) {
+      var currentVersion = Assembly.GetEntryAssembly().GetName().Version;
+      if (e.Version > currentVersion) {
+        _updateNotificationShown = true;
+        notificationPanel.ShowNotification(new NotificationPanelEntry {
+          Text = string.Format("A new version {0} of {1} is available at {2}",
+            e.Version,
+            Assembly.GetEntryAssembly().GetName().Name,
+            e.Url),
+          Icon = NotificationPanelIcon.Info,
+        });
+      }
+    }
+
+    private void updateChecker_UpdateInfoError(object sender, System.IO.ErrorEventArgs e) {
+      _updateNotificationShown = true;
+      notificationPanel.ShowNotification(new NotificationPanelEntry {
+        Text = ExceptionUtils.FormatExceptionMessage(e.GetException()),
+        Icon = NotificationPanelIcon.Error,
+      });
     }
 
     private void overlayEnableButton_Click(object sender, EventArgs e) {
@@ -273,10 +312,10 @@ namespace AccessBridgeExplorer {
 
     private void showNotificationMenuItem_Click(object sender, EventArgs e) {
       if (showNotificationMenuItem.Checked) {
-        notificationPanel.HideNotification();
+        notificationPanel.HidePanel();
         showNotificationMenuItem.Checked = false;
       } else {
-        notificationPanel.ShowNotification();
+        notificationPanel.ShowPanel();
         showNotificationMenuItem.Checked = true;
       }
     }
@@ -352,9 +391,8 @@ namespace AccessBridgeExplorer {
       _messageList.Focus();
     }
 
-    void IExplorerFormView.AddNotification(NotificationPanelEntry entry) {
-      notificationPanel.AddNotification(entry);
-      notificationPanel.ShowNotification();
+    void IExplorerFormView.ShowNotification(NotificationPanelEntry entry) {
+      notificationPanel.ShowNotification(entry);
     }
 
     #endregion

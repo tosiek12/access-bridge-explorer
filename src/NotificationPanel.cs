@@ -29,7 +29,7 @@ namespace AccessBridgeExplorer {
       };
       this.Load += (sender, args) => {
         if (!DesignMode) {
-          HideNotification();
+          HidePanel();
         }
       };
       this.Resize += (sender, args) => {
@@ -37,7 +37,7 @@ namespace AccessBridgeExplorer {
       };
     }
 
-    public void AddNotification(NotificationPanelEntry entry) {
+    public void ShowNotification(NotificationPanelEntry entry) {
       _currentEntry = entry;
       var text = entry.Text.TrimEnd('\r', '\n');
       textBox.Text = text;
@@ -53,16 +53,19 @@ namespace AccessBridgeExplorer {
           pictureBox1.Image = AccessBridgeExplorer.Properties.Resources.InfoIcon;
           break;
       }
+      ShowPanel();
     }
 
-    public void ShowNotification() {
+    public void ShowPanel() {
       _shown = true;
+      Visible = true;
       SetHeightFromText();
     }
 
-    public void HideNotification() {
+    public void HidePanel() {
       _shown = false;
-      Height = 0;
+      //Height = 0;
+      Visible = false;
     }
 
     public string NotificationText {
@@ -108,7 +111,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void closeButton_Click(object sender, EventArgs e) {
-      HideNotification();
+      HidePanel();
     }
 
     private void textBox_LinkClicked(object sender, LinkClickedEventArgs e) {
@@ -124,7 +127,7 @@ namespace AccessBridgeExplorer {
 
       if (_currentEntry.IsExpired()) {
         _currentEntry = null;
-        HideNotification();
+        HidePanel();
         textBox.Text = "";
         pictureBox1.Image = AccessBridgeExplorer.Properties.Resources.InfoIcon;
       }

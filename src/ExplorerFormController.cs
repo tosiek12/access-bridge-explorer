@@ -412,7 +412,7 @@ namespace AccessBridgeExplorer {
             sb.Append("This can happen if no application is currently running, or if the " + 
               "Java Access Bridge has not been enabled.  ");
             sb.Append("See http://docs.oracle.com/javase/8/docs/technotes/guides/access/enable_and_test.html.");
-            _view.AddNotification(new NotificationPanelEntry {
+            _view.ShowNotification(new NotificationPanelEntry {
               Text = sb.ToString(),
               Icon = NotificationPanelIcon.Info,
               IsExpired = () => _view.AccessibilityTree.Nodes.Count > 0 &&
@@ -422,17 +422,8 @@ namespace AccessBridgeExplorer {
         } catch (Exception e) {
           LogErrorMessage(e);
           RefreshTree(new List<AccessibleJvm>());
-          var sb = new StringBuilder();
-          sb.Append(e.Message);
-          sb.AppendLine();
-          sb.Append("Details:");
-          sb.AppendLine();
-          for (Exception ex = e.InnerException; ex != null; ex = ex.InnerException) {
-            sb.AppendFormat("   * {0}", ex.Message);
-            sb.AppendLine();
-          }
-          _view.AddNotification(new NotificationPanelEntry {
-            Text = sb.ToString(),
+          _view.ShowNotification(new NotificationPanelEntry {
+            Text = ExceptionUtils.FormatExceptionMessage(e),
             Icon = NotificationPanelIcon.Error,
             IsExpired = () => _accessBridge.IsLoaded
           });
