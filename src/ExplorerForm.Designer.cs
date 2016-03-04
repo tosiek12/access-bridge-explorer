@@ -141,7 +141,7 @@ namespace AccessBridgeExplorer {
       this.mainMenuStrip.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
       this.mainMenuStrip.Size = new System.Drawing.Size(1008, 24);
       this.mainMenuStrip.TabIndex = 0;
-      this.mainMenuStrip.Text = "menuStrip1";
+      this.mainMenuStrip.Text = "Main";
       // 
       // fileMenu
       // 
@@ -340,7 +340,7 @@ namespace AccessBridgeExplorer {
       this.mainToolStrip.Size = new System.Drawing.Size(1008, 27);
       this.mainToolStrip.TabIndex = 1;
       this.mainToolStrip.TabStop = true;
-      this.mainToolStrip.Text = "toolStrip1";
+      this.mainToolStrip.Text = "Main";
       // 
       // navigateBackwardButton
       // 
@@ -713,6 +713,7 @@ namespace AccessBridgeExplorer {
       this.eventsToolStrip.Name = "eventsToolStrip";
       this.eventsToolStrip.Size = new System.Drawing.Size(25, 211);
       this.eventsToolStrip.TabIndex = 0;
+      this.eventsToolStrip.TabStop = true;
       this.eventsToolStrip.Text = "Events";
       this.eventsToolStrip.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
       // 
