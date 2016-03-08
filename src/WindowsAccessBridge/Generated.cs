@@ -155,105 +155,339 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// <summary>
   /// Platform agnostic abstraction over WindowAccessBridge DLL entry points
   /// </summary>
-  public interface IAccessBridgeFunctionsTODO /*: IAccessBridgeFunctions*/ {
-    void Windows_run();
-    bool IsJavaWindow(WindowHandle window);
-    bool IsSameObject(int vmID, JavaObjectHandle obj1, JavaObjectHandle obj2);
-    bool GetAccessibleContextFromHWND(WindowHandle window, out int vmID, out JavaObjectHandle ac);
-    WindowHandle GetHWNDFromAccessibleContext(int vmID, JavaObjectHandle ac);
-    bool GetAccessibleContextAt(int vmID, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
-    bool GetAccessibleContextWithFocus(WindowHandle window, out int vmID, out JavaObjectHandle ac);
-    bool GetAccessibleContextInfo(int vmID, JavaObjectHandle ac, out AccessibleContextInfo info);
-    JavaObjectHandle GetAccessibleChildFromContext(int vmID, JavaObjectHandle ac, int i);
-    JavaObjectHandle GetAccessibleParentFromContext(int vmID, JavaObjectHandle ac);
-    bool GetAccessibleRelationSet(int vmID, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo);
-    bool GetAccessibleHypertext(int vmID, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo);
-    bool ActivateAccessibleHyperlink(int vmID, JavaObjectHandle accessibleContext, JavaObjectHandle accessibleHyperlink);
-    int GetAccessibleHyperlinkCount(int vmID, JavaObjectHandle accessibleContext);
-    bool GetAccessibleHypertextExt(int vmID, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo);
-    int GetAccessibleHypertextLinkIndex(int vmID, JavaObjectHandle hypertext, int nIndex);
-    bool GetAccessibleHyperlink(int vmID, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo);
-    bool GetAccessibleKeyBindings(int vmID, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings);
-    bool GetAccessibleIcons(int vmID, JavaObjectHandle accessibleContext, out AccessibleIcons icons);
-    bool GetAccessibleActions(int vmID, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions);
-    bool DoAccessibleActions(int vmID, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
-    bool GetAccessibleTextInfo(int vmID, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y);
-    bool GetAccessibleTextItems(int vmID, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index);
-    bool GetAccessibleTextSelectionInfo(int vmID, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection);
-    bool GetAccessibleTextAttributes(int vmID, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes);
-    bool GetAccessibleTextRect(int vmID, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index);
-    bool GetAccessibleTextLineBounds(int vmID, JavaObjectHandle at, int index, out int startIndex, out int endIndex);
-    bool GetAccessibleTextRange(int vmID, JavaObjectHandle at, int start, int end, StringBuilder text, short len);
-    bool GetCurrentAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len);
-    bool GetMaximumAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len);
-    bool GetMinimumAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len);
-    void AddAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i);
-    void ClearAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel);
-    JavaObjectHandle GetAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i);
-    int GetAccessibleSelectionCountFromContext(int vmID, JavaObjectHandle asel);
-    bool IsAccessibleChildSelectedFromContext(int vmID, JavaObjectHandle asel, int i);
-    void RemoveAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i);
-    void SelectAllAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel);
-    bool GetAccessibleTableInfo(int vmID, JavaObjectHandle ac, out AccessibleTableInfo tableInfo);
-    bool GetAccessibleTableCellInfo(int vmID, JavaObjectHandle accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo);
-    bool GetAccessibleTableRowHeader(int vmID, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
-    bool GetAccessibleTableColumnHeader(int vmID, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
-    JavaObjectHandle GetAccessibleTableRowDescription(int vmID, JavaObjectHandle acParent, int row);
-    JavaObjectHandle GetAccessibleTableColumnDescription(int vmID, JavaObjectHandle acParent, int column);
-    int GetAccessibleTableRowSelectionCount(int vmID, JavaObjectHandle table);
-    bool IsAccessibleTableRowSelected(int vmID, JavaObjectHandle table, int row);
-    bool GetAccessibleTableRowSelections(int vmID, JavaObjectHandle table, int count, [Out]int[] selections);
-    int GetAccessibleTableColumnSelectionCount(int vmID, JavaObjectHandle table);
-    bool IsAccessibleTableColumnSelected(int vmID, JavaObjectHandle table, int column);
-    bool GetAccessibleTableColumnSelections(int vmID, JavaObjectHandle table, int count, [Out]int[] selections);
-    int GetAccessibleTableRow(int vmID, JavaObjectHandle table, int index);
-    int GetAccessibleTableColumn(int vmID, JavaObjectHandle table, int index);
-    int GetAccessibleTableIndex(int vmID, JavaObjectHandle table, int row, int column);
-    bool SetTextContents(int vmID, JavaObjectHandle ac, string text);
-    JavaObjectHandle GetParentWithRole(int vmID, JavaObjectHandle ac, string role);
-    JavaObjectHandle GetParentWithRoleElseRoot(int vmID, JavaObjectHandle ac, string role);
-    JavaObjectHandle GetTopLevelObject(int vmID, JavaObjectHandle ac);
-    int GetObjectDepth(int vmID, JavaObjectHandle ac);
-    JavaObjectHandle GetActiveDescendent(int vmID, JavaObjectHandle ac);
-    bool GetVirtualAccessibleName(int vmID, JavaObjectHandle ac, StringBuilder name, int len);
-    bool GetTextAttributesInRange(int vmID, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len);
-    bool GetCaretLocation(int vmID, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
-    int GetVisibleChildrenCount(int vmID, JavaObjectHandle accessibleContext);
-    bool GetVisibleChildren(int vmID, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children);
-    bool GetVersionInfo(int vmID, out AccessBridgeVersionInfo info);
-    event PropertyChangeEventHandler PropertyChange;
-    event JavaShutdownEventHandler JavaShutdown;
-    event FocusGainedEventHandler FocusGained;
-    event FocusLostEventHandler FocusLost;
-    event CaretUpdateEventHandler CaretUpdate;
-    event MouseClickedEventHandler MouseClicked;
-    event MouseEnteredEventHandler MouseEntered;
-    event MouseExitedEventHandler MouseExited;
-    event MousePressedEventHandler MousePressed;
-    event MouseReleasedEventHandler MouseReleased;
-    event MenuCanceledEventHandler MenuCanceled;
-    event MenuDeselectedEventHandler MenuDeselected;
-    event MenuSelectedEventHandler MenuSelected;
-    event PopupMenuCanceledEventHandler PopupMenuCanceled;
-    event PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible;
-    event PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible;
-    event PropertyNameChangeEventHandler PropertyNameChange;
-    event PropertyDescriptionChangeEventHandler PropertyDescriptionChange;
-    event PropertyStateChangeEventHandler PropertyStateChange;
-    event PropertyValueChangeEventHandler PropertyValueChange;
-    event PropertySelectionChangeEventHandler PropertySelectionChange;
-    event PropertyTextChangeEventHandler PropertyTextChange;
-    event PropertyCaretChangeEventHandler PropertyCaretChange;
-    event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange;
-    event PropertyChildChangeEventHandler PropertyChildChange;
-    event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange;
-    event PropertyTableModelChangeEventHandler PropertyTableModelChange;
+  public partial class AccessBridgeFunctions: IAccessBridgeFunctions {
+    public void Windows_run() {
+      LibraryFunctions.Windows_run();
+    }
+
+    public bool IsJavaWindow(WindowHandle window) {
+      var result = LibraryFunctions.IsJavaWindow(window);
+      return ToBool(result);
+    }
+
+    public bool IsSameObject(int vmID, JavaObjectHandle obj1, JavaObjectHandle obj2) {
+      var result = LibraryFunctions.IsSameObject(vmID, Unwrap(obj1), Unwrap(obj2));
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleContextFromHWND(WindowHandle window, out int vmID, out JavaObjectHandle ac) {
+      JOBJECT64 acTemp;
+      var result = LibraryFunctions.GetAccessibleContextFromHWND(window, out vmID, out acTemp);
+      ac = Wrap(vmID, acTemp);
+      return ToBool(result);
+    }
+
+    public WindowHandle GetHWNDFromAccessibleContext(int vmID, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetHWNDFromAccessibleContext(vmID, Unwrap(ac));
+      return result;
+    }
+
+    public bool GetAccessibleContextAt(int vmID, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac) {
+      JOBJECT64 acTemp;
+      var result = LibraryFunctions.GetAccessibleContextAt(vmID, Unwrap(acParent), x, y, out acTemp);
+      ac = Wrap(vmID, acTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleContextWithFocus(WindowHandle window, out int vmID, out JavaObjectHandle ac) {
+      JOBJECT64 acTemp;
+      var result = LibraryFunctions.GetAccessibleContextWithFocus(window, out vmID, out acTemp);
+      ac = Wrap(vmID, acTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleContextInfo(int vmID, JavaObjectHandle ac, out AccessibleContextInfo info) {
+      var result = LibraryFunctions.GetAccessibleContextInfo(vmID, Unwrap(ac), out info);
+      return ToBool(result);
+    }
+
+    public JavaObjectHandle GetAccessibleChildFromContext(int vmID, JavaObjectHandle ac, int i) {
+      var result = LibraryFunctions.GetAccessibleChildFromContext(vmID, Unwrap(ac), i);
+      return Wrap(vmID, result);
+    }
+
+    public JavaObjectHandle GetAccessibleParentFromContext(int vmID, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetAccessibleParentFromContext(vmID, Unwrap(ac));
+      return Wrap(vmID, result);
+    }
+
+    public bool GetAccessibleRelationSet(int vmID, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo) {
+      var result = LibraryFunctions.GetAccessibleRelationSet(vmID, Unwrap(accessibleContext), out relationSetInfo);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleHypertext(int vmID, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo) {
+      var result = LibraryFunctions.GetAccessibleHypertext(vmID, Unwrap(accessibleContext), out hypertextInfo);
+      return ToBool(result);
+    }
+
+    public bool ActivateAccessibleHyperlink(int vmID, JavaObjectHandle accessibleContext, JavaObjectHandle accessibleHyperlink) {
+      var result = LibraryFunctions.ActivateAccessibleHyperlink(vmID, Unwrap(accessibleContext), Unwrap(accessibleHyperlink));
+      return ToBool(result);
+    }
+
+    public int GetAccessibleHyperlinkCount(int vmID, JavaObjectHandle accessibleContext) {
+      var result = LibraryFunctions.GetAccessibleHyperlinkCount(vmID, Unwrap(accessibleContext));
+      return result;
+    }
+
+    public bool GetAccessibleHypertextExt(int vmID, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo) {
+      var result = LibraryFunctions.GetAccessibleHypertextExt(vmID, Unwrap(accessibleContext), nStartIndex, out hypertextInfo);
+      return ToBool(result);
+    }
+
+    public int GetAccessibleHypertextLinkIndex(int vmID, JavaObjectHandle hypertext, int nIndex) {
+      var result = LibraryFunctions.GetAccessibleHypertextLinkIndex(vmID, Unwrap(hypertext), nIndex);
+      return result;
+    }
+
+    public bool GetAccessibleHyperlink(int vmID, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo) {
+      var result = LibraryFunctions.GetAccessibleHyperlink(vmID, Unwrap(hypertext), nIndex, out hyperlinkInfo);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleKeyBindings(int vmID, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings) {
+      var result = LibraryFunctions.GetAccessibleKeyBindings(vmID, Unwrap(accessibleContext), out keyBindings);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleIcons(int vmID, JavaObjectHandle accessibleContext, out AccessibleIcons icons) {
+      var result = LibraryFunctions.GetAccessibleIcons(vmID, Unwrap(accessibleContext), out icons);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleActions(int vmID, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions) {
+      var result = LibraryFunctions.GetAccessibleActions(vmID, Unwrap(accessibleContext), actions);
+      return ToBool(result);
+    }
+
+    public bool DoAccessibleActions(int vmID, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure) {
+      var result = LibraryFunctions.DoAccessibleActions(vmID, Unwrap(accessibleContext), ref actionsToDo, out failure);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextInfo(int vmID, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y) {
+      var result = LibraryFunctions.GetAccessibleTextInfo(vmID, Unwrap(at), out textInfo, x, y);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextItems(int vmID, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index) {
+      var result = LibraryFunctions.GetAccessibleTextItems(vmID, Unwrap(at), out textItems, index);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextSelectionInfo(int vmID, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection) {
+      var result = LibraryFunctions.GetAccessibleTextSelectionInfo(vmID, Unwrap(at), out textSelection);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextAttributes(int vmID, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes) {
+      var result = LibraryFunctions.GetAccessibleTextAttributes(vmID, Unwrap(at), index, out attributes);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextRect(int vmID, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index) {
+      var result = LibraryFunctions.GetAccessibleTextRect(vmID, Unwrap(at), out rectInfo, index);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextLineBounds(int vmID, JavaObjectHandle at, int index, out int startIndex, out int endIndex) {
+      var result = LibraryFunctions.GetAccessibleTextLineBounds(vmID, Unwrap(at), index, out startIndex, out endIndex);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextRange(int vmID, JavaObjectHandle at, int start, int end, StringBuilder text, short len) {
+      var result = LibraryFunctions.GetAccessibleTextRange(vmID, Unwrap(at), start, end, text, len);
+      return ToBool(result);
+    }
+
+    public bool GetCurrentAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len) {
+      var result = LibraryFunctions.GetCurrentAccessibleValueFromContext(vmID, Unwrap(av), value, len);
+      return ToBool(result);
+    }
+
+    public bool GetMaximumAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len) {
+      var result = LibraryFunctions.GetMaximumAccessibleValueFromContext(vmID, Unwrap(av), value, len);
+      return ToBool(result);
+    }
+
+    public bool GetMinimumAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len) {
+      var result = LibraryFunctions.GetMinimumAccessibleValueFromContext(vmID, Unwrap(av), value, len);
+      return ToBool(result);
+    }
+
+    public void AddAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i) {
+      LibraryFunctions.AddAccessibleSelectionFromContext(vmID, Unwrap(asel), i);
+    }
+
+    public void ClearAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel) {
+      LibraryFunctions.ClearAccessibleSelectionFromContext(vmID, Unwrap(asel));
+    }
+
+    public JavaObjectHandle GetAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i) {
+      var result = LibraryFunctions.GetAccessibleSelectionFromContext(vmID, Unwrap(asel), i);
+      return Wrap(vmID, result);
+    }
+
+    public int GetAccessibleSelectionCountFromContext(int vmID, JavaObjectHandle asel) {
+      var result = LibraryFunctions.GetAccessibleSelectionCountFromContext(vmID, Unwrap(asel));
+      return result;
+    }
+
+    public bool IsAccessibleChildSelectedFromContext(int vmID, JavaObjectHandle asel, int i) {
+      var result = LibraryFunctions.IsAccessibleChildSelectedFromContext(vmID, Unwrap(asel), i);
+      return ToBool(result);
+    }
+
+    public void RemoveAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i) {
+      LibraryFunctions.RemoveAccessibleSelectionFromContext(vmID, Unwrap(asel), i);
+    }
+
+    public void SelectAllAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel) {
+      LibraryFunctions.SelectAllAccessibleSelectionFromContext(vmID, Unwrap(asel));
+    }
+
+    public bool GetAccessibleTableInfo(int vmID, JavaObjectHandle ac, out AccessibleTableInfo tableInfo) {
+      var result = LibraryFunctions.GetAccessibleTableInfo(vmID, Unwrap(ac), out tableInfo);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTableCellInfo(int vmID, JavaObjectHandle accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
+      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmID, Unwrap(accessibleTable), row, column, out tableCellInfo);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTableRowHeader(int vmID, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
+      var result = LibraryFunctions.GetAccessibleTableRowHeader(vmID, Unwrap(acParent), out tableInfo);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTableColumnHeader(int vmID, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
+      var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmID, Unwrap(acParent), out tableInfo);
+      return ToBool(result);
+    }
+
+    public JavaObjectHandle GetAccessibleTableRowDescription(int vmID, JavaObjectHandle acParent, int row) {
+      var result = LibraryFunctions.GetAccessibleTableRowDescription(vmID, Unwrap(acParent), row);
+      return Wrap(vmID, result);
+    }
+
+    public JavaObjectHandle GetAccessibleTableColumnDescription(int vmID, JavaObjectHandle acParent, int column) {
+      var result = LibraryFunctions.GetAccessibleTableColumnDescription(vmID, Unwrap(acParent), column);
+      return Wrap(vmID, result);
+    }
+
+    public int GetAccessibleTableRowSelectionCount(int vmID, JavaObjectHandle table) {
+      var result = LibraryFunctions.GetAccessibleTableRowSelectionCount(vmID, Unwrap(table));
+      return result;
+    }
+
+    public bool IsAccessibleTableRowSelected(int vmID, JavaObjectHandle table, int row) {
+      var result = LibraryFunctions.IsAccessibleTableRowSelected(vmID, Unwrap(table), row);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTableRowSelections(int vmID, JavaObjectHandle table, int count, [Out]int[] selections) {
+      var result = LibraryFunctions.GetAccessibleTableRowSelections(vmID, Unwrap(table), count, selections);
+      return ToBool(result);
+    }
+
+    public int GetAccessibleTableColumnSelectionCount(int vmID, JavaObjectHandle table) {
+      var result = LibraryFunctions.GetAccessibleTableColumnSelectionCount(vmID, Unwrap(table));
+      return result;
+    }
+
+    public bool IsAccessibleTableColumnSelected(int vmID, JavaObjectHandle table, int column) {
+      var result = LibraryFunctions.IsAccessibleTableColumnSelected(vmID, Unwrap(table), column);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTableColumnSelections(int vmID, JavaObjectHandle table, int count, [Out]int[] selections) {
+      var result = LibraryFunctions.GetAccessibleTableColumnSelections(vmID, Unwrap(table), count, selections);
+      return ToBool(result);
+    }
+
+    public int GetAccessibleTableRow(int vmID, JavaObjectHandle table, int index) {
+      var result = LibraryFunctions.GetAccessibleTableRow(vmID, Unwrap(table), index);
+      return result;
+    }
+
+    public int GetAccessibleTableColumn(int vmID, JavaObjectHandle table, int index) {
+      var result = LibraryFunctions.GetAccessibleTableColumn(vmID, Unwrap(table), index);
+      return result;
+    }
+
+    public int GetAccessibleTableIndex(int vmID, JavaObjectHandle table, int row, int column) {
+      var result = LibraryFunctions.GetAccessibleTableIndex(vmID, Unwrap(table), row, column);
+      return result;
+    }
+
+    public bool SetTextContents(int vmID, JavaObjectHandle ac, string text) {
+      var result = LibraryFunctions.SetTextContents(vmID, Unwrap(ac), text);
+      return ToBool(result);
+    }
+
+    public JavaObjectHandle GetParentWithRole(int vmID, JavaObjectHandle ac, string role) {
+      var result = LibraryFunctions.GetParentWithRole(vmID, Unwrap(ac), role);
+      return Wrap(vmID, result);
+    }
+
+    public JavaObjectHandle GetParentWithRoleElseRoot(int vmID, JavaObjectHandle ac, string role) {
+      var result = LibraryFunctions.GetParentWithRoleElseRoot(vmID, Unwrap(ac), role);
+      return Wrap(vmID, result);
+    }
+
+    public JavaObjectHandle GetTopLevelObject(int vmID, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetTopLevelObject(vmID, Unwrap(ac));
+      return Wrap(vmID, result);
+    }
+
+    public int GetObjectDepth(int vmID, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetObjectDepth(vmID, Unwrap(ac));
+      return result;
+    }
+
+    public JavaObjectHandle GetActiveDescendent(int vmID, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetActiveDescendent(vmID, Unwrap(ac));
+      return Wrap(vmID, result);
+    }
+
+    public bool GetVirtualAccessibleName(int vmID, JavaObjectHandle ac, StringBuilder name, int len) {
+      var result = LibraryFunctions.GetVirtualAccessibleName(vmID, Unwrap(ac), name, len);
+      return ToBool(result);
+    }
+
+    public bool GetTextAttributesInRange(int vmID, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len) {
+      var result = LibraryFunctions.GetTextAttributesInRange(vmID, Unwrap(accessibleContext), startIndex, endIndex, out attributes, out len);
+      return ToBool(result);
+    }
+
+    public bool GetCaretLocation(int vmID, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index) {
+      var result = LibraryFunctions.GetCaretLocation(vmID, Unwrap(ac), out rectInfo, index);
+      return ToBool(result);
+    }
+
+    public int GetVisibleChildrenCount(int vmID, JavaObjectHandle accessibleContext) {
+      var result = LibraryFunctions.GetVisibleChildrenCount(vmID, Unwrap(accessibleContext));
+      return result;
+    }
+
+    public bool GetVisibleChildren(int vmID, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children) {
+      var result = LibraryFunctions.GetVisibleChildren(vmID, Unwrap(accessibleContext), startIndex, out children);
+      return ToBool(result);
+    }
+
+    public bool GetVersionInfo(int vmID, out AccessBridgeVersionInfo info) {
+      var result = LibraryFunctions.GetVersionInfo(vmID, out info);
+      return ToBool(result);
+    }
+
   }
 
   /// <summary>
   /// Acess Bridge event handlers implementation
   /// </summary>
-  public partial class AccessBridgeEvents {
+  public partial class AccessBridgeEvents : IAccessBridgeEvents {
     #region Event functions
     public event PropertyChangeEventHandler PropertyChange;
     public event JavaShutdownEventHandler JavaShutdown;

@@ -27,7 +27,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// </summary>
   public class AccessBridge : IDisposable {
     private UnmanagedLibrary _library;
-    private IAccessBridgeFunctions _functions;
+    private AccessBridgeFunctions _functions;
     private AccessBridgeEvents _events;
     private bool _disposed;
 
@@ -39,7 +39,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
-    public AccessBridgeEvents Events {
+    public IAccessBridgeEvents Events {
       get {
         ThrowIfDisposed();
         Initialize();
@@ -63,15 +63,15 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         return;
 
       var library = LoadLibrary();
-      var functions = LoadFunctions(library);
-      var events = new AccessBridgeEvents(functions);
+      var libraryFunctions = LoadFunctions(library);
+      var functions = new AccessBridgeFunctions(libraryFunctions);
+      var events = new AccessBridgeEvents(libraryFunctions);
       events.SetHandlers();
 
       // Everything is initialized correctly, save to member variables.
       _library = library;
-      _functions = new AccessBridgeFunctions(functions);
+      _functions = functions;
       _events = events;
-      _events.SetHandlers();
       _functions.Windows_run();
     }
 

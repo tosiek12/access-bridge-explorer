@@ -143,13 +143,10 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Platform agnostic abstraction over WindowAccessBridge DLL entry points");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public interface IAccessBridgeFunctionsTODO /*: IAccessBridgeFunctions*/ {{");
+      sourceWriter.WriteLine("public partial class AccessBridgeFunctions: IAccessBridgeFunctions {{");
       sourceWriter.IncIndent();
       foreach (var function in model.Functions) {
-        WriteFunction(sourceWriter, function);
-      }
-      foreach (var eventDefinition in model.Events) {
-        WriteEvent(sourceWriter, eventDefinition);
+        WriteApplicationLevelFunctionImplementation(sourceWriter, function);
       }
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
@@ -228,7 +225,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Acess Bridge event handlers implementation");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public partial class AccessBridgeEvents {{");
+      sourceWriter.WriteLine("public partial class AccessBridgeEvents : IAccessBridgeEvents {{");
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine("#region Event functions");
@@ -278,6 +275,72 @@ namespace CodeGen {
       sourceWriter.WriteIndent();
       WriteFunctionSignature(sourceWriter, definition);
       sourceWriter.Write(";");
+      sourceWriter.WriteLine();
+    }
+
+    private void WriteApplicationLevelFunctionImplementation(SourceCodeWriter sourceWriter, FunctionDefinition definition) {
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("public ");
+      WriteFunctionSignature(sourceWriter, definition);
+      sourceWriter.Write(" {{");
+      sourceWriter.WriteLine();
+      sourceWriter.IncIndent();
+
+      var javaObjects = definition.Parameters.Where(p => p.IsOut && IsJavaObjectHandle(p.Type)).ToList();
+      foreach (var x in javaObjects) {
+        sourceWriter.WriteIndent();
+        sourceWriter.IsNativeTypes = true;
+        sourceWriter.WriteType(x.Type);
+        sourceWriter.IsNativeTypes = false;
+        sourceWriter.Write(" {0}Temp;", x.Name);
+        sourceWriter.WriteLine();
+      }
+
+      sourceWriter.WriteIndent();
+      if (!IsVoid(definition.ReturnType)) {
+        sourceWriter.Write("var result = ");
+      }
+      sourceWriter.Write("LibraryFunctions.{0}(", definition.Name);
+      var first = true;
+      foreach (var p in definition.Parameters) {
+        if (first)
+          first = false;
+        else
+          sourceWriter.Write(", ");
+        if (p.IsOut)
+          sourceWriter.Write("out ");
+        else if (p.IsRef)
+          sourceWriter.Write("ref ");
+        if (IsJavaObjectHandle(p.Type)) {
+          if (p.IsOut)
+            sourceWriter.Write("{0}Temp", p.Name);
+          else
+            sourceWriter.Write("Unwrap({0})", p.Name);
+        } else {
+          sourceWriter.Write(p.Name);
+        }
+      }
+      sourceWriter.Write(");");
+      sourceWriter.WriteLine();
+
+      foreach (var x in javaObjects) {
+        sourceWriter.WriteIndent();
+        sourceWriter.Write("{0} = Wrap(vmID, {0}Temp);", x.Name);
+        sourceWriter.WriteLine();
+      }
+
+      if (!IsVoid(definition.ReturnType)) {
+        if (IsJavaObjectHandle(definition.ReturnType)) {
+          sourceWriter.WriteLine("return Wrap(vmID, result);");
+        } else if (IsBool(definition.ReturnType)) {
+          sourceWriter.WriteLine("return ToBool(result);");
+        } else {
+          sourceWriter.WriteLine("return result;");
+        }
+      }
+
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
       sourceWriter.WriteLine();
     }
 
@@ -427,7 +490,7 @@ namespace CodeGen {
           first = false;
         else
           sourceWriter.Write(", ");
-        if ((p.Type is NameTypeReference) && ((NameTypeReference) p.Type).Name == typeof (JavaObjectHandle).Name) {
+        if (IsJavaObjectHandle(p.Type)) {
           sourceWriter.Write("Wrap(vmid, {0})", p.Name);
         } else {
           sourceWriter.Write("{0}", p.Name);
@@ -437,6 +500,27 @@ namespace CodeGen {
       sourceWriter.WriteLine();
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
+    }
+
+    private static bool IsJavaObjectHandle(TypeReference p) {
+      var name = p as NameTypeReference;
+      if (name == null)
+        return false;
+      return name.Name == typeof (JavaObjectHandle).Name;
+    }
+
+    private static bool IsBool(TypeReference p) {
+      var name = p as NameTypeReference;
+      if (name == null)
+        return false;
+      return name.Name == "bool";
+    }
+
+    private static bool IsVoid(TypeReference p) {
+      var name = p as NameTypeReference;
+      if (name == null)
+        return false;
+      return name.Name == "void";
     }
 
     private void WriteParameter(SourceCodeWriter sourceWriter, ParameterDefinition parameterDefinition) {
