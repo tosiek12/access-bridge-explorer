@@ -19,7 +19,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using AccessBridgeExplorer.Model;
-using AccessBridgeExplorer.WindowsAccessBridge.NativeStructures;
 
 namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// <summary>

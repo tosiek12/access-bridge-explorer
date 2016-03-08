@@ -114,16 +114,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// DLL (<see cref="AccessBridge.Events"/>).
   /// </summary>
   public class AccessBridgeEvents : IDisposable {
-    private readonly AccessBridge _bridge;
     private readonly AccessBridgeEventsNative _nativeEvents;
 
-    public AccessBridgeEvents(AccessBridge bridge) {
-      _bridge = bridge;
-      _nativeEvents = new AccessBridgeEventsNative(this);
-    }
-
-    public AccessBridge Bridge {
-      get { return _bridge; }
+    public AccessBridgeEvents(AccessBridgeLibraryFunctions libraryFunctions) {
+      _nativeEvents = new AccessBridgeEventsNative(libraryFunctions);
     }
 
     public void Dispose() {

@@ -14,20 +14,21 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using CodeGen.Definitions;
 using CodeGen.Interop;
 
 namespace CodeGen {
   public class SourceCodeWriter : IDisposable {
-    private readonly TextWriter _writer;
+    private readonly TextWriter _textWriter;
     private string _indent = "";
 
-    public SourceCodeWriter(TextWriter writer) {
-      _writer = writer;
+    public SourceCodeWriter(TextWriter textWriter) {
+      _textWriter = textWriter;
     }
 
-    public TextWriter Writer {
-      get { return _writer; }
+    public TextWriter TextWriter {
+      get { return _textWriter; }
     }
 
     public bool IsLegacy { get; set; }
@@ -41,16 +42,16 @@ namespace CodeGen {
     }
 
     public void Write(string format, params object[] args) {
-      _writer.Write(format, args);
+      _textWriter.Write(format, args);
     }
 
     public void WriteLine() {
-      _writer.WriteLine();
+      _textWriter.WriteLine();
     }
 
     public void WriteLine(string format, params object[] args) {
-      _writer.Write(_indent);
-      _writer.WriteLine(format, args);
+      _textWriter.Write(_indent);
+      _textWriter.WriteLine(format, args);
     }
 
     public void StartNamespace(string value) {
@@ -59,7 +60,7 @@ namespace CodeGen {
     }
 
     public void WriteIndent() {
-      _writer.Write(_indent);
+      _textWriter.Write(_indent);
     }
 
     public void IncIndent() {
@@ -94,6 +95,23 @@ namespace CodeGen {
       Write("{0}", GetTypeName(typeReference));
     }
 
+    public void WriteMashalAs(MarshalAsAttribute attribute) {
+      if (attribute == null)
+        return;
+      if (!IsNativeTypes)
+        return;
+
+      Write("[{0}(", "MarshalAs");
+      Write("{0}.{1}", typeof(UnmanagedType).Name, Enum.GetName(typeof(UnmanagedType), attribute.Value));
+      if (attribute.SizeConst > 0) {
+        Write(", SizeConst = {0}", attribute.SizeConst);
+      }
+      if (attribute.SizeParamIndex > 0) {
+        Write(", SizeParamIndex = {0}", attribute.SizeParamIndex);
+      }
+      Write(")]");
+    }
+
     public string GetTypeName(NameTypeReference type) {
       if (type.Name == typeof(JavaObjectHandle).Name) {
         if (IsNativeTypes) {
@@ -102,6 +120,9 @@ namespace CodeGen {
           else
             return "JOBJECT64";
         }
+      } else if (type.Name == "bool") {
+        if (IsNativeTypes)
+          return "BOOL";
       }
 
       return type.Name;

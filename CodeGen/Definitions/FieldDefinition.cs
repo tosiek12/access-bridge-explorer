@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Runtime.InteropServices;
+
 namespace CodeGen.Definitions {
   public class FieldDefinition {
     public TypeReference Type { get; set; }
     public string Name { get; set; }
+    public MarshalAsAttribute MarshalAs { get; set; }
   }
 }

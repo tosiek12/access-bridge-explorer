@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace CodeGen.Definitions {
   public class ParameterDefinition {
     public string Name { get; set; }
+    public MarshalAsAttribute MarshalAs { get; set; }
     public TypeReference Type { get; set; }
     public bool IsOut { get; set; }
     public bool IsRef { get; set; }

@@ -17,9 +17,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using CodeGen.Definitions;
 using CodeGen.Interop;
 using CodeGen.Interop.NativeStructures;
+using WindowsAccessBridgeDefinition = CodeGen.Interop.WindowsAccessBridgeDefinition;
 
 namespace CodeGen {
   public class CodeGen {
@@ -34,7 +36,7 @@ namespace CodeGen {
       WriteFile(model);
     }
 
-    private void WriteFile(WindowsAccessBridgeDefinition model) {
+    private void WriteFile(Definitions.WindowsAccessBridgeDefinition model) {
       using (var writer = File.CreateText(_outputFilename)) {
         using (var sourceWriter = new SourceCodeWriter(writer)) {
           sourceWriter.WriteLine("// Copyright 2016 Google Inc. All Rights Reserved.");
@@ -52,16 +54,18 @@ namespace CodeGen {
           sourceWriter.WriteLine("// limitations under the License.");
           sourceWriter.WriteLine();
 
+          sourceWriter.WriteLine("// ReSharper disable InconsistentNaming");
           sourceWriter.AddUsing("System");
           //sourceWriter.AddUsing("System.Diagnostics.CodeAnalysis");
           sourceWriter.AddUsing("System.Runtime.InteropServices");
           sourceWriter.AddUsing("System.Text");
           sourceWriter.AddUsing("WindowHandle = System.IntPtr");
-          sourceWriter.WriteLine("// ReSharper disable InconsistentNaming");
+          sourceWriter.AddUsing("BOOL = System.Int32");
           sourceWriter.WriteLine();
 
           sourceWriter.StartNamespace("AccessBridgeExplorer.WindowsAccessBridge");
           WriteApplicationLevelInterface(model, sourceWriter);
+          WriteLibrayrFunctionsClass(model, sourceWriter);
           model.Enums.ForEach(x => {
             writer.WriteLine();
             WriteEnum(model, sourceWriter, x);
@@ -80,7 +84,7 @@ namespace CodeGen {
       }
     }
 
-    private void WriteApplicationLevelInterface(WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter) {
+    private void WriteApplicationLevelInterface(Definitions.WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
       sourceWriter.IsLegacy = false;
       sourceWriter.WriteLine("/// <summary>");
@@ -89,24 +93,129 @@ namespace CodeGen {
       sourceWriter.WriteLine("public interface IAccessBridgeFunctions {{");
       sourceWriter.IncIndent();
       foreach (var function in model.Functions) {
-        sourceWriter.WriteLine("{0};", function.ToString());
+        WriteFunction(sourceWriter, function);
       }
       foreach (var eventDefinition in model.Events) {
-        sourceWriter.WriteLine("bool Set{0}(Delegate handler);", eventDefinition.Name);
-        //sourceWriter.WriteLine("{0};", function.ToString());
+        WriteEvent(sourceWriter, eventDefinition);
       }
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
     }
 
-    private void WriteStruct(WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter, StrucDefinition definition) {
+    private void WriteLibrayrFunctionsClass(Definitions.WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter) {
+      sourceWriter.IsNativeTypes = true;
+      sourceWriter.IsLegacy = false;
+      sourceWriter.WriteLine("/// <summary>");
+      sourceWriter.WriteLine("/// Container of WindowAccessBridge DLL entry points");
+      sourceWriter.WriteLine("/// </summary>");
+      sourceWriter.WriteLine("public class AccessBridgeLibraryFunctions {{");
+      sourceWriter.IncIndent();
+
+      sourceWriter.WriteLine("#region Function delegate types");
+      foreach (var function in model.Functions) {
+        WriteLibrayrFunctionsDelegate(sourceWriter, function);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Functions");
+      foreach (var function in model.Functions) {
+        WriteLibraryFunctionProperty(sourceWriter, function);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Event delegate types");
+      sourceWriter.WriteLine("[UnmanagedFunctionPointer(CallingConvention.Cdecl)]");
+      sourceWriter.WriteLine("public delegate BOOL EventSetterDelegate(Delegate nativeEventHandler);");
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Event functions");
+      foreach (var eventDefinition in model.Events) {
+        WriteLibraryEventProperty(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+    }
+
+    private void WriteFunction(SourceCodeWriter sourceWriter, FunctionDefinition function) {
+      sourceWriter.WriteIndent();
+      sourceWriter.WriteType(function.ReturnType);
+      sourceWriter.Write(" ");
+      sourceWriter.Write(function.Name);
+      sourceWriter.Write("(");
+      bool first = true;
+      foreach (var p in function.Parameters) {
+        if (first)
+          first = false;
+        else {
+          sourceWriter.Write(", ");
+        }
+        WriteParameter(sourceWriter, p);
+      }
+      sourceWriter.Write(");");
+      sourceWriter.WriteLine();
+    }
+
+    private void WriteLibrayrFunctionsDelegate(SourceCodeWriter sourceWriter, FunctionDefinition function) {
+      sourceWriter.WriteLine("[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]");
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("public delegate ");
+      sourceWriter.WriteType(function.ReturnType);
+      sourceWriter.Write(" ");
+      sourceWriter.Write("{0}FP", function.Name);
+      sourceWriter.Write("(");
+      bool first = true;
+      foreach (var p in function.Parameters) {
+        if (first)
+          first = false;
+        else {
+          sourceWriter.Write(", ");
+        }
+        WriteParameter(sourceWriter, p);
+      }
+      sourceWriter.Write(");");
+      sourceWriter.WriteLine();
+    }
+
+    private void WriteLibraryFunctionProperty(SourceCodeWriter sourceWriter, FunctionDefinition function) {
+      sourceWriter.WriteLine("public {0}FP {0} {{ get; set; }}", function.Name);
+    }
+
+    private void WriteLibraryEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.WriteLine("public EventSetterDelegate Set{0} {{ get; set; }}", definition.Name);
+    }
+
+    private void WriteParameter(SourceCodeWriter sourceWriter, ParameterDefinition parameterDefinition) {
+      if (parameterDefinition.IsOutAttribute) {
+        sourceWriter.Write("[Out]");
+      }
+
+      if (parameterDefinition.IsOut) {
+        sourceWriter.Write("out ");
+      } else if (parameterDefinition.IsRef) {
+        sourceWriter.Write("ref ");
+      }
+      sourceWriter.WriteMashalAs(parameterDefinition.MarshalAs);
+      sourceWriter.WriteType(parameterDefinition.Type);
+      sourceWriter.Write(" ");
+      sourceWriter.Write(parameterDefinition.Name);
+    }
+
+    private void WriteEvent(SourceCodeWriter sourceWriter, EventDefinition eventDefinition) {
+      sourceWriter.WriteLine("bool Set{0}(Delegate handler);", eventDefinition.Name);
+    }
+
+    private void WriteStruct(Definitions.WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter, StrucDefinition definition) {
       sourceWriter.WriteLine("[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]");
       sourceWriter.WriteLine("public struct {0} {{", definition.Name);
       WriteFields(model, sourceWriter, definition);
       sourceWriter.WriteLine("}}");
     }
 
-    private void WriteEnum(WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter, EnumDefinition definition) {
+    private void WriteEnum(Definitions.WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter, EnumDefinition definition) {
       if (definition.IsFlags)
         sourceWriter.WriteLine("[Flags]");
       sourceWriter.WriteIndent();
@@ -121,13 +230,18 @@ namespace CodeGen {
       sourceWriter.WriteLine("}}");
     }
 
-    private void WriteFields(WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter, BaseTypeDefinition definition) {
+    private void WriteFields(Definitions.WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter, BaseTypeDefinition definition) {
       sourceWriter.IncIndent();
       definition.Fields.ForEach(f => WriteField(model, sourceWriter, f));
       sourceWriter.DecIndent();
     }
 
-    private void WriteField(WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter, FieldDefinition definition) {
+    private void WriteField(Definitions.WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter, FieldDefinition definition) {
+      if (definition.MarshalAs != null) {
+        sourceWriter.WriteIndent();
+        sourceWriter.WriteMashalAs(definition.MarshalAs);
+        sourceWriter.WriteLine();
+      }
       sourceWriter.WriteIndent();
       sourceWriter.Write("public ");
       sourceWriter.WriteType(definition.Type);
@@ -136,7 +250,7 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteEnumMembers(WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter, EnumDefinition definition) {
+    private void WriteEnumMembers(Definitions.WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter, EnumDefinition definition) {
       sourceWriter.IncIndent();
       definition.Members.ForEach(x => {
         sourceWriter.WriteIndent();
@@ -150,15 +264,15 @@ namespace CodeGen {
       sourceWriter.DecIndent();
     }
 
-    private void WriteClass(WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter, ClassDefinition classDefinition) {
+    private void WriteClass(Definitions.WindowsAccessBridgeDefinition model, SourceCodeWriter sourceWriter, ClassDefinition classDefinition) {
       sourceWriter.WriteLine("[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]");
       sourceWriter.WriteLine("public class {0} {{", classDefinition.Name);
       WriteFields(model, sourceWriter, classDefinition);
       sourceWriter.WriteLine("}}");
     }
 
-    private WindowsAccessBridgeDefinition CollectModel() {
-      var model = new WindowsAccessBridgeDefinition();
+    private Definitions.WindowsAccessBridgeDefinition CollectModel() {
+      var model = new Definitions.WindowsAccessBridgeDefinition();
       CollectFunctions(model);
       CollectEvents(model);
       CollectEnums(model);
@@ -167,37 +281,37 @@ namespace CodeGen {
       return model;
     }
 
-    private void CollectFunctions(WindowsAccessBridgeDefinition model) {
-      var type = typeof(IAccessBridgeFunctions);
+    private void CollectFunctions(Definitions.WindowsAccessBridgeDefinition model) {
+      var type = typeof(WindowsAccessBridgeDefinition);
       var functions = type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
       model.Functions.AddRange(functions.Where(f => !f.IsSpecialName).Select(f => CollectFunction(f)));
     }
 
-    private void CollectEvents(WindowsAccessBridgeDefinition model) {
-      var type = typeof(IAccessBridgeFunctions);
+    private void CollectEvents(Definitions.WindowsAccessBridgeDefinition model) {
+      var type = typeof(WindowsAccessBridgeDefinition);
       var events = type.GetEvents(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
       model.Events.AddRange(events.Select(x => CollectEvent(x)));
     }
 
-    private void CollectEnums(WindowsAccessBridgeDefinition model) {
+    private void CollectEnums(Definitions.WindowsAccessBridgeDefinition model) {
       var sampleType = typeof(AccessibleKeyCode);
-      var types = typeof(IAccessBridgeFunctions).Assembly.GetExportedTypes()
+      var types = typeof(WindowsAccessBridgeDefinition).Assembly.GetExportedTypes()
         .Where(t => t.Namespace == sampleType.Namespace)
         .Where(t => t.IsValueType && t.IsEnum);
       model.Enums.AddRange(types.Select(t => CollectEnum(t)));
     }
 
-    private void CollectStructs(WindowsAccessBridgeDefinition model) {
+    private void CollectStructs(Definitions.WindowsAccessBridgeDefinition model) {
       var sampleStruct = typeof(AccessibleContextInfo);
-      var types = typeof(IAccessBridgeFunctions).Assembly.GetExportedTypes()
+      var types = typeof(WindowsAccessBridgeDefinition).Assembly.GetExportedTypes()
         .Where(t => t.Namespace == sampleStruct.Namespace)
         .Where(t => t.IsValueType && !t.IsEnum);
       model.Structs.AddRange(types.Select(t => CollectStruct(t)));
     }
 
-    private void CollectClasses(WindowsAccessBridgeDefinition model) {
+    private void CollectClasses(Definitions.WindowsAccessBridgeDefinition model) {
       var sampleStruct = typeof(AccessibleContextInfo);
-      var types = typeof(IAccessBridgeFunctions).Assembly.GetExportedTypes()
+      var types = typeof(WindowsAccessBridgeDefinition).Assembly.GetExportedTypes()
         .Where(t => t.Namespace == sampleStruct.Namespace)
         .Where(t => t.IsClass);
       model.Classes.AddRange(types.Select(t => CollectClass(t)));
@@ -230,7 +344,8 @@ namespace CodeGen {
       return type.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
         .Select(x => new FieldDefinition {
           Name = x.Name,
-          Type = ConvertType(x.FieldType)
+          Type = ConvertType(x.FieldType),
+          MarshalAs = ConvertMashalAs(x)
         });
     }
 
@@ -258,17 +373,21 @@ namespace CodeGen {
       };
     }
 
-    private IEnumerable<ParameterDefinition> CollectParameters(ParameterInfo[] getParameters) {
-      foreach (var p in getParameters) {
+    private IEnumerable<ParameterDefinition> CollectParameters(ParameterInfo[] parameters) {
+      foreach (var p in parameters) {
         yield return new ParameterDefinition {
           Name = p.Name,
           Type = ConvertType(p.ParameterType),
+          MarshalAs = ConvertMashalAs(p),
           IsOutAttribute = !p.ParameterType.IsByRef && p.IsOut,
           IsOut = p.ParameterType.IsByRef && p.IsOut,
           IsRef = p.ParameterType.IsByRef,
-
         };
       }
+    }
+
+    private MarshalAsAttribute ConvertMashalAs(ICustomAttributeProvider provider) {
+      return (MarshalAsAttribute)provider.GetCustomAttributes(typeof(MarshalAsAttribute), false).FirstOrDefault();
     }
 
     private TypeReference ConvertType(System.Type type) {

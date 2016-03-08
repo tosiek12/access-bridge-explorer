@@ -64,11 +64,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
       var library = LoadLibrary();
       var functions = LoadFunctions(library);
-      var events = new AccessBridgeEvents(this);
+      var events = new AccessBridgeEvents(functions);
+      events.SetHandlers();
 
       // Everything is initialized correctly, save to member variables.
       _library = library;
-      _functions = functions;
+      _functions = new AccessBridgeFunctionsNative(functions);
       _events = events;
       _events.SetHandlers();
       _functions.Windows_run();
@@ -158,8 +159,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
-    private static IAccessBridgeFunctions LoadFunctions(UnmanagedLibrary library) {
-      var functions = new AccessBridgeFunctionsNative();
+    private static AccessBridgeLibraryFunctions LoadFunctions(UnmanagedLibrary library) {
+      var functions = new AccessBridgeLibraryFunctions();
       var publicMembers = BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance;
       foreach (var property in functions.GetType().GetProperties(publicMembers)) {
         var name = property.Name;
@@ -174,8 +175,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             break;
         }
 
-        // Setters hae a "FP" suffix
-        if (name.StartsWith("set")) {
+        // Event setters have a "FP" suffix
+        if (name.StartsWith("set") && name != "setTextContents") {
           name += "FP";
         }
 

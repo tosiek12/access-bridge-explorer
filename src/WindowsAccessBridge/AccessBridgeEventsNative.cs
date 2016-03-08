@@ -89,11 +89,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// an instance of <see cref="AccessBridgeEvents"/>.
   /// </summary>
   public class AccessBridgeEventsNative {
-    private readonly AccessBridgeEvents _accessBridgeEvents;
+    private readonly AccessBridgeLibraryFunctions _libraryFunctions;
     private readonly List<Delegate> _handlers = new List<Delegate>();
 
-    public AccessBridgeEventsNative(AccessBridgeEvents accessBridgeEvents) {
-      _accessBridgeEvents = accessBridgeEvents;
+    public AccessBridgeEventsNative(AccessBridgeLibraryFunctions libraryFunctions) {
+      _libraryFunctions = libraryFunctions;
     }
 
     public void SetHandlers() {
@@ -111,13 +111,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
         // Find the native access bridge event setter method to call
         var setName = "Set" + name;
-        var propertyMethod = _accessBridgeEvents.Bridge.Functions.GetType().GetProperty(setName, publicMembers);
+        var propertyMethod = _libraryFunctions.GetType().GetProperty(setName, publicMembers);
         if (propertyMethod == null) {
           throw new ApplicationException(string.Format("Type \"{0}\" should contain a method named \"{1}\"",
-            _accessBridgeEvents.Bridge.Functions.GetType().Name, setName));
+            _libraryFunctions.GetType().Name, setName));
         }
         var getter = propertyMethod.GetGetMethod();
-        var action = getter.Invoke(_accessBridgeEvents.Bridge.Functions, new object[] { });
+        var action = getter.Invoke(_libraryFunctions, new object[] { });
 
         // Call it with the handler instance
         ((Delegate)action).DynamicInvoke(new object[] { handler });
@@ -132,8 +132,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
         // Find the native access bridge event setter method to call
         var setName = "Set" + name;
-        var getter = _accessBridgeEvents.Bridge.Functions.GetType().GetProperty(setName, publicMembers).GetGetMethod();
-        var action = getter.Invoke(_accessBridgeEvents.Bridge.Functions, new object[] { });
+        var getter = _libraryFunctions.GetType().GetProperty(setName, publicMembers).GetGetMethod();
+        var action = getter.Invoke(_libraryFunctions, new object[] { });
 
         // Call it with "null"
         ((Delegate)action).DynamicInvoke(new object[] { null });
@@ -197,111 +197,111 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     #region Event Handlers
     protected virtual void OnJavaShutdown(int vmid) {
-      _accessBridgeEvents.OnJavaShutdown(vmid);
+      //_libraryFunctions.OnJavaShutdown(vmid);
     }
 
     protected virtual void OnPropertyChange(int vmid, JOBJECT64 evt, JOBJECT64 source, string property, string oldvalue, string newvalue) {
-      _accessBridgeEvents.OnPropertyChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), property, oldvalue, newvalue);
+      //_libraryFunctions.OnPropertyChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), property, oldvalue, newvalue);
     }
 
     protected virtual void OnPropertyChildChange(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldchild, JOBJECT64 newchild) {
-      _accessBridgeEvents.OnPropertyChildChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), Wrap(vmid, oldchild), Wrap(vmid, newchild));
+      //_libraryFunctions.OnPropertyChildChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), Wrap(vmid, oldchild), Wrap(vmid, newchild));
     }
 
     protected virtual void OnFocusGained(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnFocusGained(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnFocusGained(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnFocusLost(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnFocusLost(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnFocusLost(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnCaretUpdate(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnCaretUpdate(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnCaretUpdate(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnMouseClicked(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnMouseClicked(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnMouseClicked(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnMouseEntered(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnMouseEntered(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnMouseEntered(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnMouseExited(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnMouseExited(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnMouseExited(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnMousePressed(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnMousePressed(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnMousePressed(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnMouseReleased(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnMouseReleased(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnMouseReleased(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnMenuCanceled(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnMenuCanceled(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnMenuCanceled(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnMenuDeselected(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnMenuDeselected(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnMenuDeselected(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnMenuSelected(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnMenuSelected(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnMenuSelected(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnPopupMenuCanceled(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnPopupMenuCanceled(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnPopupMenuCanceled(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnPopupMenuWillBecomeInvisible(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnPopupMenuWillBecomeInvisible(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnPopupMenuWillBecomeInvisible(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnPopupMenuWillBecomeVisible(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnPopupMenuWillBecomeVisible(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnPopupMenuWillBecomeVisible(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnPropertyNameChange(int vmid, JOBJECT64 evt, JOBJECT64 source, string oldname, string newname) {
-      _accessBridgeEvents.OnPropertyNameChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldname, newname);
+      //_libraryFunctions.OnPropertyNameChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldname, newname);
     }
 
     protected virtual void OnPropertyDescriptionChange(int vmid, JOBJECT64 evt, JOBJECT64 source, string olddescription, string newdescription) {
-      _accessBridgeEvents.OnPropertyDescriptionChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), olddescription, newdescription);
+      //_libraryFunctions.OnPropertyDescriptionChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), olddescription, newdescription);
     }
 
     protected virtual void OnPropertyStateChange(int vmid, JOBJECT64 evt, JOBJECT64 source, string oldstate, string newstate) {
-      _accessBridgeEvents.OnPropertyStateChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldstate, newstate);
+      //_libraryFunctions.OnPropertyStateChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldstate, newstate);
     }
 
     protected virtual void OnPropertyValueChange(int vmid, JOBJECT64 evt, JOBJECT64 source, string oldvalue, string newvalue) {
-      _accessBridgeEvents.OnPropertyValueChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldvalue, newvalue);
+      //_libraryFunctions.OnPropertyValueChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldvalue, newvalue);
     }
 
     protected virtual void OnPropertySelectionChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnPropertySelectionChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnPropertySelectionChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnPropertyTextChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnPropertyTextChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnPropertyTextChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnPropertyCaretChange(int vmid, JOBJECT64 evt, JOBJECT64 source, int oldposition, int newposition) {
-      _accessBridgeEvents.OnPropertyCaretChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldposition, newposition);
+      //_libraryFunctions.OnPropertyCaretChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldposition, newposition);
     }
 
     protected virtual void OnPropertyVisibleDataChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      _accessBridgeEvents.OnPropertyVisibleDataChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+      //_libraryFunctions.OnPropertyVisibleDataChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
 
     protected virtual void OnPropertyActiveDescendentChange(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldactivedescendent, JOBJECT64 newactivedescendent) {
-      _accessBridgeEvents.OnPropertyActiveDescendentChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), Wrap(vmid, oldactivedescendent), Wrap(vmid, newactivedescendent));
+      //_libraryFunctions.OnPropertyActiveDescendentChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), Wrap(vmid, oldactivedescendent), Wrap(vmid, newactivedescendent));
     }
 
     protected virtual void OnPropertyTableModelChange(int vmid, JOBJECT64 evt, JOBJECT64 source, string oldvalue, string newvalue) {
-      _accessBridgeEvents.OnPropertyTableModelChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldvalue, newvalue);
+      //_libraryFunctions.OnPropertyTableModelChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldvalue, newvalue);
     }
 
     #endregion

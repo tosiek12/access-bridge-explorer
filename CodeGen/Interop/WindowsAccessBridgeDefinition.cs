@@ -19,8 +19,13 @@ using System.Text;
 using CodeGen.Interop.NativeStructures;
 
 namespace CodeGen.Interop {
+  /// <summary>
+  /// This interface defintion serves as the source defintion of the WindowsAccessBridge
+  /// library definitions. It is used by the code generator to generate vaious interop
+  /// classes, interfaces and utility methods.
+  /// </summary>
   [SuppressMessage("ReSharper", "InconsistentNaming")]
-  public interface IAccessBridgeFunctions {
+  public interface WindowsAccessBridgeDefinition {
     void Windows_run();
 
     bool IsJavaWindow(WindowHandle window);

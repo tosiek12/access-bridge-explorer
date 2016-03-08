@@ -87,12 +87,11 @@
     <Compile Include="Definitions\StrucDefintion.cs" />
     <Compile Include="Definitions\EventDefinition.cs" />
     <Compile Include="Definitions\WindowsAccessBridgeDefinition.cs" />
-    <Compile Include="Interop\AccessibleInterfaces.cs" />
-    <Compile Include="Interop\Hwnd.cs" />
+    <Compile Include="Interop\WindowHandle.cs" />
     <Compile Include="Interop\JavaObjectHandle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Interop\WindowsAccessBridge.cs" />
+    <Compile Include="Interop\WindowsAccessBridgeDefinition.cs" />
     <Compile Include="SourceCodeWriter.cs" />
     <Compile Include="StringSourceCodeWriter.cs" />
   </ItemGroup>

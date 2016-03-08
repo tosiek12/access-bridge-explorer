@@ -153,13 +153,11 @@
     <Compile Include="WindowsAccessBridge\AccessibleJvm.cs" />
     <Compile Include="WindowsAccessBridge\AccessibleNode.cs" />
     <Compile Include="WindowsAccessBridge\AccessibleWindow.cs" />
-    <Compile Include="WindowsAccessBridge\AccessBridgeFunctions.cs" />
     <Compile Include="WindowsAccessBridge\JavaObjectHandle.cs" />
     <Compile Include="WindowsAccessBridge\AccessBridgeEventsNative.cs" />
     <Compile Include="Model\PropertyGroup.cs" />
     <Compile Include="Model\PropertyList.cs" />
     <Compile Include="Model\PropertyNode.cs" />
-    <Compile Include="WindowsAccessBridge\NativeStructures\Constants.cs" />
     <Compile Include="WindowsAccessBridge\NodePath.cs" />
     <Compile Include="WindowsAccessBridge\PropertyOptions.cs" />
     <Compile Include="Win32\UnmanagedLibrary.cs" />

@@ -20,7 +20,7 @@ namespace CodeGen {
     }
 
     public string Text {
-      get { return ((StringWriter) Writer).ToString(); }
+      get { return ((StringWriter) TextWriter).ToString(); }
     }
   }
 }
