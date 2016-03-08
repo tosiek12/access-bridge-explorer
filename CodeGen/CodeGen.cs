@@ -55,6 +55,7 @@ namespace CodeGen {
           sourceWriter.WriteLine();
 
           sourceWriter.WriteLine("// ReSharper disable InconsistentNaming");
+          sourceWriter.WriteLine("// ReSharper disable DelegateSubtraction");
           sourceWriter.AddUsing("System");
           //sourceWriter.AddUsing("System.Collections.Generic");
           //sourceWriter.AddUsing("System.Diagnostics.CodeAnalysis");
@@ -205,7 +206,14 @@ namespace CodeGen {
       sourceWriter.WriteLine("public partial class AccessBridgeEventsNative {{");
       sourceWriter.IncIndent();
 
-      sourceWriter.WriteLine("#region Event functions");
+      sourceWriter.WriteLine("#region Event fields");
+      foreach (var eventDefinition in model.Events) {
+        WriteNativeEventField(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Event properties");
       foreach (var eventDefinition in model.Events) {
         WriteNativeEventProperty(sourceWriter, eventDefinition);
       }
@@ -228,7 +236,14 @@ namespace CodeGen {
       sourceWriter.WriteLine("public partial class AccessBridgeEvents : IAccessBridgeEvents {{");
       sourceWriter.IncIndent();
 
-      sourceWriter.WriteLine("#region Event functions");
+      sourceWriter.WriteLine("#region Event fields");
+      foreach (var eventDefinition in model.Events) {
+        WriteApplicationLevelEventField(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Event properties");
       foreach (var eventDefinition in model.Events) {
         WriteApplicationLevelEventProperty(sourceWriter, eventDefinition);
       }
@@ -242,19 +257,10 @@ namespace CodeGen {
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
 
-      sourceWriter.WriteLine("private void AttachForwarders(AccessBridgeEventsNative nativeEvents) {{");
+      sourceWriter.WriteLine("private void DetachForwarders() {{");
       sourceWriter.IncIndent();
       foreach (var eventDefinition in model.Events) {
-        sourceWriter.WriteLine("nativeEvents.{0} += Forward{0};", eventDefinition.Name);
-      }
-      sourceWriter.DecIndent();
-      sourceWriter.WriteLine("}}");
-      sourceWriter.WriteLine();
-
-      sourceWriter.WriteLine("private void DetachForwarders(AccessBridgeEventsNative nativeEvents) {{");
-      sourceWriter.IncIndent();
-      foreach (var eventDefinition in model.Events) {
-        sourceWriter.WriteLine("nativeEvents.{0} -= Forward{0};", eventDefinition.Name);
+        sourceWriter.WriteLine("NativeEvents.{0} -= Forward{0};", eventDefinition.Name);
       }
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
@@ -410,12 +416,68 @@ namespace CodeGen {
       sourceWriter.WriteLine("public {0}FP Set{0} {{ get; set; }}", definition.Name);
     }
 
+    private void WriteNativeEventField(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.WriteLine("private AccessBridgeLibraryFunctions.{0}EventHandler _{1};", definition.Name, ToPascalCase(definition));
+    }
+
     private void WriteNativeEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteLine("public event AccessBridgeLibraryFunctions.{0}EventHandler {0};", definition.Name);
+      sourceWriter.WriteLine("public event AccessBridgeLibraryFunctions.{0}EventHandler {0} {{", definition.Name);
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("add {{");
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("if (_{0} == null)", ToPascalCase(definition));
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("LibraryFunctions.Set{0}(On{0});", definition.Name);
+      sourceWriter.DecIndent();
+      sourceWriter.DecIndent();
+
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("_{0} += value;", ToPascalCase(definition));
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+      sourceWriter.WriteLine("remove{{");
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("_{0} -= value;", ToPascalCase(definition));
+      sourceWriter.WriteLine("if (_{0} == null)", ToPascalCase(definition));
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("LibraryFunctions.Set{0}(null);", definition.Name);
+      sourceWriter.DecIndent();
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+    }
+
+    private void WriteApplicationLevelEventField(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.WriteLine("private {0}EventHandler _{1};", definition.Name, ToPascalCase(definition));
     }
 
     private void WriteApplicationLevelEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteLine("public event {0}EventHandler {0};", definition.Name);
+      sourceWriter.WriteLine("public event {0}EventHandler {0} {{", definition.Name);
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("add {{");
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("if (_{0} == null)", ToPascalCase(definition));
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("NativeEvents.{0} += Forward{0};", definition.Name);
+      sourceWriter.DecIndent();
+      sourceWriter.DecIndent();
+
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("_{0} += value;", ToPascalCase(definition));
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+      sourceWriter.WriteLine("remove{{");
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("_{0} -= value;", ToPascalCase(definition));
+      sourceWriter.WriteLine("if (_{0} == null)", ToPascalCase(definition));
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("NativeEvents.{0} -= Forward{0};", definition.Name);
+      sourceWriter.DecIndent();
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
     }
 
     private void WriteNativeEventHandler(SourceCodeWriter sourceWriter, EventDefinition definition) {
@@ -425,7 +487,7 @@ namespace CodeGen {
       sourceWriter.Write(" {{");
       sourceWriter.WriteLine();
       sourceWriter.IncIndent();
-      sourceWriter.WriteLine("var handler = {0};", definition.Name);
+      sourceWriter.WriteLine("var handler = _{0};", ToPascalCase(definition));
       sourceWriter.WriteLine("if (handler != null)");
       sourceWriter.IncIndent();
       sourceWriter.WriteIndent();
@@ -452,7 +514,7 @@ namespace CodeGen {
       sourceWriter.Write(" {{");
       sourceWriter.WriteLine();
       sourceWriter.IncIndent();
-      sourceWriter.WriteLine("var handler = {0};", definition.Name);
+      sourceWriter.WriteLine("var handler = _{0};", ToPascalCase(definition));
       sourceWriter.WriteLine("if (handler != null)");
       sourceWriter.IncIndent();
       sourceWriter.WriteIndent();
@@ -783,6 +845,10 @@ namespace CodeGen {
       }
 
       return new NameTypeReference { Name = name };
+    }
+
+    private static string ToPascalCase(EventDefinition definition) {
+      return char.ToLower(definition.Name[0]) + definition.Name.Substring(1);
     }
   }
 }

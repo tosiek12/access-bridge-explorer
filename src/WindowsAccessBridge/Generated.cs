@@ -13,6 +13,7 @@
 // limitations under the License.
 
 // ReSharper disable InconsistentNaming
+// ReSharper disable DelegateSubtraction
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -488,232 +489,529 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// Acess Bridge event handlers implementation
   /// </summary>
   public partial class AccessBridgeEvents : IAccessBridgeEvents {
-    #region Event functions
-    public event PropertyChangeEventHandler PropertyChange;
-    public event JavaShutdownEventHandler JavaShutdown;
-    public event FocusGainedEventHandler FocusGained;
-    public event FocusLostEventHandler FocusLost;
-    public event CaretUpdateEventHandler CaretUpdate;
-    public event MouseClickedEventHandler MouseClicked;
-    public event MouseEnteredEventHandler MouseEntered;
-    public event MouseExitedEventHandler MouseExited;
-    public event MousePressedEventHandler MousePressed;
-    public event MouseReleasedEventHandler MouseReleased;
-    public event MenuCanceledEventHandler MenuCanceled;
-    public event MenuDeselectedEventHandler MenuDeselected;
-    public event MenuSelectedEventHandler MenuSelected;
-    public event PopupMenuCanceledEventHandler PopupMenuCanceled;
-    public event PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible;
-    public event PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible;
-    public event PropertyNameChangeEventHandler PropertyNameChange;
-    public event PropertyDescriptionChangeEventHandler PropertyDescriptionChange;
-    public event PropertyStateChangeEventHandler PropertyStateChange;
-    public event PropertyValueChangeEventHandler PropertyValueChange;
-    public event PropertySelectionChangeEventHandler PropertySelectionChange;
-    public event PropertyTextChangeEventHandler PropertyTextChange;
-    public event PropertyCaretChangeEventHandler PropertyCaretChange;
-    public event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange;
-    public event PropertyChildChangeEventHandler PropertyChildChange;
-    public event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange;
-    public event PropertyTableModelChangeEventHandler PropertyTableModelChange;
+    #region Event fields
+    private PropertyChangeEventHandler _propertyChange;
+    private JavaShutdownEventHandler _javaShutdown;
+    private FocusGainedEventHandler _focusGained;
+    private FocusLostEventHandler _focusLost;
+    private CaretUpdateEventHandler _caretUpdate;
+    private MouseClickedEventHandler _mouseClicked;
+    private MouseEnteredEventHandler _mouseEntered;
+    private MouseExitedEventHandler _mouseExited;
+    private MousePressedEventHandler _mousePressed;
+    private MouseReleasedEventHandler _mouseReleased;
+    private MenuCanceledEventHandler _menuCanceled;
+    private MenuDeselectedEventHandler _menuDeselected;
+    private MenuSelectedEventHandler _menuSelected;
+    private PopupMenuCanceledEventHandler _popupMenuCanceled;
+    private PopupMenuWillBecomeInvisibleEventHandler _popupMenuWillBecomeInvisible;
+    private PopupMenuWillBecomeVisibleEventHandler _popupMenuWillBecomeVisible;
+    private PropertyNameChangeEventHandler _propertyNameChange;
+    private PropertyDescriptionChangeEventHandler _propertyDescriptionChange;
+    private PropertyStateChangeEventHandler _propertyStateChange;
+    private PropertyValueChangeEventHandler _propertyValueChange;
+    private PropertySelectionChangeEventHandler _propertySelectionChange;
+    private PropertyTextChangeEventHandler _propertyTextChange;
+    private PropertyCaretChangeEventHandler _propertyCaretChange;
+    private PropertyVisibleDataChangeEventHandler _propertyVisibleDataChange;
+    private PropertyChildChangeEventHandler _propertyChildChange;
+    private PropertyActiveDescendentChangeEventHandler _propertyActiveDescendentChange;
+    private PropertyTableModelChangeEventHandler _propertyTableModelChange;
+    #endregion
+
+    #region Event properties
+    public event PropertyChangeEventHandler PropertyChange {
+      add {
+        if (_propertyChange == null)
+          NativeEvents.PropertyChange += ForwardPropertyChange;
+        _propertyChange += value;
+      }
+      remove{
+        _propertyChange -= value;
+        if (_propertyChange == null)
+          NativeEvents.PropertyChange -= ForwardPropertyChange;
+      }
+    }
+    public event JavaShutdownEventHandler JavaShutdown {
+      add {
+        if (_javaShutdown == null)
+          NativeEvents.JavaShutdown += ForwardJavaShutdown;
+        _javaShutdown += value;
+      }
+      remove{
+        _javaShutdown -= value;
+        if (_javaShutdown == null)
+          NativeEvents.JavaShutdown -= ForwardJavaShutdown;
+      }
+    }
+    public event FocusGainedEventHandler FocusGained {
+      add {
+        if (_focusGained == null)
+          NativeEvents.FocusGained += ForwardFocusGained;
+        _focusGained += value;
+      }
+      remove{
+        _focusGained -= value;
+        if (_focusGained == null)
+          NativeEvents.FocusGained -= ForwardFocusGained;
+      }
+    }
+    public event FocusLostEventHandler FocusLost {
+      add {
+        if (_focusLost == null)
+          NativeEvents.FocusLost += ForwardFocusLost;
+        _focusLost += value;
+      }
+      remove{
+        _focusLost -= value;
+        if (_focusLost == null)
+          NativeEvents.FocusLost -= ForwardFocusLost;
+      }
+    }
+    public event CaretUpdateEventHandler CaretUpdate {
+      add {
+        if (_caretUpdate == null)
+          NativeEvents.CaretUpdate += ForwardCaretUpdate;
+        _caretUpdate += value;
+      }
+      remove{
+        _caretUpdate -= value;
+        if (_caretUpdate == null)
+          NativeEvents.CaretUpdate -= ForwardCaretUpdate;
+      }
+    }
+    public event MouseClickedEventHandler MouseClicked {
+      add {
+        if (_mouseClicked == null)
+          NativeEvents.MouseClicked += ForwardMouseClicked;
+        _mouseClicked += value;
+      }
+      remove{
+        _mouseClicked -= value;
+        if (_mouseClicked == null)
+          NativeEvents.MouseClicked -= ForwardMouseClicked;
+      }
+    }
+    public event MouseEnteredEventHandler MouseEntered {
+      add {
+        if (_mouseEntered == null)
+          NativeEvents.MouseEntered += ForwardMouseEntered;
+        _mouseEntered += value;
+      }
+      remove{
+        _mouseEntered -= value;
+        if (_mouseEntered == null)
+          NativeEvents.MouseEntered -= ForwardMouseEntered;
+      }
+    }
+    public event MouseExitedEventHandler MouseExited {
+      add {
+        if (_mouseExited == null)
+          NativeEvents.MouseExited += ForwardMouseExited;
+        _mouseExited += value;
+      }
+      remove{
+        _mouseExited -= value;
+        if (_mouseExited == null)
+          NativeEvents.MouseExited -= ForwardMouseExited;
+      }
+    }
+    public event MousePressedEventHandler MousePressed {
+      add {
+        if (_mousePressed == null)
+          NativeEvents.MousePressed += ForwardMousePressed;
+        _mousePressed += value;
+      }
+      remove{
+        _mousePressed -= value;
+        if (_mousePressed == null)
+          NativeEvents.MousePressed -= ForwardMousePressed;
+      }
+    }
+    public event MouseReleasedEventHandler MouseReleased {
+      add {
+        if (_mouseReleased == null)
+          NativeEvents.MouseReleased += ForwardMouseReleased;
+        _mouseReleased += value;
+      }
+      remove{
+        _mouseReleased -= value;
+        if (_mouseReleased == null)
+          NativeEvents.MouseReleased -= ForwardMouseReleased;
+      }
+    }
+    public event MenuCanceledEventHandler MenuCanceled {
+      add {
+        if (_menuCanceled == null)
+          NativeEvents.MenuCanceled += ForwardMenuCanceled;
+        _menuCanceled += value;
+      }
+      remove{
+        _menuCanceled -= value;
+        if (_menuCanceled == null)
+          NativeEvents.MenuCanceled -= ForwardMenuCanceled;
+      }
+    }
+    public event MenuDeselectedEventHandler MenuDeselected {
+      add {
+        if (_menuDeselected == null)
+          NativeEvents.MenuDeselected += ForwardMenuDeselected;
+        _menuDeselected += value;
+      }
+      remove{
+        _menuDeselected -= value;
+        if (_menuDeselected == null)
+          NativeEvents.MenuDeselected -= ForwardMenuDeselected;
+      }
+    }
+    public event MenuSelectedEventHandler MenuSelected {
+      add {
+        if (_menuSelected == null)
+          NativeEvents.MenuSelected += ForwardMenuSelected;
+        _menuSelected += value;
+      }
+      remove{
+        _menuSelected -= value;
+        if (_menuSelected == null)
+          NativeEvents.MenuSelected -= ForwardMenuSelected;
+      }
+    }
+    public event PopupMenuCanceledEventHandler PopupMenuCanceled {
+      add {
+        if (_popupMenuCanceled == null)
+          NativeEvents.PopupMenuCanceled += ForwardPopupMenuCanceled;
+        _popupMenuCanceled += value;
+      }
+      remove{
+        _popupMenuCanceled -= value;
+        if (_popupMenuCanceled == null)
+          NativeEvents.PopupMenuCanceled -= ForwardPopupMenuCanceled;
+      }
+    }
+    public event PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible {
+      add {
+        if (_popupMenuWillBecomeInvisible == null)
+          NativeEvents.PopupMenuWillBecomeInvisible += ForwardPopupMenuWillBecomeInvisible;
+        _popupMenuWillBecomeInvisible += value;
+      }
+      remove{
+        _popupMenuWillBecomeInvisible -= value;
+        if (_popupMenuWillBecomeInvisible == null)
+          NativeEvents.PopupMenuWillBecomeInvisible -= ForwardPopupMenuWillBecomeInvisible;
+      }
+    }
+    public event PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible {
+      add {
+        if (_popupMenuWillBecomeVisible == null)
+          NativeEvents.PopupMenuWillBecomeVisible += ForwardPopupMenuWillBecomeVisible;
+        _popupMenuWillBecomeVisible += value;
+      }
+      remove{
+        _popupMenuWillBecomeVisible -= value;
+        if (_popupMenuWillBecomeVisible == null)
+          NativeEvents.PopupMenuWillBecomeVisible -= ForwardPopupMenuWillBecomeVisible;
+      }
+    }
+    public event PropertyNameChangeEventHandler PropertyNameChange {
+      add {
+        if (_propertyNameChange == null)
+          NativeEvents.PropertyNameChange += ForwardPropertyNameChange;
+        _propertyNameChange += value;
+      }
+      remove{
+        _propertyNameChange -= value;
+        if (_propertyNameChange == null)
+          NativeEvents.PropertyNameChange -= ForwardPropertyNameChange;
+      }
+    }
+    public event PropertyDescriptionChangeEventHandler PropertyDescriptionChange {
+      add {
+        if (_propertyDescriptionChange == null)
+          NativeEvents.PropertyDescriptionChange += ForwardPropertyDescriptionChange;
+        _propertyDescriptionChange += value;
+      }
+      remove{
+        _propertyDescriptionChange -= value;
+        if (_propertyDescriptionChange == null)
+          NativeEvents.PropertyDescriptionChange -= ForwardPropertyDescriptionChange;
+      }
+    }
+    public event PropertyStateChangeEventHandler PropertyStateChange {
+      add {
+        if (_propertyStateChange == null)
+          NativeEvents.PropertyStateChange += ForwardPropertyStateChange;
+        _propertyStateChange += value;
+      }
+      remove{
+        _propertyStateChange -= value;
+        if (_propertyStateChange == null)
+          NativeEvents.PropertyStateChange -= ForwardPropertyStateChange;
+      }
+    }
+    public event PropertyValueChangeEventHandler PropertyValueChange {
+      add {
+        if (_propertyValueChange == null)
+          NativeEvents.PropertyValueChange += ForwardPropertyValueChange;
+        _propertyValueChange += value;
+      }
+      remove{
+        _propertyValueChange -= value;
+        if (_propertyValueChange == null)
+          NativeEvents.PropertyValueChange -= ForwardPropertyValueChange;
+      }
+    }
+    public event PropertySelectionChangeEventHandler PropertySelectionChange {
+      add {
+        if (_propertySelectionChange == null)
+          NativeEvents.PropertySelectionChange += ForwardPropertySelectionChange;
+        _propertySelectionChange += value;
+      }
+      remove{
+        _propertySelectionChange -= value;
+        if (_propertySelectionChange == null)
+          NativeEvents.PropertySelectionChange -= ForwardPropertySelectionChange;
+      }
+    }
+    public event PropertyTextChangeEventHandler PropertyTextChange {
+      add {
+        if (_propertyTextChange == null)
+          NativeEvents.PropertyTextChange += ForwardPropertyTextChange;
+        _propertyTextChange += value;
+      }
+      remove{
+        _propertyTextChange -= value;
+        if (_propertyTextChange == null)
+          NativeEvents.PropertyTextChange -= ForwardPropertyTextChange;
+      }
+    }
+    public event PropertyCaretChangeEventHandler PropertyCaretChange {
+      add {
+        if (_propertyCaretChange == null)
+          NativeEvents.PropertyCaretChange += ForwardPropertyCaretChange;
+        _propertyCaretChange += value;
+      }
+      remove{
+        _propertyCaretChange -= value;
+        if (_propertyCaretChange == null)
+          NativeEvents.PropertyCaretChange -= ForwardPropertyCaretChange;
+      }
+    }
+    public event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange {
+      add {
+        if (_propertyVisibleDataChange == null)
+          NativeEvents.PropertyVisibleDataChange += ForwardPropertyVisibleDataChange;
+        _propertyVisibleDataChange += value;
+      }
+      remove{
+        _propertyVisibleDataChange -= value;
+        if (_propertyVisibleDataChange == null)
+          NativeEvents.PropertyVisibleDataChange -= ForwardPropertyVisibleDataChange;
+      }
+    }
+    public event PropertyChildChangeEventHandler PropertyChildChange {
+      add {
+        if (_propertyChildChange == null)
+          NativeEvents.PropertyChildChange += ForwardPropertyChildChange;
+        _propertyChildChange += value;
+      }
+      remove{
+        _propertyChildChange -= value;
+        if (_propertyChildChange == null)
+          NativeEvents.PropertyChildChange -= ForwardPropertyChildChange;
+      }
+    }
+    public event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange {
+      add {
+        if (_propertyActiveDescendentChange == null)
+          NativeEvents.PropertyActiveDescendentChange += ForwardPropertyActiveDescendentChange;
+        _propertyActiveDescendentChange += value;
+      }
+      remove{
+        _propertyActiveDescendentChange -= value;
+        if (_propertyActiveDescendentChange == null)
+          NativeEvents.PropertyActiveDescendentChange -= ForwardPropertyActiveDescendentChange;
+      }
+    }
+    public event PropertyTableModelChangeEventHandler PropertyTableModelChange {
+      add {
+        if (_propertyTableModelChange == null)
+          NativeEvents.PropertyTableModelChange += ForwardPropertyTableModelChange;
+        _propertyTableModelChange += value;
+      }
+      remove{
+        _propertyTableModelChange -= value;
+        if (_propertyTableModelChange == null)
+          NativeEvents.PropertyTableModelChange -= ForwardPropertyTableModelChange;
+      }
+    }
     #endregion
 
     #region Event handlers
     protected virtual void OnPropertyChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string property, string oldValue, string newValue) {
-      var handler = PropertyChange;
+      var handler = _propertyChange;
       if (handler != null)
         handler(vmid, evt, source, property, oldValue, newValue);
     }
     protected virtual void OnJavaShutdown(int vmid) {
-      var handler = JavaShutdown;
+      var handler = _javaShutdown;
       if (handler != null)
         handler(vmid);
     }
     protected virtual void OnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = FocusGained;
+      var handler = _focusGained;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnFocusLost(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = FocusLost;
+      var handler = _focusLost;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnCaretUpdate(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = CaretUpdate;
+      var handler = _caretUpdate;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMouseClicked(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = MouseClicked;
+      var handler = _mouseClicked;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMouseEntered(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = MouseEntered;
+      var handler = _mouseEntered;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMouseExited(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = MouseExited;
+      var handler = _mouseExited;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMousePressed(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = MousePressed;
+      var handler = _mousePressed;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMouseReleased(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = MouseReleased;
+      var handler = _mouseReleased;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMenuCanceled(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = MenuCanceled;
+      var handler = _menuCanceled;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMenuDeselected(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = MenuDeselected;
+      var handler = _menuDeselected;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMenuSelected(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = MenuSelected;
+      var handler = _menuSelected;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPopupMenuCanceled(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = PopupMenuCanceled;
+      var handler = _popupMenuCanceled;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPopupMenuWillBecomeInvisible(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = PopupMenuWillBecomeInvisible;
+      var handler = _popupMenuWillBecomeInvisible;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPopupMenuWillBecomeVisible(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = PopupMenuWillBecomeVisible;
+      var handler = _popupMenuWillBecomeVisible;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPropertyNameChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldName, string newName) {
-      var handler = PropertyNameChange;
+      var handler = _propertyNameChange;
       if (handler != null)
         handler(vmid, evt, source, oldName, newName);
     }
     protected virtual void OnPropertyDescriptionChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldDescription, string newDescription) {
-      var handler = PropertyDescriptionChange;
+      var handler = _propertyDescriptionChange;
       if (handler != null)
         handler(vmid, evt, source, oldDescription, newDescription);
     }
     protected virtual void OnPropertyStateChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldState, string newState) {
-      var handler = PropertyStateChange;
+      var handler = _propertyStateChange;
       if (handler != null)
         handler(vmid, evt, source, oldState, newState);
     }
     protected virtual void OnPropertyValueChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldValue, string newValue) {
-      var handler = PropertyValueChange;
+      var handler = _propertyValueChange;
       if (handler != null)
         handler(vmid, evt, source, oldValue, newValue);
     }
     protected virtual void OnPropertySelectionChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = PropertySelectionChange;
+      var handler = _propertySelectionChange;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPropertyTextChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = PropertyTextChange;
+      var handler = _propertyTextChange;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPropertyCaretChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, int oldPosition, int newPosition) {
-      var handler = PropertyCaretChange;
+      var handler = _propertyCaretChange;
       if (handler != null)
         handler(vmid, evt, source, oldPosition, newPosition);
     }
     protected virtual void OnPropertyVisibleDataChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      var handler = PropertyVisibleDataChange;
+      var handler = _propertyVisibleDataChange;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPropertyChildChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldChild, JavaObjectHandle newChild) {
-      var handler = PropertyChildChange;
+      var handler = _propertyChildChange;
       if (handler != null)
         handler(vmid, evt, source, oldChild, newChild);
     }
     protected virtual void OnPropertyActiveDescendentChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldActiveDescendent, JavaObjectHandle newActiveDescendent) {
-      var handler = PropertyActiveDescendentChange;
+      var handler = _propertyActiveDescendentChange;
       if (handler != null)
         handler(vmid, evt, source, oldActiveDescendent, newActiveDescendent);
     }
     protected virtual void OnPropertyTableModelChange(int vmid, JavaObjectHandle evt, JavaObjectHandle src, string oldValue, string newValue) {
-      var handler = PropertyTableModelChange;
+      var handler = _propertyTableModelChange;
       if (handler != null)
         handler(vmid, evt, src, oldValue, newValue);
     }
     #endregion
 
-    private void AttachForwarders(AccessBridgeEventsNative nativeEvents) {
-      nativeEvents.PropertyChange += ForwardPropertyChange;
-      nativeEvents.JavaShutdown += ForwardJavaShutdown;
-      nativeEvents.FocusGained += ForwardFocusGained;
-      nativeEvents.FocusLost += ForwardFocusLost;
-      nativeEvents.CaretUpdate += ForwardCaretUpdate;
-      nativeEvents.MouseClicked += ForwardMouseClicked;
-      nativeEvents.MouseEntered += ForwardMouseEntered;
-      nativeEvents.MouseExited += ForwardMouseExited;
-      nativeEvents.MousePressed += ForwardMousePressed;
-      nativeEvents.MouseReleased += ForwardMouseReleased;
-      nativeEvents.MenuCanceled += ForwardMenuCanceled;
-      nativeEvents.MenuDeselected += ForwardMenuDeselected;
-      nativeEvents.MenuSelected += ForwardMenuSelected;
-      nativeEvents.PopupMenuCanceled += ForwardPopupMenuCanceled;
-      nativeEvents.PopupMenuWillBecomeInvisible += ForwardPopupMenuWillBecomeInvisible;
-      nativeEvents.PopupMenuWillBecomeVisible += ForwardPopupMenuWillBecomeVisible;
-      nativeEvents.PropertyNameChange += ForwardPropertyNameChange;
-      nativeEvents.PropertyDescriptionChange += ForwardPropertyDescriptionChange;
-      nativeEvents.PropertyStateChange += ForwardPropertyStateChange;
-      nativeEvents.PropertyValueChange += ForwardPropertyValueChange;
-      nativeEvents.PropertySelectionChange += ForwardPropertySelectionChange;
-      nativeEvents.PropertyTextChange += ForwardPropertyTextChange;
-      nativeEvents.PropertyCaretChange += ForwardPropertyCaretChange;
-      nativeEvents.PropertyVisibleDataChange += ForwardPropertyVisibleDataChange;
-      nativeEvents.PropertyChildChange += ForwardPropertyChildChange;
-      nativeEvents.PropertyActiveDescendentChange += ForwardPropertyActiveDescendentChange;
-      nativeEvents.PropertyTableModelChange += ForwardPropertyTableModelChange;
-    }
-
-    private void DetachForwarders(AccessBridgeEventsNative nativeEvents) {
-      nativeEvents.PropertyChange -= ForwardPropertyChange;
-      nativeEvents.JavaShutdown -= ForwardJavaShutdown;
-      nativeEvents.FocusGained -= ForwardFocusGained;
-      nativeEvents.FocusLost -= ForwardFocusLost;
-      nativeEvents.CaretUpdate -= ForwardCaretUpdate;
-      nativeEvents.MouseClicked -= ForwardMouseClicked;
-      nativeEvents.MouseEntered -= ForwardMouseEntered;
-      nativeEvents.MouseExited -= ForwardMouseExited;
-      nativeEvents.MousePressed -= ForwardMousePressed;
-      nativeEvents.MouseReleased -= ForwardMouseReleased;
-      nativeEvents.MenuCanceled -= ForwardMenuCanceled;
-      nativeEvents.MenuDeselected -= ForwardMenuDeselected;
-      nativeEvents.MenuSelected -= ForwardMenuSelected;
-      nativeEvents.PopupMenuCanceled -= ForwardPopupMenuCanceled;
-      nativeEvents.PopupMenuWillBecomeInvisible -= ForwardPopupMenuWillBecomeInvisible;
-      nativeEvents.PopupMenuWillBecomeVisible -= ForwardPopupMenuWillBecomeVisible;
-      nativeEvents.PropertyNameChange -= ForwardPropertyNameChange;
-      nativeEvents.PropertyDescriptionChange -= ForwardPropertyDescriptionChange;
-      nativeEvents.PropertyStateChange -= ForwardPropertyStateChange;
-      nativeEvents.PropertyValueChange -= ForwardPropertyValueChange;
-      nativeEvents.PropertySelectionChange -= ForwardPropertySelectionChange;
-      nativeEvents.PropertyTextChange -= ForwardPropertyTextChange;
-      nativeEvents.PropertyCaretChange -= ForwardPropertyCaretChange;
-      nativeEvents.PropertyVisibleDataChange -= ForwardPropertyVisibleDataChange;
-      nativeEvents.PropertyChildChange -= ForwardPropertyChildChange;
-      nativeEvents.PropertyActiveDescendentChange -= ForwardPropertyActiveDescendentChange;
-      nativeEvents.PropertyTableModelChange -= ForwardPropertyTableModelChange;
+    private void DetachForwarders() {
+      NativeEvents.PropertyChange -= ForwardPropertyChange;
+      NativeEvents.JavaShutdown -= ForwardJavaShutdown;
+      NativeEvents.FocusGained -= ForwardFocusGained;
+      NativeEvents.FocusLost -= ForwardFocusLost;
+      NativeEvents.CaretUpdate -= ForwardCaretUpdate;
+      NativeEvents.MouseClicked -= ForwardMouseClicked;
+      NativeEvents.MouseEntered -= ForwardMouseEntered;
+      NativeEvents.MouseExited -= ForwardMouseExited;
+      NativeEvents.MousePressed -= ForwardMousePressed;
+      NativeEvents.MouseReleased -= ForwardMouseReleased;
+      NativeEvents.MenuCanceled -= ForwardMenuCanceled;
+      NativeEvents.MenuDeselected -= ForwardMenuDeselected;
+      NativeEvents.MenuSelected -= ForwardMenuSelected;
+      NativeEvents.PopupMenuCanceled -= ForwardPopupMenuCanceled;
+      NativeEvents.PopupMenuWillBecomeInvisible -= ForwardPopupMenuWillBecomeInvisible;
+      NativeEvents.PopupMenuWillBecomeVisible -= ForwardPopupMenuWillBecomeVisible;
+      NativeEvents.PropertyNameChange -= ForwardPropertyNameChange;
+      NativeEvents.PropertyDescriptionChange -= ForwardPropertyDescriptionChange;
+      NativeEvents.PropertyStateChange -= ForwardPropertyStateChange;
+      NativeEvents.PropertyValueChange -= ForwardPropertyValueChange;
+      NativeEvents.PropertySelectionChange -= ForwardPropertySelectionChange;
+      NativeEvents.PropertyTextChange -= ForwardPropertyTextChange;
+      NativeEvents.PropertyCaretChange -= ForwardPropertyCaretChange;
+      NativeEvents.PropertyVisibleDataChange -= ForwardPropertyVisibleDataChange;
+      NativeEvents.PropertyChildChange -= ForwardPropertyChildChange;
+      NativeEvents.PropertyActiveDescendentChange -= ForwardPropertyActiveDescendentChange;
+      NativeEvents.PropertyTableModelChange -= ForwardPropertyTableModelChange;
     }
 
     #region Event forwarders
@@ -1152,169 +1450,496 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// Native library event handlers implementation
   /// </summary>
   public partial class AccessBridgeEventsNative {
-    #region Event functions
-    public event AccessBridgeLibraryFunctions.PropertyChangeEventHandler PropertyChange;
-    public event AccessBridgeLibraryFunctions.JavaShutdownEventHandler JavaShutdown;
-    public event AccessBridgeLibraryFunctions.FocusGainedEventHandler FocusGained;
-    public event AccessBridgeLibraryFunctions.FocusLostEventHandler FocusLost;
-    public event AccessBridgeLibraryFunctions.CaretUpdateEventHandler CaretUpdate;
-    public event AccessBridgeLibraryFunctions.MouseClickedEventHandler MouseClicked;
-    public event AccessBridgeLibraryFunctions.MouseEnteredEventHandler MouseEntered;
-    public event AccessBridgeLibraryFunctions.MouseExitedEventHandler MouseExited;
-    public event AccessBridgeLibraryFunctions.MousePressedEventHandler MousePressed;
-    public event AccessBridgeLibraryFunctions.MouseReleasedEventHandler MouseReleased;
-    public event AccessBridgeLibraryFunctions.MenuCanceledEventHandler MenuCanceled;
-    public event AccessBridgeLibraryFunctions.MenuDeselectedEventHandler MenuDeselected;
-    public event AccessBridgeLibraryFunctions.MenuSelectedEventHandler MenuSelected;
-    public event AccessBridgeLibraryFunctions.PopupMenuCanceledEventHandler PopupMenuCanceled;
-    public event AccessBridgeLibraryFunctions.PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible;
-    public event AccessBridgeLibraryFunctions.PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible;
-    public event AccessBridgeLibraryFunctions.PropertyNameChangeEventHandler PropertyNameChange;
-    public event AccessBridgeLibraryFunctions.PropertyDescriptionChangeEventHandler PropertyDescriptionChange;
-    public event AccessBridgeLibraryFunctions.PropertyStateChangeEventHandler PropertyStateChange;
-    public event AccessBridgeLibraryFunctions.PropertyValueChangeEventHandler PropertyValueChange;
-    public event AccessBridgeLibraryFunctions.PropertySelectionChangeEventHandler PropertySelectionChange;
-    public event AccessBridgeLibraryFunctions.PropertyTextChangeEventHandler PropertyTextChange;
-    public event AccessBridgeLibraryFunctions.PropertyCaretChangeEventHandler PropertyCaretChange;
-    public event AccessBridgeLibraryFunctions.PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange;
-    public event AccessBridgeLibraryFunctions.PropertyChildChangeEventHandler PropertyChildChange;
-    public event AccessBridgeLibraryFunctions.PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange;
-    public event AccessBridgeLibraryFunctions.PropertyTableModelChangeEventHandler PropertyTableModelChange;
+    #region Event fields
+    private AccessBridgeLibraryFunctions.PropertyChangeEventHandler _propertyChange;
+    private AccessBridgeLibraryFunctions.JavaShutdownEventHandler _javaShutdown;
+    private AccessBridgeLibraryFunctions.FocusGainedEventHandler _focusGained;
+    private AccessBridgeLibraryFunctions.FocusLostEventHandler _focusLost;
+    private AccessBridgeLibraryFunctions.CaretUpdateEventHandler _caretUpdate;
+    private AccessBridgeLibraryFunctions.MouseClickedEventHandler _mouseClicked;
+    private AccessBridgeLibraryFunctions.MouseEnteredEventHandler _mouseEntered;
+    private AccessBridgeLibraryFunctions.MouseExitedEventHandler _mouseExited;
+    private AccessBridgeLibraryFunctions.MousePressedEventHandler _mousePressed;
+    private AccessBridgeLibraryFunctions.MouseReleasedEventHandler _mouseReleased;
+    private AccessBridgeLibraryFunctions.MenuCanceledEventHandler _menuCanceled;
+    private AccessBridgeLibraryFunctions.MenuDeselectedEventHandler _menuDeselected;
+    private AccessBridgeLibraryFunctions.MenuSelectedEventHandler _menuSelected;
+    private AccessBridgeLibraryFunctions.PopupMenuCanceledEventHandler _popupMenuCanceled;
+    private AccessBridgeLibraryFunctions.PopupMenuWillBecomeInvisibleEventHandler _popupMenuWillBecomeInvisible;
+    private AccessBridgeLibraryFunctions.PopupMenuWillBecomeVisibleEventHandler _popupMenuWillBecomeVisible;
+    private AccessBridgeLibraryFunctions.PropertyNameChangeEventHandler _propertyNameChange;
+    private AccessBridgeLibraryFunctions.PropertyDescriptionChangeEventHandler _propertyDescriptionChange;
+    private AccessBridgeLibraryFunctions.PropertyStateChangeEventHandler _propertyStateChange;
+    private AccessBridgeLibraryFunctions.PropertyValueChangeEventHandler _propertyValueChange;
+    private AccessBridgeLibraryFunctions.PropertySelectionChangeEventHandler _propertySelectionChange;
+    private AccessBridgeLibraryFunctions.PropertyTextChangeEventHandler _propertyTextChange;
+    private AccessBridgeLibraryFunctions.PropertyCaretChangeEventHandler _propertyCaretChange;
+    private AccessBridgeLibraryFunctions.PropertyVisibleDataChangeEventHandler _propertyVisibleDataChange;
+    private AccessBridgeLibraryFunctions.PropertyChildChangeEventHandler _propertyChildChange;
+    private AccessBridgeLibraryFunctions.PropertyActiveDescendentChangeEventHandler _propertyActiveDescendentChange;
+    private AccessBridgeLibraryFunctions.PropertyTableModelChangeEventHandler _propertyTableModelChange;
+    #endregion
+
+    #region Event properties
+    public event AccessBridgeLibraryFunctions.PropertyChangeEventHandler PropertyChange {
+      add {
+        if (_propertyChange == null)
+          LibraryFunctions.SetPropertyChange(OnPropertyChange);
+        _propertyChange += value;
+      }
+      remove{
+        _propertyChange -= value;
+        if (_propertyChange == null)
+          LibraryFunctions.SetPropertyChange(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.JavaShutdownEventHandler JavaShutdown {
+      add {
+        if (_javaShutdown == null)
+          LibraryFunctions.SetJavaShutdown(OnJavaShutdown);
+        _javaShutdown += value;
+      }
+      remove{
+        _javaShutdown -= value;
+        if (_javaShutdown == null)
+          LibraryFunctions.SetJavaShutdown(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.FocusGainedEventHandler FocusGained {
+      add {
+        if (_focusGained == null)
+          LibraryFunctions.SetFocusGained(OnFocusGained);
+        _focusGained += value;
+      }
+      remove{
+        _focusGained -= value;
+        if (_focusGained == null)
+          LibraryFunctions.SetFocusGained(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.FocusLostEventHandler FocusLost {
+      add {
+        if (_focusLost == null)
+          LibraryFunctions.SetFocusLost(OnFocusLost);
+        _focusLost += value;
+      }
+      remove{
+        _focusLost -= value;
+        if (_focusLost == null)
+          LibraryFunctions.SetFocusLost(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.CaretUpdateEventHandler CaretUpdate {
+      add {
+        if (_caretUpdate == null)
+          LibraryFunctions.SetCaretUpdate(OnCaretUpdate);
+        _caretUpdate += value;
+      }
+      remove{
+        _caretUpdate -= value;
+        if (_caretUpdate == null)
+          LibraryFunctions.SetCaretUpdate(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.MouseClickedEventHandler MouseClicked {
+      add {
+        if (_mouseClicked == null)
+          LibraryFunctions.SetMouseClicked(OnMouseClicked);
+        _mouseClicked += value;
+      }
+      remove{
+        _mouseClicked -= value;
+        if (_mouseClicked == null)
+          LibraryFunctions.SetMouseClicked(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.MouseEnteredEventHandler MouseEntered {
+      add {
+        if (_mouseEntered == null)
+          LibraryFunctions.SetMouseEntered(OnMouseEntered);
+        _mouseEntered += value;
+      }
+      remove{
+        _mouseEntered -= value;
+        if (_mouseEntered == null)
+          LibraryFunctions.SetMouseEntered(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.MouseExitedEventHandler MouseExited {
+      add {
+        if (_mouseExited == null)
+          LibraryFunctions.SetMouseExited(OnMouseExited);
+        _mouseExited += value;
+      }
+      remove{
+        _mouseExited -= value;
+        if (_mouseExited == null)
+          LibraryFunctions.SetMouseExited(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.MousePressedEventHandler MousePressed {
+      add {
+        if (_mousePressed == null)
+          LibraryFunctions.SetMousePressed(OnMousePressed);
+        _mousePressed += value;
+      }
+      remove{
+        _mousePressed -= value;
+        if (_mousePressed == null)
+          LibraryFunctions.SetMousePressed(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.MouseReleasedEventHandler MouseReleased {
+      add {
+        if (_mouseReleased == null)
+          LibraryFunctions.SetMouseReleased(OnMouseReleased);
+        _mouseReleased += value;
+      }
+      remove{
+        _mouseReleased -= value;
+        if (_mouseReleased == null)
+          LibraryFunctions.SetMouseReleased(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.MenuCanceledEventHandler MenuCanceled {
+      add {
+        if (_menuCanceled == null)
+          LibraryFunctions.SetMenuCanceled(OnMenuCanceled);
+        _menuCanceled += value;
+      }
+      remove{
+        _menuCanceled -= value;
+        if (_menuCanceled == null)
+          LibraryFunctions.SetMenuCanceled(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.MenuDeselectedEventHandler MenuDeselected {
+      add {
+        if (_menuDeselected == null)
+          LibraryFunctions.SetMenuDeselected(OnMenuDeselected);
+        _menuDeselected += value;
+      }
+      remove{
+        _menuDeselected -= value;
+        if (_menuDeselected == null)
+          LibraryFunctions.SetMenuDeselected(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.MenuSelectedEventHandler MenuSelected {
+      add {
+        if (_menuSelected == null)
+          LibraryFunctions.SetMenuSelected(OnMenuSelected);
+        _menuSelected += value;
+      }
+      remove{
+        _menuSelected -= value;
+        if (_menuSelected == null)
+          LibraryFunctions.SetMenuSelected(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PopupMenuCanceledEventHandler PopupMenuCanceled {
+      add {
+        if (_popupMenuCanceled == null)
+          LibraryFunctions.SetPopupMenuCanceled(OnPopupMenuCanceled);
+        _popupMenuCanceled += value;
+      }
+      remove{
+        _popupMenuCanceled -= value;
+        if (_popupMenuCanceled == null)
+          LibraryFunctions.SetPopupMenuCanceled(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible {
+      add {
+        if (_popupMenuWillBecomeInvisible == null)
+          LibraryFunctions.SetPopupMenuWillBecomeInvisible(OnPopupMenuWillBecomeInvisible);
+        _popupMenuWillBecomeInvisible += value;
+      }
+      remove{
+        _popupMenuWillBecomeInvisible -= value;
+        if (_popupMenuWillBecomeInvisible == null)
+          LibraryFunctions.SetPopupMenuWillBecomeInvisible(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible {
+      add {
+        if (_popupMenuWillBecomeVisible == null)
+          LibraryFunctions.SetPopupMenuWillBecomeVisible(OnPopupMenuWillBecomeVisible);
+        _popupMenuWillBecomeVisible += value;
+      }
+      remove{
+        _popupMenuWillBecomeVisible -= value;
+        if (_popupMenuWillBecomeVisible == null)
+          LibraryFunctions.SetPopupMenuWillBecomeVisible(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PropertyNameChangeEventHandler PropertyNameChange {
+      add {
+        if (_propertyNameChange == null)
+          LibraryFunctions.SetPropertyNameChange(OnPropertyNameChange);
+        _propertyNameChange += value;
+      }
+      remove{
+        _propertyNameChange -= value;
+        if (_propertyNameChange == null)
+          LibraryFunctions.SetPropertyNameChange(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PropertyDescriptionChangeEventHandler PropertyDescriptionChange {
+      add {
+        if (_propertyDescriptionChange == null)
+          LibraryFunctions.SetPropertyDescriptionChange(OnPropertyDescriptionChange);
+        _propertyDescriptionChange += value;
+      }
+      remove{
+        _propertyDescriptionChange -= value;
+        if (_propertyDescriptionChange == null)
+          LibraryFunctions.SetPropertyDescriptionChange(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PropertyStateChangeEventHandler PropertyStateChange {
+      add {
+        if (_propertyStateChange == null)
+          LibraryFunctions.SetPropertyStateChange(OnPropertyStateChange);
+        _propertyStateChange += value;
+      }
+      remove{
+        _propertyStateChange -= value;
+        if (_propertyStateChange == null)
+          LibraryFunctions.SetPropertyStateChange(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PropertyValueChangeEventHandler PropertyValueChange {
+      add {
+        if (_propertyValueChange == null)
+          LibraryFunctions.SetPropertyValueChange(OnPropertyValueChange);
+        _propertyValueChange += value;
+      }
+      remove{
+        _propertyValueChange -= value;
+        if (_propertyValueChange == null)
+          LibraryFunctions.SetPropertyValueChange(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PropertySelectionChangeEventHandler PropertySelectionChange {
+      add {
+        if (_propertySelectionChange == null)
+          LibraryFunctions.SetPropertySelectionChange(OnPropertySelectionChange);
+        _propertySelectionChange += value;
+      }
+      remove{
+        _propertySelectionChange -= value;
+        if (_propertySelectionChange == null)
+          LibraryFunctions.SetPropertySelectionChange(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PropertyTextChangeEventHandler PropertyTextChange {
+      add {
+        if (_propertyTextChange == null)
+          LibraryFunctions.SetPropertyTextChange(OnPropertyTextChange);
+        _propertyTextChange += value;
+      }
+      remove{
+        _propertyTextChange -= value;
+        if (_propertyTextChange == null)
+          LibraryFunctions.SetPropertyTextChange(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PropertyCaretChangeEventHandler PropertyCaretChange {
+      add {
+        if (_propertyCaretChange == null)
+          LibraryFunctions.SetPropertyCaretChange(OnPropertyCaretChange);
+        _propertyCaretChange += value;
+      }
+      remove{
+        _propertyCaretChange -= value;
+        if (_propertyCaretChange == null)
+          LibraryFunctions.SetPropertyCaretChange(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange {
+      add {
+        if (_propertyVisibleDataChange == null)
+          LibraryFunctions.SetPropertyVisibleDataChange(OnPropertyVisibleDataChange);
+        _propertyVisibleDataChange += value;
+      }
+      remove{
+        _propertyVisibleDataChange -= value;
+        if (_propertyVisibleDataChange == null)
+          LibraryFunctions.SetPropertyVisibleDataChange(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PropertyChildChangeEventHandler PropertyChildChange {
+      add {
+        if (_propertyChildChange == null)
+          LibraryFunctions.SetPropertyChildChange(OnPropertyChildChange);
+        _propertyChildChange += value;
+      }
+      remove{
+        _propertyChildChange -= value;
+        if (_propertyChildChange == null)
+          LibraryFunctions.SetPropertyChildChange(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange {
+      add {
+        if (_propertyActiveDescendentChange == null)
+          LibraryFunctions.SetPropertyActiveDescendentChange(OnPropertyActiveDescendentChange);
+        _propertyActiveDescendentChange += value;
+      }
+      remove{
+        _propertyActiveDescendentChange -= value;
+        if (_propertyActiveDescendentChange == null)
+          LibraryFunctions.SetPropertyActiveDescendentChange(null);
+      }
+    }
+    public event AccessBridgeLibraryFunctions.PropertyTableModelChangeEventHandler PropertyTableModelChange {
+      add {
+        if (_propertyTableModelChange == null)
+          LibraryFunctions.SetPropertyTableModelChange(OnPropertyTableModelChange);
+        _propertyTableModelChange += value;
+      }
+      remove{
+        _propertyTableModelChange -= value;
+        if (_propertyTableModelChange == null)
+          LibraryFunctions.SetPropertyTableModelChange(null);
+      }
+    }
     #endregion
 
     #region Event handlers
     protected virtual void OnPropertyChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
-      var handler = PropertyChange;
+      var handler = _propertyChange;
       if (handler != null)
         handler(vmid, evt, source, property, oldValue, newValue);
     }
     protected virtual void OnJavaShutdown(int vmid) {
-      var handler = JavaShutdown;
+      var handler = _javaShutdown;
       if (handler != null)
         handler(vmid);
     }
     protected virtual void OnFocusGained(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = FocusGained;
+      var handler = _focusGained;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnFocusLost(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = FocusLost;
+      var handler = _focusLost;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnCaretUpdate(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = CaretUpdate;
+      var handler = _caretUpdate;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMouseClicked(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = MouseClicked;
+      var handler = _mouseClicked;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMouseEntered(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = MouseEntered;
+      var handler = _mouseEntered;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMouseExited(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = MouseExited;
+      var handler = _mouseExited;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMousePressed(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = MousePressed;
+      var handler = _mousePressed;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMouseReleased(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = MouseReleased;
+      var handler = _mouseReleased;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMenuCanceled(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = MenuCanceled;
+      var handler = _menuCanceled;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMenuDeselected(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = MenuDeselected;
+      var handler = _menuDeselected;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnMenuSelected(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = MenuSelected;
+      var handler = _menuSelected;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPopupMenuCanceled(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = PopupMenuCanceled;
+      var handler = _popupMenuCanceled;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPopupMenuWillBecomeInvisible(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = PopupMenuWillBecomeInvisible;
+      var handler = _popupMenuWillBecomeInvisible;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPopupMenuWillBecomeVisible(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = PopupMenuWillBecomeVisible;
+      var handler = _popupMenuWillBecomeVisible;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPropertyNameChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName) {
-      var handler = PropertyNameChange;
+      var handler = _propertyNameChange;
       if (handler != null)
         handler(vmid, evt, source, oldName, newName);
     }
     protected virtual void OnPropertyDescriptionChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription) {
-      var handler = PropertyDescriptionChange;
+      var handler = _propertyDescriptionChange;
       if (handler != null)
         handler(vmid, evt, source, oldDescription, newDescription);
     }
     protected virtual void OnPropertyStateChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState) {
-      var handler = PropertyStateChange;
+      var handler = _propertyStateChange;
       if (handler != null)
         handler(vmid, evt, source, oldState, newState);
     }
     protected virtual void OnPropertyValueChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
-      var handler = PropertyValueChange;
+      var handler = _propertyValueChange;
       if (handler != null)
         handler(vmid, evt, source, oldValue, newValue);
     }
     protected virtual void OnPropertySelectionChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = PropertySelectionChange;
+      var handler = _propertySelectionChange;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPropertyTextChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = PropertyTextChange;
+      var handler = _propertyTextChange;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPropertyCaretChange(int vmid, JOBJECT64 evt, JOBJECT64 source, int oldPosition, int newPosition) {
-      var handler = PropertyCaretChange;
+      var handler = _propertyCaretChange;
       if (handler != null)
         handler(vmid, evt, source, oldPosition, newPosition);
     }
     protected virtual void OnPropertyVisibleDataChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
-      var handler = PropertyVisibleDataChange;
+      var handler = _propertyVisibleDataChange;
       if (handler != null)
         handler(vmid, evt, source);
     }
     protected virtual void OnPropertyChildChange(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldChild, JOBJECT64 newChild) {
-      var handler = PropertyChildChange;
+      var handler = _propertyChildChange;
       if (handler != null)
         handler(vmid, evt, source, oldChild, newChild);
     }
     protected virtual void OnPropertyActiveDescendentChange(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldActiveDescendent, JOBJECT64 newActiveDescendent) {
-      var handler = PropertyActiveDescendentChange;
+      var handler = _propertyActiveDescendentChange;
       if (handler != null)
         handler(vmid, evt, source, oldActiveDescendent, newActiveDescendent);
     }
     protected virtual void OnPropertyTableModelChange(int vmid, JOBJECT64 evt, JOBJECT64 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
-      var handler = PropertyTableModelChange;
+      var handler = _propertyTableModelChange;
       if (handler != null)
         handler(vmid, evt, src, oldValue, newValue);
     }

@@ -26,14 +26,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       _nativeEvents = new AccessBridgeEventsNative(libraryFunctions);
     }
 
-    public void Dispose() {
-      DetachForwarders(_nativeEvents);
-      _nativeEvents.ReleaseHandlers();
+    public AccessBridgeEventsNative NativeEvents {
+      get { return _nativeEvents; }
     }
 
-    public void SetHandlers() {
-      _nativeEvents.SetHandlers();
-      AttachForwarders(_nativeEvents);
+    public void Dispose() {
+      DetachForwarders();
     }
 
     private JavaObjectHandle Wrap(int vmid, JOBJECT64 handle) {

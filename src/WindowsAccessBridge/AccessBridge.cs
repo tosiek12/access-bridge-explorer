@@ -66,7 +66,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       var libraryFunctions = LoadFunctions(library);
       var functions = new AccessBridgeFunctions(libraryFunctions);
       var events = new AccessBridgeEvents(libraryFunctions);
-      events.SetHandlers();
 
       // Everything is initialized correctly, save to member variables.
       _library = library;
