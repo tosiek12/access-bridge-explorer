@@ -251,6 +251,323 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   /// <summary>
+  /// Acess Bridge event handlers implementation
+  /// </summary>
+  public partial class AccessBridgeEvents {
+    #region Event functions
+    public event PropertyChangeEventHandler PropertyChange;
+    public event JavaShutdownEventHandler JavaShutdown;
+    public event FocusGainedEventHandler FocusGained;
+    public event FocusLostEventHandler FocusLost;
+    public event CaretUpdateEventHandler CaretUpdate;
+    public event MouseClickedEventHandler MouseClicked;
+    public event MouseEnteredEventHandler MouseEntered;
+    public event MouseExitedEventHandler MouseExited;
+    public event MousePressedEventHandler MousePressed;
+    public event MouseReleasedEventHandler MouseReleased;
+    public event MenuCanceledEventHandler MenuCanceled;
+    public event MenuDeselectedEventHandler MenuDeselected;
+    public event MenuSelectedEventHandler MenuSelected;
+    public event PopupMenuCanceledEventHandler PopupMenuCanceled;
+    public event PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible;
+    public event PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible;
+    public event PropertyNameChangeEventHandler PropertyNameChange;
+    public event PropertyDescriptionChangeEventHandler PropertyDescriptionChange;
+    public event PropertyStateChangeEventHandler PropertyStateChange;
+    public event PropertyValueChangeEventHandler PropertyValueChange;
+    public event PropertySelectionChangeEventHandler PropertySelectionChange;
+    public event PropertyTextChangeEventHandler PropertyTextChange;
+    public event PropertyCaretChangeEventHandler PropertyCaretChange;
+    public event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange;
+    public event PropertyChildChangeEventHandler PropertyChildChange;
+    public event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange;
+    public event PropertyTableModelChangeEventHandler PropertyTableModelChange;
+    #endregion
+
+    #region Event handlers
+    protected virtual void OnPropertyChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string property, string oldValue, string newValue) {
+      var handler = PropertyChange;
+      if (handler != null)
+        handler(vmid, evt, source, property, oldValue, newValue);
+    }
+    protected virtual void OnJavaShutdown(int vmid) {
+      var handler = JavaShutdown;
+      if (handler != null)
+        handler(vmid);
+    }
+    protected virtual void OnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = FocusGained;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnFocusLost(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = FocusLost;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnCaretUpdate(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = CaretUpdate;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMouseClicked(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = MouseClicked;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMouseEntered(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = MouseEntered;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMouseExited(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = MouseExited;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMousePressed(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = MousePressed;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMouseReleased(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = MouseReleased;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMenuCanceled(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = MenuCanceled;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMenuDeselected(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = MenuDeselected;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMenuSelected(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = MenuSelected;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPopupMenuCanceled(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = PopupMenuCanceled;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPopupMenuWillBecomeInvisible(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = PopupMenuWillBecomeInvisible;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPopupMenuWillBecomeVisible(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = PopupMenuWillBecomeVisible;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPropertyNameChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldName, string newName) {
+      var handler = PropertyNameChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldName, newName);
+    }
+    protected virtual void OnPropertyDescriptionChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldDescription, string newDescription) {
+      var handler = PropertyDescriptionChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldDescription, newDescription);
+    }
+    protected virtual void OnPropertyStateChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldState, string newState) {
+      var handler = PropertyStateChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldState, newState);
+    }
+    protected virtual void OnPropertyValueChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldValue, string newValue) {
+      var handler = PropertyValueChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldValue, newValue);
+    }
+    protected virtual void OnPropertySelectionChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = PropertySelectionChange;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPropertyTextChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = PropertyTextChange;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPropertyCaretChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, int oldPosition, int newPosition) {
+      var handler = PropertyCaretChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldPosition, newPosition);
+    }
+    protected virtual void OnPropertyVisibleDataChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = PropertyVisibleDataChange;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPropertyChildChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldChild, JavaObjectHandle newChild) {
+      var handler = PropertyChildChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldChild, newChild);
+    }
+    protected virtual void OnPropertyActiveDescendentChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldActiveDescendent, JavaObjectHandle newActiveDescendent) {
+      var handler = PropertyActiveDescendentChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldActiveDescendent, newActiveDescendent);
+    }
+    protected virtual void OnPropertyTableModelChange(int vmid, JavaObjectHandle evt, JavaObjectHandle src, string oldValue, string newValue) {
+      var handler = PropertyTableModelChange;
+      if (handler != null)
+        handler(vmid, evt, src, oldValue, newValue);
+    }
+    #endregion
+
+    private void AttachForwarders(AccessBridgeEventsNative nativeEvents) {
+      nativeEvents.PropertyChange += ForwardPropertyChange;
+      nativeEvents.JavaShutdown += ForwardJavaShutdown;
+      nativeEvents.FocusGained += ForwardFocusGained;
+      nativeEvents.FocusLost += ForwardFocusLost;
+      nativeEvents.CaretUpdate += ForwardCaretUpdate;
+      nativeEvents.MouseClicked += ForwardMouseClicked;
+      nativeEvents.MouseEntered += ForwardMouseEntered;
+      nativeEvents.MouseExited += ForwardMouseExited;
+      nativeEvents.MousePressed += ForwardMousePressed;
+      nativeEvents.MouseReleased += ForwardMouseReleased;
+      nativeEvents.MenuCanceled += ForwardMenuCanceled;
+      nativeEvents.MenuDeselected += ForwardMenuDeselected;
+      nativeEvents.MenuSelected += ForwardMenuSelected;
+      nativeEvents.PopupMenuCanceled += ForwardPopupMenuCanceled;
+      nativeEvents.PopupMenuWillBecomeInvisible += ForwardPopupMenuWillBecomeInvisible;
+      nativeEvents.PopupMenuWillBecomeVisible += ForwardPopupMenuWillBecomeVisible;
+      nativeEvents.PropertyNameChange += ForwardPropertyNameChange;
+      nativeEvents.PropertyDescriptionChange += ForwardPropertyDescriptionChange;
+      nativeEvents.PropertyStateChange += ForwardPropertyStateChange;
+      nativeEvents.PropertyValueChange += ForwardPropertyValueChange;
+      nativeEvents.PropertySelectionChange += ForwardPropertySelectionChange;
+      nativeEvents.PropertyTextChange += ForwardPropertyTextChange;
+      nativeEvents.PropertyCaretChange += ForwardPropertyCaretChange;
+      nativeEvents.PropertyVisibleDataChange += ForwardPropertyVisibleDataChange;
+      nativeEvents.PropertyChildChange += ForwardPropertyChildChange;
+      nativeEvents.PropertyActiveDescendentChange += ForwardPropertyActiveDescendentChange;
+      nativeEvents.PropertyTableModelChange += ForwardPropertyTableModelChange;
+    }
+
+    private void DetachForwarders(AccessBridgeEventsNative nativeEvents) {
+      nativeEvents.PropertyChange -= ForwardPropertyChange;
+      nativeEvents.JavaShutdown -= ForwardJavaShutdown;
+      nativeEvents.FocusGained -= ForwardFocusGained;
+      nativeEvents.FocusLost -= ForwardFocusLost;
+      nativeEvents.CaretUpdate -= ForwardCaretUpdate;
+      nativeEvents.MouseClicked -= ForwardMouseClicked;
+      nativeEvents.MouseEntered -= ForwardMouseEntered;
+      nativeEvents.MouseExited -= ForwardMouseExited;
+      nativeEvents.MousePressed -= ForwardMousePressed;
+      nativeEvents.MouseReleased -= ForwardMouseReleased;
+      nativeEvents.MenuCanceled -= ForwardMenuCanceled;
+      nativeEvents.MenuDeselected -= ForwardMenuDeselected;
+      nativeEvents.MenuSelected -= ForwardMenuSelected;
+      nativeEvents.PopupMenuCanceled -= ForwardPopupMenuCanceled;
+      nativeEvents.PopupMenuWillBecomeInvisible -= ForwardPopupMenuWillBecomeInvisible;
+      nativeEvents.PopupMenuWillBecomeVisible -= ForwardPopupMenuWillBecomeVisible;
+      nativeEvents.PropertyNameChange -= ForwardPropertyNameChange;
+      nativeEvents.PropertyDescriptionChange -= ForwardPropertyDescriptionChange;
+      nativeEvents.PropertyStateChange -= ForwardPropertyStateChange;
+      nativeEvents.PropertyValueChange -= ForwardPropertyValueChange;
+      nativeEvents.PropertySelectionChange -= ForwardPropertySelectionChange;
+      nativeEvents.PropertyTextChange -= ForwardPropertyTextChange;
+      nativeEvents.PropertyCaretChange -= ForwardPropertyCaretChange;
+      nativeEvents.PropertyVisibleDataChange -= ForwardPropertyVisibleDataChange;
+      nativeEvents.PropertyChildChange -= ForwardPropertyChildChange;
+      nativeEvents.PropertyActiveDescendentChange -= ForwardPropertyActiveDescendentChange;
+      nativeEvents.PropertyTableModelChange -= ForwardPropertyTableModelChange;
+    }
+
+    #region Event forwarders
+    private void ForwardPropertyChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+      OnPropertyChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), property, oldValue, newValue);
+    }
+    private void ForwardJavaShutdown(int vmid) {
+      OnJavaShutdown(vmid);
+    }
+    private void ForwardFocusGained(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnFocusGained(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardFocusLost(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnFocusLost(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardCaretUpdate(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnCaretUpdate(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMouseClicked(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnMouseClicked(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMouseEntered(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnMouseEntered(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMouseExited(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnMouseExited(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMousePressed(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnMousePressed(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMouseReleased(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnMouseReleased(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMenuCanceled(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnMenuCanceled(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMenuDeselected(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnMenuDeselected(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMenuSelected(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnMenuSelected(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPopupMenuCanceled(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnPopupMenuCanceled(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPopupMenuWillBecomeInvisible(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnPopupMenuWillBecomeInvisible(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPopupMenuWillBecomeVisible(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnPopupMenuWillBecomeVisible(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPropertyNameChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName) {
+      OnPropertyNameChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldName, newName);
+    }
+    private void ForwardPropertyDescriptionChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription) {
+      OnPropertyDescriptionChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldDescription, newDescription);
+    }
+    private void ForwardPropertyStateChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState) {
+      OnPropertyStateChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldState, newState);
+    }
+    private void ForwardPropertyValueChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+      OnPropertyValueChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldValue, newValue);
+    }
+    private void ForwardPropertySelectionChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnPropertySelectionChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPropertyTextChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnPropertyTextChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPropertyCaretChange(int vmid, JOBJECT64 evt, JOBJECT64 source, int oldPosition, int newPosition) {
+      OnPropertyCaretChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldPosition, newPosition);
+    }
+    private void ForwardPropertyVisibleDataChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      OnPropertyVisibleDataChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPropertyChildChange(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldChild, JOBJECT64 newChild) {
+      OnPropertyChildChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), Wrap(vmid, oldChild), Wrap(vmid, newChild));
+    }
+    private void ForwardPropertyActiveDescendentChange(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldActiveDescendent, JOBJECT64 newActiveDescendent) {
+      OnPropertyActiveDescendentChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), Wrap(vmid, oldActiveDescendent), Wrap(vmid, newActiveDescendent));
+    }
+    private void ForwardPropertyTableModelChange(int vmid, JOBJECT64 evt, JOBJECT64 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+      OnPropertyTableModelChange(vmid, Wrap(vmid, evt), Wrap(vmid, src), oldValue, newValue);
+    }
+    #endregion
+
+  }
+  /// <summary>
   /// Container of WindowAccessBridge DLL entry points
   /// </summary>
   public class AccessBridgeLibraryFunctions {
@@ -595,6 +912,178 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public PropertyChildChangeFP SetPropertyChildChange { get; set; }
     public PropertyActiveDescendentChangeFP SetPropertyActiveDescendentChange { get; set; }
     public PropertyTableModelChangeFP SetPropertyTableModelChange { get; set; }
+    #endregion
+  }
+  /// <summary>
+  /// Native library event handlers implementation
+  /// </summary>
+  public partial class AccessBridgeEventsNative {
+    #region Event functions
+    public event AccessBridgeLibraryFunctions.PropertyChangeEventHandler PropertyChange;
+    public event AccessBridgeLibraryFunctions.JavaShutdownEventHandler JavaShutdown;
+    public event AccessBridgeLibraryFunctions.FocusGainedEventHandler FocusGained;
+    public event AccessBridgeLibraryFunctions.FocusLostEventHandler FocusLost;
+    public event AccessBridgeLibraryFunctions.CaretUpdateEventHandler CaretUpdate;
+    public event AccessBridgeLibraryFunctions.MouseClickedEventHandler MouseClicked;
+    public event AccessBridgeLibraryFunctions.MouseEnteredEventHandler MouseEntered;
+    public event AccessBridgeLibraryFunctions.MouseExitedEventHandler MouseExited;
+    public event AccessBridgeLibraryFunctions.MousePressedEventHandler MousePressed;
+    public event AccessBridgeLibraryFunctions.MouseReleasedEventHandler MouseReleased;
+    public event AccessBridgeLibraryFunctions.MenuCanceledEventHandler MenuCanceled;
+    public event AccessBridgeLibraryFunctions.MenuDeselectedEventHandler MenuDeselected;
+    public event AccessBridgeLibraryFunctions.MenuSelectedEventHandler MenuSelected;
+    public event AccessBridgeLibraryFunctions.PopupMenuCanceledEventHandler PopupMenuCanceled;
+    public event AccessBridgeLibraryFunctions.PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible;
+    public event AccessBridgeLibraryFunctions.PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible;
+    public event AccessBridgeLibraryFunctions.PropertyNameChangeEventHandler PropertyNameChange;
+    public event AccessBridgeLibraryFunctions.PropertyDescriptionChangeEventHandler PropertyDescriptionChange;
+    public event AccessBridgeLibraryFunctions.PropertyStateChangeEventHandler PropertyStateChange;
+    public event AccessBridgeLibraryFunctions.PropertyValueChangeEventHandler PropertyValueChange;
+    public event AccessBridgeLibraryFunctions.PropertySelectionChangeEventHandler PropertySelectionChange;
+    public event AccessBridgeLibraryFunctions.PropertyTextChangeEventHandler PropertyTextChange;
+    public event AccessBridgeLibraryFunctions.PropertyCaretChangeEventHandler PropertyCaretChange;
+    public event AccessBridgeLibraryFunctions.PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange;
+    public event AccessBridgeLibraryFunctions.PropertyChildChangeEventHandler PropertyChildChange;
+    public event AccessBridgeLibraryFunctions.PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange;
+    public event AccessBridgeLibraryFunctions.PropertyTableModelChangeEventHandler PropertyTableModelChange;
+    #endregion
+
+    #region Event handlers
+    protected virtual void OnPropertyChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+      var handler = PropertyChange;
+      if (handler != null)
+        handler(vmid, evt, source, property, oldValue, newValue);
+    }
+    protected virtual void OnJavaShutdown(int vmid) {
+      var handler = JavaShutdown;
+      if (handler != null)
+        handler(vmid);
+    }
+    protected virtual void OnFocusGained(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = FocusGained;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnFocusLost(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = FocusLost;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnCaretUpdate(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = CaretUpdate;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMouseClicked(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = MouseClicked;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMouseEntered(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = MouseEntered;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMouseExited(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = MouseExited;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMousePressed(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = MousePressed;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMouseReleased(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = MouseReleased;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMenuCanceled(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = MenuCanceled;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMenuDeselected(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = MenuDeselected;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMenuSelected(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = MenuSelected;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPopupMenuCanceled(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = PopupMenuCanceled;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPopupMenuWillBecomeInvisible(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = PopupMenuWillBecomeInvisible;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPopupMenuWillBecomeVisible(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = PopupMenuWillBecomeVisible;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPropertyNameChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName) {
+      var handler = PropertyNameChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldName, newName);
+    }
+    protected virtual void OnPropertyDescriptionChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription) {
+      var handler = PropertyDescriptionChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldDescription, newDescription);
+    }
+    protected virtual void OnPropertyStateChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState) {
+      var handler = PropertyStateChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldState, newState);
+    }
+    protected virtual void OnPropertyValueChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+      var handler = PropertyValueChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldValue, newValue);
+    }
+    protected virtual void OnPropertySelectionChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = PropertySelectionChange;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPropertyTextChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = PropertyTextChange;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPropertyCaretChange(int vmid, JOBJECT64 evt, JOBJECT64 source, int oldPosition, int newPosition) {
+      var handler = PropertyCaretChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldPosition, newPosition);
+    }
+    protected virtual void OnPropertyVisibleDataChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+      var handler = PropertyVisibleDataChange;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPropertyChildChange(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldChild, JOBJECT64 newChild) {
+      var handler = PropertyChildChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldChild, newChild);
+    }
+    protected virtual void OnPropertyActiveDescendentChange(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldActiveDescendent, JOBJECT64 newActiveDescendent) {
+      var handler = PropertyActiveDescendentChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldActiveDescendent, newActiveDescendent);
+    }
+    protected virtual void OnPropertyTableModelChange(int vmid, JOBJECT64 evt, JOBJECT64 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+      var handler = PropertyTableModelChange;
+      if (handler != null)
+        handler(vmid, evt, src, oldValue, newValue);
+    }
     #endregion
   }
 

@@ -19,6 +19,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using CodeGen.Definitions;
+using CodeGen.Interop;
 using CodeGen.Interop.NativeStructures;
 using WindowsAccessBridgeDefinition = CodeGen.Interop.WindowsAccessBridgeDefinition;
 
@@ -55,6 +56,7 @@ namespace CodeGen {
 
           sourceWriter.WriteLine("// ReSharper disable InconsistentNaming");
           sourceWriter.AddUsing("System");
+          //sourceWriter.AddUsing("System.Collections.Generic");
           //sourceWriter.AddUsing("System.Diagnostics.CodeAnalysis");
           sourceWriter.AddUsing("System.Runtime.InteropServices");
           sourceWriter.AddUsing("System.Text");
@@ -66,28 +68,42 @@ namespace CodeGen {
           WriteApplicationLevelInterface(model, sourceWriter);
           WriteApplicationLevelEventHandlerTypes(model, sourceWriter);
           WriteApplicationLevelInterfaceImplementation(model, sourceWriter);
-          WriteLibrayrFunctionsClass(model, sourceWriter);
-          model.Enums.ForEach(x => {
-            writer.WriteLine();
-            WriteEnum(model, sourceWriter, x);
-          });
-          sourceWriter.IsNativeTypes = true;
-          model.Structs.ForEach(x => {
-            writer.WriteLine();
-            WriteStruct(model, sourceWriter, x);
-          });
-          model.Classes.ForEach(x => {
-            writer.WriteLine();
-            WriteClass(model, sourceWriter, x);
-          });
+          WriteApplicationLevelEventsClass(model, sourceWriter);
+          WriteLibraryFunctionsClass(model, sourceWriter);
+          WriteLibraryEventsClass(model, sourceWriter);
+          WriteEnums(model, writer, sourceWriter);
+          WriteLibraryStructs(model, sourceWriter, writer);
+          WriteLibraryClasses(model, writer, sourceWriter);
           sourceWriter.EndNamespace();
         }
       }
     }
 
+    private void WriteEnums(LibraryDefinition model, StreamWriter writer, SourceCodeWriter sourceWriter) {
+      model.Enums.ForEach(x => {
+        writer.WriteLine();
+        WriteEnum(model, sourceWriter, x);
+      });
+    }
+
+    private void WriteLibraryStructs(LibraryDefinition model, SourceCodeWriter sourceWriter, StreamWriter writer) {
+      sourceWriter.IsNativeTypes = true;
+      model.Structs.ForEach(x => {
+        writer.WriteLine();
+        WriteStruct(model, sourceWriter, x);
+      });
+    }
+
+    private void WriteLibraryClasses(LibraryDefinition model, StreamWriter writer, SourceCodeWriter sourceWriter) {
+      sourceWriter.IsNativeTypes = true;
+      model.Classes.ForEach(x => {
+        writer.WriteLine();
+        WriteClass(model, sourceWriter, x);
+      });
+    }
+
     private void WriteApplicationLevelInterface(LibraryDefinition model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
-      sourceWriter.IsLegacy = false;
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Platform agnostic abstraction over WindowAccessBridge DLL entry points");
       sourceWriter.WriteLine("/// </summary>");
@@ -96,10 +112,6 @@ namespace CodeGen {
       foreach (var function in model.Functions) {
         WriteFunction(sourceWriter, function);
       }
-      //sourceWriter.WriteLine();
-      //foreach (var eventDefinition in model.Events) {
-      //  WriteEvent(sourceWriter, eventDefinition);
-      //}
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
       sourceWriter.WriteLine();
@@ -119,7 +131,6 @@ namespace CodeGen {
 
     private void WriteApplicationLevelEventHandlerTypes(LibraryDefinition model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
-      sourceWriter.IsLegacy = false;
       foreach (var eventDefinition in model.Events) {
         WriteEventHandlerType(sourceWriter, eventDefinition);
       }
@@ -145,9 +156,8 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteLibrayrFunctionsClass(LibraryDefinition model, SourceCodeWriter sourceWriter) {
+    private void WriteLibraryFunctionsClass(LibraryDefinition model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = true;
-      sourceWriter.IsLegacy = false;
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Container of WindowAccessBridge DLL entry points");
       sourceWriter.WriteLine("/// </summary>");
@@ -190,6 +200,80 @@ namespace CodeGen {
       sourceWriter.WriteLine("}}");
     }
 
+    private void WriteLibraryEventsClass(LibraryDefinition model, SourceCodeWriter sourceWriter) {
+      sourceWriter.IsNativeTypes = true;
+      sourceWriter.WriteLine("/// <summary>");
+      sourceWriter.WriteLine("/// Native library event handlers implementation");
+      sourceWriter.WriteLine("/// </summary>");
+      sourceWriter.WriteLine("public partial class AccessBridgeEventsNative {{");
+      sourceWriter.IncIndent();
+
+      sourceWriter.WriteLine("#region Event functions");
+      foreach (var eventDefinition in model.Events) {
+        WriteNativeEventProperty(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+      sourceWriter.WriteLine("#region Event handlers");
+      foreach (var eventDefinition in model.Events) {
+        WriteNativeEventHandler(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+    }
+
+    private void WriteApplicationLevelEventsClass(LibraryDefinition model, SourceCodeWriter sourceWriter) {
+      sourceWriter.IsNativeTypes = false;
+      sourceWriter.WriteLine("/// <summary>");
+      sourceWriter.WriteLine("/// Acess Bridge event handlers implementation");
+      sourceWriter.WriteLine("/// </summary>");
+      sourceWriter.WriteLine("public partial class AccessBridgeEvents {{");
+      sourceWriter.IncIndent();
+
+      sourceWriter.WriteLine("#region Event functions");
+      foreach (var eventDefinition in model.Events) {
+        WriteApplicationLevelEventProperty(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Event handlers");
+      foreach (var eventDefinition in model.Events) {
+        WriteApplicationLevelEventHandler(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("private void AttachForwarders(AccessBridgeEventsNative nativeEvents) {{");
+      sourceWriter.IncIndent();
+      foreach (var eventDefinition in model.Events) {
+        sourceWriter.WriteLine("nativeEvents.{0} += Forward{0};", eventDefinition.Name);
+      }
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("private void DetachForwarders(AccessBridgeEventsNative nativeEvents) {{");
+      sourceWriter.IncIndent();
+      foreach (var eventDefinition in model.Events) {
+        sourceWriter.WriteLine("nativeEvents.{0} -= Forward{0};", eventDefinition.Name);
+      }
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Event forwarders");
+      foreach (var eventDefinition in model.Events) {
+        WriteApplicationLevelEventForwarder(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+    }
+
     private void WriteFunction(SourceCodeWriter sourceWriter, FunctionDefinition definition) {
       sourceWriter.WriteIndent();
       WriteFunctionSignature(sourceWriter, definition);
@@ -207,9 +291,13 @@ namespace CodeGen {
     }
 
     private void WriteFunctionSignature(SourceCodeWriter sourceWriter, FunctionDefinition definition) {
+      WriteFunctionSignature(sourceWriter, definition, definition.Name);
+    }
+
+    private void WriteFunctionSignature(SourceCodeWriter sourceWriter, FunctionDefinition definition, string name) {
       sourceWriter.WriteType(definition.ReturnType);
       sourceWriter.Write(" ");
-      sourceWriter.Write(definition.Name);
+      sourceWriter.Write(name);
       sourceWriter.Write("(");
       bool first = true;
       foreach (var p in definition.Parameters) {
@@ -257,6 +345,98 @@ namespace CodeGen {
 
     private void WriteLibraryEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
       sourceWriter.WriteLine("public {0}FP Set{0} {{ get; set; }}", definition.Name);
+    }
+
+    private void WriteNativeEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.WriteLine("public event AccessBridgeLibraryFunctions.{0}EventHandler {0};", definition.Name);
+    }
+
+    private void WriteApplicationLevelEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.WriteLine("public event {0}EventHandler {0};", definition.Name);
+    }
+
+    private void WriteNativeEventHandler(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("protected virtual ");
+      WriteFunctionSignature(sourceWriter, definition.DelegateFunction, "On" + definition.Name);
+      sourceWriter.Write(" {{");
+      sourceWriter.WriteLine();
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("var handler = {0};", definition.Name);
+      sourceWriter.WriteLine("if (handler != null)");
+      sourceWriter.IncIndent();
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("handler(");
+      var first = true;
+      foreach (var p in definition.DelegateFunction.Parameters) {
+        if (first)
+          first = false;
+        else
+          sourceWriter.Write(", ");
+        sourceWriter.Write("{0}", p.Name);
+      }
+      sourceWriter.Write(");");
+      sourceWriter.WriteLine();
+      sourceWriter.DecIndent();
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+    }
+
+    private void WriteApplicationLevelEventHandler(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("protected virtual ");
+      WriteFunctionSignature(sourceWriter, definition.DelegateFunction, "On" + definition.Name);
+      sourceWriter.Write(" {{");
+      sourceWriter.WriteLine();
+      sourceWriter.IncIndent();
+      sourceWriter.WriteLine("var handler = {0};", definition.Name);
+      sourceWriter.WriteLine("if (handler != null)");
+      sourceWriter.IncIndent();
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("handler(");
+      var first = true;
+      foreach (var p in definition.DelegateFunction.Parameters) {
+        if (first)
+          first = false;
+        else
+          sourceWriter.Write(", ");
+        sourceWriter.Write("{0}", p.Name);
+      }
+      sourceWriter.Write(");");
+      sourceWriter.WriteLine();
+      sourceWriter.DecIndent();
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+    }
+
+    private void WriteApplicationLevelEventForwarder(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.IsNativeTypes = true;
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("private ");
+      WriteFunctionSignature(sourceWriter, definition.DelegateFunction, "Forward" + definition.Name);
+      sourceWriter.Write(" {{");
+      sourceWriter.WriteLine();
+
+      sourceWriter.IsNativeTypes = false;
+      sourceWriter.IncIndent();
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("On{0}(", definition.Name);
+      var first = true;
+      foreach (var p in definition.DelegateFunction.Parameters) {
+        if (first)
+          first = false;
+        else
+          sourceWriter.Write(", ");
+        if ((p.Type is NameTypeReference) && ((NameTypeReference) p.Type).Name == typeof (JavaObjectHandle).Name) {
+          sourceWriter.Write("Wrap(vmid, {0})", p.Name);
+        } else {
+          sourceWriter.Write("{0}", p.Name);
+        }
+      }
+      sourceWriter.Write(");");
+      sourceWriter.WriteLine();
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
     }
 
     private void WriteParameter(SourceCodeWriter sourceWriter, ParameterDefinition parameterDefinition) {
