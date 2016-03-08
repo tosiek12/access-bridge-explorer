@@ -86,7 +86,7 @@
     <Compile Include="Definitions\ParameterDefinition.cs" />
     <Compile Include="Definitions\StrucDefintion.cs" />
     <Compile Include="Definitions\EventDefinition.cs" />
-    <Compile Include="Definitions\WindowsAccessBridgeDefinition.cs" />
+    <Compile Include="Definitions\LibraryDefinition.cs" />
     <Compile Include="Interop\WindowHandle.cs" />
     <Compile Include="Interop\JavaObjectHandle.cs" />
     <Compile Include="Program.cs" />

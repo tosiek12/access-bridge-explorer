@@ -15,7 +15,7 @@
 using System.Collections.Generic;
 
 namespace CodeGen.Definitions {
-  public class WindowsAccessBridgeDefinition {
+  public class LibraryDefinition {
     private readonly List<FunctionDefinition> _functions = new List<FunctionDefinition>();
     private readonly List<EventDefinition> _events = new List<EventDefinition>();
     private readonly List<EnumDefinition> _enums = new List<EnumDefinition>();
