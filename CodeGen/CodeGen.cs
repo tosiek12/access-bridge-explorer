@@ -771,6 +771,10 @@ namespace CodeGen {
         name = "ushort";
       else if (type == typeof(ulong))
         name = "ulong";
+      else if (type == typeof(byte))
+        name = "byte";
+      else if (type == typeof(char))
+        name = "char";
 
       if (type.IsArray) {
         return new ArrayTypeReference {

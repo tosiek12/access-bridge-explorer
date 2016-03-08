@@ -1485,7 +1485,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public int column;
     public int rowExtent;
     public int columnExtent;
-    public Byte isSelected;
+    public byte isSelected;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -1534,7 +1534,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleTextItemsInfo {
-    public Char letter;
+    public char letter;
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string word;
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
