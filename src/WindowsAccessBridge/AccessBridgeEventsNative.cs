@@ -20,70 +20,6 @@ using System.Runtime.InteropServices;
 // ReSharper disable InconsistentNaming
 
 namespace AccessBridgeExplorer.WindowsAccessBridge {
-  #region Native Event Handlers Delegate Definitions
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PropertyChangeFP(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
-
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_JavaShutdownFP(int vmid);
-
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_FocusGainedFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_FocusLostFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_CaretUpdateFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_MouseClickedFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_MouseEnteredFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_MouseExitedFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_MousePressedFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_MouseReleasedFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_MenuCanceledFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_MenuDeselectedFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_MenuSelectedFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PopupMenuCanceledFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PopupMenuWillBecomeInvisibleFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PopupMenuWillBecomeVisibleFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PropertyNameChangeFP(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PropertyDescriptionChangeFP(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PropertyStateChangeFP(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PropertyValueChangeFP(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PropertySelectionChangeFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PropertyTextChangeFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PropertyCaretChangeFP(int vmid, JOBJECT64 evt, JOBJECT64 source, int oldPosition, int newPosition);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PropertyVisibleDataChangeFP(int vmid, JOBJECT64 evt, JOBJECT64 source);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PropertyChildChangeFP(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldchild, JOBJECT64 newchild);
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PropertyActiveDescendentChangeFP(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldActiveDescendent, JOBJECT64 newActiveDescendent);
-
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-  public delegate void AccessBridge_PropertyTableModelChangeFP(int vmID, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
-  #endregion
-
   /// <summary>
   /// Helper class used to forward native events from the Java Access Bridge to
   /// an instance of <see cref="AccessBridgeEvents"/>.
@@ -153,44 +89,44 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     /// the WindowsAccessBridge DLL.
     /// </summary>
 #pragma warning disable 67
-    public event AccessBridge_PropertyChangeFP PropertyChange;
+    public event AccessBridgeLibraryFunctions.PropertyChangeEventHandler PropertyChange;
 
-    public event AccessBridge_JavaShutdownFP JavaShutdown;
+    public event AccessBridgeLibraryFunctions.JavaShutdownEventHandler JavaShutdown;
 
-    public event AccessBridge_FocusGainedFP FocusGained;
-    public event AccessBridge_FocusLostFP FocusLost;
+    public event AccessBridgeLibraryFunctions.FocusGainedEventHandler FocusGained;
+    public event AccessBridgeLibraryFunctions.FocusLostEventHandler FocusLost;
 
-    public event AccessBridge_CaretUpdateFP CaretUpdate;
+    public event AccessBridgeLibraryFunctions.CaretUpdateEventHandler CaretUpdate;
 
     //TODO: Hooking up any of these event break the JBTabsImpl of IntelliJ: Clicking on
     // a TabLabel does not activate the tab anymore.
 #if false
-    public event AccessBridge_MouseClickedFP MouseClicked;
-    public event AccessBridge_MouseEnteredFP MouseEntered;
-    public event AccessBridge_MouseExitedFP MouseExited;
-    public event AccessBridge_MousePressedFP MousePressed;
-    public event AccessBridge_MouseReleasedFP MouseReleased;
+    public event AccessBridgeLibraryFunctions.MouseClickedEventHandler MouseClicked;
+    public event AccessBridgeLibraryFunctions.MouseEnteredEventHandler MouseEntered;
+    public event AccessBridgeLibraryFunctions.MouseExitedEventHandler MouseExited;
+    public event AccessBridgeLibraryFunctions.MousePressedEventHandler MousePressed;
+    public event AccessBridgeLibraryFunctions.MouseReleasedEventHandler MouseReleased;
 #endif
 
-    public event AccessBridge_MenuCanceledFP MenuCanceled;
-    public event AccessBridge_MenuDeselectedFP MenuDeselected;
-    public event AccessBridge_MenuSelectedFP MenuSelected;
-    public event AccessBridge_PopupMenuCanceledFP PopupMenuCanceled;
-    public event AccessBridge_PopupMenuWillBecomeInvisibleFP PopupMenuWillBecomeInvisible;
-    public event AccessBridge_PopupMenuWillBecomeVisibleFP PopupMenuWillBecomeVisible;
+    public event AccessBridgeLibraryFunctions.MenuCanceledEventHandler MenuCanceled;
+    public event AccessBridgeLibraryFunctions.MenuDeselectedEventHandler MenuDeselected;
+    public event AccessBridgeLibraryFunctions.MenuSelectedEventHandler MenuSelected;
+    public event AccessBridgeLibraryFunctions.PopupMenuCanceledEventHandler PopupMenuCanceled;
+    public event AccessBridgeLibraryFunctions.PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible;
+    public event AccessBridgeLibraryFunctions.PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible;
 
-    public event AccessBridge_PropertyNameChangeFP PropertyNameChange;
-    public event AccessBridge_PropertyDescriptionChangeFP PropertyDescriptionChange;
-    public event AccessBridge_PropertyStateChangeFP PropertyStateChange;
-    public event AccessBridge_PropertyValueChangeFP PropertyValueChange;
-    public event AccessBridge_PropertySelectionChangeFP PropertySelectionChange;
-    public event AccessBridge_PropertyTextChangeFP PropertyTextChange;
-    public event AccessBridge_PropertyCaretChangeFP PropertyCaretChange;
-    public event AccessBridge_PropertyVisibleDataChangeFP PropertyVisibleDataChange;
-    public event AccessBridge_PropertyChildChangeFP PropertyChildChange;
-    public event AccessBridge_PropertyActiveDescendentChangeFP PropertyActiveDescendentChange;
+    public event AccessBridgeLibraryFunctions.PropertyNameChangeEventHandler PropertyNameChange;
+    public event AccessBridgeLibraryFunctions.PropertyDescriptionChangeEventHandler PropertyDescriptionChange;
+    public event AccessBridgeLibraryFunctions.PropertyStateChangeEventHandler PropertyStateChange;
+    public event AccessBridgeLibraryFunctions.PropertyValueChangeEventHandler PropertyValueChange;
+    public event AccessBridgeLibraryFunctions.PropertySelectionChangeEventHandler PropertySelectionChange;
+    public event AccessBridgeLibraryFunctions.PropertyTextChangeEventHandler PropertyTextChange;
+    public event AccessBridgeLibraryFunctions.PropertyCaretChangeEventHandler PropertyCaretChange;
+    public event AccessBridgeLibraryFunctions.PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange;
+    public event AccessBridgeLibraryFunctions.PropertyChildChangeEventHandler PropertyChildChange;
+    public event AccessBridgeLibraryFunctions.PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange;
 
-    public event AccessBridge_PropertyTableModelChangeFP PropertyTableModelChange;
+    public event AccessBridgeLibraryFunctions.PropertyTableModelChangeEventHandler PropertyTableModelChange;
 
 #pragma warning restore 67
     #endregion

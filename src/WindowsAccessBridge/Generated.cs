@@ -456,38 +456,145 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     #endregion
 
     #region Event delegate types
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate BOOL EventSetterDelegate(Delegate nativeEventHandler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void JavaShutdownEventHandler(int vmid);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void FocusGainedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void FocusLostEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void CaretUpdateEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MouseClickedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MouseEnteredEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MouseExitedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MousePressedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MouseReleasedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MenuCanceledEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MenuDeselectedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MenuSelectedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PopupMenuCanceledEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PopupMenuWillBecomeInvisibleEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PopupMenuWillBecomeVisibleEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyNameChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyDescriptionChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyStateChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyValueChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertySelectionChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyTextChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyCaretChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, int oldPosition, int newPosition);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyVisibleDataChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyChildChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldChild, JOBJECT64 newChild);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyActiveDescendentChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldActiveDescendent, JOBJECT64 newActiveDescendent);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyTableModelChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PropertyChangeFP(PropertyChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL JavaShutdownFP(JavaShutdownEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL FocusGainedFP(FocusGainedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL FocusLostFP(FocusLostEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL CaretUpdateFP(CaretUpdateEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL MouseClickedFP(MouseClickedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL MouseEnteredFP(MouseEnteredEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL MouseExitedFP(MouseExitedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL MousePressedFP(MousePressedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL MouseReleasedFP(MouseReleasedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL MenuCanceledFP(MenuCanceledEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL MenuDeselectedFP(MenuDeselectedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL MenuSelectedFP(MenuSelectedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PopupMenuCanceledFP(PopupMenuCanceledEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PopupMenuWillBecomeInvisibleFP(PopupMenuWillBecomeInvisibleEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PopupMenuWillBecomeVisibleFP(PopupMenuWillBecomeVisibleEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PropertyNameChangeFP(PropertyNameChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PropertyDescriptionChangeFP(PropertyDescriptionChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PropertyStateChangeFP(PropertyStateChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PropertyValueChangeFP(PropertyValueChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PropertySelectionChangeFP(PropertySelectionChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PropertyTextChangeFP(PropertyTextChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PropertyCaretChangeFP(PropertyCaretChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PropertyVisibleDataChangeFP(PropertyVisibleDataChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PropertyChildChangeFP(PropertyChildChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PropertyActiveDescendentChangeFP(PropertyActiveDescendentChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL PropertyTableModelChangeFP(PropertyTableModelChangeEventHandler handler);
     #endregion
 
     #region Event functions
-    public EventSetterDelegate SetPropertyChange { get; set; }
-    public EventSetterDelegate SetJavaShutdown { get; set; }
-    public EventSetterDelegate SetFocusGained { get; set; }
-    public EventSetterDelegate SetFocusLost { get; set; }
-    public EventSetterDelegate SetCaretUpdate { get; set; }
-    public EventSetterDelegate SetMouseClicked { get; set; }
-    public EventSetterDelegate SetMouseEntered { get; set; }
-    public EventSetterDelegate SetMouseExited { get; set; }
-    public EventSetterDelegate SetMousePressed { get; set; }
-    public EventSetterDelegate SetMouseReleased { get; set; }
-    public EventSetterDelegate SetMenuCanceled { get; set; }
-    public EventSetterDelegate SetMenuDeselected { get; set; }
-    public EventSetterDelegate SetMenuSelected { get; set; }
-    public EventSetterDelegate SetPopupMenuCanceled { get; set; }
-    public EventSetterDelegate SetPopupMenuWillBecomeInvisible { get; set; }
-    public EventSetterDelegate SetPopupMenuWillBecomeVisible { get; set; }
-    public EventSetterDelegate SetPropertyNameChange { get; set; }
-    public EventSetterDelegate SetPropertyDescriptionChange { get; set; }
-    public EventSetterDelegate SetPropertyStateChange { get; set; }
-    public EventSetterDelegate SetPropertyValueChange { get; set; }
-    public EventSetterDelegate SetPropertySelectionChange { get; set; }
-    public EventSetterDelegate SetPropertyTextChange { get; set; }
-    public EventSetterDelegate SetPropertyCaretChange { get; set; }
-    public EventSetterDelegate SetPropertyVisibleDataChange { get; set; }
-    public EventSetterDelegate SetPropertyChildChange { get; set; }
-    public EventSetterDelegate SetPropertyActiveDescendentChange { get; set; }
-    public EventSetterDelegate SetPropertyTableModelChange { get; set; }
+    public PropertyChangeFP SetPropertyChange { get; set; }
+    public JavaShutdownFP SetJavaShutdown { get; set; }
+    public FocusGainedFP SetFocusGained { get; set; }
+    public FocusLostFP SetFocusLost { get; set; }
+    public CaretUpdateFP SetCaretUpdate { get; set; }
+    public MouseClickedFP SetMouseClicked { get; set; }
+    public MouseEnteredFP SetMouseEntered { get; set; }
+    public MouseExitedFP SetMouseExited { get; set; }
+    public MousePressedFP SetMousePressed { get; set; }
+    public MouseReleasedFP SetMouseReleased { get; set; }
+    public MenuCanceledFP SetMenuCanceled { get; set; }
+    public MenuDeselectedFP SetMenuDeselected { get; set; }
+    public MenuSelectedFP SetMenuSelected { get; set; }
+    public PopupMenuCanceledFP SetPopupMenuCanceled { get; set; }
+    public PopupMenuWillBecomeInvisibleFP SetPopupMenuWillBecomeInvisible { get; set; }
+    public PopupMenuWillBecomeVisibleFP SetPopupMenuWillBecomeVisible { get; set; }
+    public PropertyNameChangeFP SetPropertyNameChange { get; set; }
+    public PropertyDescriptionChangeFP SetPropertyDescriptionChange { get; set; }
+    public PropertyStateChangeFP SetPropertyStateChange { get; set; }
+    public PropertyValueChangeFP SetPropertyValueChange { get; set; }
+    public PropertySelectionChangeFP SetPropertySelectionChange { get; set; }
+    public PropertyTextChangeFP SetPropertyTextChange { get; set; }
+    public PropertyCaretChangeFP SetPropertyCaretChange { get; set; }
+    public PropertyVisibleDataChangeFP SetPropertyVisibleDataChange { get; set; }
+    public PropertyChildChangeFP SetPropertyChildChange { get; set; }
+    public PropertyActiveDescendentChangeFP SetPropertyActiveDescendentChange { get; set; }
+    public PropertyTableModelChangeFP SetPropertyTableModelChange { get; set; }
     #endregion
   }
 

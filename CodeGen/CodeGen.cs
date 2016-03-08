@@ -169,8 +169,15 @@ namespace CodeGen {
       sourceWriter.WriteLine();
 
       sourceWriter.WriteLine("#region Event delegate types");
-      sourceWriter.WriteLine("[UnmanagedFunctionPointer(CallingConvention.Cdecl)]");
-      sourceWriter.WriteLine("public delegate BOOL EventSetterDelegate(Delegate nativeEventHandler);");
+      foreach (var definition in model.Events) {
+        sourceWriter.WriteLine("[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]");
+        WriteDelegateType(sourceWriter, definition.DelegateFunction);
+      }
+      sourceWriter.WriteLine();
+      foreach (var eventDefinition in model.Events) {
+        sourceWriter.WriteLine("[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]");
+        WriteLibraryEventDelegateType(sourceWriter, eventDefinition);
+      }
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
 
@@ -241,8 +248,15 @@ namespace CodeGen {
       sourceWriter.WriteLine("public {0}FP {0} {{ get; set; }}", function.Name);
     }
 
+    private void WriteLibraryEventDelegateType(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("public delegate BOOL {0}FP({0}EventHandler handler)", definition.Name);
+      sourceWriter.Write(";");
+      sourceWriter.WriteLine();
+    }
+
     private void WriteLibraryEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteLine("public EventSetterDelegate Set{0} {{ get; set; }}", definition.Name);
+      sourceWriter.WriteLine("public {0}FP Set{0} {{ get; set; }}", definition.Name);
     }
 
     private void WriteParameter(SourceCodeWriter sourceWriter, ParameterDefinition parameterDefinition) {
