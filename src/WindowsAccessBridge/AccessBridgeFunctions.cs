@@ -27,10 +27,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// DLL (<see cref="AccessBridge.Functions"/>).
   /// </summary>
   [SuppressMessage("ReSharper", "InconsistentNaming")]
-  public class AccessBridgeFunctionsNative : IAccessBridgeFunctions {
+  public class AccessBridgeFunctions : IAccessBridgeFunctions {
     private AccessBridgeLibraryFunctions _functions;
 
-    public AccessBridgeFunctionsNative(AccessBridgeLibraryFunctions functions) {
+    public AccessBridgeFunctions(AccessBridgeLibraryFunctions functions) {
       this._functions = functions;
     }
 

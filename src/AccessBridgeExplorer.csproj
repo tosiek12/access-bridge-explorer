@@ -146,7 +146,7 @@
     <Compile Include="Win32\NativeMethods.cs" />
     <Compile Include="Model\AccessibleNodeModel.cs" />
     <Compile Include="WindowsAccessBridge\AccessBridgeEvents.cs" />
-    <Compile Include="WindowsAccessBridge\AccessBridgeFunctionsNative.cs" />
+    <Compile Include="WindowsAccessBridge\AccessBridgeFunctions.cs" />
     <Compile Include="WindowsAccessBridge\Generated.cs" />
     <Compile Include="WindowsAccessBridge\JOBJECT64.cs" />
     <Compile Include="WindowsAccessBridge\AccessibleContextNode.cs" />

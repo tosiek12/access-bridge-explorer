@@ -69,7 +69,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
       // Everything is initialized correctly, save to member variables.
       _library = library;
-      _functions = new AccessBridgeFunctionsNative(functions);
+      _functions = new AccessBridgeFunctions(functions);
       _events = events;
       _events.SetHandlers();
       _functions.Windows_run();
