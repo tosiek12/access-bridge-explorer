@@ -34,6 +34,9 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public JavaObjectHandle(int jvmId, JOBJECT64 handle) {
       _jvmId = jvmId;
       _handle = handle;
+      if (handle.Value == 0) {
+        GC.SuppressFinalize(this);
+      }
     }
 
     ~JavaObjectHandle() {
@@ -76,8 +79,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       get { return _disposed; }
     }
 
-    public bool IsNull { get 
-        { return _handle.Value == 0; }
+    public bool IsNull {
+      get { return _handle.Value == 0; }
     }
 
     [DllImport("WindowsAccessBridge-32.dll", EntryPoint = "releaseJavaObject", CallingConvention = CallingConvention.Cdecl)]
