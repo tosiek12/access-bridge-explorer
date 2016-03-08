@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace CodeGen.Definitions {
@@ -21,11 +22,13 @@ namespace CodeGen.Definitions {
 
     public TypeReference ReturnType { get; set; }
     public string Name { get; set; }
+    public MarshalAsAttribute MarshalAs { get; set; }
 
     public List<ParameterDefinition> Parameters {
       get { return _parameters; }
       set { _parameters = value; }
     }
+
 
     public override string ToString() {
       var sb = new StringBuilder();

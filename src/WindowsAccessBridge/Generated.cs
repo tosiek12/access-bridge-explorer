@@ -89,34 +89,167 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     int GetVisibleChildrenCount(int vmID, JavaObjectHandle accessibleContext);
     bool GetVisibleChildren(int vmID, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children);
     bool GetVersionInfo(int vmID, out AccessBridgeVersionInfo info);
-    bool SetPropertyChange(Delegate handler);
-    bool SetJavaShutdown(Delegate handler);
-    bool SetFocusGained(Delegate handler);
-    bool SetFocusLost(Delegate handler);
-    bool SetCaretUpdate(Delegate handler);
-    bool SetMouseClicked(Delegate handler);
-    bool SetMouseEntered(Delegate handler);
-    bool SetMouseExited(Delegate handler);
-    bool SetMousePressed(Delegate handler);
-    bool SetMouseReleased(Delegate handler);
-    bool SetMenuCanceled(Delegate handler);
-    bool SetMenuDeselected(Delegate handler);
-    bool SetMenuSelected(Delegate handler);
-    bool SetPopupMenuCanceled(Delegate handler);
-    bool SetPopupMenuWillBecomeInvisible(Delegate handler);
-    bool SetPopupMenuWillBecomeVisible(Delegate handler);
-    bool SetPropertyNameChange(Delegate handler);
-    bool SetPropertyDescriptionChange(Delegate handler);
-    bool SetPropertyStateChange(Delegate handler);
-    bool SetPropertyValueChange(Delegate handler);
-    bool SetPropertySelectionChange(Delegate handler);
-    bool SetPropertyTextChange(Delegate handler);
-    bool SetPropertyCaretChange(Delegate handler);
-    bool SetPropertyVisibleDataChange(Delegate handler);
-    bool SetPropertyChildChange(Delegate handler);
-    bool SetPropertyActiveDescendentChange(Delegate handler);
-    bool SetPropertyTableModelChange(Delegate handler);
   }
+
+  /// <summary>
+  /// Platform agnostic abstraction over WindowAccessBridge DLL entry points
+  /// </summary>
+  public interface IAccessBridgeEvents {
+    event PropertyChangeEventHandler PropertyChange;
+    event JavaShutdownEventHandler JavaShutdown;
+    event FocusGainedEventHandler FocusGained;
+    event FocusLostEventHandler FocusLost;
+    event CaretUpdateEventHandler CaretUpdate;
+    event MouseClickedEventHandler MouseClicked;
+    event MouseEnteredEventHandler MouseEntered;
+    event MouseExitedEventHandler MouseExited;
+    event MousePressedEventHandler MousePressed;
+    event MouseReleasedEventHandler MouseReleased;
+    event MenuCanceledEventHandler MenuCanceled;
+    event MenuDeselectedEventHandler MenuDeselected;
+    event MenuSelectedEventHandler MenuSelected;
+    event PopupMenuCanceledEventHandler PopupMenuCanceled;
+    event PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible;
+    event PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible;
+    event PropertyNameChangeEventHandler PropertyNameChange;
+    event PropertyDescriptionChangeEventHandler PropertyDescriptionChange;
+    event PropertyStateChangeEventHandler PropertyStateChange;
+    event PropertyValueChangeEventHandler PropertyValueChange;
+    event PropertySelectionChangeEventHandler PropertySelectionChange;
+    event PropertyTextChangeEventHandler PropertyTextChange;
+    event PropertyCaretChangeEventHandler PropertyCaretChange;
+    event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange;
+    event PropertyChildChangeEventHandler PropertyChildChange;
+    event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange;
+    event PropertyTableModelChangeEventHandler PropertyTableModelChange;
+  }
+
+  public delegate void PropertyChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string property, string oldValue, string newValue);
+  public delegate void JavaShutdownEventHandler(int vmid);
+  public delegate void FocusGainedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void FocusLostEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void CaretUpdateEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MouseClickedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MouseEnteredEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MouseExitedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MousePressedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MouseReleasedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MenuCanceledEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MenuDeselectedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MenuSelectedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void PopupMenuCanceledEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void PopupMenuWillBecomeInvisibleEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void PopupMenuWillBecomeVisibleEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void PropertyNameChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldName, string newName);
+  public delegate void PropertyDescriptionChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldDescription, string newDescription);
+  public delegate void PropertyStateChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldState, string newState);
+  public delegate void PropertyValueChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldValue, string newValue);
+  public delegate void PropertySelectionChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void PropertyTextChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void PropertyCaretChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, int oldPosition, int newPosition);
+  public delegate void PropertyVisibleDataChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void PropertyChildChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldChild, JavaObjectHandle newChild);
+  public delegate void PropertyActiveDescendentChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldActiveDescendent, JavaObjectHandle newActiveDescendent);
+  public delegate void PropertyTableModelChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle src, string oldValue, string newValue);
+
+  /// <summary>
+  /// Platform agnostic abstraction over WindowAccessBridge DLL entry points
+  /// </summary>
+  public interface IAccessBridgeFunctionsTODO /*: IAccessBridgeFunctions*/ {
+    void Windows_run();
+    bool IsJavaWindow(WindowHandle window);
+    bool IsSameObject(int vmID, JavaObjectHandle obj1, JavaObjectHandle obj2);
+    bool GetAccessibleContextFromHWND(WindowHandle window, out int vmID, out JavaObjectHandle ac);
+    WindowHandle GetHWNDFromAccessibleContext(int vmID, JavaObjectHandle ac);
+    bool GetAccessibleContextAt(int vmID, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
+    bool GetAccessibleContextWithFocus(WindowHandle window, out int vmID, out JavaObjectHandle ac);
+    bool GetAccessibleContextInfo(int vmID, JavaObjectHandle ac, out AccessibleContextInfo info);
+    JavaObjectHandle GetAccessibleChildFromContext(int vmID, JavaObjectHandle ac, int i);
+    JavaObjectHandle GetAccessibleParentFromContext(int vmID, JavaObjectHandle ac);
+    bool GetAccessibleRelationSet(int vmID, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo);
+    bool GetAccessibleHypertext(int vmID, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo);
+    bool ActivateAccessibleHyperlink(int vmID, JavaObjectHandle accessibleContext, JavaObjectHandle accessibleHyperlink);
+    int GetAccessibleHyperlinkCount(int vmID, JavaObjectHandle accessibleContext);
+    bool GetAccessibleHypertextExt(int vmID, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo);
+    int GetAccessibleHypertextLinkIndex(int vmID, JavaObjectHandle hypertext, int nIndex);
+    bool GetAccessibleHyperlink(int vmID, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo);
+    bool GetAccessibleKeyBindings(int vmID, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings);
+    bool GetAccessibleIcons(int vmID, JavaObjectHandle accessibleContext, out AccessibleIcons icons);
+    bool GetAccessibleActions(int vmID, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions);
+    bool DoAccessibleActions(int vmID, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
+    bool GetAccessibleTextInfo(int vmID, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y);
+    bool GetAccessibleTextItems(int vmID, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index);
+    bool GetAccessibleTextSelectionInfo(int vmID, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection);
+    bool GetAccessibleTextAttributes(int vmID, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes);
+    bool GetAccessibleTextRect(int vmID, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index);
+    bool GetAccessibleTextLineBounds(int vmID, JavaObjectHandle at, int index, out int startIndex, out int endIndex);
+    bool GetAccessibleTextRange(int vmID, JavaObjectHandle at, int start, int end, StringBuilder text, short len);
+    bool GetCurrentAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len);
+    bool GetMaximumAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len);
+    bool GetMinimumAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len);
+    void AddAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i);
+    void ClearAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel);
+    JavaObjectHandle GetAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i);
+    int GetAccessibleSelectionCountFromContext(int vmID, JavaObjectHandle asel);
+    bool IsAccessibleChildSelectedFromContext(int vmID, JavaObjectHandle asel, int i);
+    void RemoveAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i);
+    void SelectAllAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel);
+    bool GetAccessibleTableInfo(int vmID, JavaObjectHandle ac, out AccessibleTableInfo tableInfo);
+    bool GetAccessibleTableCellInfo(int vmID, JavaObjectHandle accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo);
+    bool GetAccessibleTableRowHeader(int vmID, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
+    bool GetAccessibleTableColumnHeader(int vmID, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
+    JavaObjectHandle GetAccessibleTableRowDescription(int vmID, JavaObjectHandle acParent, int row);
+    JavaObjectHandle GetAccessibleTableColumnDescription(int vmID, JavaObjectHandle acParent, int column);
+    int GetAccessibleTableRowSelectionCount(int vmID, JavaObjectHandle table);
+    bool IsAccessibleTableRowSelected(int vmID, JavaObjectHandle table, int row);
+    bool GetAccessibleTableRowSelections(int vmID, JavaObjectHandle table, int count, [Out]int[] selections);
+    int GetAccessibleTableColumnSelectionCount(int vmID, JavaObjectHandle table);
+    bool IsAccessibleTableColumnSelected(int vmID, JavaObjectHandle table, int column);
+    bool GetAccessibleTableColumnSelections(int vmID, JavaObjectHandle table, int count, [Out]int[] selections);
+    int GetAccessibleTableRow(int vmID, JavaObjectHandle table, int index);
+    int GetAccessibleTableColumn(int vmID, JavaObjectHandle table, int index);
+    int GetAccessibleTableIndex(int vmID, JavaObjectHandle table, int row, int column);
+    bool SetTextContents(int vmID, JavaObjectHandle ac, string text);
+    JavaObjectHandle GetParentWithRole(int vmID, JavaObjectHandle ac, string role);
+    JavaObjectHandle GetParentWithRoleElseRoot(int vmID, JavaObjectHandle ac, string role);
+    JavaObjectHandle GetTopLevelObject(int vmID, JavaObjectHandle ac);
+    int GetObjectDepth(int vmID, JavaObjectHandle ac);
+    JavaObjectHandle GetActiveDescendent(int vmID, JavaObjectHandle ac);
+    bool GetVirtualAccessibleName(int vmID, JavaObjectHandle ac, StringBuilder name, int len);
+    bool GetTextAttributesInRange(int vmID, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len);
+    bool GetCaretLocation(int vmID, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
+    int GetVisibleChildrenCount(int vmID, JavaObjectHandle accessibleContext);
+    bool GetVisibleChildren(int vmID, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children);
+    bool GetVersionInfo(int vmID, out AccessBridgeVersionInfo info);
+    event PropertyChangeEventHandler PropertyChange;
+    event JavaShutdownEventHandler JavaShutdown;
+    event FocusGainedEventHandler FocusGained;
+    event FocusLostEventHandler FocusLost;
+    event CaretUpdateEventHandler CaretUpdate;
+    event MouseClickedEventHandler MouseClicked;
+    event MouseEnteredEventHandler MouseEntered;
+    event MouseExitedEventHandler MouseExited;
+    event MousePressedEventHandler MousePressed;
+    event MouseReleasedEventHandler MouseReleased;
+    event MenuCanceledEventHandler MenuCanceled;
+    event MenuDeselectedEventHandler MenuDeselected;
+    event MenuSelectedEventHandler MenuSelected;
+    event PopupMenuCanceledEventHandler PopupMenuCanceled;
+    event PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible;
+    event PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible;
+    event PropertyNameChangeEventHandler PropertyNameChange;
+    event PropertyDescriptionChangeEventHandler PropertyDescriptionChange;
+    event PropertyStateChangeEventHandler PropertyStateChange;
+    event PropertyValueChangeEventHandler PropertyValueChange;
+    event PropertySelectionChangeEventHandler PropertySelectionChange;
+    event PropertyTextChangeEventHandler PropertyTextChange;
+    event PropertyCaretChangeEventHandler PropertyCaretChange;
+    event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange;
+    event PropertyChildChangeEventHandler PropertyChildChange;
+    event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange;
+    event PropertyTableModelChangeEventHandler PropertyTableModelChange;
+  }
+
   /// <summary>
   /// Container of WindowAccessBridge DLL entry points
   /// </summary>

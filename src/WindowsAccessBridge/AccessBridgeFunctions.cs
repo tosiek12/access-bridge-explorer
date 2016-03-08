@@ -14,12 +14,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
 using System.Text;
-using BOOL = System.Int32;
 using HWND = System.IntPtr;
-using AccessibleContext = AccessBridgeExplorer.WindowsAccessBridge.JOBJECT64;
-using jint = System.Int32;
 
 namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// <summary>
@@ -28,10 +24,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// </summary>
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class AccessBridgeFunctions : IAccessBridgeFunctions {
-    private AccessBridgeLibraryFunctions _functions;
+    private readonly AccessBridgeLibraryFunctions _functions;
 
     public AccessBridgeFunctions(AccessBridgeLibraryFunctions functions) {
-      this._functions = functions;
+      _functions = functions;
     }
 
     #region IAccessBridgeFunctions implementation
@@ -315,114 +311,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     bool IAccessBridgeFunctions.GetVersionInfo(int vmID, out AccessBridgeVersionInfo info) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPropertyChange(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetJavaShutdown(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetFocusGained(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetFocusLost(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetCaretUpdate(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetMouseClicked(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetMouseEntered(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetMouseExited(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetMousePressed(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetMouseReleased(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetMenuCanceled(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetMenuDeselected(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetMenuSelected(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPopupMenuCanceled(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPopupMenuWillBecomeInvisible(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPopupMenuWillBecomeVisible(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPropertyNameChange(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPropertyDescriptionChange(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPropertyStateChange(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPropertyValueChange(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPropertySelectionChange(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPropertyTextChange(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPropertyCaretChange(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPropertyVisibleDataChange(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPropertyChildChange(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPropertyActiveDescendentChange(Delegate nativeEventHandler) {
-      throw new NotImplementedException();
-    }
-
-    bool IAccessBridgeFunctions.SetPropertyTableModelChange(Delegate nativeEventHandler) {
       throw new NotImplementedException();
     }
     #endregion

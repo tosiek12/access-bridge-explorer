@@ -212,41 +212,134 @@ namespace CodeGen.Interop {
 
     #region Event handling routines
 
-    event Action PropertyChange;
+    event PropertyChangeEventHandler PropertyChange;
 
-    event Action JavaShutdown;
+    event JavaShutdownEventHandler JavaShutdown;
 
-    event Action FocusGained;
-    event Action FocusLost;
+    event FocusGainedEventHandler FocusGained;
+    event FocusLostEventHandler FocusLost;
 
-    event Action CaretUpdate;
+    event CaretUpdateEventHandler CaretUpdate;
 
-    event Action MouseClicked;
-    event Action MouseEntered;
-    event Action MouseExited;
-    event Action MousePressed;
-    event Action MouseReleased;
+    event MouseClickedEventHandler MouseClicked;
+    event MouseEnteredEventHandler MouseEntered;
+    event MouseExitedEventHandler MouseExited;
+    event MousePressedEventHandler MousePressed;
+    event MouseReleasedEventHandler MouseReleased;
 
-    event Action MenuCanceled;
-    event Action MenuDeselected;
-    event Action MenuSelected;
-    event Action PopupMenuCanceled;
-    event Action PopupMenuWillBecomeInvisible;
-    event Action PopupMenuWillBecomeVisible;
+    event MenuCanceledEventHandler MenuCanceled;
+    event MenuDeselectedEventHandler MenuDeselected;
+    event MenuSelectedEventHandler MenuSelected;
+    event PopupMenuCanceledEventHandler PopupMenuCanceled;
+    event PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible;
+    event PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible;
 
-    event Action PropertyNameChange;
-    event Action PropertyDescriptionChange;
-    event Action PropertyStateChange;
-    event Action PropertyValueChange;
-    event Action PropertySelectionChange;
-    event Action PropertyTextChange;
-    event Action PropertyCaretChange;
-    event Action PropertyVisibleDataChange;
-    event Action PropertyChildChange;
-    event Action PropertyActiveDescendentChange;
+    event PropertyNameChangeEventHandler PropertyNameChange;
+    event PropertyDescriptionChangeEventHandler PropertyDescriptionChange;
+    event PropertyStateChangeEventHandler PropertyStateChange;
+    event PropertyValueChangeEventHandler PropertyValueChange;
+    event PropertySelectionChangeEventHandler PropertySelectionChange;
+    event PropertyTextChangeEventHandler PropertyTextChange;
+    event PropertyCaretChangeEventHandler PropertyCaretChange;
+    event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange;
+    event PropertyChildChangeEventHandler PropertyChildChange;
+    event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange;
 
-    event Action PropertyTableModelChange;
+    event PropertyTableModelChangeEventHandler PropertyTableModelChange;
 
     #endregion
   }
+
+  #region Managed Event Handlers Delegate Definitions
+
+  public delegate void PropertyChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    [MarshalAs(UnmanagedType.LPWStr)] string property,
+    [MarshalAs(UnmanagedType.LPWStr)] string oldValue,
+    [MarshalAs(UnmanagedType.LPWStr)] string newValue);
+
+  public delegate void JavaShutdownEventHandler(int vmid);
+
+  public delegate void FocusGainedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void FocusLostEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  public delegate void CaretUpdateEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  public delegate void MouseClickedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MouseEnteredEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MouseExitedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MousePressedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MouseReleasedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  public delegate void MenuCanceledEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MenuDeselectedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void MenuSelectedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void PopupMenuCanceledEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void PopupMenuWillBecomeInvisibleEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  public delegate void PopupMenuWillBecomeVisibleEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  public delegate void PropertyNameChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    [MarshalAs(UnmanagedType.LPWStr)] string oldName,
+    [MarshalAs(UnmanagedType.LPWStr)] string newName);
+
+  public delegate void PropertyDescriptionChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    [MarshalAs(UnmanagedType.LPWStr)] string oldDescription,
+    [MarshalAs(UnmanagedType.LPWStr)] string newDescription);
+
+  public delegate void PropertyStateChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    [MarshalAs(UnmanagedType.LPWStr)] string oldState,
+    [MarshalAs(UnmanagedType.LPWStr)] string newState);
+
+  public delegate void PropertyValueChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    [MarshalAs(UnmanagedType.LPWStr)] string oldValue,
+    [MarshalAs(UnmanagedType.LPWStr)] string newValue);
+
+  public delegate void PropertySelectionChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  public delegate void PropertyTextChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  public delegate void PropertyCaretChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    int oldPosition,
+    int newPosition);
+
+  public delegate void PropertyVisibleDataChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  public delegate void PropertyChildChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    JavaObjectHandle oldChild,
+    JavaObjectHandle newChild);
+
+  public delegate void PropertyActiveDescendentChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    JavaObjectHandle oldActiveDescendent,
+    JavaObjectHandle newActiveDescendent);
+
+  public delegate void PropertyTableModelChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle src,
+    [MarshalAs(UnmanagedType.LPWStr)] string oldValue,
+    [MarshalAs(UnmanagedType.LPWStr)] string newValue);
+  #endregion
 }

@@ -21,5 +21,6 @@ namespace CodeGen.Definitions {
   public class EventDefinition {
     public string Name { get; set; }
     public TypeReference Type { get; set; }
+    public FunctionDefinition DelegateFunction { get; set; }
   }
 }
