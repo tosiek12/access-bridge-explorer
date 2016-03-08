@@ -55,12 +55,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     public override AccessibleNode GetParent() {
       ThrowIfDisposed();
-      var parentAc = new JavaObjectHandle(JvmId, AccessBridge.Functions.GetAccessibleParentFromContext(JvmId, _ac.Handle));
+      var parentAc = AccessBridge.Functions.GetAccessibleParentFromContext(JvmId, _ac);
       if (parentAc.IsNull) {
         return null;
       }
 
-      var hwnd = AccessBridge.Functions.GetHWNDFromAccessibleContext(JvmId, parentAc.Handle);
+      var hwnd = AccessBridge.Functions.GetHWNDFromAccessibleContext(JvmId, parentAc);
       if (hwnd != IntPtr.Zero) {
         return new AccessibleWindow(AccessBridge, hwnd, parentAc);
       }
@@ -78,7 +78,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       _childList.Clear();
 
       AccessibleContextInfo info;
-      if (Failed(AccessBridge.Functions.GetAccessibleContextInfo(JvmId, _ac.Handle, out info))) {
+      if (Failed(AccessBridge.Functions.GetAccessibleContextInfo(JvmId, _ac, out info))) {
         throw new ApplicationException("Error retrieving accessible context info");
       }
       _childList.AddRange(Enumerable.Range(0, info.childrenCount).Select(i => new Lazy<AccessibleNode>(() => FetchChildNode(i))));
@@ -101,12 +101,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
 #endif
 
-      var childContextPtr = AccessBridge.Functions.GetAccessibleChildFromContext(JvmId, _ac.Handle, i);
-      if (childContextPtr == JOBJECT64.Zero) {
+      var childhandle = AccessBridge.Functions.GetAccessibleChildFromContext(JvmId, _ac, i);
+      if (childhandle.IsNull) {
         throw new ApplicationException(string.Format("Error retrieving accessible context for child {0}", i));
       }
 
-      var result = new AccessibleContextNode(AccessBridge, new JavaObjectHandle(JvmId, childContextPtr));
+      var result = new AccessibleContextNode(AccessBridge, childhandle);
       if (_isManagedDescendant || _info.Value.states.Contains("manages descendants")) {
         result.SetManagedDescendant(true);
       }
@@ -127,14 +127,14 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
       // Note that if the table only supports entire row selection, this call
       // may end up selecting an entire row.
-      AccessBridge.Functions.ClearAccessibleSelectionFromContext(JvmId, _ac.Handle);
-      AccessBridge.Functions.AddAccessibleSelectionFromContext(JvmId, _ac.Handle, childIndex);
+      AccessBridge.Functions.ClearAccessibleSelectionFromContext(JvmId, _ac);
+      AccessBridge.Functions.AddAccessibleSelectionFromContext(JvmId, _ac, childIndex);
       childNode = FindNodeInSelection(childIndex);
       if (childNode != null)
         return childNode;
 
-      var row = AccessBridge.Functions.GetAccessibleTableRow(JvmId, _ac.Handle, childIndex);
-      var col = AccessBridge.Functions.GetAccessibleTableColumn(JvmId, _ac.Handle, childIndex);
+      var row = AccessBridge.Functions.GetAccessibleTableRow(JvmId, _ac, childIndex);
+      var col = AccessBridge.Functions.GetAccessibleTableColumn(JvmId, _ac, childIndex);
 
       throw new ApplicationException(string.Format("Error retrieving accessible context for cell [{0},{1}]", row, col));
     }
@@ -145,11 +145,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     /// <code>null</code> if there is no such child in the selection.
     /// </summary>
     private AccessibleContextNode FindNodeInSelection(int childIndex) {
-      var selCount = AccessBridge.Functions.GetAccessibleSelectionCountFromContext(JvmId, _ac.Handle);
+      var selCount = AccessBridge.Functions.GetAccessibleSelectionCountFromContext(JvmId, _ac);
       if (selCount > 0) {
         for (var selIndex = 0; selIndex < selCount; selIndex++) {
-          var selectedContext = new JavaObjectHandle(JvmId,
-            AccessBridge.Functions.GetAccessibleSelectionFromContext(JvmId, _ac.Handle, selIndex));
+          var selectedContext = AccessBridge.Functions.GetAccessibleSelectionFromContext(JvmId, _ac, selIndex);
           if (!selectedContext.IsNull) {
             var selectedNode = new AccessibleContextNode(AccessBridge, selectedContext);
             if (selectedNode.GetInfo().indexInParent == childIndex) {
@@ -214,19 +213,18 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     /// <summary>
-    /// Experimental implementation using <see cref="AccessBridgeFunctions.GetAccessibleContextAt"/>
+    /// Experimental implementation using <see cref="IAccessBridgeFunctions.GetAccessibleContextAt"/>
     /// </summary>
     private NodePath GetNodePathAtUsingAccessBridge(Point screenPoint) {
-      JOBJECT64 childContextHandle;
-      if (Failed(AccessBridge.Functions.GetAccessibleContextAt(JvmId, _ac.Handle, screenPoint.X, screenPoint.Y, out childContextHandle))) {
+      JavaObjectHandle childHandle;
+      if (Failed(AccessBridge.Functions.GetAccessibleContextAt(JvmId, _ac, screenPoint.X, screenPoint.Y, out childHandle))) {
         return null;
       }
 
-      if (childContextHandle == JOBJECT64.Zero) {
+      if (childHandle.IsNull) {
         return null;
       }
 
-      var childHandle = new JavaObjectHandle(JvmId, childContextHandle);
       var childNode = new AccessibleContextNode(AccessBridge, childHandle);
       Debug.WriteLine("Child found: {0}-{1}-{2}-{3}", childNode.GetInfo().x, childNode.GetInfo().y,
         childNode.GetInfo().width, childNode.GetInfo().height);
@@ -289,7 +287,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     private void AddTopLevelWindowProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.TopLevelWindowInfo) != 0) {
-        var topLevel = new JavaObjectHandle(JvmId, AccessBridge.Functions.GetTopLevelObject(JvmId, _ac.Handle));
+        var topLevel = AccessBridge.Functions.GetTopLevelObject(JvmId, _ac);
         if (!topLevel.IsNull) {
           var group = list.AddGroup("Top level window");
           group.Expanded = false;
@@ -300,7 +298,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     private void AddParentContextProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.ParentContext) != 0) {
-        var parentContext = new JavaObjectHandle(JvmId, AccessBridge.Functions.GetAccessibleParentFromContext(JvmId, _ac.Handle));
+        var parentContext = AccessBridge.Functions.GetAccessibleParentFromContext(JvmId, _ac);
         if (!parentContext.IsNull) {
           var group = list.AddGroup("Parent");
           group.Expanded = false;
@@ -311,7 +309,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     private void AddActiveDescendentProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.ActiveDescendent) != 0) {
-        var context = new JavaObjectHandle(JvmId, AccessBridge.Functions.GetActiveDescendent(JvmId, _ac.Handle));
+        var context = AccessBridge.Functions.GetActiveDescendent(JvmId, _ac);
         if (!context.IsNull) {
           var group = list.AddGroup("Active Descendent");
           group.Expanded = false;
@@ -324,13 +322,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       if ((options & PropertyOptions.AccessibleSelection) != 0) {
         var info = GetInfo();
         if (info.accessibleSelection != 0) {
-          var selCount = AccessBridge.Functions.GetAccessibleSelectionCountFromContext(JvmId, _ac.Handle);
+          var selCount = AccessBridge.Functions.GetAccessibleSelectionCountFromContext(JvmId, _ac);
           var group = list.AddGroup("Selections", selCount);
           group.Expanded = false;
           if (selCount > 0) {
             for (var i = 0; i < selCount; i++) {
               var selGroup = group.AddGroup(string.Format("Selection {0} of {1}", i + 1, selCount));
-              var selectedContext = new JavaObjectHandle(JvmId, AccessBridge.Functions.GetAccessibleSelectionFromContext(JvmId, _ac.Handle, i));
+              var selectedContext = AccessBridge.Functions.GetAccessibleSelectionFromContext(JvmId, _ac, i);
               if (selectedContext.IsNull) {
                 selGroup.AddProperty(string.Format("Selection {0} of {1}", i + 1, selCount), "<Error>");
               } else {
@@ -345,7 +343,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     private void AddKeyBindingsProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleKeyBindings) != 0) {
         AccessibleKeyBindings keyBindings;
-        if (Succeeded(AccessBridge.Functions.GetAccessibleKeyBindings(JvmId, _ac.Handle, out keyBindings))) {
+        if (Succeeded(AccessBridge.Functions.GetAccessibleKeyBindings(JvmId, _ac, out keyBindings))) {
           if (keyBindings.keyBindingsCount > 0) {
             var group = list.AddGroup("Key Bindings", keyBindings.keyBindingsCount);
             group.Expanded = false;
@@ -362,7 +360,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     private void AddIconsProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleIcons) != 0) {
         AccessibleIcons icons;
-        if (Succeeded(AccessBridge.Functions.GetAccessibleIcons(JvmId, _ac.Handle, out icons))) {
+        if (Succeeded(AccessBridge.Functions.GetAccessibleIcons(JvmId, _ac, out icons))) {
           if (icons.iconsCount > 0) {
             var group = list.AddGroup("Icons", icons.iconsCount);
             group.Expanded = false;
@@ -379,7 +377,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     private void AddActionProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleActions) != 0) {
         AccessibleActions actions = new AccessibleActions();
-        if (Succeeded(AccessBridge.Functions.GetAccessibleActions(JvmId, _ac.Handle, actions))) {
+        if (Succeeded(AccessBridge.Functions.GetAccessibleActions(JvmId, _ac, actions))) {
           if (actions.actionsCount > 0) {
             var group = list.AddGroup("Actions", actions.actionsCount);
             group.Expanded = false;
@@ -397,12 +395,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     private void AddVisibleDescendentsProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.VisibleChildren) != 0) {
-        var visibleCount = AccessBridge.Functions.GetVisibleChildrenCount(JvmId, _ac.Handle);
+        var visibleCount = AccessBridge.Functions.GetVisibleChildrenCount(JvmId, _ac);
         if (visibleCount > 0) {
           var group = list.AddGroup("Visible Children", visibleCount);
           group.Expanded = false;
           VisibleChildrenInfo childrenInfo;
-          if (AccessBridge.Functions.GetVisibleChildren(JvmId, _ac.Handle, 0, out childrenInfo) != 0) {
+          if (Succeeded(AccessBridge.Functions.GetVisibleChildren(JvmId, _ac, 0, out childrenInfo))) {
             var handles = Enumerable
               .Range(0, childrenInfo.returnedChildrenCount)
               .Select(i => new JavaObjectHandle(JvmId, childrenInfo.children[i]))
@@ -423,7 +421,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     private void AddRelationSetProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleRelationSet) != 0) {
         AccessibleRelationSetInfo relationSetInfo;
-        if (Succeeded(AccessBridge.Functions.GetAccessibleRelationSet(JvmId, _ac.Handle, out relationSetInfo))) {
+        if (Succeeded(AccessBridge.Functions.GetAccessibleRelationSet(JvmId, _ac, out relationSetInfo))) {
           if (relationSetInfo.relationCount > 0) {
             // Note: Create safe handles as soon as possible
             var handles = Enumerable
@@ -462,13 +460,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           group.Expanded = false;
 
           var sb = new StringBuilder(TextBufferSize);
-          if (Succeeded(AccessBridge.Functions.GetCurrentAccessibleValueFromContext(JvmId, _ac.Handle, sb, (short)sb.Capacity))) {
+          if (Succeeded(AccessBridge.Functions.GetCurrentAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
             group.AddProperty("Current", sb);
           }
-          if (Succeeded(AccessBridge.Functions.GetMaximumAccessibleValueFromContext(JvmId, _ac.Handle, sb, (short)sb.Capacity))) {
+          if (Succeeded(AccessBridge.Functions.GetMaximumAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
             group.AddProperty("Maximum", sb);
           }
-          if (Succeeded(AccessBridge.Functions.GetMinimumAccessibleValueFromContext(JvmId, _ac.Handle, sb, (short)sb.Capacity))) {
+          if (Succeeded(AccessBridge.Functions.GetMinimumAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
             group.AddProperty("Minimum", sb);
           }
         }
@@ -502,7 +500,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           var group = list.AddGroup("Table");
           group.Expanded = false;
           AccessibleTableInfo tableInfoNative;
-          if (Failed(AccessBridge.Functions.GetAccessibleTableInfo(JvmId, _ac.Handle, out tableInfoNative))) {
+          if (Failed(AccessBridge.Functions.GetAccessibleTableInfo(JvmId, _ac, out tableInfoNative))) {
             group.AddProperty("Error", "Error retrieving table info");
           } else {
             var tableInfo = WrapTableInfo(tableInfoNative);
@@ -523,7 +521,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             var columnHeaderGroup = group.AddGroup("Column Header");
             columnHeaderGroup.Expanded = false;
             AccessibleTableInfo columnInfoNative;
-            if (Failed(AccessBridge.Functions.GetAccessibleTableColumnHeader(JvmId, _ac.Handle, out columnInfoNative))) {
+            if (Failed(AccessBridge.Functions.GetAccessibleTableColumnHeader(JvmId, _ac, out columnInfoNative))) {
               columnHeaderGroup.AddProperty("Error", "Error retrieving column header info");
             } else {
               var columnInfo = WrapTableInfo(columnInfoNative);
@@ -540,7 +538,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             var rowHeaderGroup = group.AddGroup("Row Header");
             rowHeaderGroup.Expanded = false;
             AccessibleTableInfo rowInfoNative;
-            if (Failed(AccessBridge.Functions.GetAccessibleTableRowHeader(JvmId, _ac.Handle, out rowInfoNative))) {
+            if (Failed(AccessBridge.Functions.GetAccessibleTableRowHeader(JvmId, _ac, out rowInfoNative))) {
               rowHeaderGroup.AddProperty("Error", "Error retrieving column header info");
             } else {
               var rowInfo = WrapTableInfo(rowInfoNative);
@@ -548,12 +546,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             }
 
             // Get the selected columns
-            var numColSelections = AccessBridge.Functions.GetAccessibleTableColumnSelectionCount(JvmId, tableInfo.AccessibleTable.Handle);
+            var numColSelections = AccessBridge.Functions.GetAccessibleTableColumnSelectionCount(JvmId, tableInfo.AccessibleTable);
             var selColGroup = group.AddGroup("Column selections", numColSelections);
             selColGroup.Expanded = false;
             if (numColSelections > 0) {
               var selections = new int[numColSelections];
-              if (Failed(AccessBridge.Functions.GetAccessibleTableColumnSelections(JvmId, tableInfo.AccessibleTable.Handle, numColSelections, selections))) {
+              if (Failed(AccessBridge.Functions.GetAccessibleTableColumnSelections(JvmId, tableInfo.AccessibleTable, numColSelections, selections))) {
                 selColGroup.AddProperty("Error", "Error getting column selections");
               } else {
                 for (var j = 0; j < numColSelections; j++) {
@@ -563,12 +561,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             }
 
             // Get the selected rows
-            var numRowSelections = AccessBridge.Functions.GetAccessibleTableRowSelectionCount(JvmId, tableInfo.AccessibleTable.Handle);
+            var numRowSelections = AccessBridge.Functions.GetAccessibleTableRowSelectionCount(JvmId, tableInfo.AccessibleTable);
             var selRowGroup = group.AddGroup("Row selections", numRowSelections);
             selRowGroup.Expanded = false;
             if (numRowSelections > 0) {
               var selections = new int[numRowSelections];
-              if (Failed(AccessBridge.Functions.GetAccessibleTableRowSelections(JvmId, tableInfo.AccessibleTable.Handle, numRowSelections, selections))) {
+              if (Failed(AccessBridge.Functions.GetAccessibleTableRowSelections(JvmId, tableInfo.AccessibleTable, numRowSelections, selections))) {
                 selRowGroup.AddProperty("Error", "Error getting row selections");
               } else {
                 for (var j = 0; j < numRowSelections; j++) {
@@ -587,7 +585,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
                   AccessibleTableCellInfo tableCellInfo;
                   if (Failed(AccessBridge.Functions.GetAccessibleTableCellInfo(tableInfo.AccessibleTable.JvmId,
-                      tableInfo.AccessibleTable.Handle, rowIndex, colunmnIndex, out tableCellInfo))) {
+                      tableInfo.AccessibleTable, rowIndex, colunmnIndex, out tableCellInfo))) {
                     cellGroup.AddProperty("Error", "Error retrieving cell info");
                   } else {
                     var cellHandle = new JavaObjectHandle(tableInfo.AccessibleTable.JvmId,
@@ -623,14 +621,14 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           group.Expanded = false;
 
           AccessibleTextInfo textInfo;
-          if (Succeeded(AccessBridge.Functions.GetAccessibleTextInfo(JvmId, _ac.Handle, out textInfo, x, y))) {
+          if (Succeeded(AccessBridge.Functions.GetAccessibleTextInfo(JvmId, _ac, out textInfo, x, y))) {
             group.AddProperty("Mouse point at text index", textInfo.indexAtPoint);
             group.AddProperty("Caret at text index", textInfo.caretIndex);
             group.AddProperty("Char count", textInfo.charCount);
           }
 
           AccessibleTextSelectionInfo textSelection;
-          if (Succeeded(AccessBridge.Functions.GetAccessibleTextSelectionInfo(JvmId, _ac.Handle, out textSelection))) {
+          if (Succeeded(AccessBridge.Functions.GetAccessibleTextSelectionInfo(JvmId, _ac, out textSelection))) {
             group.AddProperty("Selection start index", textSelection.selectionStartIndex);
             group.AddProperty("Selection end index", textSelection.selectionEndIndex);
             group.AddProperty("Selected text", textSelection.selectedText);
@@ -658,7 +656,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
         AccessibleHypertextInfo hyperTextInfo;
 #if true
-        if (Failed(AccessBridge.Functions.GetAccessibleHypertextExt(JvmId, _ac.Handle, 0, out hyperTextInfo))) {
+        if (Failed(AccessBridge.Functions.GetAccessibleHypertextExt(JvmId, _ac, 0, out hyperTextInfo))) {
           group.AddProperty("Error", "No hyper text data");
           return;
         }
@@ -685,22 +683,22 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     private void AddTextAttributeAtIndex(PropertyList list, int index) {
       AccessibleTextRectInfo rectInfo;
-      if (Succeeded(AccessBridge.Functions.GetAccessibleTextRect(JvmId, _ac.Handle, out rectInfo, index))) {
+      if (Succeeded(AccessBridge.Functions.GetAccessibleTextRect(JvmId, _ac, out rectInfo, index))) {
         list.AddProperty("Character bounding rectangle:", string.Format("[{0},{1},{2},{3}]", rectInfo.x, rectInfo.y, rectInfo.width, rectInfo.height));
       }
 
       int start;
       int end;
-      if (Succeeded(AccessBridge.Functions.GetAccessibleTextLineBounds(JvmId, _ac.Handle, index, out start, out end))) {
+      if (Succeeded(AccessBridge.Functions.GetAccessibleTextLineBounds(JvmId, _ac, index, out start, out end))) {
         list.AddProperty("Line bounds", string.Format("[{0},{1}]", start, end));
         var sb = new StringBuilder(TextBufferSize);
-        if (Succeeded(AccessBridge.Functions.GetAccessibleTextRange(JvmId, _ac.Handle, start, end, sb, (short)sb.Capacity))) {
+        if (Succeeded(AccessBridge.Functions.GetAccessibleTextRange(JvmId, _ac, start, end, sb, (short)sb.Capacity))) {
           list.AddProperty("Line text", sb);
         }
       }
 
       AccessibleTextItemsInfo textItems;
-      if (Succeeded(AccessBridge.Functions.GetAccessibleTextItems(JvmId, _ac.Handle, out textItems, index))) {
+      if (Succeeded(AccessBridge.Functions.GetAccessibleTextItems(JvmId, _ac, out textItems, index))) {
         list.AddProperty("Character", textItems.letter);
         list.AddProperty("Word", textItems.word);
         list.AddProperty("Sentence", textItems.sentence);
@@ -709,7 +707,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       /* ===== AccessibleText attributes ===== */
 
       AccessibleTextAttributesInfo attributeInfo;
-      if (Succeeded(AccessBridge.Functions.GetAccessibleTextAttributes(JvmId, _ac.Handle, index, out attributeInfo))) {
+      if (Succeeded(AccessBridge.Functions.GetAccessibleTextAttributes(JvmId, _ac, index, out attributeInfo))) {
         list.AddProperty("Core attributes", (attributeInfo.bold != 0 ? "bold" : "not bold") + ", " +
                                             (attributeInfo.italic != 0 ? "italic" : "not italic") + ", " +
                                             (attributeInfo.underline != 0 ? "underline" : "not underline") + ", " +
@@ -731,7 +729,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
         // get the attribute run length
         short runLength;
-        if (Succeeded(AccessBridge.Functions.GetTextAttributesInRange(JvmId, _ac.Handle, index, index + 100, out attributeInfo, out runLength))) {
+        if (Succeeded(AccessBridge.Functions.GetTextAttributesInRange(JvmId, _ac, index, index + 100, out attributeInfo, out runLength))) {
           list.AddProperty("Attribute run", runLength);
         } else {
           list.AddProperty("Attribute run", "<Error>");
@@ -741,7 +739,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     private void AddContextProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.ObjectDepth) != 0) {
-        var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac.Handle);
+        var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
         list.AddProperty("Object Depth", depth);
       }
 
@@ -773,7 +771,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     private void AddSubContextProperties(PropertyList list, PropertyOptions options, AccessibleContextNode contextNode) {
       try {
         if ((options & PropertyOptions.ObjectDepth) != 0) {
-          var depth = AccessBridge.Functions.GetObjectDepth(contextNode.JvmId, contextNode._ac.Handle);
+          var depth = AccessBridge.Functions.GetObjectDepth(contextNode.JvmId, contextNode._ac);
           list.AddProperty("Object Depth", depth);
         }
 
@@ -813,28 +811,28 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       if (!(other is AccessibleContextNode))
         return false;
 
-      return AccessBridge.Functions.IsSameObject(JvmId, _ac.Handle, ((AccessibleContextNode)other)._ac.Handle) != 0;
+      return AccessBridge.Functions.IsSameObject(JvmId, _ac, ((AccessibleContextNode)other)._ac);
     }
 
     /// <summary>
     /// Call the custom function <see
-    /// cref="AccessBridgeFunctions.GetVirtualAccessibleName"/> to retrieve the
+    /// cref="IAccessBridgeFunctions.GetVirtualAccessibleName"/> to retrieve the
     /// spoken name of an accessible component supposedly according to the
     /// algorithm used by the Jaws screen reader.
     /// </summary>
     private string GetVirtualAccessibleName() {
       var sb = new StringBuilder(TextBufferSize);
-      if (Failed(AccessBridge.Functions.GetVirtualAccessibleName(JvmId, _ac.Handle, sb, sb.Capacity))) {
+      if (Failed(AccessBridge.Functions.GetVirtualAccessibleName(JvmId, _ac, sb, sb.Capacity))) {
         return "<Error>";
       }
       return sb.ToString();
     }
 
-    private static bool Failed(int accessBridgeReturnValue) {
-      return accessBridgeReturnValue == 0;
+    private static bool Failed(bool accessBridgeReturnValue) {
+      return accessBridgeReturnValue == false;
     }
 
-    private static bool Succeeded(int accessBridgeReturnValue) {
+    private static bool Succeeded(bool accessBridgeReturnValue) {
       return !Failed(accessBridgeReturnValue);
     }
 

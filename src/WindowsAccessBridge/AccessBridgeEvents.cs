@@ -17,7 +17,14 @@ using System.Runtime.InteropServices;
 
 namespace AccessBridgeExplorer.WindowsAccessBridge {
   #region Managed Event Handlers Delegate Definitions
-  public delegate void PropertyChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
+
+  public delegate void PropertyChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    [MarshalAs(UnmanagedType.LPWStr)] string property,
+    [MarshalAs(UnmanagedType.LPWStr)] string oldValue,
+    [MarshalAs(UnmanagedType.LPWStr)] string newValue);
 
   public delegate void JavaShutdownEventHandler(int vmid);
 
@@ -39,18 +46,67 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   public delegate void PopupMenuWillBecomeInvisibleEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
   public delegate void PopupMenuWillBecomeVisibleEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
 
-  public delegate void PropertyNameChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName);
-  public delegate void PropertyDescriptionChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription);
-  public delegate void PropertyStateChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState);
-  public delegate void PropertyValueChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
-  public delegate void PropertySelectionChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
-  public delegate void PropertyTextChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
-  public delegate void PropertyCaretChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, int oldPosition, int newPosition);
-  public delegate void PropertyVisibleDataChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
-  public delegate void PropertyChildChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldChild, JavaObjectHandle newChild);
-  public delegate void PropertyActiveDescendentChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldActiveDescendent, JavaObjectHandle newActiveDescendent);
+  public delegate void PropertyNameChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    [MarshalAs(UnmanagedType.LPWStr)] string oldName,
+    [MarshalAs(UnmanagedType.LPWStr)] string newName);
 
-  public delegate void PropertyTableModelChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
+  public delegate void PropertyDescriptionChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    [MarshalAs(UnmanagedType.LPWStr)] string oldDescription,
+    [MarshalAs(UnmanagedType.LPWStr)] string newDescription);
+
+  public delegate void PropertyStateChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    [MarshalAs(UnmanagedType.LPWStr)] string oldState,
+    [MarshalAs(UnmanagedType.LPWStr)] string newState);
+
+  public delegate void PropertyValueChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    [MarshalAs(UnmanagedType.LPWStr)] string oldValue,
+    [MarshalAs(UnmanagedType.LPWStr)] string newValue);
+
+  public delegate void PropertySelectionChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  public delegate void PropertyTextChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  public delegate void PropertyCaretChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    int oldPosition,
+    int newPosition);
+
+  public delegate void PropertyVisibleDataChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  public delegate void PropertyChildChange(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    JavaObjectHandle oldChild,
+    JavaObjectHandle newChild);
+
+  public delegate void PropertyActiveDescendentChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle source,
+    JavaObjectHandle oldActiveDescendent,
+    JavaObjectHandle newActiveDescendent);
+
+  public delegate void PropertyTableModelChangeEventHandler(
+    int vmid,
+    JavaObjectHandle evt,
+    JavaObjectHandle src,
+    [MarshalAs(UnmanagedType.LPWStr)] string oldValue,
+    [MarshalAs(UnmanagedType.LPWStr)] string newValue);
   #endregion
 
   /// <summary>

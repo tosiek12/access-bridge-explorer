@@ -27,14 +27,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// </summary>
   public class AccessBridge : IDisposable {
     private UnmanagedLibrary _library;
-    private AccessBridgeFunctions _functions;
+    private IAccessBridgeFunctions _functions;
     private AccessBridgeEvents _events;
     private bool _disposed;
 
-    public AccessBridge() {
-    }
-
-    public AccessBridgeFunctions Functions {
+    public IAccessBridgeFunctions Functions {
       get {
         ThrowIfDisposed();
         Initialize();
@@ -106,12 +103,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       try {
         var windows = new List<AccessibleWindow>();
         var success = Win32.NativeMethods.EnumWindows((hWnd, lParam) => {
-          var rc = Functions.IsJavaWindow(hWnd);
-          if (rc != 0) {
+          if (Functions.IsJavaWindow(hWnd)) {
             int vmId;
-            JOBJECT64 ac;
-            if (Functions.GetAccessibleContextFromHWND(hWnd, out vmId, out ac) != 0) {
-              windows.Add(new AccessibleWindow(this, hWnd, new JavaObjectHandle(vmId, ac)));
+            JavaObjectHandle ac;
+            if (Functions.GetAccessibleContextFromHWND(hWnd, out vmId, out ac)) {
+              windows.Add(new AccessibleWindow(this, hWnd, ac));
             }
           }
           return true;
@@ -162,8 +158,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
-    private static AccessBridgeFunctions LoadFunctions(UnmanagedLibrary library) {
-      var functions = new AccessBridgeFunctions();
+    private static IAccessBridgeFunctions LoadFunctions(UnmanagedLibrary library) {
+      var functions = new AccessBridgeFunctionsNative();
       var publicMembers = BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance;
       foreach (var property in functions.GetType().GetProperties(publicMembers)) {
         var name = property.Name;

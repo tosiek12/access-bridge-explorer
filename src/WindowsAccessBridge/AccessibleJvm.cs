@@ -80,7 +80,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     protected override void AddProperties(PropertyList list, PropertyOptions options) {
       list.AddProperty("JVM id", JvmId);
       AccessBridgeVersionInfo versionInfo;
-      if (AccessBridge.Functions.GetVersionInfo(JvmId, out versionInfo) != 0) {
+      if (AccessBridge.Functions.GetVersionInfo(JvmId, out versionInfo)) {
         list.AddProperty("JVM version", versionInfo.VMversion);
         list.AddProperty("AccessBridge.class version", versionInfo.bridgeJavaClassVersion);
         list.AddProperty("JavaAccessBridge.dll version", versionInfo.bridgeJavaDLLVersion);
