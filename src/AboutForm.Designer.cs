@@ -125,6 +125,8 @@ namespace AccessBridgeExplorer {
       // 
       // githubUrlLinkLabel
       // 
+      this.githubUrlLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.githubUrlLinkLabel.Location = new System.Drawing.Point(13, 61);
       this.githubUrlLinkLabel.Margin = new System.Windows.Forms.Padding(0);
       this.githubUrlLinkLabel.Name = "githubUrlLinkLabel";
@@ -152,6 +154,8 @@ namespace AccessBridgeExplorer {
       // 
       // groupBox1
       // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.label1);
@@ -203,7 +207,7 @@ namespace AccessBridgeExplorer {
       this.accessBridgeVersionText.Location = new System.Drawing.Point(57, 57);
       this.accessBridgeVersionText.Name = "accessBridgeVersionText";
       this.accessBridgeVersionText.ReadOnly = true;
-      this.accessBridgeVersionText.Size = new System.Drawing.Size(475, 13);
+      this.accessBridgeVersionText.Size = new System.Drawing.Size(464, 13);
       this.accessBridgeVersionText.TabIndex = 5;
       this.accessBridgeVersionText.Text = "(accessbridge version)";
       // 
@@ -218,7 +222,7 @@ namespace AccessBridgeExplorer {
       this.accessBridgePathText.Location = new System.Drawing.Point(57, 19);
       this.accessBridgePathText.Name = "accessBridgePathText";
       this.accessBridgePathText.ReadOnly = true;
-      this.accessBridgePathText.Size = new System.Drawing.Size(475, 13);
+      this.accessBridgePathText.Size = new System.Drawing.Size(464, 13);
       this.accessBridgePathText.TabIndex = 1;
       this.accessBridgePathText.Text = "(accessbridge path)";
       // 
@@ -233,7 +237,7 @@ namespace AccessBridgeExplorer {
       this.accessBridgeProductText.Location = new System.Drawing.Point(57, 38);
       this.accessBridgeProductText.Name = "accessBridgeProductText";
       this.accessBridgeProductText.ReadOnly = true;
-      this.accessBridgeProductText.Size = new System.Drawing.Size(475, 13);
+      this.accessBridgeProductText.Size = new System.Drawing.Size(464, 13);
       this.accessBridgeProductText.TabIndex = 3;
       this.accessBridgeProductText.Text = "(accessbridge product)";
       // 
