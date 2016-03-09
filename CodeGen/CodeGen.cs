@@ -75,8 +75,12 @@ namespace CodeGen {
           WriteApplicationClasses(model, writer, sourceWriter);
           WriteApplicationFunctionsClass(model, sourceWriter);
           WriteApplicationEventsClass(model, sourceWriter);
+
           sourceWriter.IsNativeTypes = true;
           WriteLibraryFunctionsClass(model, sourceWriter);
+          sourceWriter.IsLegacy = true;
+          WriteLibraryFunctionsClass(model, sourceWriter);
+          sourceWriter.IsLegacy = false;
           WriteLibraryEventsClass(model, sourceWriter);
           WriteLibraryStructs(model, sourceWriter, writer);
           WriteLibraryClasses(model, writer, sourceWriter);
@@ -257,7 +261,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Container of WindowAccessBridge DLL entry points");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public class AccessBridgeLibraryFunctions {{");
+      sourceWriter.WriteLine("public class AccessBridgeLibraryFunctions{0} {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine("#region Functions");
@@ -299,6 +303,10 @@ namespace CodeGen {
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
       sourceWriter.WriteLine();
+    }
+
+    public string GetLegacySuffix(SourceCodeWriter sourceWriter) {
+        return sourceWriter.IsLegacy ? "Legacy" : ""; 
     }
 
     private void WriteLibraryEventsClass(LibraryDefinition model, SourceCodeWriter sourceWriter) {

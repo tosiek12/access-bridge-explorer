@@ -148,6 +148,7 @@
     <Compile Include="WindowsAccessBridge\AccessBridgeEvents.cs" />
     <Compile Include="WindowsAccessBridge\AccessBridgeFunctions.cs" />
     <Compile Include="WindowsAccessBridge\Generated.cs" />
+    <Compile Include="WindowsAccessBridge\JOBJECT32.cs" />
     <Compile Include="WindowsAccessBridge\JOBJECT64.cs" />
     <Compile Include="WindowsAccessBridge\AccessibleContextNode.cs" />
     <Compile Include="WindowsAccessBridge\AccessibleJvm.cs" />

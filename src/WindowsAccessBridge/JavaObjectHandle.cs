@@ -29,11 +29,22 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   public class JavaObjectHandle : IDisposable {
     private readonly int _jvmId;
     private readonly JOBJECT64 _handle;
+    private readonly bool _isLegacy;
     private bool _disposed;
 
     public JavaObjectHandle(int jvmId, JOBJECT64 handle) {
       _jvmId = jvmId;
       _handle = handle;
+      _isLegacy = false;
+      if (handle.Value == 0) {
+        GC.SuppressFinalize(this);
+      }
+    }
+
+    public JavaObjectHandle(int jvmId, JOBJECT32 handle) {
+      _jvmId = jvmId;
+      _handle.Value = handle.Value;
+      _isLegacy = true;
       if (handle.Value == 0) {
         GC.SuppressFinalize(this);
       }
@@ -58,10 +69,14 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         // DLL. Also, we depend on the fact the CLR tries to load the method from
         // the DLL only when the method is actually called. This allows us to work
         // correctly on either a 64-bit or 32-bit.
-        if (IntPtr.Size == 4) {
-          ReleaseJavaObjectFP_32(_jvmId, _handle);
+        if (_isLegacy) {
+          ReleaseJavaObjectFP_Legacy(_jvmId, HandleLegacy);
         } else {
-          ReleaseJavaObjectFP_64(_jvmId, _handle);
+          if (IntPtr.Size == 4) {
+            ReleaseJavaObjectFP_32(_jvmId, _handle);
+          } else {
+            ReleaseJavaObjectFP_64(_jvmId, _handle);
+          }
         }
       }
       _disposed = true;
@@ -75,6 +90,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       get { return _handle; }
     }
 
+    public JOBJECT32 HandleLegacy {
+      get { return new JOBJECT32((Int32)_handle.Value); }
+    }
+
     public bool IsClosed {
       get { return _disposed; }
     }
@@ -82,6 +101,9 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool IsNull {
       get { return _handle.Value == 0; }
     }
+
+    [DllImport("WindowsAccessBridge.dll", EntryPoint = "releaseJavaObject", CallingConvention = CallingConvention.Cdecl)]
+    private static extern void ReleaseJavaObjectFP_Legacy(int jvmId, JOBJECT32 javaObject);
 
     [DllImport("WindowsAccessBridge-32.dll", EntryPoint = "releaseJavaObject", CallingConvention = CallingConvention.Cdecl)]
     private static extern void ReleaseJavaObjectFP_32(int jvmId, JOBJECT64 javaObject);

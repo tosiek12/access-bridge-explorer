@@ -2262,6 +2262,356 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   /// <summary>
+  /// Container of WindowAccessBridge DLL entry points
+  /// </summary>
+  public class AccessBridgeLibraryFunctionsLegacy {
+    #region Functions
+    public Windows_runFP Windows_run { get; set; }
+    public IsJavaWindowFP IsJavaWindow { get; set; }
+    public IsSameObjectFP IsSameObject { get; set; }
+    public GetAccessibleContextFromHWNDFP GetAccessibleContextFromHWND { get; set; }
+    public GetHWNDFromAccessibleContextFP GetHWNDFromAccessibleContext { get; set; }
+    public GetAccessibleContextAtFP GetAccessibleContextAt { get; set; }
+    public GetAccessibleContextWithFocusFP GetAccessibleContextWithFocus { get; set; }
+    public GetAccessibleContextInfoFP GetAccessibleContextInfo { get; set; }
+    public GetAccessibleChildFromContextFP GetAccessibleChildFromContext { get; set; }
+    public GetAccessibleParentFromContextFP GetAccessibleParentFromContext { get; set; }
+    public GetAccessibleRelationSetFP GetAccessibleRelationSet { get; set; }
+    public GetAccessibleHypertextFP GetAccessibleHypertext { get; set; }
+    public ActivateAccessibleHyperlinkFP ActivateAccessibleHyperlink { get; set; }
+    public GetAccessibleHyperlinkCountFP GetAccessibleHyperlinkCount { get; set; }
+    public GetAccessibleHypertextExtFP GetAccessibleHypertextExt { get; set; }
+    public GetAccessibleHypertextLinkIndexFP GetAccessibleHypertextLinkIndex { get; set; }
+    public GetAccessibleHyperlinkFP GetAccessibleHyperlink { get; set; }
+    public GetAccessibleKeyBindingsFP GetAccessibleKeyBindings { get; set; }
+    public GetAccessibleIconsFP GetAccessibleIcons { get; set; }
+    public GetAccessibleActionsFP GetAccessibleActions { get; set; }
+    public DoAccessibleActionsFP DoAccessibleActions { get; set; }
+    public GetAccessibleTextInfoFP GetAccessibleTextInfo { get; set; }
+    public GetAccessibleTextItemsFP GetAccessibleTextItems { get; set; }
+    public GetAccessibleTextSelectionInfoFP GetAccessibleTextSelectionInfo { get; set; }
+    public GetAccessibleTextAttributesFP GetAccessibleTextAttributes { get; set; }
+    public GetAccessibleTextRectFP GetAccessibleTextRect { get; set; }
+    public GetAccessibleTextLineBoundsFP GetAccessibleTextLineBounds { get; set; }
+    public GetAccessibleTextRangeFP GetAccessibleTextRange { get; set; }
+    public GetCurrentAccessibleValueFromContextFP GetCurrentAccessibleValueFromContext { get; set; }
+    public GetMaximumAccessibleValueFromContextFP GetMaximumAccessibleValueFromContext { get; set; }
+    public GetMinimumAccessibleValueFromContextFP GetMinimumAccessibleValueFromContext { get; set; }
+    public AddAccessibleSelectionFromContextFP AddAccessibleSelectionFromContext { get; set; }
+    public ClearAccessibleSelectionFromContextFP ClearAccessibleSelectionFromContext { get; set; }
+    public GetAccessibleSelectionFromContextFP GetAccessibleSelectionFromContext { get; set; }
+    public GetAccessibleSelectionCountFromContextFP GetAccessibleSelectionCountFromContext { get; set; }
+    public IsAccessibleChildSelectedFromContextFP IsAccessibleChildSelectedFromContext { get; set; }
+    public RemoveAccessibleSelectionFromContextFP RemoveAccessibleSelectionFromContext { get; set; }
+    public SelectAllAccessibleSelectionFromContextFP SelectAllAccessibleSelectionFromContext { get; set; }
+    public GetAccessibleTableInfoFP GetAccessibleTableInfo { get; set; }
+    public GetAccessibleTableCellInfoFP GetAccessibleTableCellInfo { get; set; }
+    public GetAccessibleTableRowHeaderFP GetAccessibleTableRowHeader { get; set; }
+    public GetAccessibleTableColumnHeaderFP GetAccessibleTableColumnHeader { get; set; }
+    public GetAccessibleTableRowDescriptionFP GetAccessibleTableRowDescription { get; set; }
+    public GetAccessibleTableColumnDescriptionFP GetAccessibleTableColumnDescription { get; set; }
+    public GetAccessibleTableRowSelectionCountFP GetAccessibleTableRowSelectionCount { get; set; }
+    public IsAccessibleTableRowSelectedFP IsAccessibleTableRowSelected { get; set; }
+    public GetAccessibleTableRowSelectionsFP GetAccessibleTableRowSelections { get; set; }
+    public GetAccessibleTableColumnSelectionCountFP GetAccessibleTableColumnSelectionCount { get; set; }
+    public IsAccessibleTableColumnSelectedFP IsAccessibleTableColumnSelected { get; set; }
+    public GetAccessibleTableColumnSelectionsFP GetAccessibleTableColumnSelections { get; set; }
+    public GetAccessibleTableRowFP GetAccessibleTableRow { get; set; }
+    public GetAccessibleTableColumnFP GetAccessibleTableColumn { get; set; }
+    public GetAccessibleTableIndexFP GetAccessibleTableIndex { get; set; }
+    public SetTextContentsFP SetTextContents { get; set; }
+    public GetParentWithRoleFP GetParentWithRole { get; set; }
+    public GetParentWithRoleElseRootFP GetParentWithRoleElseRoot { get; set; }
+    public GetTopLevelObjectFP GetTopLevelObject { get; set; }
+    public GetObjectDepthFP GetObjectDepth { get; set; }
+    public GetActiveDescendentFP GetActiveDescendent { get; set; }
+    public GetVirtualAccessibleNameFP GetVirtualAccessibleName { get; set; }
+    public GetTextAttributesInRangeFP GetTextAttributesInRange { get; set; }
+    public GetCaretLocationFP GetCaretLocation { get; set; }
+    public GetVisibleChildrenCountFP GetVisibleChildrenCount { get; set; }
+    public GetVisibleChildrenFP GetVisibleChildren { get; set; }
+    public GetVersionInfoFP GetVersionInfo { get; set; }
+    #endregion
+
+    #region Event functions
+    public SetPropertyChangeFP SetPropertyChange { get; set; }
+    public SetJavaShutdownFP SetJavaShutdown { get; set; }
+    public SetFocusGainedFP SetFocusGained { get; set; }
+    public SetFocusLostFP SetFocusLost { get; set; }
+    public SetCaretUpdateFP SetCaretUpdate { get; set; }
+    public SetMouseClickedFP SetMouseClicked { get; set; }
+    public SetMouseEnteredFP SetMouseEntered { get; set; }
+    public SetMouseExitedFP SetMouseExited { get; set; }
+    public SetMousePressedFP SetMousePressed { get; set; }
+    public SetMouseReleasedFP SetMouseReleased { get; set; }
+    public SetMenuCanceledFP SetMenuCanceled { get; set; }
+    public SetMenuDeselectedFP SetMenuDeselected { get; set; }
+    public SetMenuSelectedFP SetMenuSelected { get; set; }
+    public SetPopupMenuCanceledFP SetPopupMenuCanceled { get; set; }
+    public SetPopupMenuWillBecomeInvisibleFP SetPopupMenuWillBecomeInvisible { get; set; }
+    public SetPopupMenuWillBecomeVisibleFP SetPopupMenuWillBecomeVisible { get; set; }
+    public SetPropertyNameChangeFP SetPropertyNameChange { get; set; }
+    public SetPropertyDescriptionChangeFP SetPropertyDescriptionChange { get; set; }
+    public SetPropertyStateChangeFP SetPropertyStateChange { get; set; }
+    public SetPropertyValueChangeFP SetPropertyValueChange { get; set; }
+    public SetPropertySelectionChangeFP SetPropertySelectionChange { get; set; }
+    public SetPropertyTextChangeFP SetPropertyTextChange { get; set; }
+    public SetPropertyCaretChangeFP SetPropertyCaretChange { get; set; }
+    public SetPropertyVisibleDataChangeFP SetPropertyVisibleDataChange { get; set; }
+    public SetPropertyChildChangeFP SetPropertyChildChange { get; set; }
+    public SetPropertyActiveDescendentChangeFP SetPropertyActiveDescendentChange { get; set; }
+    public SetPropertyTableModelChangeFP SetPropertyTableModelChange { get; set; }
+    #endregion
+
+    #region Function delegate types
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void Windows_runFP();
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL IsJavaWindowFP(WindowHandle window);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL IsSameObjectFP(int vmid, JOBJECT32 obj1, JOBJECT32 obj2);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleContextFromHWNDFP(WindowHandle window, out int vmid, out JOBJECT32 ac);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate WindowHandle GetHWNDFromAccessibleContextFP(int vmid, JOBJECT32 ac);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleContextAtFP(int vmid, JOBJECT32 acParent, int x, int y, out JOBJECT32 ac);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleContextWithFocusFP(WindowHandle window, out int vmid, out JOBJECT32 ac);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleContextInfoFP(int vmid, JOBJECT32 ac, out AccessibleContextInfoNative info);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate JOBJECT32 GetAccessibleChildFromContextFP(int vmid, JOBJECT32 ac, int i);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate JOBJECT32 GetAccessibleParentFromContextFP(int vmid, JOBJECT32 ac);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleRelationSetFP(int vmid, JOBJECT32 accessibleContext, out AccessibleRelationSetInfoNative relationSetInfo);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleHypertextFP(int vmid, JOBJECT32 accessibleContext, out AccessibleHypertextInfoNative hypertextInfo);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL ActivateAccessibleHyperlinkFP(int vmid, JOBJECT32 accessibleContext, JOBJECT32 accessibleHyperlink);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate int GetAccessibleHyperlinkCountFP(int vmid, JOBJECT32 accessibleContext);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleHypertextExtFP(int vmid, JOBJECT32 accessibleContext, int nStartIndex, out AccessibleHypertextInfoNative hypertextInfo);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate int GetAccessibleHypertextLinkIndexFP(int vmid, JOBJECT32 hypertext, int nIndex);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleHyperlinkFP(int vmid, JOBJECT32 hypertext, int nIndex, out AccessibleHyperlinkInfoNative hyperlinkInfo);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleKeyBindingsFP(int vmid, JOBJECT32 accessibleContext, out AccessibleKeyBindingsNative keyBindings);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleIconsFP(int vmid, JOBJECT32 accessibleContext, out AccessibleIconsNative icons);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleActionsFP(int vmid, JOBJECT32 accessibleContext, [Out]AccessibleActionsNative actions);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL DoAccessibleActionsFP(int vmid, JOBJECT32 accessibleContext, ref AccessibleActionsToDoNative actionsToDo, out int failure);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTextInfoFP(int vmid, JOBJECT32 at, out AccessibleTextInfoNative textInfo, int x, int y);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTextItemsFP(int vmid, JOBJECT32 at, out AccessibleTextItemsInfoNative textItems, int index);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmid, JOBJECT32 at, out AccessibleTextSelectionInfoNative textSelection);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTextAttributesFP(int vmid, JOBJECT32 at, int index, out AccessibleTextAttributesInfoNative attributes);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTextRectFP(int vmid, JOBJECT32 at, out AccessibleTextRectInfoNative rectInfo, int index);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTextLineBoundsFP(int vmid, JOBJECT32 at, int index, out int startIndex, out int endIndex);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTextRangeFP(int vmid, JOBJECT32 at, int start, int end, StringBuilder text, short len);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetCurrentAccessibleValueFromContextFP(int vmid, JOBJECT32 av, StringBuilder value, short len);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetMaximumAccessibleValueFromContextFP(int vmid, JOBJECT32 av, StringBuilder value, short len);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetMinimumAccessibleValueFromContextFP(int vmid, JOBJECT32 av, StringBuilder value, short len);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void AddAccessibleSelectionFromContextFP(int vmid, JOBJECT32 asel, int i);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void ClearAccessibleSelectionFromContextFP(int vmid, JOBJECT32 asel);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate JOBJECT32 GetAccessibleSelectionFromContextFP(int vmid, JOBJECT32 asel, int i);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate int GetAccessibleSelectionCountFromContextFP(int vmid, JOBJECT32 asel);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL IsAccessibleChildSelectedFromContextFP(int vmid, JOBJECT32 asel, int i);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void RemoveAccessibleSelectionFromContextFP(int vmid, JOBJECT32 asel, int i);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void SelectAllAccessibleSelectionFromContextFP(int vmid, JOBJECT32 asel);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTableInfoFP(int vmid, JOBJECT32 ac, out AccessibleTableInfoNative tableInfo);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTableCellInfoFP(int vmid, JOBJECT32 accessibleTable, int row, int column, out AccessibleTableCellInfoNative tableCellInfo);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTableRowHeaderFP(int vmid, JOBJECT32 acParent, out AccessibleTableInfoNative tableInfo);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTableColumnHeaderFP(int vmid, JOBJECT32 acParent, out AccessibleTableInfoNative tableInfo);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate JOBJECT32 GetAccessibleTableRowDescriptionFP(int vmid, JOBJECT32 acParent, int row);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate JOBJECT32 GetAccessibleTableColumnDescriptionFP(int vmid, JOBJECT32 acParent, int column);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate int GetAccessibleTableRowSelectionCountFP(int vmid, JOBJECT32 table);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL IsAccessibleTableRowSelectedFP(int vmid, JOBJECT32 table, int row);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTableRowSelectionsFP(int vmid, JOBJECT32 table, int count, [Out][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]int[] selections);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate int GetAccessibleTableColumnSelectionCountFP(int vmid, JOBJECT32 table);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL IsAccessibleTableColumnSelectedFP(int vmid, JOBJECT32 table, int column);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetAccessibleTableColumnSelectionsFP(int vmid, JOBJECT32 table, int count, [Out][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]int[] selections);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate int GetAccessibleTableRowFP(int vmid, JOBJECT32 table, int index);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate int GetAccessibleTableColumnFP(int vmid, JOBJECT32 table, int index);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate int GetAccessibleTableIndexFP(int vmid, JOBJECT32 table, int row, int column);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetTextContentsFP(int vmid, JOBJECT32 ac, string text);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate JOBJECT32 GetParentWithRoleFP(int vmid, JOBJECT32 ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate JOBJECT32 GetParentWithRoleElseRootFP(int vmid, JOBJECT32 ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate JOBJECT32 GetTopLevelObjectFP(int vmid, JOBJECT32 ac);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate int GetObjectDepthFP(int vmid, JOBJECT32 ac);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate JOBJECT32 GetActiveDescendentFP(int vmid, JOBJECT32 ac);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetVirtualAccessibleNameFP(int vmid, JOBJECT32 ac, StringBuilder name, int len);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetTextAttributesInRangeFP(int vmid, JOBJECT32 accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfoNative attributes, out short len);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetCaretLocationFP(int vmid, JOBJECT32 ac, out AccessibleTextRectInfoNative rectInfo, int index);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate int GetVisibleChildrenCountFP(int vmid, JOBJECT32 accessibleContext);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetVisibleChildrenFP(int vmid, JOBJECT32 accessibleContext, int startIndex, out VisibleChildrenInfoNative children);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfoNative info);
+    #endregion
+
+    #region Event delegate types
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void JavaShutdownEventHandler(int vmid);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void FocusGainedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void FocusLostEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void CaretUpdateEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MouseClickedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MouseEnteredEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MouseExitedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MousePressedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MouseReleasedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MenuCanceledEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MenuDeselectedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void MenuSelectedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PopupMenuCanceledEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PopupMenuWillBecomeInvisibleEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PopupMenuWillBecomeVisibleEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyNameChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyDescriptionChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyStateChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyValueChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertySelectionChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyTextChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyCaretChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, int oldPosition, int newPosition);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyVisibleDataChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyChildChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, JOBJECT32 oldChild, JOBJECT32 newChild);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyActiveDescendentChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, JOBJECT32 oldActiveDescendent, JOBJECT32 newActiveDescendent);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate void PropertyTableModelChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
+    #endregion
+
+    #region Event function delegate types
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyChangeFP(PropertyChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetJavaShutdownFP(JavaShutdownEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetFocusGainedFP(FocusGainedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetFocusLostFP(FocusLostEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetCaretUpdateFP(CaretUpdateEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMouseClickedFP(MouseClickedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMouseEnteredFP(MouseEnteredEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMouseExitedFP(MouseExitedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMousePressedFP(MousePressedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMouseReleasedFP(MouseReleasedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMenuCanceledFP(MenuCanceledEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMenuDeselectedFP(MenuDeselectedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMenuSelectedFP(MenuSelectedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPopupMenuCanceledFP(PopupMenuCanceledEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPopupMenuWillBecomeInvisibleFP(PopupMenuWillBecomeInvisibleEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPopupMenuWillBecomeVisibleFP(PopupMenuWillBecomeVisibleEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyNameChangeFP(PropertyNameChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyDescriptionChangeFP(PropertyDescriptionChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyStateChangeFP(PropertyStateChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyValueChangeFP(PropertyValueChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertySelectionChangeFP(PropertySelectionChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyTextChangeFP(PropertyTextChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyCaretChangeFP(PropertyCaretChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyVisibleDataChangeFP(PropertyVisibleDataChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyChildChangeFP(PropertyChildChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyActiveDescendentChangeFP(PropertyActiveDescendentChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyTableModelChangeFP(PropertyTableModelChangeEventHandler handler);
+    #endregion
+  }
+
+  /// <summary>
   /// Native library event handlers implementation
   /// </summary>
   public partial class AccessBridgeEventsNative {
