@@ -324,6 +324,7 @@ namespace CodeGen {
       sourceWriter.IncIndent();
 
       var javaObjects = definition.Parameters.Where(p => p.IsOut && IsJavaObjectHandle(p.Type)).ToList();
+      var javaInObjects = definition.Parameters.Where(p => !p.IsOut && IsJavaObjectHandle(p.Type)).ToList();
       foreach (var x in javaObjects) {
         sourceWriter.WriteIndent();
         sourceWriter.IsNativeTypes = true;
@@ -333,8 +334,7 @@ namespace CodeGen {
         sourceWriter.WriteLine();
       }
 
-      var structs =
-        definition.Parameters.Where(p => (p.IsOut || p.IsRef || p.IsOutAttribute) && model.IsStruct(p.Type)).ToList();
+      var structs = definition.Parameters.Where(p => (p.IsOut || p.IsRef || p.IsOutAttribute) && model.IsStruct(p.Type)).ToList();
       foreach (var x in structs) {
         sourceWriter.WriteIndent();
         sourceWriter.IsNativeTypes = true;
@@ -384,6 +384,12 @@ namespace CodeGen {
       }
       sourceWriter.Write(");");
       sourceWriter.WriteLine();
+
+      foreach (var x in javaInObjects) {
+        sourceWriter.WriteIndent();
+        sourceWriter.Write("GC.KeepAlive({0});", x.Name);
+        sourceWriter.WriteLine();
+      }
 
       foreach (var x in javaObjects) {
         sourceWriter.WriteIndent();
@@ -478,10 +484,6 @@ namespace CodeGen {
       sourceWriter.Write(" {{");
       sourceWriter.WriteLine();
       sourceWriter.IncIndent();
-      //sourceWriter.IsNativeTypes = false;
-      //sourceWriter.WriteLine("var result = new {0}();", sourceWriter.GetTypeName(definition.Name));
-      //sourceWriter.IsNativeTypes = true;
-      //sourceWriter.WriteLine("return result;");
       sourceWriter.IsNativeTypes = true;
       WriteCopyFields(model, sourceWriter, "infoSrc", "infoDest", definition);
       sourceWriter.DecIndent();
@@ -499,10 +501,6 @@ namespace CodeGen {
       sourceWriter.Write(" {{");
       sourceWriter.WriteLine();
       sourceWriter.IncIndent();
-      //sourceWriter.IsNativeTypes = false;
-      //sourceWriter.WriteLine("var result = new {0}();", sourceWriter.GetTypeName(definition.Name));
-      //sourceWriter.IsNativeTypes = true;
-      //sourceWriter.WriteLine("return result;");
       sourceWriter.IsNativeTypes = false;
       WriteCopyFields(model, sourceWriter, "infoSrc", "infoDest", definition);
       sourceWriter.DecIndent();
@@ -549,7 +547,6 @@ namespace CodeGen {
       } else {
         sourceWriter.WriteLine("{0}{1} = {2}{3};", infodest, fieldName, infosrc, fieldName);
       }
-
     }
 
     private void WriteDelegateType(SourceCodeWriter sourceWriter, FunctionDefinition definition) {

@@ -169,6 +169,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     public bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2) {
       var result = LibraryFunctions.IsSameObject(vmid, Unwrap(vmid, obj1), Unwrap(vmid, obj2));
+      GC.KeepAlive(obj1);
+      GC.KeepAlive(obj2);
       return ToBool(result);
     }
 
@@ -181,12 +183,14 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     public WindowHandle GetHWNDFromAccessibleContext(int vmid, JavaObjectHandle ac) {
       var result = LibraryFunctions.GetHWNDFromAccessibleContext(vmid, Unwrap(vmid, ac));
+      GC.KeepAlive(ac);
       return result;
     }
 
     public bool GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac) {
       JOBJECT64 acTemp;
       var result = LibraryFunctions.GetAccessibleContextAt(vmid, Unwrap(vmid, acParent), x, y, out acTemp);
+      GC.KeepAlive(acParent);
       ac = Wrap(vmid, acTemp);
       return ToBool(result);
     }
@@ -201,23 +205,27 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info) {
       AccessibleContextInfoNative infoTemp;
       var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), out infoTemp);
+      GC.KeepAlive(ac);
       info = Wrap(vmid, infoTemp);
       return ToBool(result);
     }
 
     public JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i) {
       var result = LibraryFunctions.GetAccessibleChildFromContext(vmid, Unwrap(vmid, ac), i);
+      GC.KeepAlive(ac);
       return Wrap(vmid, result);
     }
 
     public JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac) {
       var result = LibraryFunctions.GetAccessibleParentFromContext(vmid, Unwrap(vmid, ac));
+      GC.KeepAlive(ac);
       return Wrap(vmid, result);
     }
 
     public bool GetAccessibleRelationSet(int vmid, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo) {
       AccessibleRelationSetInfoNative relationSetInfoTemp;
       var result = LibraryFunctions.GetAccessibleRelationSet(vmid, Unwrap(vmid, accessibleContext), out relationSetInfoTemp);
+      GC.KeepAlive(accessibleContext);
       relationSetInfo = Wrap(vmid, relationSetInfoTemp);
       return ToBool(result);
     }
@@ -225,35 +233,42 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleHypertext(int vmid, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo) {
       AccessibleHypertextInfoNative hypertextInfoTemp;
       var result = LibraryFunctions.GetAccessibleHypertext(vmid, Unwrap(vmid, accessibleContext), out hypertextInfoTemp);
+      GC.KeepAlive(accessibleContext);
       hypertextInfo = Wrap(vmid, hypertextInfoTemp);
       return ToBool(result);
     }
 
     public bool ActivateAccessibleHyperlink(int vmid, JavaObjectHandle accessibleContext, JavaObjectHandle accessibleHyperlink) {
       var result = LibraryFunctions.ActivateAccessibleHyperlink(vmid, Unwrap(vmid, accessibleContext), Unwrap(vmid, accessibleHyperlink));
+      GC.KeepAlive(accessibleContext);
+      GC.KeepAlive(accessibleHyperlink);
       return ToBool(result);
     }
 
     public int GetAccessibleHyperlinkCount(int vmid, JavaObjectHandle accessibleContext) {
       var result = LibraryFunctions.GetAccessibleHyperlinkCount(vmid, Unwrap(vmid, accessibleContext));
+      GC.KeepAlive(accessibleContext);
       return result;
     }
 
     public bool GetAccessibleHypertextExt(int vmid, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo) {
       AccessibleHypertextInfoNative hypertextInfoTemp;
       var result = LibraryFunctions.GetAccessibleHypertextExt(vmid, Unwrap(vmid, accessibleContext), nStartIndex, out hypertextInfoTemp);
+      GC.KeepAlive(accessibleContext);
       hypertextInfo = Wrap(vmid, hypertextInfoTemp);
       return ToBool(result);
     }
 
     public int GetAccessibleHypertextLinkIndex(int vmid, JavaObjectHandle hypertext, int nIndex) {
       var result = LibraryFunctions.GetAccessibleHypertextLinkIndex(vmid, Unwrap(vmid, hypertext), nIndex);
+      GC.KeepAlive(hypertext);
       return result;
     }
 
     public bool GetAccessibleHyperlink(int vmid, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo) {
       AccessibleHyperlinkInfoNative hyperlinkInfoTemp;
       var result = LibraryFunctions.GetAccessibleHyperlink(vmid, Unwrap(vmid, hypertext), nIndex, out hyperlinkInfoTemp);
+      GC.KeepAlive(hypertext);
       hyperlinkInfo = Wrap(vmid, hyperlinkInfoTemp);
       return ToBool(result);
     }
@@ -261,6 +276,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings) {
       AccessibleKeyBindingsNative keyBindingsTemp;
       var result = LibraryFunctions.GetAccessibleKeyBindings(vmid, Unwrap(vmid, accessibleContext), out keyBindingsTemp);
+      GC.KeepAlive(accessibleContext);
       keyBindings = Wrap(vmid, keyBindingsTemp);
       return ToBool(result);
     }
@@ -268,6 +284,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons) {
       AccessibleIconsNative iconsTemp;
       var result = LibraryFunctions.GetAccessibleIcons(vmid, Unwrap(vmid, accessibleContext), out iconsTemp);
+      GC.KeepAlive(accessibleContext);
       icons = Wrap(vmid, iconsTemp);
       return ToBool(result);
     }
@@ -275,6 +292,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions) {
       AccessibleActionsNative actionsTemp = new AccessibleActionsNative();
       var result = LibraryFunctions.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actionsTemp);
+      GC.KeepAlive(accessibleContext);
       CopyWrap(vmid, actionsTemp, actions);
       return ToBool(result);
     }
@@ -282,6 +300,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool DoAccessibleActions(int vmid, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure) {
       AccessibleActionsToDoNative actionsToDoTemp = Unwrap(vmid, actionsToDo);
       var result = LibraryFunctions.DoAccessibleActions(vmid, Unwrap(vmid, accessibleContext), ref actionsToDoTemp, out failure);
+      GC.KeepAlive(accessibleContext);
       actionsToDo = Wrap(vmid, actionsToDoTemp);
       return ToBool(result);
     }
@@ -289,6 +308,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y) {
       AccessibleTextInfoNative textInfoTemp;
       var result = LibraryFunctions.GetAccessibleTextInfo(vmid, Unwrap(vmid, at), out textInfoTemp, x, y);
+      GC.KeepAlive(at);
       textInfo = Wrap(vmid, textInfoTemp);
       return ToBool(result);
     }
@@ -296,6 +316,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index) {
       AccessibleTextItemsInfoNative textItemsTemp;
       var result = LibraryFunctions.GetAccessibleTextItems(vmid, Unwrap(vmid, at), out textItemsTemp, index);
+      GC.KeepAlive(at);
       textItems = Wrap(vmid, textItemsTemp);
       return ToBool(result);
     }
@@ -303,6 +324,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleTextSelectionInfo(int vmid, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection) {
       AccessibleTextSelectionInfoNative textSelectionTemp;
       var result = LibraryFunctions.GetAccessibleTextSelectionInfo(vmid, Unwrap(vmid, at), out textSelectionTemp);
+      GC.KeepAlive(at);
       textSelection = Wrap(vmid, textSelectionTemp);
       return ToBool(result);
     }
@@ -310,6 +332,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes) {
       AccessibleTextAttributesInfoNative attributesTemp;
       var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, out attributesTemp);
+      GC.KeepAlive(at);
       attributes = Wrap(vmid, attributesTemp);
       return ToBool(result);
     }
@@ -317,69 +340,83 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index) {
       AccessibleTextRectInfoNative rectInfoTemp;
       var result = LibraryFunctions.GetAccessibleTextRect(vmid, Unwrap(vmid, at), out rectInfoTemp, index);
+      GC.KeepAlive(at);
       rectInfo = Wrap(vmid, rectInfoTemp);
       return ToBool(result);
     }
 
     public bool GetAccessibleTextLineBounds(int vmid, JavaObjectHandle at, int index, out int startIndex, out int endIndex) {
       var result = LibraryFunctions.GetAccessibleTextLineBounds(vmid, Unwrap(vmid, at), index, out startIndex, out endIndex);
+      GC.KeepAlive(at);
       return ToBool(result);
     }
 
     public bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, StringBuilder text, short len) {
       var result = LibraryFunctions.GetAccessibleTextRange(vmid, Unwrap(vmid, at), start, end, text, len);
+      GC.KeepAlive(at);
       return ToBool(result);
     }
 
     public bool GetCurrentAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len) {
       var result = LibraryFunctions.GetCurrentAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
+      GC.KeepAlive(av);
       return ToBool(result);
     }
 
     public bool GetMaximumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len) {
       var result = LibraryFunctions.GetMaximumAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
+      GC.KeepAlive(av);
       return ToBool(result);
     }
 
     public bool GetMinimumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len) {
       var result = LibraryFunctions.GetMinimumAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
+      GC.KeepAlive(av);
       return ToBool(result);
     }
 
     public void AddAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i) {
       LibraryFunctions.AddAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
+      GC.KeepAlive(asel);
     }
 
     public void ClearAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel) {
       LibraryFunctions.ClearAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel));
+      GC.KeepAlive(asel);
     }
 
     public JavaObjectHandle GetAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i) {
       var result = LibraryFunctions.GetAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
+      GC.KeepAlive(asel);
       return Wrap(vmid, result);
     }
 
     public int GetAccessibleSelectionCountFromContext(int vmid, JavaObjectHandle asel) {
       var result = LibraryFunctions.GetAccessibleSelectionCountFromContext(vmid, Unwrap(vmid, asel));
+      GC.KeepAlive(asel);
       return result;
     }
 
     public bool IsAccessibleChildSelectedFromContext(int vmid, JavaObjectHandle asel, int i) {
       var result = LibraryFunctions.IsAccessibleChildSelectedFromContext(vmid, Unwrap(vmid, asel), i);
+      GC.KeepAlive(asel);
       return ToBool(result);
     }
 
     public void RemoveAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i) {
       LibraryFunctions.RemoveAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
+      GC.KeepAlive(asel);
     }
 
     public void SelectAllAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel) {
       LibraryFunctions.SelectAllAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel));
+      GC.KeepAlive(asel);
     }
 
     public bool GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo) {
       AccessibleTableInfoNative tableInfoTemp;
       var result = LibraryFunctions.GetAccessibleTableInfo(vmid, Unwrap(vmid, ac), out tableInfoTemp);
+      GC.KeepAlive(ac);
       tableInfo = Wrap(vmid, tableInfoTemp);
       return ToBool(result);
     }
@@ -387,6 +424,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
       AccessibleTableCellInfoNative tableCellInfoTemp;
       var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, accessibleTable), row, column, out tableCellInfoTemp);
+      GC.KeepAlive(accessibleTable);
       tableCellInfo = Wrap(vmid, tableCellInfoTemp);
       return ToBool(result);
     }
@@ -394,6 +432,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
       AccessibleTableInfoNative tableInfoTemp;
       var result = LibraryFunctions.GetAccessibleTableRowHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
+      GC.KeepAlive(acParent);
       tableInfo = Wrap(vmid, tableInfoTemp);
       return ToBool(result);
     }
@@ -401,103 +440,123 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
       AccessibleTableInfoNative tableInfoTemp;
       var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
+      GC.KeepAlive(acParent);
       tableInfo = Wrap(vmid, tableInfoTemp);
       return ToBool(result);
     }
 
     public JavaObjectHandle GetAccessibleTableRowDescription(int vmid, JavaObjectHandle acParent, int row) {
       var result = LibraryFunctions.GetAccessibleTableRowDescription(vmid, Unwrap(vmid, acParent), row);
+      GC.KeepAlive(acParent);
       return Wrap(vmid, result);
     }
 
     public JavaObjectHandle GetAccessibleTableColumnDescription(int vmid, JavaObjectHandle acParent, int column) {
       var result = LibraryFunctions.GetAccessibleTableColumnDescription(vmid, Unwrap(vmid, acParent), column);
+      GC.KeepAlive(acParent);
       return Wrap(vmid, result);
     }
 
     public int GetAccessibleTableRowSelectionCount(int vmid, JavaObjectHandle table) {
       var result = LibraryFunctions.GetAccessibleTableRowSelectionCount(vmid, Unwrap(vmid, table));
+      GC.KeepAlive(table);
       return result;
     }
 
     public bool IsAccessibleTableRowSelected(int vmid, JavaObjectHandle table, int row) {
       var result = LibraryFunctions.IsAccessibleTableRowSelected(vmid, Unwrap(vmid, table), row);
+      GC.KeepAlive(table);
       return ToBool(result);
     }
 
     public bool GetAccessibleTableRowSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections) {
       var result = LibraryFunctions.GetAccessibleTableRowSelections(vmid, Unwrap(vmid, table), count, selections);
+      GC.KeepAlive(table);
       return ToBool(result);
     }
 
     public int GetAccessibleTableColumnSelectionCount(int vmid, JavaObjectHandle table) {
       var result = LibraryFunctions.GetAccessibleTableColumnSelectionCount(vmid, Unwrap(vmid, table));
+      GC.KeepAlive(table);
       return result;
     }
 
     public bool IsAccessibleTableColumnSelected(int vmid, JavaObjectHandle table, int column) {
       var result = LibraryFunctions.IsAccessibleTableColumnSelected(vmid, Unwrap(vmid, table), column);
+      GC.KeepAlive(table);
       return ToBool(result);
     }
 
     public bool GetAccessibleTableColumnSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections) {
       var result = LibraryFunctions.GetAccessibleTableColumnSelections(vmid, Unwrap(vmid, table), count, selections);
+      GC.KeepAlive(table);
       return ToBool(result);
     }
 
     public int GetAccessibleTableRow(int vmid, JavaObjectHandle table, int index) {
       var result = LibraryFunctions.GetAccessibleTableRow(vmid, Unwrap(vmid, table), index);
+      GC.KeepAlive(table);
       return result;
     }
 
     public int GetAccessibleTableColumn(int vmid, JavaObjectHandle table, int index) {
       var result = LibraryFunctions.GetAccessibleTableColumn(vmid, Unwrap(vmid, table), index);
+      GC.KeepAlive(table);
       return result;
     }
 
     public int GetAccessibleTableIndex(int vmid, JavaObjectHandle table, int row, int column) {
       var result = LibraryFunctions.GetAccessibleTableIndex(vmid, Unwrap(vmid, table), row, column);
+      GC.KeepAlive(table);
       return result;
     }
 
     public bool SetTextContents(int vmid, JavaObjectHandle ac, string text) {
       var result = LibraryFunctions.SetTextContents(vmid, Unwrap(vmid, ac), text);
+      GC.KeepAlive(ac);
       return ToBool(result);
     }
 
     public JavaObjectHandle GetParentWithRole(int vmid, JavaObjectHandle ac, string role) {
       var result = LibraryFunctions.GetParentWithRole(vmid, Unwrap(vmid, ac), role);
+      GC.KeepAlive(ac);
       return Wrap(vmid, result);
     }
 
     public JavaObjectHandle GetParentWithRoleElseRoot(int vmid, JavaObjectHandle ac, string role) {
       var result = LibraryFunctions.GetParentWithRoleElseRoot(vmid, Unwrap(vmid, ac), role);
+      GC.KeepAlive(ac);
       return Wrap(vmid, result);
     }
 
     public JavaObjectHandle GetTopLevelObject(int vmid, JavaObjectHandle ac) {
       var result = LibraryFunctions.GetTopLevelObject(vmid, Unwrap(vmid, ac));
+      GC.KeepAlive(ac);
       return Wrap(vmid, result);
     }
 
     public int GetObjectDepth(int vmid, JavaObjectHandle ac) {
       var result = LibraryFunctions.GetObjectDepth(vmid, Unwrap(vmid, ac));
+      GC.KeepAlive(ac);
       return result;
     }
 
     public JavaObjectHandle GetActiveDescendent(int vmid, JavaObjectHandle ac) {
       var result = LibraryFunctions.GetActiveDescendent(vmid, Unwrap(vmid, ac));
+      GC.KeepAlive(ac);
       return Wrap(vmid, result);
     }
 
     public bool GetVirtualAccessibleName(int vmid, JavaObjectHandle ac, StringBuilder name, int len) {
       var result = LibraryFunctions.GetVirtualAccessibleName(vmid, Unwrap(vmid, ac), name, len);
+      GC.KeepAlive(ac);
       return ToBool(result);
     }
 
     public bool GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len) {
       AccessibleTextAttributesInfoNative attributesTemp;
       var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, out attributesTemp, out len);
+      GC.KeepAlive(accessibleContext);
       attributes = Wrap(vmid, attributesTemp);
       return ToBool(result);
     }
@@ -505,18 +564,21 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index) {
       AccessibleTextRectInfoNative rectInfoTemp;
       var result = LibraryFunctions.GetCaretLocation(vmid, Unwrap(vmid, ac), out rectInfoTemp, index);
+      GC.KeepAlive(ac);
       rectInfo = Wrap(vmid, rectInfoTemp);
       return ToBool(result);
     }
 
     public int GetVisibleChildrenCount(int vmid, JavaObjectHandle accessibleContext) {
       var result = LibraryFunctions.GetVisibleChildrenCount(vmid, Unwrap(vmid, accessibleContext));
+      GC.KeepAlive(accessibleContext);
       return result;
     }
 
     public bool GetVisibleChildren(int vmid, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children) {
       VisibleChildrenInfoNative childrenTemp;
       var result = LibraryFunctions.GetVisibleChildren(vmid, Unwrap(vmid, accessibleContext), startIndex, out childrenTemp);
+      GC.KeepAlive(accessibleContext);
       children = Wrap(vmid, childrenTemp);
       return ToBool(result);
     }
