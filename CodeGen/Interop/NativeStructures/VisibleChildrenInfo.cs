@@ -23,6 +23,7 @@ namespace CodeGen.Interop.NativeStructures {
     public int returnedChildrenCount; // number of children returned
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_VISIBLE_CHILDREN)]
+    [ElementCount("returnedChildrenCount")]
     public AccessibleContext[] children; // the visible children
   }
 }

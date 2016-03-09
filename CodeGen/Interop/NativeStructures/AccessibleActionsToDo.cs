@@ -25,6 +25,7 @@ namespace CodeGen.Interop.NativeStructures {
   public struct AccessibleActionsToDo {
     public jint actionsCount;                              // number of actions to do
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_ACTIONS_TO_DO)]
+    [ElementCount("actionsCount")]
     public AccessibleActionInfo[] actions;// the accessible actions to do
   }
 }

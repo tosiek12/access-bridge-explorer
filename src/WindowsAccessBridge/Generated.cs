@@ -562,7 +562,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       var result = new AccessibleActionsToDo();
       result.actionsCount = info.actionsCount;
       if (info.actions != null) {
-        var count = info.actions.Length;
+        var count = info.actionsCount;
         result.actions = new AccessibleActionInfo[count];
         for(var i = 0; i < count; i++) {
           result.actions[i] = Wrap(vmid, info.actions[i]);
@@ -575,7 +575,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       var result = new AccessibleActionsToDoNative();
       result.actionsCount = info.actionsCount;
       if (info.actions != null) {
-        var count = info.actions.Length;
+        var count = info.actionsCount;
         result.actions = new AccessibleActionInfoNative[count];
         for(var i = 0; i < count; i++) {
           result.actions[i] = Unwrap(vmid, info.actions[i]);
@@ -650,7 +650,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       var result = new AccessibleHypertextInfo();
       result.linkCount = info.linkCount;
       if (info.links != null) {
-        var count = info.links.Length;
+        var count = info.linkCount;
         result.links = new AccessibleHyperlinkInfo[count];
         for(var i = 0; i < count; i++) {
           result.links[i] = Wrap(vmid, info.links[i]);
@@ -664,7 +664,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       var result = new AccessibleHypertextInfoNative();
       result.linkCount = info.linkCount;
       if (info.links != null) {
-        var count = info.links.Length;
+        var count = info.linkCount;
         result.links = new AccessibleHyperlinkInfoNative[count];
         for(var i = 0; i < count; i++) {
           result.links[i] = Unwrap(vmid, info.links[i]);
@@ -694,7 +694,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       var result = new AccessibleIcons();
       result.iconsCount = info.iconsCount;
       if (info.iconInfo != null) {
-        var count = info.iconInfo.Length;
+        var count = info.iconsCount;
         result.iconInfo = new AccessibleIconInfo[count];
         for(var i = 0; i < count; i++) {
           result.iconInfo[i] = Wrap(vmid, info.iconInfo[i]);
@@ -707,7 +707,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       var result = new AccessibleIconsNative();
       result.iconsCount = info.iconsCount;
       if (info.iconInfo != null) {
-        var count = info.iconInfo.Length;
+        var count = info.iconsCount;
         result.iconInfo = new AccessibleIconInfoNative[count];
         for(var i = 0; i < count; i++) {
           result.iconInfo[i] = Unwrap(vmid, info.iconInfo[i]);
@@ -734,7 +734,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       var result = new AccessibleKeyBindings();
       result.keyBindingsCount = info.keyBindingsCount;
       if (info.keyBindingInfo != null) {
-        var count = info.keyBindingInfo.Length;
+        var count = info.keyBindingsCount;
         result.keyBindingInfo = new AccessibleKeyBindingInfo[count];
         for(var i = 0; i < count; i++) {
           result.keyBindingInfo[i] = Wrap(vmid, info.keyBindingInfo[i]);
@@ -747,7 +747,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       var result = new AccessibleKeyBindingsNative();
       result.keyBindingsCount = info.keyBindingsCount;
       if (info.keyBindingInfo != null) {
-        var count = info.keyBindingInfo.Length;
+        var count = info.keyBindingsCount;
         result.keyBindingInfo = new AccessibleKeyBindingInfoNative[count];
         for(var i = 0; i < count; i++) {
           result.keyBindingInfo[i] = Unwrap(vmid, info.keyBindingInfo[i]);
@@ -761,7 +761,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       result.key = info.key;
       result.targetCount = info.targetCount;
       if (info.targets != null) {
-        var count = info.targets.Length;
+        var count = info.targetCount;
         result.targets = new JavaObjectHandle[count];
         for(var i = 0; i < count; i++) {
           result.targets[i] = Wrap(vmid, info.targets[i]);
@@ -775,7 +775,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       result.key = info.key;
       result.targetCount = info.targetCount;
       if (info.targets != null) {
-        var count = info.targets.Length;
+        var count = info.targetCount;
         result.targets = new JOBJECT64[count];
         for(var i = 0; i < count; i++) {
           result.targets[i] = Unwrap(vmid, info.targets[i]);
@@ -788,7 +788,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       var result = new AccessibleRelationSetInfo();
       result.relationCount = info.relationCount;
       if (info.relations != null) {
-        var count = info.relations.Length;
+        var count = info.relationCount;
         result.relations = new AccessibleRelationInfo[count];
         for(var i = 0; i < count; i++) {
           result.relations[i] = Wrap(vmid, info.relations[i]);
@@ -801,7 +801,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       var result = new AccessibleRelationSetInfoNative();
       result.relationCount = info.relationCount;
       if (info.relations != null) {
-        var count = info.relations.Length;
+        var count = info.relationCount;
         result.relations = new AccessibleRelationInfoNative[count];
         for(var i = 0; i < count; i++) {
           result.relations[i] = Unwrap(vmid, info.relations[i]);
@@ -970,79 +970,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public DoAccessibleActionsPackage Wrap(int vmid, DoAccessibleActionsPackageNative info) {
-      var result = new DoAccessibleActionsPackage();
-      result.vmID = info.vmID;
-      result.accessibleContext = Wrap(vmid, info.accessibleContext);
-      result.actionsToDo = Wrap(vmid, info.actionsToDo);
-      result.rResult = info.rResult;
-      result.failure = info.failure;
-      return result;
-    }
-
-    public DoAccessibleActionsPackageNative Unwrap(int vmid, DoAccessibleActionsPackage info) {
-      var result = new DoAccessibleActionsPackageNative();
-      result.vmID = info.vmID;
-      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
-      result.actionsToDo = Unwrap(vmid, info.actionsToDo);
-      result.rResult = info.rResult;
-      result.failure = info.failure;
-      return result;
-    }
-
-    public GetAccessibleActionsPackage Wrap(int vmid, GetAccessibleActionsPackageNative info) {
-      var result = new GetAccessibleActionsPackage();
-      result.vmID = info.vmID;
-      result.accessibleContext = Wrap(vmid, info.accessibleContext);
-      CopyWrap(vmid, info.rAccessibleActions, result.rAccessibleActions);
-      return result;
-    }
-
-    public GetAccessibleActionsPackageNative Unwrap(int vmid, GetAccessibleActionsPackage info) {
-      var result = new GetAccessibleActionsPackageNative();
-      result.vmID = info.vmID;
-      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
-      CopyUnwrap(vmid, info.rAccessibleActions, result.rAccessibleActions);
-      return result;
-    }
-
-    public GetAccessibleIconsPackage Wrap(int vmid, GetAccessibleIconsPackageNative info) {
-      var result = new GetAccessibleIconsPackage();
-      result.vmID = info.vmID;
-      result.accessibleContext = Wrap(vmid, info.accessibleContext);
-      result.rAccessibleIcons = Wrap(vmid, info.rAccessibleIcons);
-      return result;
-    }
-
-    public GetAccessibleIconsPackageNative Unwrap(int vmid, GetAccessibleIconsPackage info) {
-      var result = new GetAccessibleIconsPackageNative();
-      result.vmID = info.vmID;
-      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
-      result.rAccessibleIcons = Unwrap(vmid, info.rAccessibleIcons);
-      return result;
-    }
-
-    public GetAccessibleKeyBindingsPackage Wrap(int vmid, GetAccessibleKeyBindingsPackageNative info) {
-      var result = new GetAccessibleKeyBindingsPackage();
-      result.vmID = info.vmID;
-      result.accessibleContext = Wrap(vmid, info.accessibleContext);
-      result.rAccessibleKeyBindings = Wrap(vmid, info.rAccessibleKeyBindings);
-      return result;
-    }
-
-    public GetAccessibleKeyBindingsPackageNative Unwrap(int vmid, GetAccessibleKeyBindingsPackage info) {
-      var result = new GetAccessibleKeyBindingsPackageNative();
-      result.vmID = info.vmID;
-      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
-      result.rAccessibleKeyBindings = Unwrap(vmid, info.rAccessibleKeyBindings);
-      return result;
-    }
-
     public VisibleChildrenInfo Wrap(int vmid, VisibleChildrenInfoNative info) {
       var result = new VisibleChildrenInfo();
       result.returnedChildrenCount = info.returnedChildrenCount;
       if (info.children != null) {
-        var count = info.children.Length;
+        var count = info.returnedChildrenCount;
         result.children = new JavaObjectHandle[count];
         for(var i = 0; i < count; i++) {
           result.children[i] = Wrap(vmid, info.children[i]);
@@ -1055,7 +987,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       var result = new VisibleChildrenInfoNative();
       result.returnedChildrenCount = info.returnedChildrenCount;
       if (info.children != null) {
-        var count = info.children.Length;
+        var count = info.returnedChildrenCount;
         result.children = new JOBJECT64[count];
         for(var i = 0; i < count; i++) {
           result.children[i] = Unwrap(vmid, info.children[i]);
@@ -1067,7 +999,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public void CopyWrap(int vmid, AccessibleActionsNative infoSrc, AccessibleActions infoDest) {
       infoDest.actionsCount = infoSrc.actionsCount;
       if (infoSrc.actionInfo != null) {
-        var count = infoSrc.actionInfo.Length;
+        var count = infoSrc.actionsCount;
         infoDest.actionInfo = new AccessibleActionInfo[count];
         for(var i = 0; i < count; i++) {
           infoDest.actionInfo[i] = Wrap(vmid, infoSrc.actionInfo[i]);
@@ -1078,7 +1010,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public void CopyUnwrap(int vmid, AccessibleActions infoSrc, AccessibleActionsNative infoDest) {
       infoDest.actionsCount = infoSrc.actionsCount;
       if (infoSrc.actionInfo != null) {
-        var count = infoSrc.actionInfo.Length;
+        var count = infoSrc.actionsCount;
         infoDest.actionInfo = new AccessibleActionInfoNative[count];
         for(var i = 0; i < count; i++) {
           infoDest.actionInfo[i] = Unwrap(vmid, infoSrc.actionInfo[i]);
@@ -1891,32 +1823,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public int selectionStartIndex;
     public int selectionEndIndex;
     public string selectedText;
-  }
-
-  public struct DoAccessibleActionsPackage {
-    public int vmID;
-    public JavaObjectHandle accessibleContext;
-    public AccessibleActionsToDo actionsToDo;
-    public int rResult;
-    public int failure;
-  }
-
-  public struct GetAccessibleActionsPackage {
-    public int vmID;
-    public JavaObjectHandle accessibleContext;
-    public AccessibleActions rAccessibleActions;
-  }
-
-  public struct GetAccessibleIconsPackage {
-    public int vmID;
-    public JavaObjectHandle accessibleContext;
-    public AccessibleIcons rAccessibleIcons;
-  }
-
-  public struct GetAccessibleKeyBindingsPackage {
-    public int vmID;
-    public JavaObjectHandle accessibleContext;
-    public AccessibleKeyBindings rAccessibleKeyBindings;
   }
 
   public struct VisibleChildrenInfo {
@@ -2966,36 +2872,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public int selectionEndIndex;
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
     public string selectedText;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct DoAccessibleActionsPackageNative {
-    public int vmID;
-    public JOBJECT64 accessibleContext;
-    public AccessibleActionsToDoNative actionsToDo;
-    public int rResult;
-    public int failure;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct GetAccessibleActionsPackageNative {
-    public int vmID;
-    public JOBJECT64 accessibleContext;
-    public AccessibleActionsNative rAccessibleActions;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct GetAccessibleIconsPackageNative {
-    public int vmID;
-    public JOBJECT64 accessibleContext;
-    public AccessibleIconsNative rAccessibleIcons;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct GetAccessibleKeyBindingsPackageNative {
-    public int vmID;
-    public JOBJECT64 accessibleContext;
-    public AccessibleKeyBindingsNative rAccessibleKeyBindings;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

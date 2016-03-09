@@ -29,6 +29,7 @@ namespace CodeGen.Interop.NativeStructures {
 
     /// <summary>the hyperlinks</summary>
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_HYPERLINKS)]
+    [ElementCount("linkCount")]
     public AccessibleHyperlinkInfo[] links;
 
     /// <summary>AccessibleHypertext object</summary>

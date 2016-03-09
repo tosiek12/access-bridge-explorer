@@ -25,6 +25,7 @@ namespace CodeGen.Interop.NativeStructures {
     public string key;
     public jint targetCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_RELATION_TARGETS)]
+    [ElementCount("targetCount")]
     public AccessibleContext[] targets;  // AccessibleContexts
   }
 }

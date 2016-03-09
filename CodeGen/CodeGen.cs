@@ -528,9 +528,14 @@ namespace CodeGen {
           sourceWriter.IsNativeTypes ? "Wrap" : "Unwrap");
       } else if (type is ArrayTypeReference) {
         var elementType = ((ArrayTypeReference)type).ElementType;
+        var elementCountFiedName = ((ArrayTypeReference) type).ElementCountAttribute == null ? null : ((ArrayTypeReference)type).ElementCountAttribute.FieldName;
         sourceWriter.WriteLine("if ({0}{1} != null) {{", infosrc, fieldName);
         sourceWriter.IncIndent();
-        sourceWriter.WriteLine("var count = {0}{1}.Length;", infosrc, fieldName);
+        if (elementCountFiedName == null) {
+          sourceWriter.WriteLine("var count = {0}{1}.Length;", infosrc, fieldName);
+        } else {
+          sourceWriter.WriteLine("var count = {0}.{1};", infosrc, elementCountFiedName);
+        }
         sourceWriter.IsNativeTypes = !sourceWriter.IsNativeTypes;
         sourceWriter.WriteLine("{0}{1} = new {2}[count];", infodest, fieldName, sourceWriter.GetTypeName(elementType));
         sourceWriter.IsNativeTypes = !sourceWriter.IsNativeTypes;
@@ -950,7 +955,7 @@ namespace CodeGen {
       return type.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
         .Select(x => new FieldDefinition {
           Name = x.Name,
-          Type = ConvertType(x.FieldType),
+          Type = ConvertType(x, x.FieldType),
           MarshalAs = ConvertMashalAs(x)
         });
     }
@@ -1007,7 +1012,11 @@ namespace CodeGen {
       return (MarshalAsAttribute)provider.GetCustomAttributes(typeof(MarshalAsAttribute), false).FirstOrDefault();
     }
 
-    private TypeReference ConvertType(System.Type type) {
+    private TypeReference ConvertType(Type type) {
+      return ConvertType(null, type);
+    }
+
+    private TypeReference ConvertType(FieldInfo field, Type type) {
       if (type.IsByRef)
         type = type.GetElementType();
 
@@ -1041,7 +1050,8 @@ namespace CodeGen {
 
       if (type.IsArray) {
         return new ArrayTypeReference {
-          ElementType = ConvertType(type.GetElementType())
+          ElementType = ConvertType(type.GetElementType()),
+          ElementCountAttribute = field == null ? null : (ElementCountAttribute)field.GetCustomAttributes(typeof(ElementCountAttribute), false).FirstOrDefault()
         };
       }
 

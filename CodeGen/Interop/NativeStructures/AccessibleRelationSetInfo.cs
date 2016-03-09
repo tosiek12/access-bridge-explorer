@@ -22,6 +22,7 @@ namespace CodeGen.Interop.NativeStructures {
   public struct AccessibleRelationSetInfo {
     public jint relationCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_RELATIONS)]
+    [ElementCount("relationCount")]
     public AccessibleRelationInfo[] relations;
   }
 }

@@ -24,6 +24,7 @@ namespace CodeGen.Interop.NativeStructures {
   public struct AccessibleKeyBindings {
     public int keyBindingsCount;   // number of key bindings
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_KEY_BINDINGS)]
+    [ElementCount("keyBindingsCount")]
     public AccessibleKeyBindingInfo[] keyBindingInfo;
   }
 }

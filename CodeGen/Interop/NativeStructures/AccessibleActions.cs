@@ -25,6 +25,7 @@ namespace CodeGen.Interop.NativeStructures {
   public class AccessibleActions {
     public jint actionsCount;              // number of actions
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_ACTION_INFO)]
+    [ElementCount("actionsCount")]
     public AccessibleActionInfo[] actionInfo;       // the action information
   }
 }

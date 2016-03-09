@@ -25,6 +25,7 @@ namespace CodeGen.Interop.NativeStructures {
   public struct AccessibleIcons {
     public jint iconsCount;                // number of icons
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_ICON_INFO)]
+    [ElementCount("iconsCount")]
     public AccessibleIconInfo[] iconInfo;     // the icons
   }
 }

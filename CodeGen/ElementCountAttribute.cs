@@ -12,13 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace CodeGen.Definitions {
-  public class ArrayTypeReference : TypeReference {
-    public TypeReference ElementType { get; set; }
-    public ElementCountAttribute ElementCountAttribute { get; set; }
+using System;
 
-    public override string ToString() {
-      return string.Format("{0}[]", ElementType);
+namespace CodeGen {
+  public class ElementCountAttribute : Attribute {
+    private readonly string _fieldName;
+
+    public ElementCountAttribute(string fieldName) {
+      _fieldName = fieldName;
+    }
+
+    public string FieldName {
+      get { return _fieldName; }
     }
   }
 }
