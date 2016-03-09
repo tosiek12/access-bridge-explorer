@@ -73,8 +73,12 @@ namespace CodeGen {
           WriteApplicationEnums(model, writer, sourceWriter);
           WriteApplicationStructs(model, sourceWriter, writer);
           WriteApplicationClasses(model, writer, sourceWriter);
-          WriteApplicationFunctionsClass(model, sourceWriter);
-          WriteApplicationEventsClass(model, sourceWriter);
+
+          foreach (var legacy in new[] {false, true}) {
+            sourceWriter.IsLegacy = legacy;
+            WriteApplicationFunctionsClass(model, sourceWriter);
+            WriteApplicationEventsClass(model, sourceWriter);
+          }
 
           sourceWriter.IsNativeTypes = true;
           foreach (var legacy in new[] {false, true}) {
@@ -176,11 +180,10 @@ namespace CodeGen {
 
     private void WriteApplicationFunctionsClass(LibraryDefinition model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
-      sourceWriter.IsLegacy = false;
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Implementation of platform agnostic functions");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public partial class AccessBridgeFunctions : IAccessBridgeFunctions {{");
+      sourceWriter.WriteLine("public partial class AccessBridgeFunctions{0} : IAccessBridgeFunctions {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine();
@@ -218,7 +221,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Implementation of platform agnostic events");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public partial class AccessBridgeEvents : IAccessBridgeEvents {{");
+      sourceWriter.WriteLine("public partial class AccessBridgeEvents{0} : IAccessBridgeEvents {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine("#region Event fields");

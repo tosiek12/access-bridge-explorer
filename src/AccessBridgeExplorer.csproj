@@ -145,6 +145,7 @@
     <Compile Include="UpdateInfoArgs.cs" />
     <Compile Include="Win32\NativeMethods.cs" />
     <Compile Include="Model\AccessibleNodeModel.cs" />
+    <Compile Include="WindowsAccessBridge\AccessBridgeEventsLegacy.cs" />
     <Compile Include="WindowsAccessBridge\AccessBridgeEvents.cs" />
     <Compile Include="WindowsAccessBridge\AccessBridgeEventsNativeLegacy.cs" />
     <Compile Include="WindowsAccessBridge\AccessBridgeFunctionsLegacy.cs" />

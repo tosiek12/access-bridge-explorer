@@ -1912,6 +1912,1561 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   /// <summary>
+  /// Implementation of platform agnostic functions
+  /// </summary>
+  public partial class AccessBridgeFunctionsLegacy : IAccessBridgeFunctions {
+
+    #region Function implementations
+
+    public void Windows_run() {
+      LibraryFunctions.Windows_run();
+    }
+
+    public bool IsJavaWindow(WindowHandle window) {
+      var result = LibraryFunctions.IsJavaWindow(window);
+      return ToBool(result);
+    }
+
+    public bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2) {
+      var result = LibraryFunctions.IsSameObject(vmid, Unwrap(vmid, obj1), Unwrap(vmid, obj2));
+      GC.KeepAlive(obj1);
+      GC.KeepAlive(obj2);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac) {
+      JOBJECT32 acTemp;
+      var result = LibraryFunctions.GetAccessibleContextFromHWND(window, out vmid, out acTemp);
+      ac = Wrap(vmid, acTemp);
+      return ToBool(result);
+    }
+
+    public WindowHandle GetHWNDFromAccessibleContext(int vmid, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetHWNDFromAccessibleContext(vmid, Unwrap(vmid, ac));
+      GC.KeepAlive(ac);
+      return result;
+    }
+
+    public bool GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac) {
+      JOBJECT32 acTemp;
+      var result = LibraryFunctions.GetAccessibleContextAt(vmid, Unwrap(vmid, acParent), x, y, out acTemp);
+      GC.KeepAlive(acParent);
+      ac = Wrap(vmid, acTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac) {
+      JOBJECT32 acTemp;
+      var result = LibraryFunctions.GetAccessibleContextWithFocus(window, out vmid, out acTemp);
+      ac = Wrap(vmid, acTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info) {
+      AccessibleContextInfoNativeLegacy infoTemp;
+      var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), out infoTemp);
+      GC.KeepAlive(ac);
+      info = Wrap(vmid, infoTemp);
+      return ToBool(result);
+    }
+
+    public JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i) {
+      var result = LibraryFunctions.GetAccessibleChildFromContext(vmid, Unwrap(vmid, ac), i);
+      GC.KeepAlive(ac);
+      return Wrap(vmid, result);
+    }
+
+    public JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetAccessibleParentFromContext(vmid, Unwrap(vmid, ac));
+      GC.KeepAlive(ac);
+      return Wrap(vmid, result);
+    }
+
+    public bool GetAccessibleRelationSet(int vmid, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo) {
+      AccessibleRelationSetInfoNativeLegacy relationSetInfoTemp;
+      var result = LibraryFunctions.GetAccessibleRelationSet(vmid, Unwrap(vmid, accessibleContext), out relationSetInfoTemp);
+      GC.KeepAlive(accessibleContext);
+      relationSetInfo = Wrap(vmid, relationSetInfoTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleHypertext(int vmid, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo) {
+      AccessibleHypertextInfoNativeLegacy hypertextInfoTemp;
+      var result = LibraryFunctions.GetAccessibleHypertext(vmid, Unwrap(vmid, accessibleContext), out hypertextInfoTemp);
+      GC.KeepAlive(accessibleContext);
+      hypertextInfo = Wrap(vmid, hypertextInfoTemp);
+      return ToBool(result);
+    }
+
+    public bool ActivateAccessibleHyperlink(int vmid, JavaObjectHandle accessibleContext, JavaObjectHandle accessibleHyperlink) {
+      var result = LibraryFunctions.ActivateAccessibleHyperlink(vmid, Unwrap(vmid, accessibleContext), Unwrap(vmid, accessibleHyperlink));
+      GC.KeepAlive(accessibleContext);
+      GC.KeepAlive(accessibleHyperlink);
+      return ToBool(result);
+    }
+
+    public int GetAccessibleHyperlinkCount(int vmid, JavaObjectHandle accessibleContext) {
+      var result = LibraryFunctions.GetAccessibleHyperlinkCount(vmid, Unwrap(vmid, accessibleContext));
+      GC.KeepAlive(accessibleContext);
+      return result;
+    }
+
+    public bool GetAccessibleHypertextExt(int vmid, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo) {
+      AccessibleHypertextInfoNativeLegacy hypertextInfoTemp;
+      var result = LibraryFunctions.GetAccessibleHypertextExt(vmid, Unwrap(vmid, accessibleContext), nStartIndex, out hypertextInfoTemp);
+      GC.KeepAlive(accessibleContext);
+      hypertextInfo = Wrap(vmid, hypertextInfoTemp);
+      return ToBool(result);
+    }
+
+    public int GetAccessibleHypertextLinkIndex(int vmid, JavaObjectHandle hypertext, int nIndex) {
+      var result = LibraryFunctions.GetAccessibleHypertextLinkIndex(vmid, Unwrap(vmid, hypertext), nIndex);
+      GC.KeepAlive(hypertext);
+      return result;
+    }
+
+    public bool GetAccessibleHyperlink(int vmid, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo) {
+      AccessibleHyperlinkInfoNativeLegacy hyperlinkInfoTemp;
+      var result = LibraryFunctions.GetAccessibleHyperlink(vmid, Unwrap(vmid, hypertext), nIndex, out hyperlinkInfoTemp);
+      GC.KeepAlive(hypertext);
+      hyperlinkInfo = Wrap(vmid, hyperlinkInfoTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings) {
+      AccessibleKeyBindingsNativeLegacy keyBindingsTemp;
+      var result = LibraryFunctions.GetAccessibleKeyBindings(vmid, Unwrap(vmid, accessibleContext), out keyBindingsTemp);
+      GC.KeepAlive(accessibleContext);
+      keyBindings = Wrap(vmid, keyBindingsTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons) {
+      AccessibleIconsNativeLegacy iconsTemp;
+      var result = LibraryFunctions.GetAccessibleIcons(vmid, Unwrap(vmid, accessibleContext), out iconsTemp);
+      GC.KeepAlive(accessibleContext);
+      icons = Wrap(vmid, iconsTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions) {
+      AccessibleActionsNativeLegacy actionsTemp = new AccessibleActionsNativeLegacy();
+      var result = LibraryFunctions.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actionsTemp);
+      GC.KeepAlive(accessibleContext);
+      CopyWrap(vmid, actionsTemp, actions);
+      return ToBool(result);
+    }
+
+    public bool DoAccessibleActions(int vmid, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure) {
+      AccessibleActionsToDoNativeLegacy actionsToDoTemp = Unwrap(vmid, actionsToDo);
+      var result = LibraryFunctions.DoAccessibleActions(vmid, Unwrap(vmid, accessibleContext), ref actionsToDoTemp, out failure);
+      GC.KeepAlive(accessibleContext);
+      actionsToDo = Wrap(vmid, actionsToDoTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y) {
+      AccessibleTextInfoNativeLegacy textInfoTemp;
+      var result = LibraryFunctions.GetAccessibleTextInfo(vmid, Unwrap(vmid, at), out textInfoTemp, x, y);
+      GC.KeepAlive(at);
+      textInfo = Wrap(vmid, textInfoTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index) {
+      AccessibleTextItemsInfoNativeLegacy textItemsTemp;
+      var result = LibraryFunctions.GetAccessibleTextItems(vmid, Unwrap(vmid, at), out textItemsTemp, index);
+      GC.KeepAlive(at);
+      textItems = Wrap(vmid, textItemsTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextSelectionInfo(int vmid, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection) {
+      AccessibleTextSelectionInfoNativeLegacy textSelectionTemp;
+      var result = LibraryFunctions.GetAccessibleTextSelectionInfo(vmid, Unwrap(vmid, at), out textSelectionTemp);
+      GC.KeepAlive(at);
+      textSelection = Wrap(vmid, textSelectionTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes) {
+      AccessibleTextAttributesInfoNativeLegacy attributesTemp;
+      var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, out attributesTemp);
+      GC.KeepAlive(at);
+      attributes = Wrap(vmid, attributesTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index) {
+      AccessibleTextRectInfoNativeLegacy rectInfoTemp;
+      var result = LibraryFunctions.GetAccessibleTextRect(vmid, Unwrap(vmid, at), out rectInfoTemp, index);
+      GC.KeepAlive(at);
+      rectInfo = Wrap(vmid, rectInfoTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextLineBounds(int vmid, JavaObjectHandle at, int index, out int startIndex, out int endIndex) {
+      var result = LibraryFunctions.GetAccessibleTextLineBounds(vmid, Unwrap(vmid, at), index, out startIndex, out endIndex);
+      GC.KeepAlive(at);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, StringBuilder text, short len) {
+      var result = LibraryFunctions.GetAccessibleTextRange(vmid, Unwrap(vmid, at), start, end, text, len);
+      GC.KeepAlive(at);
+      return ToBool(result);
+    }
+
+    public bool GetCurrentAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len) {
+      var result = LibraryFunctions.GetCurrentAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
+      GC.KeepAlive(av);
+      return ToBool(result);
+    }
+
+    public bool GetMaximumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len) {
+      var result = LibraryFunctions.GetMaximumAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
+      GC.KeepAlive(av);
+      return ToBool(result);
+    }
+
+    public bool GetMinimumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len) {
+      var result = LibraryFunctions.GetMinimumAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
+      GC.KeepAlive(av);
+      return ToBool(result);
+    }
+
+    public void AddAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i) {
+      LibraryFunctions.AddAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
+      GC.KeepAlive(asel);
+    }
+
+    public void ClearAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel) {
+      LibraryFunctions.ClearAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel));
+      GC.KeepAlive(asel);
+    }
+
+    public JavaObjectHandle GetAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i) {
+      var result = LibraryFunctions.GetAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
+      GC.KeepAlive(asel);
+      return Wrap(vmid, result);
+    }
+
+    public int GetAccessibleSelectionCountFromContext(int vmid, JavaObjectHandle asel) {
+      var result = LibraryFunctions.GetAccessibleSelectionCountFromContext(vmid, Unwrap(vmid, asel));
+      GC.KeepAlive(asel);
+      return result;
+    }
+
+    public bool IsAccessibleChildSelectedFromContext(int vmid, JavaObjectHandle asel, int i) {
+      var result = LibraryFunctions.IsAccessibleChildSelectedFromContext(vmid, Unwrap(vmid, asel), i);
+      GC.KeepAlive(asel);
+      return ToBool(result);
+    }
+
+    public void RemoveAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i) {
+      LibraryFunctions.RemoveAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
+      GC.KeepAlive(asel);
+    }
+
+    public void SelectAllAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel) {
+      LibraryFunctions.SelectAllAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel));
+      GC.KeepAlive(asel);
+    }
+
+    public bool GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo) {
+      AccessibleTableInfoNativeLegacy tableInfoTemp;
+      var result = LibraryFunctions.GetAccessibleTableInfo(vmid, Unwrap(vmid, ac), out tableInfoTemp);
+      GC.KeepAlive(ac);
+      tableInfo = Wrap(vmid, tableInfoTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
+      AccessibleTableCellInfoNativeLegacy tableCellInfoTemp;
+      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, accessibleTable), row, column, out tableCellInfoTemp);
+      GC.KeepAlive(accessibleTable);
+      tableCellInfo = Wrap(vmid, tableCellInfoTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
+      AccessibleTableInfoNativeLegacy tableInfoTemp;
+      var result = LibraryFunctions.GetAccessibleTableRowHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
+      GC.KeepAlive(acParent);
+      tableInfo = Wrap(vmid, tableInfoTemp);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
+      AccessibleTableInfoNativeLegacy tableInfoTemp;
+      var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
+      GC.KeepAlive(acParent);
+      tableInfo = Wrap(vmid, tableInfoTemp);
+      return ToBool(result);
+    }
+
+    public JavaObjectHandle GetAccessibleTableRowDescription(int vmid, JavaObjectHandle acParent, int row) {
+      var result = LibraryFunctions.GetAccessibleTableRowDescription(vmid, Unwrap(vmid, acParent), row);
+      GC.KeepAlive(acParent);
+      return Wrap(vmid, result);
+    }
+
+    public JavaObjectHandle GetAccessibleTableColumnDescription(int vmid, JavaObjectHandle acParent, int column) {
+      var result = LibraryFunctions.GetAccessibleTableColumnDescription(vmid, Unwrap(vmid, acParent), column);
+      GC.KeepAlive(acParent);
+      return Wrap(vmid, result);
+    }
+
+    public int GetAccessibleTableRowSelectionCount(int vmid, JavaObjectHandle table) {
+      var result = LibraryFunctions.GetAccessibleTableRowSelectionCount(vmid, Unwrap(vmid, table));
+      GC.KeepAlive(table);
+      return result;
+    }
+
+    public bool IsAccessibleTableRowSelected(int vmid, JavaObjectHandle table, int row) {
+      var result = LibraryFunctions.IsAccessibleTableRowSelected(vmid, Unwrap(vmid, table), row);
+      GC.KeepAlive(table);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTableRowSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections) {
+      var result = LibraryFunctions.GetAccessibleTableRowSelections(vmid, Unwrap(vmid, table), count, selections);
+      GC.KeepAlive(table);
+      return ToBool(result);
+    }
+
+    public int GetAccessibleTableColumnSelectionCount(int vmid, JavaObjectHandle table) {
+      var result = LibraryFunctions.GetAccessibleTableColumnSelectionCount(vmid, Unwrap(vmid, table));
+      GC.KeepAlive(table);
+      return result;
+    }
+
+    public bool IsAccessibleTableColumnSelected(int vmid, JavaObjectHandle table, int column) {
+      var result = LibraryFunctions.IsAccessibleTableColumnSelected(vmid, Unwrap(vmid, table), column);
+      GC.KeepAlive(table);
+      return ToBool(result);
+    }
+
+    public bool GetAccessibleTableColumnSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections) {
+      var result = LibraryFunctions.GetAccessibleTableColumnSelections(vmid, Unwrap(vmid, table), count, selections);
+      GC.KeepAlive(table);
+      return ToBool(result);
+    }
+
+    public int GetAccessibleTableRow(int vmid, JavaObjectHandle table, int index) {
+      var result = LibraryFunctions.GetAccessibleTableRow(vmid, Unwrap(vmid, table), index);
+      GC.KeepAlive(table);
+      return result;
+    }
+
+    public int GetAccessibleTableColumn(int vmid, JavaObjectHandle table, int index) {
+      var result = LibraryFunctions.GetAccessibleTableColumn(vmid, Unwrap(vmid, table), index);
+      GC.KeepAlive(table);
+      return result;
+    }
+
+    public int GetAccessibleTableIndex(int vmid, JavaObjectHandle table, int row, int column) {
+      var result = LibraryFunctions.GetAccessibleTableIndex(vmid, Unwrap(vmid, table), row, column);
+      GC.KeepAlive(table);
+      return result;
+    }
+
+    public bool SetTextContents(int vmid, JavaObjectHandle ac, string text) {
+      var result = LibraryFunctions.SetTextContents(vmid, Unwrap(vmid, ac), text);
+      GC.KeepAlive(ac);
+      return ToBool(result);
+    }
+
+    public JavaObjectHandle GetParentWithRole(int vmid, JavaObjectHandle ac, string role) {
+      var result = LibraryFunctions.GetParentWithRole(vmid, Unwrap(vmid, ac), role);
+      GC.KeepAlive(ac);
+      return Wrap(vmid, result);
+    }
+
+    public JavaObjectHandle GetParentWithRoleElseRoot(int vmid, JavaObjectHandle ac, string role) {
+      var result = LibraryFunctions.GetParentWithRoleElseRoot(vmid, Unwrap(vmid, ac), role);
+      GC.KeepAlive(ac);
+      return Wrap(vmid, result);
+    }
+
+    public JavaObjectHandle GetTopLevelObject(int vmid, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetTopLevelObject(vmid, Unwrap(vmid, ac));
+      GC.KeepAlive(ac);
+      return Wrap(vmid, result);
+    }
+
+    public int GetObjectDepth(int vmid, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetObjectDepth(vmid, Unwrap(vmid, ac));
+      GC.KeepAlive(ac);
+      return result;
+    }
+
+    public JavaObjectHandle GetActiveDescendent(int vmid, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetActiveDescendent(vmid, Unwrap(vmid, ac));
+      GC.KeepAlive(ac);
+      return Wrap(vmid, result);
+    }
+
+    public bool GetVirtualAccessibleName(int vmid, JavaObjectHandle ac, StringBuilder name, int len) {
+      var result = LibraryFunctions.GetVirtualAccessibleName(vmid, Unwrap(vmid, ac), name, len);
+      GC.KeepAlive(ac);
+      return ToBool(result);
+    }
+
+    public bool GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len) {
+      AccessibleTextAttributesInfoNativeLegacy attributesTemp;
+      var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, out attributesTemp, out len);
+      GC.KeepAlive(accessibleContext);
+      attributes = Wrap(vmid, attributesTemp);
+      return ToBool(result);
+    }
+
+    public bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index) {
+      AccessibleTextRectInfoNativeLegacy rectInfoTemp;
+      var result = LibraryFunctions.GetCaretLocation(vmid, Unwrap(vmid, ac), out rectInfoTemp, index);
+      GC.KeepAlive(ac);
+      rectInfo = Wrap(vmid, rectInfoTemp);
+      return ToBool(result);
+    }
+
+    public int GetVisibleChildrenCount(int vmid, JavaObjectHandle accessibleContext) {
+      var result = LibraryFunctions.GetVisibleChildrenCount(vmid, Unwrap(vmid, accessibleContext));
+      GC.KeepAlive(accessibleContext);
+      return result;
+    }
+
+    public bool GetVisibleChildren(int vmid, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children) {
+      VisibleChildrenInfoNativeLegacy childrenTemp;
+      var result = LibraryFunctions.GetVisibleChildren(vmid, Unwrap(vmid, accessibleContext), startIndex, out childrenTemp);
+      GC.KeepAlive(accessibleContext);
+      children = Wrap(vmid, childrenTemp);
+      return ToBool(result);
+    }
+
+    public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
+      AccessBridgeVersionInfoNativeLegacy infoTemp;
+      var result = LibraryFunctions.GetVersionInfo(vmid, out infoTemp);
+      info = Wrap(vmid, infoTemp);
+      return ToBool(result);
+    }
+
+    #endregion
+
+    #region Wrap/Unwrap structs
+
+    private AccessBridgeVersionInfo Wrap(int vmid, AccessBridgeVersionInfoNativeLegacy info) {
+      var result = new AccessBridgeVersionInfo();
+      result.VMversion = info.VMversion;
+      result.bridgeJavaClassVersion = info.bridgeJavaClassVersion;
+      result.bridgeJavaDLLVersion = info.bridgeJavaDLLVersion;
+      result.bridgeWinDLLVersion = info.bridgeWinDLLVersion;
+      return result;
+    }
+
+    private AccessBridgeVersionInfoNativeLegacy Unwrap(int vmid, AccessBridgeVersionInfo info) {
+      var result = new AccessBridgeVersionInfoNativeLegacy();
+      result.VMversion = info.VMversion;
+      result.bridgeJavaClassVersion = info.bridgeJavaClassVersion;
+      result.bridgeJavaDLLVersion = info.bridgeJavaDLLVersion;
+      result.bridgeWinDLLVersion = info.bridgeWinDLLVersion;
+      return result;
+    }
+
+    private AccessibleActionInfo Wrap(int vmid, AccessibleActionInfoNativeLegacy info) {
+      var result = new AccessibleActionInfo();
+      result.name = info.name;
+      return result;
+    }
+
+    private AccessibleActionInfoNativeLegacy Unwrap(int vmid, AccessibleActionInfo info) {
+      var result = new AccessibleActionInfoNativeLegacy();
+      result.name = info.name;
+      return result;
+    }
+
+    private AccessibleActionsToDo Wrap(int vmid, AccessibleActionsToDoNativeLegacy info) {
+      var result = new AccessibleActionsToDo();
+      result.actionsCount = info.actionsCount;
+      if (info.actions != null) {
+        var count = info.actionsCount;
+        result.actions = new AccessibleActionInfo[count];
+        for(var i = 0; i < count; i++) {
+          result.actions[i] = Wrap(vmid, info.actions[i]);
+        }
+      }
+      return result;
+    }
+
+    private AccessibleActionsToDoNativeLegacy Unwrap(int vmid, AccessibleActionsToDo info) {
+      var result = new AccessibleActionsToDoNativeLegacy();
+      result.actionsCount = info.actionsCount;
+      if (info.actions != null) {
+        var count = info.actionsCount;
+        result.actions = new AccessibleActionInfoNativeLegacy[count];
+        for(var i = 0; i < count; i++) {
+          result.actions[i] = Unwrap(vmid, info.actions[i]);
+        }
+      }
+      return result;
+    }
+
+    private AccessibleContextInfo Wrap(int vmid, AccessibleContextInfoNativeLegacy info) {
+      var result = new AccessibleContextInfo();
+      result.name = info.name;
+      result.description = info.description;
+      result.role = info.role;
+      result.role_en_US = info.role_en_US;
+      result.states = info.states;
+      result.states_en_US = info.states_en_US;
+      result.indexInParent = info.indexInParent;
+      result.childrenCount = info.childrenCount;
+      result.x = info.x;
+      result.y = info.y;
+      result.width = info.width;
+      result.height = info.height;
+      result.accessibleComponent = info.accessibleComponent;
+      result.accessibleAction = info.accessibleAction;
+      result.accessibleSelection = info.accessibleSelection;
+      result.accessibleText = info.accessibleText;
+      result.accessibleInterfaces = info.accessibleInterfaces;
+      return result;
+    }
+
+    private AccessibleContextInfoNativeLegacy Unwrap(int vmid, AccessibleContextInfo info) {
+      var result = new AccessibleContextInfoNativeLegacy();
+      result.name = info.name;
+      result.description = info.description;
+      result.role = info.role;
+      result.role_en_US = info.role_en_US;
+      result.states = info.states;
+      result.states_en_US = info.states_en_US;
+      result.indexInParent = info.indexInParent;
+      result.childrenCount = info.childrenCount;
+      result.x = info.x;
+      result.y = info.y;
+      result.width = info.width;
+      result.height = info.height;
+      result.accessibleComponent = info.accessibleComponent;
+      result.accessibleAction = info.accessibleAction;
+      result.accessibleSelection = info.accessibleSelection;
+      result.accessibleText = info.accessibleText;
+      result.accessibleInterfaces = info.accessibleInterfaces;
+      return result;
+    }
+
+    private AccessibleHyperlinkInfo Wrap(int vmid, AccessibleHyperlinkInfoNativeLegacy info) {
+      var result = new AccessibleHyperlinkInfo();
+      result.text = info.text;
+      result.startIndex = info.startIndex;
+      result.endIndex = info.endIndex;
+      result.accessibleHyperlink = Wrap(vmid, info.accessibleHyperlink);
+      return result;
+    }
+
+    private AccessibleHyperlinkInfoNativeLegacy Unwrap(int vmid, AccessibleHyperlinkInfo info) {
+      var result = new AccessibleHyperlinkInfoNativeLegacy();
+      result.text = info.text;
+      result.startIndex = info.startIndex;
+      result.endIndex = info.endIndex;
+      result.accessibleHyperlink = Unwrap(vmid, info.accessibleHyperlink);
+      return result;
+    }
+
+    private AccessibleHypertextInfo Wrap(int vmid, AccessibleHypertextInfoNativeLegacy info) {
+      var result = new AccessibleHypertextInfo();
+      result.linkCount = info.linkCount;
+      if (info.links != null) {
+        var count = info.linkCount;
+        result.links = new AccessibleHyperlinkInfo[count];
+        for(var i = 0; i < count; i++) {
+          result.links[i] = Wrap(vmid, info.links[i]);
+        }
+      }
+      result.accessibleHypertext = Wrap(vmid, info.accessibleHypertext);
+      return result;
+    }
+
+    private AccessibleHypertextInfoNativeLegacy Unwrap(int vmid, AccessibleHypertextInfo info) {
+      var result = new AccessibleHypertextInfoNativeLegacy();
+      result.linkCount = info.linkCount;
+      if (info.links != null) {
+        var count = info.linkCount;
+        result.links = new AccessibleHyperlinkInfoNativeLegacy[count];
+        for(var i = 0; i < count; i++) {
+          result.links[i] = Unwrap(vmid, info.links[i]);
+        }
+      }
+      result.accessibleHypertext = Unwrap(vmid, info.accessibleHypertext);
+      return result;
+    }
+
+    private AccessibleIconInfo Wrap(int vmid, AccessibleIconInfoNativeLegacy info) {
+      var result = new AccessibleIconInfo();
+      result.description = info.description;
+      result.height = info.height;
+      result.width = info.width;
+      return result;
+    }
+
+    private AccessibleIconInfoNativeLegacy Unwrap(int vmid, AccessibleIconInfo info) {
+      var result = new AccessibleIconInfoNativeLegacy();
+      result.description = info.description;
+      result.height = info.height;
+      result.width = info.width;
+      return result;
+    }
+
+    private AccessibleIcons Wrap(int vmid, AccessibleIconsNativeLegacy info) {
+      var result = new AccessibleIcons();
+      result.iconsCount = info.iconsCount;
+      if (info.iconInfo != null) {
+        var count = info.iconsCount;
+        result.iconInfo = new AccessibleIconInfo[count];
+        for(var i = 0; i < count; i++) {
+          result.iconInfo[i] = Wrap(vmid, info.iconInfo[i]);
+        }
+      }
+      return result;
+    }
+
+    private AccessibleIconsNativeLegacy Unwrap(int vmid, AccessibleIcons info) {
+      var result = new AccessibleIconsNativeLegacy();
+      result.iconsCount = info.iconsCount;
+      if (info.iconInfo != null) {
+        var count = info.iconsCount;
+        result.iconInfo = new AccessibleIconInfoNativeLegacy[count];
+        for(var i = 0; i < count; i++) {
+          result.iconInfo[i] = Unwrap(vmid, info.iconInfo[i]);
+        }
+      }
+      return result;
+    }
+
+    private AccessibleKeyBindingInfo Wrap(int vmid, AccessibleKeyBindingInfoNativeLegacy info) {
+      var result = new AccessibleKeyBindingInfo();
+      result.character = info.character;
+      result.modifiers = info.modifiers;
+      return result;
+    }
+
+    private AccessibleKeyBindingInfoNativeLegacy Unwrap(int vmid, AccessibleKeyBindingInfo info) {
+      var result = new AccessibleKeyBindingInfoNativeLegacy();
+      result.character = info.character;
+      result.modifiers = info.modifiers;
+      return result;
+    }
+
+    private AccessibleKeyBindings Wrap(int vmid, AccessibleKeyBindingsNativeLegacy info) {
+      var result = new AccessibleKeyBindings();
+      result.keyBindingsCount = info.keyBindingsCount;
+      if (info.keyBindingInfo != null) {
+        var count = info.keyBindingsCount;
+        result.keyBindingInfo = new AccessibleKeyBindingInfo[count];
+        for(var i = 0; i < count; i++) {
+          result.keyBindingInfo[i] = Wrap(vmid, info.keyBindingInfo[i]);
+        }
+      }
+      return result;
+    }
+
+    private AccessibleKeyBindingsNativeLegacy Unwrap(int vmid, AccessibleKeyBindings info) {
+      var result = new AccessibleKeyBindingsNativeLegacy();
+      result.keyBindingsCount = info.keyBindingsCount;
+      if (info.keyBindingInfo != null) {
+        var count = info.keyBindingsCount;
+        result.keyBindingInfo = new AccessibleKeyBindingInfoNativeLegacy[count];
+        for(var i = 0; i < count; i++) {
+          result.keyBindingInfo[i] = Unwrap(vmid, info.keyBindingInfo[i]);
+        }
+      }
+      return result;
+    }
+
+    private AccessibleRelationInfo Wrap(int vmid, AccessibleRelationInfoNativeLegacy info) {
+      var result = new AccessibleRelationInfo();
+      result.key = info.key;
+      result.targetCount = info.targetCount;
+      if (info.targets != null) {
+        var count = info.targetCount;
+        result.targets = new JavaObjectHandle[count];
+        for(var i = 0; i < count; i++) {
+          result.targets[i] = Wrap(vmid, info.targets[i]);
+        }
+      }
+      return result;
+    }
+
+    private AccessibleRelationInfoNativeLegacy Unwrap(int vmid, AccessibleRelationInfo info) {
+      var result = new AccessibleRelationInfoNativeLegacy();
+      result.key = info.key;
+      result.targetCount = info.targetCount;
+      if (info.targets != null) {
+        var count = info.targetCount;
+        result.targets = new JOBJECT32[count];
+        for(var i = 0; i < count; i++) {
+          result.targets[i] = Unwrap(vmid, info.targets[i]);
+        }
+      }
+      return result;
+    }
+
+    private AccessibleRelationSetInfo Wrap(int vmid, AccessibleRelationSetInfoNativeLegacy info) {
+      var result = new AccessibleRelationSetInfo();
+      result.relationCount = info.relationCount;
+      if (info.relations != null) {
+        var count = info.relationCount;
+        result.relations = new AccessibleRelationInfo[count];
+        for(var i = 0; i < count; i++) {
+          result.relations[i] = Wrap(vmid, info.relations[i]);
+        }
+      }
+      return result;
+    }
+
+    private AccessibleRelationSetInfoNativeLegacy Unwrap(int vmid, AccessibleRelationSetInfo info) {
+      var result = new AccessibleRelationSetInfoNativeLegacy();
+      result.relationCount = info.relationCount;
+      if (info.relations != null) {
+        var count = info.relationCount;
+        result.relations = new AccessibleRelationInfoNativeLegacy[count];
+        for(var i = 0; i < count; i++) {
+          result.relations[i] = Unwrap(vmid, info.relations[i]);
+        }
+      }
+      return result;
+    }
+
+    private AccessibleTableCellInfo Wrap(int vmid, AccessibleTableCellInfoNativeLegacy info) {
+      var result = new AccessibleTableCellInfo();
+      result.accessibleContext = Wrap(vmid, info.accessibleContext);
+      result.index = info.index;
+      result.row = info.row;
+      result.column = info.column;
+      result.rowExtent = info.rowExtent;
+      result.columnExtent = info.columnExtent;
+      result.isSelected = info.isSelected;
+      return result;
+    }
+
+    private AccessibleTableCellInfoNativeLegacy Unwrap(int vmid, AccessibleTableCellInfo info) {
+      var result = new AccessibleTableCellInfoNativeLegacy();
+      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
+      result.index = info.index;
+      result.row = info.row;
+      result.column = info.column;
+      result.rowExtent = info.rowExtent;
+      result.columnExtent = info.columnExtent;
+      result.isSelected = info.isSelected;
+      return result;
+    }
+
+    private AccessibleTableInfo Wrap(int vmid, AccessibleTableInfoNativeLegacy info) {
+      var result = new AccessibleTableInfo();
+      result.caption = Wrap(vmid, info.caption);
+      result.summary = Wrap(vmid, info.summary);
+      result.rowCount = info.rowCount;
+      result.columnCount = info.columnCount;
+      result.accessibleContext = Wrap(vmid, info.accessibleContext);
+      result.accessibleTable = Wrap(vmid, info.accessibleTable);
+      return result;
+    }
+
+    private AccessibleTableInfoNativeLegacy Unwrap(int vmid, AccessibleTableInfo info) {
+      var result = new AccessibleTableInfoNativeLegacy();
+      result.caption = Unwrap(vmid, info.caption);
+      result.summary = Unwrap(vmid, info.summary);
+      result.rowCount = info.rowCount;
+      result.columnCount = info.columnCount;
+      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
+      result.accessibleTable = Unwrap(vmid, info.accessibleTable);
+      return result;
+    }
+
+    private AccessibleTextAttributesInfo Wrap(int vmid, AccessibleTextAttributesInfoNativeLegacy info) {
+      var result = new AccessibleTextAttributesInfo();
+      result.bold = info.bold;
+      result.italic = info.italic;
+      result.underline = info.underline;
+      result.strikethrough = info.strikethrough;
+      result.superscript = info.superscript;
+      result.subscript = info.subscript;
+      result.backgroundColor = info.backgroundColor;
+      result.foregroundColor = info.foregroundColor;
+      result.fontFamily = info.fontFamily;
+      result.fontSize = info.fontSize;
+      result.alignment = info.alignment;
+      result.bidiLevel = info.bidiLevel;
+      result.firstLineIndent = info.firstLineIndent;
+      result.leftIndent = info.leftIndent;
+      result.rightIndent = info.rightIndent;
+      result.lineSpacing = info.lineSpacing;
+      result.spaceAbove = info.spaceAbove;
+      result.spaceBelow = info.spaceBelow;
+      result.fullAttributesString = info.fullAttributesString;
+      return result;
+    }
+
+    private AccessibleTextAttributesInfoNativeLegacy Unwrap(int vmid, AccessibleTextAttributesInfo info) {
+      var result = new AccessibleTextAttributesInfoNativeLegacy();
+      result.bold = info.bold;
+      result.italic = info.italic;
+      result.underline = info.underline;
+      result.strikethrough = info.strikethrough;
+      result.superscript = info.superscript;
+      result.subscript = info.subscript;
+      result.backgroundColor = info.backgroundColor;
+      result.foregroundColor = info.foregroundColor;
+      result.fontFamily = info.fontFamily;
+      result.fontSize = info.fontSize;
+      result.alignment = info.alignment;
+      result.bidiLevel = info.bidiLevel;
+      result.firstLineIndent = info.firstLineIndent;
+      result.leftIndent = info.leftIndent;
+      result.rightIndent = info.rightIndent;
+      result.lineSpacing = info.lineSpacing;
+      result.spaceAbove = info.spaceAbove;
+      result.spaceBelow = info.spaceBelow;
+      result.fullAttributesString = info.fullAttributesString;
+      return result;
+    }
+
+    private AccessibleTextInfo Wrap(int vmid, AccessibleTextInfoNativeLegacy info) {
+      var result = new AccessibleTextInfo();
+      result.charCount = info.charCount;
+      result.caretIndex = info.caretIndex;
+      result.indexAtPoint = info.indexAtPoint;
+      return result;
+    }
+
+    private AccessibleTextInfoNativeLegacy Unwrap(int vmid, AccessibleTextInfo info) {
+      var result = new AccessibleTextInfoNativeLegacy();
+      result.charCount = info.charCount;
+      result.caretIndex = info.caretIndex;
+      result.indexAtPoint = info.indexAtPoint;
+      return result;
+    }
+
+    private AccessibleTextItemsInfo Wrap(int vmid, AccessibleTextItemsInfoNativeLegacy info) {
+      var result = new AccessibleTextItemsInfo();
+      result.letter = info.letter;
+      result.word = info.word;
+      result.sentence = info.sentence;
+      return result;
+    }
+
+    private AccessibleTextItemsInfoNativeLegacy Unwrap(int vmid, AccessibleTextItemsInfo info) {
+      var result = new AccessibleTextItemsInfoNativeLegacy();
+      result.letter = info.letter;
+      result.word = info.word;
+      result.sentence = info.sentence;
+      return result;
+    }
+
+    private AccessibleTextRectInfo Wrap(int vmid, AccessibleTextRectInfoNativeLegacy info) {
+      var result = new AccessibleTextRectInfo();
+      result.x = info.x;
+      result.y = info.y;
+      result.width = info.width;
+      result.height = info.height;
+      return result;
+    }
+
+    private AccessibleTextRectInfoNativeLegacy Unwrap(int vmid, AccessibleTextRectInfo info) {
+      var result = new AccessibleTextRectInfoNativeLegacy();
+      result.x = info.x;
+      result.y = info.y;
+      result.width = info.width;
+      result.height = info.height;
+      return result;
+    }
+
+    private AccessibleTextSelectionInfo Wrap(int vmid, AccessibleTextSelectionInfoNativeLegacy info) {
+      var result = new AccessibleTextSelectionInfo();
+      result.selectionStartIndex = info.selectionStartIndex;
+      result.selectionEndIndex = info.selectionEndIndex;
+      result.selectedText = info.selectedText;
+      return result;
+    }
+
+    private AccessibleTextSelectionInfoNativeLegacy Unwrap(int vmid, AccessibleTextSelectionInfo info) {
+      var result = new AccessibleTextSelectionInfoNativeLegacy();
+      result.selectionStartIndex = info.selectionStartIndex;
+      result.selectionEndIndex = info.selectionEndIndex;
+      result.selectedText = info.selectedText;
+      return result;
+    }
+
+    private VisibleChildrenInfo Wrap(int vmid, VisibleChildrenInfoNativeLegacy info) {
+      var result = new VisibleChildrenInfo();
+      result.returnedChildrenCount = info.returnedChildrenCount;
+      if (info.children != null) {
+        var count = info.returnedChildrenCount;
+        result.children = new JavaObjectHandle[count];
+        for(var i = 0; i < count; i++) {
+          result.children[i] = Wrap(vmid, info.children[i]);
+        }
+      }
+      return result;
+    }
+
+    private VisibleChildrenInfoNativeLegacy Unwrap(int vmid, VisibleChildrenInfo info) {
+      var result = new VisibleChildrenInfoNativeLegacy();
+      result.returnedChildrenCount = info.returnedChildrenCount;
+      if (info.children != null) {
+        var count = info.returnedChildrenCount;
+        result.children = new JOBJECT32[count];
+        for(var i = 0; i < count; i++) {
+          result.children[i] = Unwrap(vmid, info.children[i]);
+        }
+      }
+      return result;
+    }
+
+    #endregion
+
+    #region CopyWrap/CopyUnwrap classes
+
+    private void CopyWrap(int vmid, AccessibleActionsNativeLegacy infoSrc, AccessibleActions infoDest) {
+      infoDest.actionsCount = infoSrc.actionsCount;
+      if (infoSrc.actionInfo != null) {
+        var count = infoSrc.actionsCount;
+        infoDest.actionInfo = new AccessibleActionInfo[count];
+        for(var i = 0; i < count; i++) {
+          infoDest.actionInfo[i] = Wrap(vmid, infoSrc.actionInfo[i]);
+        }
+      }
+    }
+
+    private void CopyUnwrap(int vmid, AccessibleActions infoSrc, AccessibleActionsNativeLegacy infoDest) {
+      infoDest.actionsCount = infoSrc.actionsCount;
+      if (infoSrc.actionInfo != null) {
+        var count = infoSrc.actionsCount;
+        infoDest.actionInfo = new AccessibleActionInfoNativeLegacy[count];
+        for(var i = 0; i < count; i++) {
+          infoDest.actionInfo[i] = Unwrap(vmid, infoSrc.actionInfo[i]);
+        }
+      }
+    }
+
+    #endregion
+
+  }
+
+  /// <summary>
+  /// Implementation of platform agnostic events
+  /// </summary>
+  public partial class AccessBridgeEventsLegacy : IAccessBridgeEvents {
+    #region Event fields
+    private PropertyChangeEventHandler _propertyChange;
+    private JavaShutdownEventHandler _javaShutdown;
+    private FocusGainedEventHandler _focusGained;
+    private FocusLostEventHandler _focusLost;
+    private CaretUpdateEventHandler _caretUpdate;
+    private MouseClickedEventHandler _mouseClicked;
+    private MouseEnteredEventHandler _mouseEntered;
+    private MouseExitedEventHandler _mouseExited;
+    private MousePressedEventHandler _mousePressed;
+    private MouseReleasedEventHandler _mouseReleased;
+    private MenuCanceledEventHandler _menuCanceled;
+    private MenuDeselectedEventHandler _menuDeselected;
+    private MenuSelectedEventHandler _menuSelected;
+    private PopupMenuCanceledEventHandler _popupMenuCanceled;
+    private PopupMenuWillBecomeInvisibleEventHandler _popupMenuWillBecomeInvisible;
+    private PopupMenuWillBecomeVisibleEventHandler _popupMenuWillBecomeVisible;
+    private PropertyNameChangeEventHandler _propertyNameChange;
+    private PropertyDescriptionChangeEventHandler _propertyDescriptionChange;
+    private PropertyStateChangeEventHandler _propertyStateChange;
+    private PropertyValueChangeEventHandler _propertyValueChange;
+    private PropertySelectionChangeEventHandler _propertySelectionChange;
+    private PropertyTextChangeEventHandler _propertyTextChange;
+    private PropertyCaretChangeEventHandler _propertyCaretChange;
+    private PropertyVisibleDataChangeEventHandler _propertyVisibleDataChange;
+    private PropertyChildChangeEventHandler _propertyChildChange;
+    private PropertyActiveDescendentChangeEventHandler _propertyActiveDescendentChange;
+    private PropertyTableModelChangeEventHandler _propertyTableModelChange;
+    #endregion
+
+    #region Event properties
+    public event PropertyChangeEventHandler PropertyChange {
+      add {
+        if (_propertyChange == null)
+          NativeEvents.PropertyChange += ForwardPropertyChange;
+        _propertyChange += value;
+      }
+      remove{
+        _propertyChange -= value;
+        if (_propertyChange == null)
+          NativeEvents.PropertyChange -= ForwardPropertyChange;
+      }
+    }
+    public event JavaShutdownEventHandler JavaShutdown {
+      add {
+        if (_javaShutdown == null)
+          NativeEvents.JavaShutdown += ForwardJavaShutdown;
+        _javaShutdown += value;
+      }
+      remove{
+        _javaShutdown -= value;
+        if (_javaShutdown == null)
+          NativeEvents.JavaShutdown -= ForwardJavaShutdown;
+      }
+    }
+    public event FocusGainedEventHandler FocusGained {
+      add {
+        if (_focusGained == null)
+          NativeEvents.FocusGained += ForwardFocusGained;
+        _focusGained += value;
+      }
+      remove{
+        _focusGained -= value;
+        if (_focusGained == null)
+          NativeEvents.FocusGained -= ForwardFocusGained;
+      }
+    }
+    public event FocusLostEventHandler FocusLost {
+      add {
+        if (_focusLost == null)
+          NativeEvents.FocusLost += ForwardFocusLost;
+        _focusLost += value;
+      }
+      remove{
+        _focusLost -= value;
+        if (_focusLost == null)
+          NativeEvents.FocusLost -= ForwardFocusLost;
+      }
+    }
+    public event CaretUpdateEventHandler CaretUpdate {
+      add {
+        if (_caretUpdate == null)
+          NativeEvents.CaretUpdate += ForwardCaretUpdate;
+        _caretUpdate += value;
+      }
+      remove{
+        _caretUpdate -= value;
+        if (_caretUpdate == null)
+          NativeEvents.CaretUpdate -= ForwardCaretUpdate;
+      }
+    }
+    public event MouseClickedEventHandler MouseClicked {
+      add {
+        if (_mouseClicked == null)
+          NativeEvents.MouseClicked += ForwardMouseClicked;
+        _mouseClicked += value;
+      }
+      remove{
+        _mouseClicked -= value;
+        if (_mouseClicked == null)
+          NativeEvents.MouseClicked -= ForwardMouseClicked;
+      }
+    }
+    public event MouseEnteredEventHandler MouseEntered {
+      add {
+        if (_mouseEntered == null)
+          NativeEvents.MouseEntered += ForwardMouseEntered;
+        _mouseEntered += value;
+      }
+      remove{
+        _mouseEntered -= value;
+        if (_mouseEntered == null)
+          NativeEvents.MouseEntered -= ForwardMouseEntered;
+      }
+    }
+    public event MouseExitedEventHandler MouseExited {
+      add {
+        if (_mouseExited == null)
+          NativeEvents.MouseExited += ForwardMouseExited;
+        _mouseExited += value;
+      }
+      remove{
+        _mouseExited -= value;
+        if (_mouseExited == null)
+          NativeEvents.MouseExited -= ForwardMouseExited;
+      }
+    }
+    public event MousePressedEventHandler MousePressed {
+      add {
+        if (_mousePressed == null)
+          NativeEvents.MousePressed += ForwardMousePressed;
+        _mousePressed += value;
+      }
+      remove{
+        _mousePressed -= value;
+        if (_mousePressed == null)
+          NativeEvents.MousePressed -= ForwardMousePressed;
+      }
+    }
+    public event MouseReleasedEventHandler MouseReleased {
+      add {
+        if (_mouseReleased == null)
+          NativeEvents.MouseReleased += ForwardMouseReleased;
+        _mouseReleased += value;
+      }
+      remove{
+        _mouseReleased -= value;
+        if (_mouseReleased == null)
+          NativeEvents.MouseReleased -= ForwardMouseReleased;
+      }
+    }
+    public event MenuCanceledEventHandler MenuCanceled {
+      add {
+        if (_menuCanceled == null)
+          NativeEvents.MenuCanceled += ForwardMenuCanceled;
+        _menuCanceled += value;
+      }
+      remove{
+        _menuCanceled -= value;
+        if (_menuCanceled == null)
+          NativeEvents.MenuCanceled -= ForwardMenuCanceled;
+      }
+    }
+    public event MenuDeselectedEventHandler MenuDeselected {
+      add {
+        if (_menuDeselected == null)
+          NativeEvents.MenuDeselected += ForwardMenuDeselected;
+        _menuDeselected += value;
+      }
+      remove{
+        _menuDeselected -= value;
+        if (_menuDeselected == null)
+          NativeEvents.MenuDeselected -= ForwardMenuDeselected;
+      }
+    }
+    public event MenuSelectedEventHandler MenuSelected {
+      add {
+        if (_menuSelected == null)
+          NativeEvents.MenuSelected += ForwardMenuSelected;
+        _menuSelected += value;
+      }
+      remove{
+        _menuSelected -= value;
+        if (_menuSelected == null)
+          NativeEvents.MenuSelected -= ForwardMenuSelected;
+      }
+    }
+    public event PopupMenuCanceledEventHandler PopupMenuCanceled {
+      add {
+        if (_popupMenuCanceled == null)
+          NativeEvents.PopupMenuCanceled += ForwardPopupMenuCanceled;
+        _popupMenuCanceled += value;
+      }
+      remove{
+        _popupMenuCanceled -= value;
+        if (_popupMenuCanceled == null)
+          NativeEvents.PopupMenuCanceled -= ForwardPopupMenuCanceled;
+      }
+    }
+    public event PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible {
+      add {
+        if (_popupMenuWillBecomeInvisible == null)
+          NativeEvents.PopupMenuWillBecomeInvisible += ForwardPopupMenuWillBecomeInvisible;
+        _popupMenuWillBecomeInvisible += value;
+      }
+      remove{
+        _popupMenuWillBecomeInvisible -= value;
+        if (_popupMenuWillBecomeInvisible == null)
+          NativeEvents.PopupMenuWillBecomeInvisible -= ForwardPopupMenuWillBecomeInvisible;
+      }
+    }
+    public event PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible {
+      add {
+        if (_popupMenuWillBecomeVisible == null)
+          NativeEvents.PopupMenuWillBecomeVisible += ForwardPopupMenuWillBecomeVisible;
+        _popupMenuWillBecomeVisible += value;
+      }
+      remove{
+        _popupMenuWillBecomeVisible -= value;
+        if (_popupMenuWillBecomeVisible == null)
+          NativeEvents.PopupMenuWillBecomeVisible -= ForwardPopupMenuWillBecomeVisible;
+      }
+    }
+    public event PropertyNameChangeEventHandler PropertyNameChange {
+      add {
+        if (_propertyNameChange == null)
+          NativeEvents.PropertyNameChange += ForwardPropertyNameChange;
+        _propertyNameChange += value;
+      }
+      remove{
+        _propertyNameChange -= value;
+        if (_propertyNameChange == null)
+          NativeEvents.PropertyNameChange -= ForwardPropertyNameChange;
+      }
+    }
+    public event PropertyDescriptionChangeEventHandler PropertyDescriptionChange {
+      add {
+        if (_propertyDescriptionChange == null)
+          NativeEvents.PropertyDescriptionChange += ForwardPropertyDescriptionChange;
+        _propertyDescriptionChange += value;
+      }
+      remove{
+        _propertyDescriptionChange -= value;
+        if (_propertyDescriptionChange == null)
+          NativeEvents.PropertyDescriptionChange -= ForwardPropertyDescriptionChange;
+      }
+    }
+    public event PropertyStateChangeEventHandler PropertyStateChange {
+      add {
+        if (_propertyStateChange == null)
+          NativeEvents.PropertyStateChange += ForwardPropertyStateChange;
+        _propertyStateChange += value;
+      }
+      remove{
+        _propertyStateChange -= value;
+        if (_propertyStateChange == null)
+          NativeEvents.PropertyStateChange -= ForwardPropertyStateChange;
+      }
+    }
+    public event PropertyValueChangeEventHandler PropertyValueChange {
+      add {
+        if (_propertyValueChange == null)
+          NativeEvents.PropertyValueChange += ForwardPropertyValueChange;
+        _propertyValueChange += value;
+      }
+      remove{
+        _propertyValueChange -= value;
+        if (_propertyValueChange == null)
+          NativeEvents.PropertyValueChange -= ForwardPropertyValueChange;
+      }
+    }
+    public event PropertySelectionChangeEventHandler PropertySelectionChange {
+      add {
+        if (_propertySelectionChange == null)
+          NativeEvents.PropertySelectionChange += ForwardPropertySelectionChange;
+        _propertySelectionChange += value;
+      }
+      remove{
+        _propertySelectionChange -= value;
+        if (_propertySelectionChange == null)
+          NativeEvents.PropertySelectionChange -= ForwardPropertySelectionChange;
+      }
+    }
+    public event PropertyTextChangeEventHandler PropertyTextChange {
+      add {
+        if (_propertyTextChange == null)
+          NativeEvents.PropertyTextChange += ForwardPropertyTextChange;
+        _propertyTextChange += value;
+      }
+      remove{
+        _propertyTextChange -= value;
+        if (_propertyTextChange == null)
+          NativeEvents.PropertyTextChange -= ForwardPropertyTextChange;
+      }
+    }
+    public event PropertyCaretChangeEventHandler PropertyCaretChange {
+      add {
+        if (_propertyCaretChange == null)
+          NativeEvents.PropertyCaretChange += ForwardPropertyCaretChange;
+        _propertyCaretChange += value;
+      }
+      remove{
+        _propertyCaretChange -= value;
+        if (_propertyCaretChange == null)
+          NativeEvents.PropertyCaretChange -= ForwardPropertyCaretChange;
+      }
+    }
+    public event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange {
+      add {
+        if (_propertyVisibleDataChange == null)
+          NativeEvents.PropertyVisibleDataChange += ForwardPropertyVisibleDataChange;
+        _propertyVisibleDataChange += value;
+      }
+      remove{
+        _propertyVisibleDataChange -= value;
+        if (_propertyVisibleDataChange == null)
+          NativeEvents.PropertyVisibleDataChange -= ForwardPropertyVisibleDataChange;
+      }
+    }
+    public event PropertyChildChangeEventHandler PropertyChildChange {
+      add {
+        if (_propertyChildChange == null)
+          NativeEvents.PropertyChildChange += ForwardPropertyChildChange;
+        _propertyChildChange += value;
+      }
+      remove{
+        _propertyChildChange -= value;
+        if (_propertyChildChange == null)
+          NativeEvents.PropertyChildChange -= ForwardPropertyChildChange;
+      }
+    }
+    public event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange {
+      add {
+        if (_propertyActiveDescendentChange == null)
+          NativeEvents.PropertyActiveDescendentChange += ForwardPropertyActiveDescendentChange;
+        _propertyActiveDescendentChange += value;
+      }
+      remove{
+        _propertyActiveDescendentChange -= value;
+        if (_propertyActiveDescendentChange == null)
+          NativeEvents.PropertyActiveDescendentChange -= ForwardPropertyActiveDescendentChange;
+      }
+    }
+    public event PropertyTableModelChangeEventHandler PropertyTableModelChange {
+      add {
+        if (_propertyTableModelChange == null)
+          NativeEvents.PropertyTableModelChange += ForwardPropertyTableModelChange;
+        _propertyTableModelChange += value;
+      }
+      remove{
+        _propertyTableModelChange -= value;
+        if (_propertyTableModelChange == null)
+          NativeEvents.PropertyTableModelChange -= ForwardPropertyTableModelChange;
+      }
+    }
+    #endregion
+
+    #region Event handlers
+    protected virtual void OnPropertyChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string property, string oldValue, string newValue) {
+      var handler = _propertyChange;
+      if (handler != null)
+        handler(vmid, evt, source, property, oldValue, newValue);
+    }
+    protected virtual void OnJavaShutdown(int vmid) {
+      var handler = _javaShutdown;
+      if (handler != null)
+        handler(vmid);
+    }
+    protected virtual void OnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _focusGained;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnFocusLost(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _focusLost;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnCaretUpdate(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _caretUpdate;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMouseClicked(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _mouseClicked;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMouseEntered(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _mouseEntered;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMouseExited(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _mouseExited;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMousePressed(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _mousePressed;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMouseReleased(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _mouseReleased;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMenuCanceled(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _menuCanceled;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMenuDeselected(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _menuDeselected;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnMenuSelected(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _menuSelected;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPopupMenuCanceled(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _popupMenuCanceled;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPopupMenuWillBecomeInvisible(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _popupMenuWillBecomeInvisible;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPopupMenuWillBecomeVisible(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _popupMenuWillBecomeVisible;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPropertyNameChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldName, string newName) {
+      var handler = _propertyNameChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldName, newName);
+    }
+    protected virtual void OnPropertyDescriptionChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldDescription, string newDescription) {
+      var handler = _propertyDescriptionChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldDescription, newDescription);
+    }
+    protected virtual void OnPropertyStateChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldState, string newState) {
+      var handler = _propertyStateChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldState, newState);
+    }
+    protected virtual void OnPropertyValueChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldValue, string newValue) {
+      var handler = _propertyValueChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldValue, newValue);
+    }
+    protected virtual void OnPropertySelectionChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _propertySelectionChange;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPropertyTextChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _propertyTextChange;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPropertyCaretChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, int oldPosition, int newPosition) {
+      var handler = _propertyCaretChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldPosition, newPosition);
+    }
+    protected virtual void OnPropertyVisibleDataChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      var handler = _propertyVisibleDataChange;
+      if (handler != null)
+        handler(vmid, evt, source);
+    }
+    protected virtual void OnPropertyChildChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldChild, JavaObjectHandle newChild) {
+      var handler = _propertyChildChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldChild, newChild);
+    }
+    protected virtual void OnPropertyActiveDescendentChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldActiveDescendent, JavaObjectHandle newActiveDescendent) {
+      var handler = _propertyActiveDescendentChange;
+      if (handler != null)
+        handler(vmid, evt, source, oldActiveDescendent, newActiveDescendent);
+    }
+    protected virtual void OnPropertyTableModelChange(int vmid, JavaObjectHandle evt, JavaObjectHandle src, string oldValue, string newValue) {
+      var handler = _propertyTableModelChange;
+      if (handler != null)
+        handler(vmid, evt, src, oldValue, newValue);
+    }
+    #endregion
+
+    private void DetachForwarders() {
+      NativeEvents.PropertyChange -= ForwardPropertyChange;
+      NativeEvents.JavaShutdown -= ForwardJavaShutdown;
+      NativeEvents.FocusGained -= ForwardFocusGained;
+      NativeEvents.FocusLost -= ForwardFocusLost;
+      NativeEvents.CaretUpdate -= ForwardCaretUpdate;
+      NativeEvents.MouseClicked -= ForwardMouseClicked;
+      NativeEvents.MouseEntered -= ForwardMouseEntered;
+      NativeEvents.MouseExited -= ForwardMouseExited;
+      NativeEvents.MousePressed -= ForwardMousePressed;
+      NativeEvents.MouseReleased -= ForwardMouseReleased;
+      NativeEvents.MenuCanceled -= ForwardMenuCanceled;
+      NativeEvents.MenuDeselected -= ForwardMenuDeselected;
+      NativeEvents.MenuSelected -= ForwardMenuSelected;
+      NativeEvents.PopupMenuCanceled -= ForwardPopupMenuCanceled;
+      NativeEvents.PopupMenuWillBecomeInvisible -= ForwardPopupMenuWillBecomeInvisible;
+      NativeEvents.PopupMenuWillBecomeVisible -= ForwardPopupMenuWillBecomeVisible;
+      NativeEvents.PropertyNameChange -= ForwardPropertyNameChange;
+      NativeEvents.PropertyDescriptionChange -= ForwardPropertyDescriptionChange;
+      NativeEvents.PropertyStateChange -= ForwardPropertyStateChange;
+      NativeEvents.PropertyValueChange -= ForwardPropertyValueChange;
+      NativeEvents.PropertySelectionChange -= ForwardPropertySelectionChange;
+      NativeEvents.PropertyTextChange -= ForwardPropertyTextChange;
+      NativeEvents.PropertyCaretChange -= ForwardPropertyCaretChange;
+      NativeEvents.PropertyVisibleDataChange -= ForwardPropertyVisibleDataChange;
+      NativeEvents.PropertyChildChange -= ForwardPropertyChildChange;
+      NativeEvents.PropertyActiveDescendentChange -= ForwardPropertyActiveDescendentChange;
+      NativeEvents.PropertyTableModelChange -= ForwardPropertyTableModelChange;
+    }
+
+    #region Event forwarders
+    private void ForwardPropertyChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+      OnPropertyChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), property, oldValue, newValue);
+    }
+    private void ForwardJavaShutdown(int vmid) {
+      OnJavaShutdown(vmid);
+    }
+    private void ForwardFocusGained(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnFocusGained(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardFocusLost(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnFocusLost(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardCaretUpdate(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnCaretUpdate(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMouseClicked(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnMouseClicked(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMouseEntered(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnMouseEntered(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMouseExited(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnMouseExited(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMousePressed(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnMousePressed(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMouseReleased(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnMouseReleased(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMenuCanceled(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnMenuCanceled(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMenuDeselected(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnMenuDeselected(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardMenuSelected(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnMenuSelected(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPopupMenuCanceled(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnPopupMenuCanceled(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPopupMenuWillBecomeInvisible(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnPopupMenuWillBecomeInvisible(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPopupMenuWillBecomeVisible(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnPopupMenuWillBecomeVisible(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPropertyNameChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName) {
+      OnPropertyNameChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldName, newName);
+    }
+    private void ForwardPropertyDescriptionChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription) {
+      OnPropertyDescriptionChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldDescription, newDescription);
+    }
+    private void ForwardPropertyStateChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState) {
+      OnPropertyStateChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldState, newState);
+    }
+    private void ForwardPropertyValueChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+      OnPropertyValueChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldValue, newValue);
+    }
+    private void ForwardPropertySelectionChange(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnPropertySelectionChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPropertyTextChange(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnPropertyTextChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPropertyCaretChange(int vmid, JOBJECT32 evt, JOBJECT32 source, int oldPosition, int newPosition) {
+      OnPropertyCaretChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldPosition, newPosition);
+    }
+    private void ForwardPropertyVisibleDataChange(int vmid, JOBJECT32 evt, JOBJECT32 source) {
+      OnPropertyVisibleDataChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
+    }
+    private void ForwardPropertyChildChange(int vmid, JOBJECT32 evt, JOBJECT32 source, JOBJECT32 oldChild, JOBJECT32 newChild) {
+      OnPropertyChildChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), Wrap(vmid, oldChild), Wrap(vmid, newChild));
+    }
+    private void ForwardPropertyActiveDescendentChange(int vmid, JOBJECT32 evt, JOBJECT32 source, JOBJECT32 oldActiveDescendent, JOBJECT32 newActiveDescendent) {
+      OnPropertyActiveDescendentChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), Wrap(vmid, oldActiveDescendent), Wrap(vmid, newActiveDescendent));
+    }
+    private void ForwardPropertyTableModelChange(int vmid, JOBJECT32 evt, JOBJECT32 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+      OnPropertyTableModelChange(vmid, Wrap(vmid, evt), Wrap(vmid, src), oldValue, newValue);
+    }
+    #endregion
+  }
+
+  /// <summary>
   /// Container of WindowAccessBridge DLL entry points
   /// </summary>
   public class AccessBridgeLibraryFunctions {

@@ -28,7 +28,7 @@ namespace AccessBridgeExplorer.Win32 {
   /// This is a managed wrapper over the native LoadLibrary, GetProcAddress, and
   /// FreeLibrary calls.
   /// </remarks>
-  public sealed class UnmanagedLibrary : IDisposable {
+  public class UnmanagedLibrary : IDisposable {
     // Unmanaged resource. CLR will ensure SafeHandles get freed, without requiring a finalizer on this class.
     private readonly SafeLibraryHandle _libraryHandle;
 

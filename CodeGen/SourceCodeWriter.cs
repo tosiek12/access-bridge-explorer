@@ -140,10 +140,11 @@ namespace CodeGen {
         if (IsNativeTypes)
           return "BOOL";
       } else if (_model.IsStructName(typeName) || _model.IsClassName(typeName)) {
-        if (IsNativeTypes)
+        if (IsNativeTypes) {
           typeName += "Native";
-        if (IsLegacy)
-          typeName += "Legacy";
+          if (IsLegacy)
+            typeName += "Legacy";
+        }
       }
 
       return typeName;

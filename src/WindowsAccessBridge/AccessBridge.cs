@@ -63,14 +63,25 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         return;
 
       var library = LoadLibrary();
-      var libraryFunctions = LoadFunctions(library);
-      var functions = new AccessBridgeFunctions(libraryFunctions);
-      var events = new AccessBridgeEvents(libraryFunctions);
+      if (library.IsLegacy) {
+        var libraryFunctions = LoadFunctionsLegacy(library);
+        var functions = new AccessBridgeFunctionsLegacy(libraryFunctions);
+        var events = new AccessBridgeEventsLegacy(libraryFunctions);
 
-      // Everything is initialized correctly, save to member variables.
-      _library = library;
-      _functions = functions;
-      _events = events;
+        // Everything is initialized correctly, save to member variables.
+        _library = library;
+        _functions = functions;
+        _events = events;
+      } else {
+        var libraryFunctions = LoadFunctions(library);
+        var functions = new AccessBridgeFunctions(libraryFunctions);
+        var events = new AccessBridgeEvents(libraryFunctions);
+
+        // Everything is initialized correctly, save to member variables.
+        _library = library;
+        _functions = functions;
+        _events = events;
+      }
       _functions.Windows_run();
     }
 
@@ -129,13 +140,25 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
-    private static UnmanagedLibrary LoadLibrary() {
+    public class AccessBridgeLibrary : UnmanagedLibrary {
+      public AccessBridgeLibrary(string fileName) : base(fileName) {
+      }
+
+      public bool IsLegacy { get; set; }
+    }
+
+    private static AccessBridgeLibrary LoadLibrary() {
       try {
-        UnmanagedLibrary library;
+        AccessBridgeLibrary library;
         if (IntPtr.Size == 4) {
-          library = new UnmanagedLibrary("WindowsAccessBridge-32.dll");
+          try {
+            library = new AccessBridgeLibrary("WindowsAccessBridge-32.dll");
+          } catch {
+            library = new AccessBridgeLibrary("WindowsAccessBridge.dll");
+            library.IsLegacy = true;
+          }
         } else if (IntPtr.Size == 8) {
-          library = new UnmanagedLibrary("WindowsAccessBridge-64.dll");
+          library = new AccessBridgeLibrary("WindowsAccessBridge-64.dll");
         } else {
           throw new InvalidOperationException("Unknown platform.");
         }
@@ -147,7 +170,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         if (IntPtr.Size == 8) {
           sb.Append("Please make sure to install the 64-bit version of the " +
             "Java SE Runtime Environment version 7 or later. ");
-          sb.AppendFormat("Alternatively, try running the 32-bit version of {0} " + 
+          sb.AppendFormat("Alternatively, try running the 32-bit version of {0} " +
             "if a 32-bit version of the JRE is installed.", Assembly.GetEntryAssembly().GetName().Name);
         } else {
           sb.Append(
@@ -160,6 +183,17 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     private static AccessBridgeLibraryFunctions LoadFunctions(UnmanagedLibrary library) {
       var functions = new AccessBridgeLibraryFunctions();
+      LoadFunctionsEntryPoints(library, functions);
+      return functions;
+    }
+
+    private static AccessBridgeLibraryFunctionsLegacy LoadFunctionsLegacy(UnmanagedLibrary library) {
+      var functions = new AccessBridgeLibraryFunctionsLegacy();
+      LoadFunctionsEntryPoints(library, functions);
+      return functions;
+    }
+
+    private static void LoadFunctionsEntryPoints(UnmanagedLibrary library, object functions) {
       var publicMembers = BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance;
       foreach (var property in functions.GetType().GetProperties(publicMembers)) {
         var name = property.Name;
@@ -189,7 +223,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           throw new ArgumentException(string.Format("Error loading function {0} from access bridge library", name), e);
         }
       }
-      return functions;
     }
   }
 }
