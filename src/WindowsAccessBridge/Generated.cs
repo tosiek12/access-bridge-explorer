@@ -15,6 +15,9 @@
 // ReSharper disable InconsistentNaming
 // ReSharper disable DelegateSubtraction
 // ReSharper disable UseObjectOrCollectionInitializer
+// ReSharper disable UnusedParameter.Local
+// ReSharper disable UnusedMember.Local
+// ReSharper disable ConvertIfStatementToConditionalTernaryExpression
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -411,7 +414,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleContextInfoNative infoTemp;
       var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), out infoTemp);
       GC.KeepAlive(ac);
-      info = Wrap(vmid, infoTemp);
+      if (ToBool(result))
+        info = Wrap(vmid, infoTemp);
+      else
+        info = default(AccessibleContextInfo);
       return ToBool(result);
     }
 
@@ -431,7 +437,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleRelationSetInfoNative relationSetInfoTemp;
       var result = LibraryFunctions.GetAccessibleRelationSet(vmid, Unwrap(vmid, accessibleContext), out relationSetInfoTemp);
       GC.KeepAlive(accessibleContext);
-      relationSetInfo = Wrap(vmid, relationSetInfoTemp);
+      if (ToBool(result))
+        relationSetInfo = Wrap(vmid, relationSetInfoTemp);
+      else
+        relationSetInfo = default(AccessibleRelationSetInfo);
       return ToBool(result);
     }
 
@@ -439,7 +448,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleHypertextInfoNative hypertextInfoTemp;
       var result = LibraryFunctions.GetAccessibleHypertext(vmid, Unwrap(vmid, accessibleContext), out hypertextInfoTemp);
       GC.KeepAlive(accessibleContext);
-      hypertextInfo = Wrap(vmid, hypertextInfoTemp);
+      if (ToBool(result))
+        hypertextInfo = Wrap(vmid, hypertextInfoTemp);
+      else
+        hypertextInfo = default(AccessibleHypertextInfo);
       return ToBool(result);
     }
 
@@ -460,7 +472,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleHypertextInfoNative hypertextInfoTemp;
       var result = LibraryFunctions.GetAccessibleHypertextExt(vmid, Unwrap(vmid, accessibleContext), nStartIndex, out hypertextInfoTemp);
       GC.KeepAlive(accessibleContext);
-      hypertextInfo = Wrap(vmid, hypertextInfoTemp);
+      if (ToBool(result))
+        hypertextInfo = Wrap(vmid, hypertextInfoTemp);
+      else
+        hypertextInfo = default(AccessibleHypertextInfo);
       return ToBool(result);
     }
 
@@ -474,7 +489,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleHyperlinkInfoNative hyperlinkInfoTemp;
       var result = LibraryFunctions.GetAccessibleHyperlink(vmid, Unwrap(vmid, hypertext), nIndex, out hyperlinkInfoTemp);
       GC.KeepAlive(hypertext);
-      hyperlinkInfo = Wrap(vmid, hyperlinkInfoTemp);
+      if (ToBool(result))
+        hyperlinkInfo = Wrap(vmid, hyperlinkInfoTemp);
+      else
+        hyperlinkInfo = default(AccessibleHyperlinkInfo);
       return ToBool(result);
     }
 
@@ -482,7 +500,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleKeyBindingsNative keyBindingsTemp;
       var result = LibraryFunctions.GetAccessibleKeyBindings(vmid, Unwrap(vmid, accessibleContext), out keyBindingsTemp);
       GC.KeepAlive(accessibleContext);
-      keyBindings = Wrap(vmid, keyBindingsTemp);
+      if (ToBool(result))
+        keyBindings = Wrap(vmid, keyBindingsTemp);
+      else
+        keyBindings = default(AccessibleKeyBindings);
       return ToBool(result);
     }
 
@@ -490,7 +511,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleIconsNative iconsTemp;
       var result = LibraryFunctions.GetAccessibleIcons(vmid, Unwrap(vmid, accessibleContext), out iconsTemp);
       GC.KeepAlive(accessibleContext);
-      icons = Wrap(vmid, iconsTemp);
+      if (ToBool(result))
+        icons = Wrap(vmid, iconsTemp);
+      else
+        icons = default(AccessibleIcons);
       return ToBool(result);
     }
 
@@ -498,7 +522,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleActionsNative actionsTemp = new AccessibleActionsNative();
       var result = LibraryFunctions.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actionsTemp);
       GC.KeepAlive(accessibleContext);
-      CopyWrap(vmid, actionsTemp, actions);
+      if (ToBool(result))
+        CopyWrap(vmid, actionsTemp, actions);
       return ToBool(result);
     }
 
@@ -506,7 +531,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleActionsToDoNative actionsToDoTemp = Unwrap(vmid, actionsToDo);
       var result = LibraryFunctions.DoAccessibleActions(vmid, Unwrap(vmid, accessibleContext), ref actionsToDoTemp, out failure);
       GC.KeepAlive(accessibleContext);
-      actionsToDo = Wrap(vmid, actionsToDoTemp);
+      if (ToBool(result))
+        actionsToDo = Wrap(vmid, actionsToDoTemp);
       return ToBool(result);
     }
 
@@ -514,7 +540,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextInfoNative textInfoTemp;
       var result = LibraryFunctions.GetAccessibleTextInfo(vmid, Unwrap(vmid, at), out textInfoTemp, x, y);
       GC.KeepAlive(at);
-      textInfo = Wrap(vmid, textInfoTemp);
+      if (ToBool(result))
+        textInfo = Wrap(vmid, textInfoTemp);
+      else
+        textInfo = default(AccessibleTextInfo);
       return ToBool(result);
     }
 
@@ -522,7 +551,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextItemsInfoNative textItemsTemp;
       var result = LibraryFunctions.GetAccessibleTextItems(vmid, Unwrap(vmid, at), out textItemsTemp, index);
       GC.KeepAlive(at);
-      textItems = Wrap(vmid, textItemsTemp);
+      if (ToBool(result))
+        textItems = Wrap(vmid, textItemsTemp);
+      else
+        textItems = default(AccessibleTextItemsInfo);
       return ToBool(result);
     }
 
@@ -530,7 +562,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextSelectionInfoNative textSelectionTemp;
       var result = LibraryFunctions.GetAccessibleTextSelectionInfo(vmid, Unwrap(vmid, at), out textSelectionTemp);
       GC.KeepAlive(at);
-      textSelection = Wrap(vmid, textSelectionTemp);
+      if (ToBool(result))
+        textSelection = Wrap(vmid, textSelectionTemp);
+      else
+        textSelection = default(AccessibleTextSelectionInfo);
       return ToBool(result);
     }
 
@@ -538,7 +573,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextAttributesInfoNative attributesTemp;
       var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, out attributesTemp);
       GC.KeepAlive(at);
-      attributes = Wrap(vmid, attributesTemp);
+      if (ToBool(result))
+        attributes = Wrap(vmid, attributesTemp);
+      else
+        attributes = default(AccessibleTextAttributesInfo);
       return ToBool(result);
     }
 
@@ -546,7 +584,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextRectInfoNative rectInfoTemp;
       var result = LibraryFunctions.GetAccessibleTextRect(vmid, Unwrap(vmid, at), out rectInfoTemp, index);
       GC.KeepAlive(at);
-      rectInfo = Wrap(vmid, rectInfoTemp);
+      if (ToBool(result))
+        rectInfo = Wrap(vmid, rectInfoTemp);
+      else
+        rectInfo = default(AccessibleTextRectInfo);
       return ToBool(result);
     }
 
@@ -622,7 +663,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTableInfoNative tableInfoTemp;
       var result = LibraryFunctions.GetAccessibleTableInfo(vmid, Unwrap(vmid, ac), out tableInfoTemp);
       GC.KeepAlive(ac);
-      tableInfo = Wrap(vmid, tableInfoTemp);
+      if (ToBool(result))
+        tableInfo = Wrap(vmid, tableInfoTemp);
+      else
+        tableInfo = default(AccessibleTableInfo);
       return ToBool(result);
     }
 
@@ -630,7 +674,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTableCellInfoNative tableCellInfoTemp;
       var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, at), row, column, out tableCellInfoTemp);
       GC.KeepAlive(at);
-      tableCellInfo = Wrap(vmid, tableCellInfoTemp);
+      if (ToBool(result))
+        tableCellInfo = Wrap(vmid, tableCellInfoTemp);
+      else
+        tableCellInfo = default(AccessibleTableCellInfo);
       return ToBool(result);
     }
 
@@ -638,7 +685,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTableInfoNative tableInfoTemp;
       var result = LibraryFunctions.GetAccessibleTableRowHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
       GC.KeepAlive(acParent);
-      tableInfo = Wrap(vmid, tableInfoTemp);
+      if (ToBool(result))
+        tableInfo = Wrap(vmid, tableInfoTemp);
+      else
+        tableInfo = default(AccessibleTableInfo);
       return ToBool(result);
     }
 
@@ -646,7 +696,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTableInfoNative tableInfoTemp;
       var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
       GC.KeepAlive(acParent);
-      tableInfo = Wrap(vmid, tableInfoTemp);
+      if (ToBool(result))
+        tableInfo = Wrap(vmid, tableInfoTemp);
+      else
+        tableInfo = default(AccessibleTableInfo);
       return ToBool(result);
     }
 
@@ -762,7 +815,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextAttributesInfoNative attributesTemp;
       var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, out attributesTemp, out len);
       GC.KeepAlive(accessibleContext);
-      attributes = Wrap(vmid, attributesTemp);
+      if (ToBool(result))
+        attributes = Wrap(vmid, attributesTemp);
+      else
+        attributes = default(AccessibleTextAttributesInfo);
       return ToBool(result);
     }
 
@@ -770,7 +826,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextRectInfoNative rectInfoTemp;
       var result = LibraryFunctions.GetCaretLocation(vmid, Unwrap(vmid, ac), out rectInfoTemp, index);
       GC.KeepAlive(ac);
-      rectInfo = Wrap(vmid, rectInfoTemp);
+      if (ToBool(result))
+        rectInfo = Wrap(vmid, rectInfoTemp);
+      else
+        rectInfo = default(AccessibleTextRectInfo);
       return ToBool(result);
     }
 
@@ -784,14 +843,20 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       VisibleChildrenInfoNative childrenTemp;
       var result = LibraryFunctions.GetVisibleChildren(vmid, Unwrap(vmid, accessibleContext), startIndex, out childrenTemp);
       GC.KeepAlive(accessibleContext);
-      children = Wrap(vmid, childrenTemp);
+      if (ToBool(result))
+        children = Wrap(vmid, childrenTemp);
+      else
+        children = default(VisibleChildrenInfo);
       return ToBool(result);
     }
 
     public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
       AccessBridgeVersionInfoNative infoTemp;
       var result = LibraryFunctions.GetVersionInfo(vmid, out infoTemp);
-      info = Wrap(vmid, infoTemp);
+      if (ToBool(result))
+        info = Wrap(vmid, infoTemp);
+      else
+        info = default(AccessBridgeVersionInfo);
       return ToBool(result);
     }
 
@@ -1966,7 +2031,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleContextInfoNativeLegacy infoTemp;
       var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), out infoTemp);
       GC.KeepAlive(ac);
-      info = Wrap(vmid, infoTemp);
+      if (ToBool(result))
+        info = Wrap(vmid, infoTemp);
+      else
+        info = default(AccessibleContextInfo);
       return ToBool(result);
     }
 
@@ -1986,7 +2054,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleRelationSetInfoNativeLegacy relationSetInfoTemp;
       var result = LibraryFunctions.GetAccessibleRelationSet(vmid, Unwrap(vmid, accessibleContext), out relationSetInfoTemp);
       GC.KeepAlive(accessibleContext);
-      relationSetInfo = Wrap(vmid, relationSetInfoTemp);
+      if (ToBool(result))
+        relationSetInfo = Wrap(vmid, relationSetInfoTemp);
+      else
+        relationSetInfo = default(AccessibleRelationSetInfo);
       return ToBool(result);
     }
 
@@ -1994,7 +2065,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleHypertextInfoNativeLegacy hypertextInfoTemp;
       var result = LibraryFunctions.GetAccessibleHypertext(vmid, Unwrap(vmid, accessibleContext), out hypertextInfoTemp);
       GC.KeepAlive(accessibleContext);
-      hypertextInfo = Wrap(vmid, hypertextInfoTemp);
+      if (ToBool(result))
+        hypertextInfo = Wrap(vmid, hypertextInfoTemp);
+      else
+        hypertextInfo = default(AccessibleHypertextInfo);
       return ToBool(result);
     }
 
@@ -2015,7 +2089,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleHypertextInfoNativeLegacy hypertextInfoTemp;
       var result = LibraryFunctions.GetAccessibleHypertextExt(vmid, Unwrap(vmid, accessibleContext), nStartIndex, out hypertextInfoTemp);
       GC.KeepAlive(accessibleContext);
-      hypertextInfo = Wrap(vmid, hypertextInfoTemp);
+      if (ToBool(result))
+        hypertextInfo = Wrap(vmid, hypertextInfoTemp);
+      else
+        hypertextInfo = default(AccessibleHypertextInfo);
       return ToBool(result);
     }
 
@@ -2029,7 +2106,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleHyperlinkInfoNativeLegacy hyperlinkInfoTemp;
       var result = LibraryFunctions.GetAccessibleHyperlink(vmid, Unwrap(vmid, hypertext), nIndex, out hyperlinkInfoTemp);
       GC.KeepAlive(hypertext);
-      hyperlinkInfo = Wrap(vmid, hyperlinkInfoTemp);
+      if (ToBool(result))
+        hyperlinkInfo = Wrap(vmid, hyperlinkInfoTemp);
+      else
+        hyperlinkInfo = default(AccessibleHyperlinkInfo);
       return ToBool(result);
     }
 
@@ -2037,7 +2117,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleKeyBindingsNativeLegacy keyBindingsTemp;
       var result = LibraryFunctions.GetAccessibleKeyBindings(vmid, Unwrap(vmid, accessibleContext), out keyBindingsTemp);
       GC.KeepAlive(accessibleContext);
-      keyBindings = Wrap(vmid, keyBindingsTemp);
+      if (ToBool(result))
+        keyBindings = Wrap(vmid, keyBindingsTemp);
+      else
+        keyBindings = default(AccessibleKeyBindings);
       return ToBool(result);
     }
 
@@ -2045,7 +2128,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleIconsNativeLegacy iconsTemp;
       var result = LibraryFunctions.GetAccessibleIcons(vmid, Unwrap(vmid, accessibleContext), out iconsTemp);
       GC.KeepAlive(accessibleContext);
-      icons = Wrap(vmid, iconsTemp);
+      if (ToBool(result))
+        icons = Wrap(vmid, iconsTemp);
+      else
+        icons = default(AccessibleIcons);
       return ToBool(result);
     }
 
@@ -2053,7 +2139,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleActionsNativeLegacy actionsTemp = new AccessibleActionsNativeLegacy();
       var result = LibraryFunctions.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actionsTemp);
       GC.KeepAlive(accessibleContext);
-      CopyWrap(vmid, actionsTemp, actions);
+      if (ToBool(result))
+        CopyWrap(vmid, actionsTemp, actions);
       return ToBool(result);
     }
 
@@ -2061,7 +2148,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleActionsToDoNativeLegacy actionsToDoTemp = Unwrap(vmid, actionsToDo);
       var result = LibraryFunctions.DoAccessibleActions(vmid, Unwrap(vmid, accessibleContext), ref actionsToDoTemp, out failure);
       GC.KeepAlive(accessibleContext);
-      actionsToDo = Wrap(vmid, actionsToDoTemp);
+      if (ToBool(result))
+        actionsToDo = Wrap(vmid, actionsToDoTemp);
       return ToBool(result);
     }
 
@@ -2069,7 +2157,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextInfoNativeLegacy textInfoTemp;
       var result = LibraryFunctions.GetAccessibleTextInfo(vmid, Unwrap(vmid, at), out textInfoTemp, x, y);
       GC.KeepAlive(at);
-      textInfo = Wrap(vmid, textInfoTemp);
+      if (ToBool(result))
+        textInfo = Wrap(vmid, textInfoTemp);
+      else
+        textInfo = default(AccessibleTextInfo);
       return ToBool(result);
     }
 
@@ -2077,7 +2168,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextItemsInfoNativeLegacy textItemsTemp;
       var result = LibraryFunctions.GetAccessibleTextItems(vmid, Unwrap(vmid, at), out textItemsTemp, index);
       GC.KeepAlive(at);
-      textItems = Wrap(vmid, textItemsTemp);
+      if (ToBool(result))
+        textItems = Wrap(vmid, textItemsTemp);
+      else
+        textItems = default(AccessibleTextItemsInfo);
       return ToBool(result);
     }
 
@@ -2085,7 +2179,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextSelectionInfoNativeLegacy textSelectionTemp;
       var result = LibraryFunctions.GetAccessibleTextSelectionInfo(vmid, Unwrap(vmid, at), out textSelectionTemp);
       GC.KeepAlive(at);
-      textSelection = Wrap(vmid, textSelectionTemp);
+      if (ToBool(result))
+        textSelection = Wrap(vmid, textSelectionTemp);
+      else
+        textSelection = default(AccessibleTextSelectionInfo);
       return ToBool(result);
     }
 
@@ -2093,7 +2190,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextAttributesInfoNativeLegacy attributesTemp;
       var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, out attributesTemp);
       GC.KeepAlive(at);
-      attributes = Wrap(vmid, attributesTemp);
+      if (ToBool(result))
+        attributes = Wrap(vmid, attributesTemp);
+      else
+        attributes = default(AccessibleTextAttributesInfo);
       return ToBool(result);
     }
 
@@ -2101,7 +2201,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextRectInfoNativeLegacy rectInfoTemp;
       var result = LibraryFunctions.GetAccessibleTextRect(vmid, Unwrap(vmid, at), out rectInfoTemp, index);
       GC.KeepAlive(at);
-      rectInfo = Wrap(vmid, rectInfoTemp);
+      if (ToBool(result))
+        rectInfo = Wrap(vmid, rectInfoTemp);
+      else
+        rectInfo = default(AccessibleTextRectInfo);
       return ToBool(result);
     }
 
@@ -2177,7 +2280,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTableInfoNativeLegacy tableInfoTemp;
       var result = LibraryFunctions.GetAccessibleTableInfo(vmid, Unwrap(vmid, ac), out tableInfoTemp);
       GC.KeepAlive(ac);
-      tableInfo = Wrap(vmid, tableInfoTemp);
+      if (ToBool(result))
+        tableInfo = Wrap(vmid, tableInfoTemp);
+      else
+        tableInfo = default(AccessibleTableInfo);
       return ToBool(result);
     }
 
@@ -2185,7 +2291,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTableCellInfoNativeLegacy tableCellInfoTemp;
       var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, at), row, column, out tableCellInfoTemp);
       GC.KeepAlive(at);
-      tableCellInfo = Wrap(vmid, tableCellInfoTemp);
+      if (ToBool(result))
+        tableCellInfo = Wrap(vmid, tableCellInfoTemp);
+      else
+        tableCellInfo = default(AccessibleTableCellInfo);
       return ToBool(result);
     }
 
@@ -2193,7 +2302,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTableInfoNativeLegacy tableInfoTemp;
       var result = LibraryFunctions.GetAccessibleTableRowHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
       GC.KeepAlive(acParent);
-      tableInfo = Wrap(vmid, tableInfoTemp);
+      if (ToBool(result))
+        tableInfo = Wrap(vmid, tableInfoTemp);
+      else
+        tableInfo = default(AccessibleTableInfo);
       return ToBool(result);
     }
 
@@ -2201,7 +2313,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTableInfoNativeLegacy tableInfoTemp;
       var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
       GC.KeepAlive(acParent);
-      tableInfo = Wrap(vmid, tableInfoTemp);
+      if (ToBool(result))
+        tableInfo = Wrap(vmid, tableInfoTemp);
+      else
+        tableInfo = default(AccessibleTableInfo);
       return ToBool(result);
     }
 
@@ -2317,7 +2432,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextAttributesInfoNativeLegacy attributesTemp;
       var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, out attributesTemp, out len);
       GC.KeepAlive(accessibleContext);
-      attributes = Wrap(vmid, attributesTemp);
+      if (ToBool(result))
+        attributes = Wrap(vmid, attributesTemp);
+      else
+        attributes = default(AccessibleTextAttributesInfo);
       return ToBool(result);
     }
 
@@ -2325,7 +2443,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AccessibleTextRectInfoNativeLegacy rectInfoTemp;
       var result = LibraryFunctions.GetCaretLocation(vmid, Unwrap(vmid, ac), out rectInfoTemp, index);
       GC.KeepAlive(ac);
-      rectInfo = Wrap(vmid, rectInfoTemp);
+      if (ToBool(result))
+        rectInfo = Wrap(vmid, rectInfoTemp);
+      else
+        rectInfo = default(AccessibleTextRectInfo);
       return ToBool(result);
     }
 
@@ -2339,14 +2460,20 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       VisibleChildrenInfoNativeLegacy childrenTemp;
       var result = LibraryFunctions.GetVisibleChildren(vmid, Unwrap(vmid, accessibleContext), startIndex, out childrenTemp);
       GC.KeepAlive(accessibleContext);
-      children = Wrap(vmid, childrenTemp);
+      if (ToBool(result))
+        children = Wrap(vmid, childrenTemp);
+      else
+        children = default(VisibleChildrenInfo);
       return ToBool(result);
     }
 
     public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
       AccessBridgeVersionInfoNativeLegacy infoTemp;
       var result = LibraryFunctions.GetVersionInfo(vmid, out infoTemp);
-      info = Wrap(vmid, infoTemp);
+      if (ToBool(result))
+        info = Wrap(vmid, infoTemp);
+      else
+        info = default(AccessBridgeVersionInfo);
       return ToBool(result);
     }
 

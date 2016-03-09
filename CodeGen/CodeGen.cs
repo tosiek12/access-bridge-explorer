@@ -57,6 +57,9 @@ namespace CodeGen {
           sourceWriter.WriteLine("// ReSharper disable InconsistentNaming");
           sourceWriter.WriteLine("// ReSharper disable DelegateSubtraction");
           sourceWriter.WriteLine("// ReSharper disable UseObjectOrCollectionInitializer");
+          sourceWriter.WriteLine("// ReSharper disable UnusedParameter.Local");
+          sourceWriter.WriteLine("// ReSharper disable UnusedMember.Local");
+          sourceWriter.WriteLine("// ReSharper disable ConvertIfStatementToConditionalTernaryExpression");
 
           sourceWriter.AddUsing("System");
           sourceWriter.AddUsing("System.Runtime.InteropServices");
@@ -367,6 +370,9 @@ namespace CodeGen {
       sourceWriter.WriteLine();
       sourceWriter.IncIndent();
 
+      //
+      // Generate temporary local variables for out/ref parameters.
+      //
       var javaOutObjects = definition.Parameters.Where(p => p.IsOut && IsJavaObjectHandle(p.Type)).ToList();
       var javaInObjects = definition.Parameters.Where(p => !p.IsOut && IsJavaObjectHandle(p.Type)).ToList();
       foreach (var x in javaOutObjects) {
@@ -400,6 +406,9 @@ namespace CodeGen {
         sourceWriter.IsNativeTypes = false;
       }
 
+      //
+      // Generate function call
+      //
       sourceWriter.WriteIndent();
       if (!IsVoid(definition.ReturnType)) {
         sourceWriter.Write("var result = ");
@@ -429,30 +438,54 @@ namespace CodeGen {
       sourceWriter.Write(");");
       sourceWriter.WriteLine();
 
-      // Keep handles alive
+      //
+      // Generate code to keep handles alive for GC.
+      //
       foreach (var x in javaInObjects) {
-        sourceWriter.WriteIndent();
-        sourceWriter.Write("GC.KeepAlive({0});", x.Name);
-        sourceWriter.WriteLine();
+        sourceWriter.WriteLine("GC.KeepAlive({0});", x.Name);
       }
 
-      // Deal with out/ref parameters (Wrap and/or Copy)
+      //
+      // Generate code to copy back temporary local variables to ref/out parameters.
+      //
       foreach (var x in javaOutObjects) {
-        sourceWriter.WriteIndent();
-        sourceWriter.Write("{0} = Wrap(vmid, {0}Temp);", x.Name);
-        sourceWriter.WriteLine();
+        sourceWriter.WriteLine("{0} = Wrap(vmid, {0}Temp);", x.Name);
       }
 
       foreach (var x in outStructs) {
-        sourceWriter.WriteIndent();
-        sourceWriter.Write("{0} = Wrap(vmid, {0}Temp);", x.Name);
-        sourceWriter.WriteLine();
+        var wrapExpression = string.Format("{0} = Wrap(vmid, {0}Temp)", x.Name);
+        if (IsStatusResult(definition.ReturnType)) {
+          sourceWriter.WriteLine("if (ToBool(result))");
+          sourceWriter.IncIndent();
+          sourceWriter.WriteLine("{0};", wrapExpression);
+          sourceWriter.DecIndent();
+          if (x.IsOut) {
+            sourceWriter.WriteLine("else");
+            sourceWriter.IncIndent();
+            sourceWriter.WriteLine("{0} = default({1});", x.Name, sourceWriter.GetTypeName(x.Type));
+            sourceWriter.DecIndent();
+          }
+        } else {
+          sourceWriter.WriteLine("{0};", wrapExpression);
+        }
       }
 
       foreach (var x in outClasses) {
-        sourceWriter.WriteIndent();
-        sourceWriter.Write("CopyWrap(vmid, {0}Temp, {0});", x.Name);
-        sourceWriter.WriteLine();
+        var wrapExpression = string.Format("CopyWrap(vmid, {0}Temp, {0})", x.Name);
+        if (IsStatusResult(definition.ReturnType)) {
+          sourceWriter.WriteLine("if (ToBool(result))");
+          sourceWriter.IncIndent();
+          sourceWriter.WriteLine("{0};", wrapExpression);
+          sourceWriter.DecIndent();
+          if (x.IsOut) {
+            sourceWriter.WriteLine("else");
+            sourceWriter.IncIndent();
+            sourceWriter.WriteLine("{0} = default({1});", x.Name, sourceWriter.GetTypeName(x.Type));
+            sourceWriter.DecIndent();
+          }
+        } else {
+          sourceWriter.WriteLine("{0};", wrapExpression);
+        }
       }
 
       if (!IsVoid(definition.ReturnType)) {
