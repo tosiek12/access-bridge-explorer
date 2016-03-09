@@ -30,7 +30,7 @@ namespace CodeGen.Interop {
 
     bool IsJavaWindow(WindowHandle window);
     bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2);
-    bool GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac);
+    StatusResult GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac);
     WindowHandle GetHWNDFromAccessibleContext(int vmid, JavaObjectHandle ac);
 
     /// <summary>
@@ -40,29 +40,26 @@ namespace CodeGen.Interop {
     /// name="acParent"/> in case there is no child at that location. Returns
     /// <code>false</code> in case of serious error.
     /// </summary>
-    bool GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
+    StatusResult GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
 
-    bool GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac);
-    bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info);
+    StatusResult GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac);
+    StatusResult GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info);
     JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i);
     JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac);
 
     #region AccessibleRelationSet
 
-    bool GetAccessibleRelationSet(
-      int vmid,
-      JavaObjectHandle accessibleContext,
-      out AccessibleRelationSetInfo relationSetInfo);
+    StatusResult GetAccessibleRelationSet(int vmid, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo);
 
     #endregion
 
     #region AccessibleHypertext
 
-    bool GetAccessibleHypertext(int vmid, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo);
+    StatusResult GetAccessibleHypertext(int vmid, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo);
     bool ActivateAccessibleHyperlink(int vmid, JavaObjectHandle accessibleContext, JavaObjectHandle accessibleHyperlink);
     int GetAccessibleHyperlinkCount(int vmid, JavaObjectHandle accessibleContext);
 
-    bool GetAccessibleHypertextExt(
+    StatusResult GetAccessibleHypertextExt(
       int vmid,
       JavaObjectHandle accessibleContext,
       int nStartIndex,
@@ -70,7 +67,7 @@ namespace CodeGen.Interop {
 
     int GetAccessibleHypertextLinkIndex(int vmid, JavaObjectHandle hypertext, int nIndex);
 
-    bool GetAccessibleHyperlink(
+    StatusResult GetAccessibleHyperlink(
       int vmid,
       JavaObjectHandle hypertext,
       int nIndex,
@@ -80,11 +77,11 @@ namespace CodeGen.Interop {
 
     #region Accessible KeyBindings, Icons and Actions
 
-    bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings);
-    bool GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons);
-    bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, [Out] AccessibleActions actions);
+    StatusResult GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings);
+    StatusResult GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons);
+    StatusResult GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, [Out] AccessibleActions actions);
 
-    bool DoAccessibleActions(
+    StatusResult DoAccessibleActions(
       int vmid,
       JavaObjectHandle accessibleContext,
       ref AccessibleActionsToDo actionsToDo,
@@ -94,25 +91,20 @@ namespace CodeGen.Interop {
 
     #region AccessibleText
 
-    bool GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y);
-    bool GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index);
-    bool GetAccessibleTextSelectionInfo(int vmid, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection);
+    StatusResult GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y);
+    StatusResult GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index);
+    StatusResult GetAccessibleTextSelectionInfo(int vmid, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection);
+    StatusResult GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes);
 
-    bool GetAccessibleTextAttributes(
-      int vmid,
-      JavaObjectHandle at,
-      int index,
-      out AccessibleTextAttributesInfo attributes);
-
-    bool GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index);
-    bool GetAccessibleTextLineBounds(int vmid, JavaObjectHandle at, int index, out int startIndex, out int endIndex);
-    bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, StringBuilder text, short len);
+    StatusResult GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index);
+    StatusResult GetAccessibleTextLineBounds(int vmid, JavaObjectHandle at, int index, out int startIndex, out int endIndex);
+    StatusResult GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, StringBuilder text, short len);
 
     #endregion
 
-    bool GetCurrentAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
-    bool GetMaximumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
-    bool GetMinimumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
+    StatusResult GetCurrentAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
+    StatusResult GetMaximumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
+    StatusResult GetMinimumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
 
     void AddAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i);
     void ClearAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel);
@@ -124,36 +116,21 @@ namespace CodeGen.Interop {
 
     #region AccessibleTable
 
-    bool GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo);
-
-    bool GetAccessibleTableCellInfo(
-      int vmid,
-      JavaObjectHandle accessibleTable,
-      int row,
-      int column,
-      out AccessibleTableCellInfo tableCellInfo);
-
-    bool GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
-    bool GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
+    StatusResult GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo);
+    StatusResult GetAccessibleTableCellInfo(int vmid, JavaObjectHandle at, int row, int column, out AccessibleTableCellInfo tableCellInfo);
+    StatusResult GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
+    StatusResult GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
     JavaObjectHandle GetAccessibleTableRowDescription(int vmid, JavaObjectHandle acParent, int row);
     JavaObjectHandle GetAccessibleTableColumnDescription(int vmid, JavaObjectHandle acParent, int column);
     int GetAccessibleTableRowSelectionCount(int vmid, JavaObjectHandle table);
     bool IsAccessibleTableRowSelected(int vmid, JavaObjectHandle table, int row);
 
-    bool GetAccessibleTableRowSelections(
-      int vmid,
-      JavaObjectHandle table,
-      int count,
-      [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] int[] selections);
+    StatusResult GetAccessibleTableRowSelections(int vmid, JavaObjectHandle table, int count, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] int[] selections);
 
     int GetAccessibleTableColumnSelectionCount(int vmid, JavaObjectHandle table);
     bool IsAccessibleTableColumnSelected(int vmid, JavaObjectHandle table, int column);
 
-    bool GetAccessibleTableColumnSelections(
-      int vmid,
-      JavaObjectHandle table,
-      int count,
-      [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] int[] selections);
+    StatusResult GetAccessibleTableColumnSelections(int vmid, JavaObjectHandle table, int count, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] int[] selections);
 
     /// <summary>
     /// Return the row number for a cell at a given index
@@ -174,41 +151,28 @@ namespace CodeGen.Interop {
 
     #region Additional utility methods
 
-    bool SetTextContents(int vmid, JavaObjectHandle ac, string text);
+    StatusResult SetTextContents(int vmid, JavaObjectHandle ac, string text);
     JavaObjectHandle GetParentWithRole(int vmid, JavaObjectHandle ac, [MarshalAs(UnmanagedType.LPWStr)] string role);
 
-    JavaObjectHandle GetParentWithRoleElseRoot(
-      int vmid,
-      JavaObjectHandle ac,
-      [MarshalAs(UnmanagedType.LPWStr)] string role);
+    JavaObjectHandle GetParentWithRoleElseRoot(int vmid, JavaObjectHandle ac, [MarshalAs(UnmanagedType.LPWStr)] string role);
 
     JavaObjectHandle GetTopLevelObject(int vmid, JavaObjectHandle ac);
     int GetObjectDepth(int vmid, JavaObjectHandle ac);
     JavaObjectHandle GetActiveDescendent(int vmid, JavaObjectHandle ac);
 
-    bool GetVirtualAccessibleName(int vmid, JavaObjectHandle ac, StringBuilder name, int len);
+    StatusResult GetVirtualAccessibleName(int vmid, JavaObjectHandle ac, StringBuilder name, int len);
 
-    bool GetTextAttributesInRange(
-      int vmid,
-      JavaObjectHandle accessibleContext,
-      int startIndex,
-      int endIndex,
-      out AccessibleTextAttributesInfo attributes,
-      out short len);
+    StatusResult GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len);
 
-    bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
+    StatusResult GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
 
     int GetVisibleChildrenCount(int vmid, JavaObjectHandle accessibleContext);
 
-    bool GetVisibleChildren(
-      int vmid,
-      JavaObjectHandle accessibleContext,
-      int startIndex,
-      out VisibleChildrenInfo children);
+    StatusResult GetVisibleChildren(int vmid, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children);
 
     #endregion
 
-    bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info);
+    StatusResult GetVersionInfo(int vmid, out AccessBridgeVersionInfo info);
 
     #region Event handling routines
 

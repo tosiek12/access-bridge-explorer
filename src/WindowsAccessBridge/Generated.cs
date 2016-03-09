@@ -65,7 +65,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     void RemoveAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i);
     void SelectAllAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel);
     bool GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo);
-    bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo);
+    bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle at, int row, int column, out AccessibleTableCellInfo tableCellInfo);
     bool GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
     bool GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
     JavaObjectHandle GetAccessibleTableRowDescription(int vmid, JavaObjectHandle acParent, int row);
@@ -626,10 +626,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return ToBool(result);
     }
 
-    public bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
+    public bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle at, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
       AccessibleTableCellInfoNative tableCellInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, accessibleTable), row, column, out tableCellInfoTemp);
-      GC.KeepAlive(accessibleTable);
+      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, at), row, column, out tableCellInfoTemp);
+      GC.KeepAlive(at);
       tableCellInfo = Wrap(vmid, tableCellInfoTemp);
       return ToBool(result);
     }
@@ -2181,10 +2181,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return ToBool(result);
     }
 
-    public bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
+    public bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle at, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
       AccessibleTableCellInfoNativeLegacy tableCellInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, accessibleTable), row, column, out tableCellInfoTemp);
-      GC.KeepAlive(accessibleTable);
+      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, at), row, column, out tableCellInfoTemp);
+      GC.KeepAlive(at);
       tableCellInfo = Wrap(vmid, tableCellInfoTemp);
       return ToBool(result);
     }
@@ -3648,7 +3648,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleTableInfoFP(int vmid, JOBJECT64 ac, out AccessibleTableInfoNative tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableCellInfoFP(int vmid, JOBJECT64 accessibleTable, int row, int column, out AccessibleTableCellInfoNative tableCellInfo);
+    public delegate BOOL GetAccessibleTableCellInfoFP(int vmid, JOBJECT64 at, int row, int column, out AccessibleTableCellInfoNative tableCellInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleTableRowHeaderFP(int vmid, JOBJECT64 acParent, out AccessibleTableInfoNative tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -3998,7 +3998,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleTableInfoFP(int vmid, JOBJECT32 ac, out AccessibleTableInfoNativeLegacy tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableCellInfoFP(int vmid, JOBJECT32 accessibleTable, int row, int column, out AccessibleTableCellInfoNativeLegacy tableCellInfo);
+    public delegate BOOL GetAccessibleTableCellInfoFP(int vmid, JOBJECT32 at, int row, int column, out AccessibleTableCellInfoNativeLegacy tableCellInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleTableRowHeaderFP(int vmid, JOBJECT32 acParent, out AccessibleTableInfoNativeLegacy tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]

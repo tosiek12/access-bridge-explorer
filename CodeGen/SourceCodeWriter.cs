@@ -14,7 +14,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using CodeGen.Definitions;
 using CodeGen.Interop;
@@ -132,10 +131,15 @@ namespace CodeGen {
     }
 
     public string GetTypeName(string typeName) {
-      if (typeName == typeof(JavaObjectHandle).Name) {
+      if (typeName == typeof (JavaObjectHandle).Name) {
         if (IsNativeTypes) {
           return (IsLegacy ? "JOBJECT32" : "JOBJECT64");
         }
+      } else if (typeName == typeof(StatusResult).Name) {
+        if (IsNativeTypes)
+          return "BOOL";
+        else
+          return "bool";
       } else if (typeName == "bool") {
         if (IsNativeTypes)
           return "BOOL";

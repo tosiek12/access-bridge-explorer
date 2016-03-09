@@ -367,9 +367,9 @@ namespace CodeGen {
       sourceWriter.WriteLine();
       sourceWriter.IncIndent();
 
-      var javaObjects = definition.Parameters.Where(p => p.IsOut && IsJavaObjectHandle(p.Type)).ToList();
+      var javaOutObjects = definition.Parameters.Where(p => p.IsOut && IsJavaObjectHandle(p.Type)).ToList();
       var javaInObjects = definition.Parameters.Where(p => !p.IsOut && IsJavaObjectHandle(p.Type)).ToList();
-      foreach (var x in javaObjects) {
+      foreach (var x in javaOutObjects) {
         sourceWriter.WriteIndent();
         sourceWriter.IsNativeTypes = true;
         sourceWriter.WriteType(x.Type);
@@ -378,8 +378,8 @@ namespace CodeGen {
         sourceWriter.WriteLine();
       }
 
-      var structs = definition.Parameters.Where(p => (p.IsOut || p.IsRef || p.IsOutAttribute) && model.IsStruct(p.Type)).ToList();
-      foreach (var x in structs) {
+      var outStructs = definition.Parameters.Where(p => (p.IsOut || p.IsRef || p.IsOutAttribute) && model.IsStruct(p.Type)).ToList();
+      foreach (var x in outStructs) {
         sourceWriter.WriteIndent();
         sourceWriter.IsNativeTypes = true;
         sourceWriter.WriteType(x.Type);
@@ -390,8 +390,8 @@ namespace CodeGen {
         sourceWriter.WriteLine();
         sourceWriter.IsNativeTypes = false;
       }
-      var classes = definition.Parameters.Where(p => (p.IsOut || p.IsOutAttribute) && model.IsClass(p.Type)).ToList();
-      foreach (var x in classes) {
+      var outClasses = definition.Parameters.Where(p => (p.IsOut || p.IsOutAttribute) && model.IsClass(p.Type)).ToList();
+      foreach (var x in outClasses) {
         sourceWriter.WriteIndent();
         sourceWriter.IsNativeTypes = true;
         sourceWriter.WriteType(x.Type);
@@ -420,7 +420,7 @@ namespace CodeGen {
             sourceWriter.Write("{0}Temp", p.Name);
           else
             sourceWriter.Write("Unwrap(vmid, {0})", p.Name);
-        } else if (structs.Contains(p) || classes.Contains(p)) {
+        } else if (outStructs.Contains(p) || outClasses.Contains(p)) {
           sourceWriter.Write("{0}Temp", p.Name);
         } else {
           sourceWriter.Write(p.Name);
@@ -429,25 +429,27 @@ namespace CodeGen {
       sourceWriter.Write(");");
       sourceWriter.WriteLine();
 
+      // Keep handles alive
       foreach (var x in javaInObjects) {
         sourceWriter.WriteIndent();
         sourceWriter.Write("GC.KeepAlive({0});", x.Name);
         sourceWriter.WriteLine();
       }
 
-      foreach (var x in javaObjects) {
+      // Deal with out/ref parameters (Wrap and/or Copy)
+      foreach (var x in javaOutObjects) {
         sourceWriter.WriteIndent();
         sourceWriter.Write("{0} = Wrap(vmid, {0}Temp);", x.Name);
         sourceWriter.WriteLine();
       }
 
-      foreach (var x in structs) {
+      foreach (var x in outStructs) {
         sourceWriter.WriteIndent();
         sourceWriter.Write("{0} = Wrap(vmid, {0}Temp);", x.Name);
         sourceWriter.WriteLine();
       }
 
-      foreach (var x in classes) {
+      foreach (var x in outClasses) {
         sourceWriter.WriteIndent();
         sourceWriter.Write("CopyWrap(vmid, {0}Temp, {0});", x.Name);
         sourceWriter.WriteLine();
@@ -456,7 +458,7 @@ namespace CodeGen {
       if (!IsVoid(definition.ReturnType)) {
         if (IsJavaObjectHandle(definition.ReturnType)) {
           sourceWriter.WriteLine("return Wrap(vmid, result);");
-        } else if (IsBool(definition.ReturnType)) {
+        } else if (IsBool(definition.ReturnType) || IsStatusResult(definition.ReturnType)) {
           sourceWriter.WriteLine("return ToBool(result);");
         } else {
           sourceWriter.WriteLine("return result;");
@@ -814,6 +816,13 @@ namespace CodeGen {
       if (name == null)
         return false;
       return name.Name == typeof(JavaObjectHandle).Name;
+    }
+
+    private static bool IsStatusResult(TypeReference p) {
+      var name = p as NameTypeReference;
+      if (name == null)
+        return false;
+      return name.Name == typeof(StatusResult).Name;
     }
 
     private static bool IsBool(TypeReference p) {
