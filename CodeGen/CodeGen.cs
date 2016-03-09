@@ -77,13 +77,19 @@ namespace CodeGen {
           WriteApplicationEventsClass(model, sourceWriter);
 
           sourceWriter.IsNativeTypes = true;
-          WriteLibraryFunctionsClass(model, sourceWriter);
-          sourceWriter.IsLegacy = true;
-          WriteLibraryFunctionsClass(model, sourceWriter);
-          sourceWriter.IsLegacy = false;
-          WriteLibraryEventsClass(model, sourceWriter);
-          WriteLibraryStructs(model, sourceWriter, writer);
-          WriteLibraryClasses(model, writer, sourceWriter);
+          foreach (var legacy in new[] {false, true}) {
+            sourceWriter.IsLegacy = legacy;
+            WriteLibraryFunctionsClass(model, sourceWriter);
+          }
+          foreach (var legacy in new[] { false, true }) {
+            sourceWriter.IsLegacy = legacy;
+            WriteLibraryEventsClass(model, sourceWriter);
+          }
+          foreach (var legacy in new[] { false, true }) {
+            sourceWriter.IsLegacy = legacy;
+            WriteLibraryStructs(model, sourceWriter, writer);
+            WriteLibraryClasses(model, writer, sourceWriter);
+          }
           sourceWriter.EndNamespace();
         }
       }
@@ -99,7 +105,7 @@ namespace CodeGen {
     private void WriteLibraryStructs(LibraryDefinition model, SourceCodeWriter sourceWriter, StreamWriter writer) {
       sourceWriter.IsNativeTypes = true;
       model.Structs.ForEach(x => {
-        WriteStruct(model, sourceWriter, x);
+        WriteLibraryStruct(model, sourceWriter, x);
         writer.WriteLine();
       });
     }
@@ -107,7 +113,7 @@ namespace CodeGen {
     private void WriteLibraryClasses(LibraryDefinition model, StreamWriter writer, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = true;
       model.Classes.ForEach(x => {
-        WriteClass(model, sourceWriter, x);
+        WriteLibraryClass(model, sourceWriter, x);
         writer.WriteLine();
       });
     }
@@ -314,7 +320,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Native library event handlers implementation");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public partial class AccessBridgeEventsNative {{");
+      sourceWriter.WriteLine("public partial class AccessBridgeEventsNative{0} {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine("#region Event fields");
@@ -651,11 +657,13 @@ namespace CodeGen {
     }
 
     private void WriteNativeEventField(SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteLine("private AccessBridgeLibraryFunctions.{0}EventHandler _{1};", definition.Name, ToPascalCase(definition));
+      sourceWriter.WriteLine("private AccessBridgeLibraryFunctions{0}.{1}EventHandler _{2};",
+        GetLegacySuffix(sourceWriter), definition.Name, ToPascalCase(definition));
     }
 
     private void WriteNativeEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteLine("public event AccessBridgeLibraryFunctions.{0}EventHandler {0} {{", definition.Name);
+      sourceWriter.WriteLine("public event AccessBridgeLibraryFunctions{0}.{1}EventHandler {1} {{",
+        GetLegacySuffix(sourceWriter), definition.Name);
       sourceWriter.IncIndent();
       sourceWriter.WriteLine("add {{");
       sourceWriter.IncIndent();
@@ -843,16 +851,16 @@ namespace CodeGen {
       WriteDelegateType(sourceWriter, eventDefinition.DelegateFunction);
     }
 
-    private void WriteStruct(LibraryDefinition model, SourceCodeWriter sourceWriter, StrucDefinition definition) {
+    private void WriteLibraryStruct(LibraryDefinition model, SourceCodeWriter sourceWriter, StrucDefinition definition) {
       sourceWriter.WriteLine("[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]");
-      sourceWriter.WriteLine("public struct {0}Native {{", definition.Name);
+      sourceWriter.WriteLine("public struct {0}Native{1} {{", definition.Name, GetLegacySuffix(sourceWriter));
       WriteFields(model, sourceWriter, definition);
       sourceWriter.WriteLine("}}");
     }
 
-    private void WriteClass(LibraryDefinition model, SourceCodeWriter sourceWriter, ClassDefinition classDefinition) {
+    private void WriteLibraryClass(LibraryDefinition model, SourceCodeWriter sourceWriter, ClassDefinition classDefinition) {
       sourceWriter.WriteLine("[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]");
-      sourceWriter.WriteLine("public class {0}Native {{", classDefinition.Name);
+      sourceWriter.WriteLine("public class {0}Native{1} {{", classDefinition.Name, GetLegacySuffix(sourceWriter));
       WriteFields(model, sourceWriter, classDefinition);
       sourceWriter.WriteLine("}}");
     }
