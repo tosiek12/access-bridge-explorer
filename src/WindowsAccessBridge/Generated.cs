@@ -126,6 +126,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     event PropertyTableModelChangeEventHandler PropertyTableModelChange;
   }
 
+  #region Platform agnostic event handler delegate types
   public delegate void PropertyChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string property, string oldValue, string newValue);
   public delegate void JavaShutdownEventHandler(int vmid);
   public delegate void FocusGainedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
@@ -153,11 +154,215 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   public delegate void PropertyChildChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldChild, JavaObjectHandle newChild);
   public delegate void PropertyActiveDescendentChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldActiveDescendent, JavaObjectHandle newActiveDescendent);
   public delegate void PropertyTableModelChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle src, string oldValue, string newValue);
+  #endregion
+
+  [Flags]
+  public enum AccessibleInterfaces {
+    cAccessibleValueInterface = 1,
+    cAccessibleActionInterface = 2,
+    cAccessibleComponentInterface = 4,
+    cAccessibleSelectionInterface = 8,
+    cAccessibleTableInterface = 16,
+    cAccessibleTextInterface = 32,
+    cAccessibleHypertextInterface = 64,
+  }
+
+  public enum AccessibleKeyCode : ushort {
+    ACCESSIBLE_VK_BACK_SPACE = 8,
+    ACCESSIBLE_VK_DELETE = 127,
+    ACCESSIBLE_VK_DOWN = 40,
+    ACCESSIBLE_VK_END = 35,
+    ACCESSIBLE_VK_HOME = 36,
+    ACCESSIBLE_VK_INSERT = 155,
+    ACCESSIBLE_VK_KP_DOWN = 225,
+    ACCESSIBLE_VK_KP_LEFT = 226,
+    ACCESSIBLE_VK_KP_RIGHT = 227,
+    ACCESSIBLE_VK_KP_UP = 224,
+    ACCESSIBLE_VK_LEFT = 37,
+    ACCESSIBLE_VK_PAGE_DOWN = 34,
+    ACCESSIBLE_VK_PAGE_UP = 33,
+    ACCESSIBLE_VK_RIGHT = 39,
+    ACCESSIBLE_VK_UP = 38,
+  }
+
+  [Flags]
+  public enum AccessibleModifiers {
+    ACCESSIBLE_SHIFT_KEYSTROKE = 1,
+    ACCESSIBLE_CONTROL_KEYSTROKE = 2,
+    ACCESSIBLE_META_KEYSTROKE = 4,
+    ACCESSIBLE_ALT_KEYSTROKE = 8,
+    ACCESSIBLE_ALT_GRAPH_KEYSTROKE = 16,
+    ACCESSIBLE_BUTTON1_KEYSTROKE = 32,
+    ACCESSIBLE_BUTTON2_KEYSTROKE = 64,
+    ACCESSIBLE_BUTTON3_KEYSTROKE = 128,
+    ACCESSIBLE_FKEY_KEYSTROKE = 256,
+    ACCESSIBLE_CONTROLCODE_KEYSTROKE = 512,
+  }
+
+  public struct AccessBridgeVersionInfo {
+    public string VMversion;
+    public string bridgeJavaClassVersion;
+    public string bridgeJavaDLLVersion;
+    public string bridgeWinDLLVersion;
+  }
+
+  public struct AccessibleActionInfo {
+    public string name;
+  }
+
+  public struct AccessibleActionsToDo {
+    public int actionsCount;
+    public AccessibleActionInfo[] actions;
+  }
+
+  public struct AccessibleContextInfo {
+    public string name;
+    public string description;
+    public string role;
+    public string role_en_US;
+    public string states;
+    public string states_en_US;
+    public int indexInParent;
+    public int childrenCount;
+    public int x;
+    public int y;
+    public int width;
+    public int height;
+    public int accessibleComponent;
+    public int accessibleAction;
+    public int accessibleSelection;
+    public int accessibleText;
+    public AccessibleInterfaces accessibleInterfaces;
+  }
+
+  public struct AccessibleHyperlinkInfo {
+    public string text;
+    public int startIndex;
+    public int endIndex;
+    public JavaObjectHandle accessibleHyperlink;
+  }
+
+  public struct AccessibleHypertextInfo {
+    public int linkCount;
+    public AccessibleHyperlinkInfo[] links;
+    public JavaObjectHandle accessibleHypertext;
+  }
+
+  public struct AccessibleIconInfo {
+    public string description;
+    public int height;
+    public int width;
+  }
+
+  public struct AccessibleIcons {
+    public int iconsCount;
+    public AccessibleIconInfo[] iconInfo;
+  }
+
+  public struct AccessibleKeyBindingInfo {
+    public AccessibleKeyCode character;
+    public AccessibleModifiers modifiers;
+  }
+
+  public struct AccessibleKeyBindings {
+    public int keyBindingsCount;
+    public AccessibleKeyBindingInfo[] keyBindingInfo;
+  }
+
+  public struct AccessibleRelationInfo {
+    public string key;
+    public int targetCount;
+    public JavaObjectHandle[] targets;
+  }
+
+  public struct AccessibleRelationSetInfo {
+    public int relationCount;
+    public AccessibleRelationInfo[] relations;
+  }
+
+  public struct AccessibleTableCellInfo {
+    public JavaObjectHandle accessibleContext;
+    public int index;
+    public int row;
+    public int column;
+    public int rowExtent;
+    public int columnExtent;
+    public byte isSelected;
+  }
+
+  public struct AccessibleTableInfo {
+    public JavaObjectHandle caption;
+    public JavaObjectHandle summary;
+    public int rowCount;
+    public int columnCount;
+    public JavaObjectHandle accessibleContext;
+    public JavaObjectHandle accessibleTable;
+  }
+
+  public struct AccessibleTextAttributesInfo {
+    public int bold;
+    public int italic;
+    public int underline;
+    public int strikethrough;
+    public int superscript;
+    public int subscript;
+    public string backgroundColor;
+    public string foregroundColor;
+    public string fontFamily;
+    public int fontSize;
+    public int alignment;
+    public int bidiLevel;
+    public float firstLineIndent;
+    public float leftIndent;
+    public float rightIndent;
+    public float lineSpacing;
+    public float spaceAbove;
+    public float spaceBelow;
+    public string fullAttributesString;
+  }
+
+  public struct AccessibleTextInfo {
+    public int charCount;
+    public int caretIndex;
+    public int indexAtPoint;
+  }
+
+  public struct AccessibleTextItemsInfo {
+    public char letter;
+    public string word;
+    public string sentence;
+  }
+
+  public struct AccessibleTextRectInfo {
+    public int x;
+    public int y;
+    public int width;
+    public int height;
+  }
+
+  public struct AccessibleTextSelectionInfo {
+    public int selectionStartIndex;
+    public int selectionEndIndex;
+    public string selectedText;
+  }
+
+  public struct VisibleChildrenInfo {
+    public int returnedChildrenCount;
+    public JavaObjectHandle[] children;
+  }
+
+  public class AccessibleActions {
+    public int actionsCount;
+    public AccessibleActionInfo[] actionInfo;
+  }
 
   /// <summary>
   /// Implementation of platform agnostic functions
   /// </summary>
   public partial class AccessBridgeFunctions : IAccessBridgeFunctions {
+
+    #region Function implementations
+
     public void Windows_run() {
       LibraryFunctions.Windows_run();
     }
@@ -590,7 +795,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return ToBool(result);
     }
 
-    public AccessBridgeVersionInfo Wrap(int vmid, AccessBridgeVersionInfoNative info) {
+    #endregion
+
+    #region Wrap/Unwrap structs
+
+    private AccessBridgeVersionInfo Wrap(int vmid, AccessBridgeVersionInfoNative info) {
       var result = new AccessBridgeVersionInfo();
       result.VMversion = info.VMversion;
       result.bridgeJavaClassVersion = info.bridgeJavaClassVersion;
@@ -599,7 +808,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessBridgeVersionInfoNative Unwrap(int vmid, AccessBridgeVersionInfo info) {
+    private AccessBridgeVersionInfoNative Unwrap(int vmid, AccessBridgeVersionInfo info) {
       var result = new AccessBridgeVersionInfoNative();
       result.VMversion = info.VMversion;
       result.bridgeJavaClassVersion = info.bridgeJavaClassVersion;
@@ -608,19 +817,19 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleActionInfo Wrap(int vmid, AccessibleActionInfoNative info) {
+    private AccessibleActionInfo Wrap(int vmid, AccessibleActionInfoNative info) {
       var result = new AccessibleActionInfo();
       result.name = info.name;
       return result;
     }
 
-    public AccessibleActionInfoNative Unwrap(int vmid, AccessibleActionInfo info) {
+    private AccessibleActionInfoNative Unwrap(int vmid, AccessibleActionInfo info) {
       var result = new AccessibleActionInfoNative();
       result.name = info.name;
       return result;
     }
 
-    public AccessibleActionsToDo Wrap(int vmid, AccessibleActionsToDoNative info) {
+    private AccessibleActionsToDo Wrap(int vmid, AccessibleActionsToDoNative info) {
       var result = new AccessibleActionsToDo();
       result.actionsCount = info.actionsCount;
       if (info.actions != null) {
@@ -633,7 +842,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleActionsToDoNative Unwrap(int vmid, AccessibleActionsToDo info) {
+    private AccessibleActionsToDoNative Unwrap(int vmid, AccessibleActionsToDo info) {
       var result = new AccessibleActionsToDoNative();
       result.actionsCount = info.actionsCount;
       if (info.actions != null) {
@@ -646,7 +855,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleContextInfo Wrap(int vmid, AccessibleContextInfoNative info) {
+    private AccessibleContextInfo Wrap(int vmid, AccessibleContextInfoNative info) {
       var result = new AccessibleContextInfo();
       result.name = info.name;
       result.description = info.description;
@@ -668,7 +877,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleContextInfoNative Unwrap(int vmid, AccessibleContextInfo info) {
+    private AccessibleContextInfoNative Unwrap(int vmid, AccessibleContextInfo info) {
       var result = new AccessibleContextInfoNative();
       result.name = info.name;
       result.description = info.description;
@@ -690,7 +899,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleHyperlinkInfo Wrap(int vmid, AccessibleHyperlinkInfoNative info) {
+    private AccessibleHyperlinkInfo Wrap(int vmid, AccessibleHyperlinkInfoNative info) {
       var result = new AccessibleHyperlinkInfo();
       result.text = info.text;
       result.startIndex = info.startIndex;
@@ -699,7 +908,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleHyperlinkInfoNative Unwrap(int vmid, AccessibleHyperlinkInfo info) {
+    private AccessibleHyperlinkInfoNative Unwrap(int vmid, AccessibleHyperlinkInfo info) {
       var result = new AccessibleHyperlinkInfoNative();
       result.text = info.text;
       result.startIndex = info.startIndex;
@@ -708,7 +917,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleHypertextInfo Wrap(int vmid, AccessibleHypertextInfoNative info) {
+    private AccessibleHypertextInfo Wrap(int vmid, AccessibleHypertextInfoNative info) {
       var result = new AccessibleHypertextInfo();
       result.linkCount = info.linkCount;
       if (info.links != null) {
@@ -722,7 +931,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleHypertextInfoNative Unwrap(int vmid, AccessibleHypertextInfo info) {
+    private AccessibleHypertextInfoNative Unwrap(int vmid, AccessibleHypertextInfo info) {
       var result = new AccessibleHypertextInfoNative();
       result.linkCount = info.linkCount;
       if (info.links != null) {
@@ -736,7 +945,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleIconInfo Wrap(int vmid, AccessibleIconInfoNative info) {
+    private AccessibleIconInfo Wrap(int vmid, AccessibleIconInfoNative info) {
       var result = new AccessibleIconInfo();
       result.description = info.description;
       result.height = info.height;
@@ -744,7 +953,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleIconInfoNative Unwrap(int vmid, AccessibleIconInfo info) {
+    private AccessibleIconInfoNative Unwrap(int vmid, AccessibleIconInfo info) {
       var result = new AccessibleIconInfoNative();
       result.description = info.description;
       result.height = info.height;
@@ -752,7 +961,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleIcons Wrap(int vmid, AccessibleIconsNative info) {
+    private AccessibleIcons Wrap(int vmid, AccessibleIconsNative info) {
       var result = new AccessibleIcons();
       result.iconsCount = info.iconsCount;
       if (info.iconInfo != null) {
@@ -765,7 +974,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleIconsNative Unwrap(int vmid, AccessibleIcons info) {
+    private AccessibleIconsNative Unwrap(int vmid, AccessibleIcons info) {
       var result = new AccessibleIconsNative();
       result.iconsCount = info.iconsCount;
       if (info.iconInfo != null) {
@@ -778,21 +987,21 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleKeyBindingInfo Wrap(int vmid, AccessibleKeyBindingInfoNative info) {
+    private AccessibleKeyBindingInfo Wrap(int vmid, AccessibleKeyBindingInfoNative info) {
       var result = new AccessibleKeyBindingInfo();
       result.character = info.character;
       result.modifiers = info.modifiers;
       return result;
     }
 
-    public AccessibleKeyBindingInfoNative Unwrap(int vmid, AccessibleKeyBindingInfo info) {
+    private AccessibleKeyBindingInfoNative Unwrap(int vmid, AccessibleKeyBindingInfo info) {
       var result = new AccessibleKeyBindingInfoNative();
       result.character = info.character;
       result.modifiers = info.modifiers;
       return result;
     }
 
-    public AccessibleKeyBindings Wrap(int vmid, AccessibleKeyBindingsNative info) {
+    private AccessibleKeyBindings Wrap(int vmid, AccessibleKeyBindingsNative info) {
       var result = new AccessibleKeyBindings();
       result.keyBindingsCount = info.keyBindingsCount;
       if (info.keyBindingInfo != null) {
@@ -805,7 +1014,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleKeyBindingsNative Unwrap(int vmid, AccessibleKeyBindings info) {
+    private AccessibleKeyBindingsNative Unwrap(int vmid, AccessibleKeyBindings info) {
       var result = new AccessibleKeyBindingsNative();
       result.keyBindingsCount = info.keyBindingsCount;
       if (info.keyBindingInfo != null) {
@@ -818,7 +1027,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleRelationInfo Wrap(int vmid, AccessibleRelationInfoNative info) {
+    private AccessibleRelationInfo Wrap(int vmid, AccessibleRelationInfoNative info) {
       var result = new AccessibleRelationInfo();
       result.key = info.key;
       result.targetCount = info.targetCount;
@@ -832,7 +1041,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleRelationInfoNative Unwrap(int vmid, AccessibleRelationInfo info) {
+    private AccessibleRelationInfoNative Unwrap(int vmid, AccessibleRelationInfo info) {
       var result = new AccessibleRelationInfoNative();
       result.key = info.key;
       result.targetCount = info.targetCount;
@@ -846,7 +1055,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleRelationSetInfo Wrap(int vmid, AccessibleRelationSetInfoNative info) {
+    private AccessibleRelationSetInfo Wrap(int vmid, AccessibleRelationSetInfoNative info) {
       var result = new AccessibleRelationSetInfo();
       result.relationCount = info.relationCount;
       if (info.relations != null) {
@@ -859,7 +1068,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleRelationSetInfoNative Unwrap(int vmid, AccessibleRelationSetInfo info) {
+    private AccessibleRelationSetInfoNative Unwrap(int vmid, AccessibleRelationSetInfo info) {
       var result = new AccessibleRelationSetInfoNative();
       result.relationCount = info.relationCount;
       if (info.relations != null) {
@@ -872,7 +1081,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTableCellInfo Wrap(int vmid, AccessibleTableCellInfoNative info) {
+    private AccessibleTableCellInfo Wrap(int vmid, AccessibleTableCellInfoNative info) {
       var result = new AccessibleTableCellInfo();
       result.accessibleContext = Wrap(vmid, info.accessibleContext);
       result.index = info.index;
@@ -884,7 +1093,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTableCellInfoNative Unwrap(int vmid, AccessibleTableCellInfo info) {
+    private AccessibleTableCellInfoNative Unwrap(int vmid, AccessibleTableCellInfo info) {
       var result = new AccessibleTableCellInfoNative();
       result.accessibleContext = Unwrap(vmid, info.accessibleContext);
       result.index = info.index;
@@ -896,7 +1105,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTableInfo Wrap(int vmid, AccessibleTableInfoNative info) {
+    private AccessibleTableInfo Wrap(int vmid, AccessibleTableInfoNative info) {
       var result = new AccessibleTableInfo();
       result.caption = Wrap(vmid, info.caption);
       result.summary = Wrap(vmid, info.summary);
@@ -907,7 +1116,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTableInfoNative Unwrap(int vmid, AccessibleTableInfo info) {
+    private AccessibleTableInfoNative Unwrap(int vmid, AccessibleTableInfo info) {
       var result = new AccessibleTableInfoNative();
       result.caption = Unwrap(vmid, info.caption);
       result.summary = Unwrap(vmid, info.summary);
@@ -918,7 +1127,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTextAttributesInfo Wrap(int vmid, AccessibleTextAttributesInfoNative info) {
+    private AccessibleTextAttributesInfo Wrap(int vmid, AccessibleTextAttributesInfoNative info) {
       var result = new AccessibleTextAttributesInfo();
       result.bold = info.bold;
       result.italic = info.italic;
@@ -942,7 +1151,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTextAttributesInfoNative Unwrap(int vmid, AccessibleTextAttributesInfo info) {
+    private AccessibleTextAttributesInfoNative Unwrap(int vmid, AccessibleTextAttributesInfo info) {
       var result = new AccessibleTextAttributesInfoNative();
       result.bold = info.bold;
       result.italic = info.italic;
@@ -966,7 +1175,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTextInfo Wrap(int vmid, AccessibleTextInfoNative info) {
+    private AccessibleTextInfo Wrap(int vmid, AccessibleTextInfoNative info) {
       var result = new AccessibleTextInfo();
       result.charCount = info.charCount;
       result.caretIndex = info.caretIndex;
@@ -974,7 +1183,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTextInfoNative Unwrap(int vmid, AccessibleTextInfo info) {
+    private AccessibleTextInfoNative Unwrap(int vmid, AccessibleTextInfo info) {
       var result = new AccessibleTextInfoNative();
       result.charCount = info.charCount;
       result.caretIndex = info.caretIndex;
@@ -982,7 +1191,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTextItemsInfo Wrap(int vmid, AccessibleTextItemsInfoNative info) {
+    private AccessibleTextItemsInfo Wrap(int vmid, AccessibleTextItemsInfoNative info) {
       var result = new AccessibleTextItemsInfo();
       result.letter = info.letter;
       result.word = info.word;
@@ -990,7 +1199,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTextItemsInfoNative Unwrap(int vmid, AccessibleTextItemsInfo info) {
+    private AccessibleTextItemsInfoNative Unwrap(int vmid, AccessibleTextItemsInfo info) {
       var result = new AccessibleTextItemsInfoNative();
       result.letter = info.letter;
       result.word = info.word;
@@ -998,7 +1207,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTextRectInfo Wrap(int vmid, AccessibleTextRectInfoNative info) {
+    private AccessibleTextRectInfo Wrap(int vmid, AccessibleTextRectInfoNative info) {
       var result = new AccessibleTextRectInfo();
       result.x = info.x;
       result.y = info.y;
@@ -1007,7 +1216,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTextRectInfoNative Unwrap(int vmid, AccessibleTextRectInfo info) {
+    private AccessibleTextRectInfoNative Unwrap(int vmid, AccessibleTextRectInfo info) {
       var result = new AccessibleTextRectInfoNative();
       result.x = info.x;
       result.y = info.y;
@@ -1016,7 +1225,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTextSelectionInfo Wrap(int vmid, AccessibleTextSelectionInfoNative info) {
+    private AccessibleTextSelectionInfo Wrap(int vmid, AccessibleTextSelectionInfoNative info) {
       var result = new AccessibleTextSelectionInfo();
       result.selectionStartIndex = info.selectionStartIndex;
       result.selectionEndIndex = info.selectionEndIndex;
@@ -1024,7 +1233,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public AccessibleTextSelectionInfoNative Unwrap(int vmid, AccessibleTextSelectionInfo info) {
+    private AccessibleTextSelectionInfoNative Unwrap(int vmid, AccessibleTextSelectionInfo info) {
       var result = new AccessibleTextSelectionInfoNative();
       result.selectionStartIndex = info.selectionStartIndex;
       result.selectionEndIndex = info.selectionEndIndex;
@@ -1032,7 +1241,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public VisibleChildrenInfo Wrap(int vmid, VisibleChildrenInfoNative info) {
+    private VisibleChildrenInfo Wrap(int vmid, VisibleChildrenInfoNative info) {
       var result = new VisibleChildrenInfo();
       result.returnedChildrenCount = info.returnedChildrenCount;
       if (info.children != null) {
@@ -1045,7 +1254,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public VisibleChildrenInfoNative Unwrap(int vmid, VisibleChildrenInfo info) {
+    private VisibleChildrenInfoNative Unwrap(int vmid, VisibleChildrenInfo info) {
       var result = new VisibleChildrenInfoNative();
       result.returnedChildrenCount = info.returnedChildrenCount;
       if (info.children != null) {
@@ -1058,7 +1267,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    public void CopyWrap(int vmid, AccessibleActionsNative infoSrc, AccessibleActions infoDest) {
+    #endregion
+
+    #region CopyWrap/CopyUnwrap classes
+
+    private void CopyWrap(int vmid, AccessibleActionsNative infoSrc, AccessibleActions infoDest) {
       infoDest.actionsCount = infoSrc.actionsCount;
       if (infoSrc.actionInfo != null) {
         var count = infoSrc.actionsCount;
@@ -1069,7 +1282,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
-    public void CopyUnwrap(int vmid, AccessibleActions infoSrc, AccessibleActionsNative infoDest) {
+    private void CopyUnwrap(int vmid, AccessibleActions infoSrc, AccessibleActionsNative infoDest) {
       infoDest.actionsCount = infoSrc.actionsCount;
       if (infoSrc.actionInfo != null) {
         var count = infoSrc.actionsCount;
@@ -1079,6 +1292,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         }
       }
     }
+
+    #endregion
 
   }
 
@@ -1694,208 +1909,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       OnPropertyTableModelChange(vmid, Wrap(vmid, evt), Wrap(vmid, src), oldValue, newValue);
     }
     #endregion
-
   }
 
-  [Flags]
-  public enum AccessibleInterfaces {
-    cAccessibleValueInterface = 1,
-    cAccessibleActionInterface = 2,
-    cAccessibleComponentInterface = 4,
-    cAccessibleSelectionInterface = 8,
-    cAccessibleTableInterface = 16,
-    cAccessibleTextInterface = 32,
-    cAccessibleHypertextInterface = 64,
-  }
-
-  public enum AccessibleKeyCode : ushort {
-    ACCESSIBLE_VK_BACK_SPACE = 8,
-    ACCESSIBLE_VK_DELETE = 127,
-    ACCESSIBLE_VK_DOWN = 40,
-    ACCESSIBLE_VK_END = 35,
-    ACCESSIBLE_VK_HOME = 36,
-    ACCESSIBLE_VK_INSERT = 155,
-    ACCESSIBLE_VK_KP_DOWN = 225,
-    ACCESSIBLE_VK_KP_LEFT = 226,
-    ACCESSIBLE_VK_KP_RIGHT = 227,
-    ACCESSIBLE_VK_KP_UP = 224,
-    ACCESSIBLE_VK_LEFT = 37,
-    ACCESSIBLE_VK_PAGE_DOWN = 34,
-    ACCESSIBLE_VK_PAGE_UP = 33,
-    ACCESSIBLE_VK_RIGHT = 39,
-    ACCESSIBLE_VK_UP = 38,
-  }
-
-  [Flags]
-  public enum AccessibleModifiers {
-    ACCESSIBLE_SHIFT_KEYSTROKE = 1,
-    ACCESSIBLE_CONTROL_KEYSTROKE = 2,
-    ACCESSIBLE_META_KEYSTROKE = 4,
-    ACCESSIBLE_ALT_KEYSTROKE = 8,
-    ACCESSIBLE_ALT_GRAPH_KEYSTROKE = 16,
-    ACCESSIBLE_BUTTON1_KEYSTROKE = 32,
-    ACCESSIBLE_BUTTON2_KEYSTROKE = 64,
-    ACCESSIBLE_BUTTON3_KEYSTROKE = 128,
-    ACCESSIBLE_FKEY_KEYSTROKE = 256,
-    ACCESSIBLE_CONTROLCODE_KEYSTROKE = 512,
-  }
-
-  public struct AccessBridgeVersionInfo {
-    public string VMversion;
-    public string bridgeJavaClassVersion;
-    public string bridgeJavaDLLVersion;
-    public string bridgeWinDLLVersion;
-  }
-
-  public struct AccessibleActionInfo {
-    public string name;
-  }
-
-  public struct AccessibleActionsToDo {
-    public int actionsCount;
-    public AccessibleActionInfo[] actions;
-  }
-
-  public struct AccessibleContextInfo {
-    public string name;
-    public string description;
-    public string role;
-    public string role_en_US;
-    public string states;
-    public string states_en_US;
-    public int indexInParent;
-    public int childrenCount;
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-    public int accessibleComponent;
-    public int accessibleAction;
-    public int accessibleSelection;
-    public int accessibleText;
-    public AccessibleInterfaces accessibleInterfaces;
-  }
-
-  public struct AccessibleHyperlinkInfo {
-    public string text;
-    public int startIndex;
-    public int endIndex;
-    public JavaObjectHandle accessibleHyperlink;
-  }
-
-  public struct AccessibleHypertextInfo {
-    public int linkCount;
-    public AccessibleHyperlinkInfo[] links;
-    public JavaObjectHandle accessibleHypertext;
-  }
-
-  public struct AccessibleIconInfo {
-    public string description;
-    public int height;
-    public int width;
-  }
-
-  public struct AccessibleIcons {
-    public int iconsCount;
-    public AccessibleIconInfo[] iconInfo;
-  }
-
-  public struct AccessibleKeyBindingInfo {
-    public AccessibleKeyCode character;
-    public AccessibleModifiers modifiers;
-  }
-
-  public struct AccessibleKeyBindings {
-    public int keyBindingsCount;
-    public AccessibleKeyBindingInfo[] keyBindingInfo;
-  }
-
-  public struct AccessibleRelationInfo {
-    public string key;
-    public int targetCount;
-    public JavaObjectHandle[] targets;
-  }
-
-  public struct AccessibleRelationSetInfo {
-    public int relationCount;
-    public AccessibleRelationInfo[] relations;
-  }
-
-  public struct AccessibleTableCellInfo {
-    public JavaObjectHandle accessibleContext;
-    public int index;
-    public int row;
-    public int column;
-    public int rowExtent;
-    public int columnExtent;
-    public byte isSelected;
-  }
-
-  public struct AccessibleTableInfo {
-    public JavaObjectHandle caption;
-    public JavaObjectHandle summary;
-    public int rowCount;
-    public int columnCount;
-    public JavaObjectHandle accessibleContext;
-    public JavaObjectHandle accessibleTable;
-  }
-
-  public struct AccessibleTextAttributesInfo {
-    public int bold;
-    public int italic;
-    public int underline;
-    public int strikethrough;
-    public int superscript;
-    public int subscript;
-    public string backgroundColor;
-    public string foregroundColor;
-    public string fontFamily;
-    public int fontSize;
-    public int alignment;
-    public int bidiLevel;
-    public float firstLineIndent;
-    public float leftIndent;
-    public float rightIndent;
-    public float lineSpacing;
-    public float spaceAbove;
-    public float spaceBelow;
-    public string fullAttributesString;
-  }
-
-  public struct AccessibleTextInfo {
-    public int charCount;
-    public int caretIndex;
-    public int indexAtPoint;
-  }
-
-  public struct AccessibleTextItemsInfo {
-    public char letter;
-    public string word;
-    public string sentence;
-  }
-
-  public struct AccessibleTextRectInfo {
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-  }
-
-  public struct AccessibleTextSelectionInfo {
-    public int selectionStartIndex;
-    public int selectionEndIndex;
-    public string selectedText;
-  }
-
-  public struct VisibleChildrenInfo {
-    public int returnedChildrenCount;
-    public JavaObjectHandle[] children;
-  }
-
-  public class AccessibleActions {
-    public int actionsCount;
-    public AccessibleActionInfo[] actionInfo;
-  }
   /// <summary>
   /// Container of WindowAccessBridge DLL entry points
   /// </summary>
@@ -2243,6 +2258,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public PropertyTableModelChangeFP SetPropertyTableModelChange { get; set; }
     #endregion
   }
+
   /// <summary>
   /// Native library event handlers implementation
   /// </summary>
@@ -2949,4 +2965,5 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
     public AccessibleActionInfoNative[] actionInfo;
   }
+
 }

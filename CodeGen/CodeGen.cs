@@ -70,11 +70,11 @@ namespace CodeGen {
           WriteApplicationFunctionsInterface(model, sourceWriter);
           WriteApplicationEventsInterface(model, sourceWriter);
           WriteApplicationEventHandlerTypes(model, sourceWriter);
-          WriteApplicationFunctionsClass(model, sourceWriter);
-          WriteApplicationEventsClass(model, sourceWriter);
-          WriteEnums(model, writer, sourceWriter);
+          WriteApplicationEnums(model, writer, sourceWriter);
           WriteApplicationStructs(model, sourceWriter, writer);
           WriteApplicationClasses(model, writer, sourceWriter);
+          WriteApplicationFunctionsClass(model, sourceWriter);
+          WriteApplicationEventsClass(model, sourceWriter);
           sourceWriter.IsNativeTypes = true;
           WriteLibraryFunctionsClass(model, sourceWriter);
           WriteLibraryEventsClass(model, sourceWriter);
@@ -85,42 +85,42 @@ namespace CodeGen {
       }
     }
 
-    private void WriteEnums(LibraryDefinition model, StreamWriter writer, SourceCodeWriter sourceWriter) {
+    private void WriteApplicationEnums(LibraryDefinition model, StreamWriter writer, SourceCodeWriter sourceWriter) {
       model.Enums.ForEach(x => {
-        writer.WriteLine();
         WriteEnum(model, sourceWriter, x);
+        writer.WriteLine();
       });
     }
 
     private void WriteLibraryStructs(LibraryDefinition model, SourceCodeWriter sourceWriter, StreamWriter writer) {
       sourceWriter.IsNativeTypes = true;
       model.Structs.ForEach(x => {
-        writer.WriteLine();
         WriteStruct(model, sourceWriter, x);
+        writer.WriteLine();
       });
     }
 
     private void WriteLibraryClasses(LibraryDefinition model, StreamWriter writer, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = true;
       model.Classes.ForEach(x => {
-        writer.WriteLine();
         WriteClass(model, sourceWriter, x);
+        writer.WriteLine();
       });
     }
 
     private void WriteApplicationStructs(LibraryDefinition model, SourceCodeWriter sourceWriter, StreamWriter writer) {
       sourceWriter.IsNativeTypes = false;
       model.Structs.ForEach(x => {
-        writer.WriteLine();
         WriteApplicationStruct(model, sourceWriter, x);
+        writer.WriteLine();
       });
     }
 
     private void WriteApplicationClasses(LibraryDefinition model, StreamWriter writer, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
       model.Classes.ForEach(x => {
-        writer.WriteLine();
         WriteApplicationClass(model, sourceWriter, x);
+        writer.WriteLine();
       });
     }
 
@@ -156,9 +156,11 @@ namespace CodeGen {
 
     private void WriteApplicationEventHandlerTypes(LibraryDefinition model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
+      sourceWriter.WriteLine("#region Platform agnostic event handler delegate types");
       foreach (var eventDefinition in model.Events) {
         WriteEventHandlerType(sourceWriter, eventDefinition);
       }
+      sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
     }
 
@@ -170,15 +172,32 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// </summary>");
       sourceWriter.WriteLine("public partial class AccessBridgeFunctions : IAccessBridgeFunctions {{");
       sourceWriter.IncIndent();
+
+      sourceWriter.WriteLine();
+      sourceWriter.WriteLine("#region Function implementations");
+      sourceWriter.WriteLine();
       foreach (var function in model.Functions) {
-        WriteApplicationLevelFunctionImplementation(model, sourceWriter, function);
+        WriteApplicationFunctionImplementation(model, sourceWriter, function);
       }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Wrap/Unwrap structs");
+      sourceWriter.WriteLine();
       foreach (var definition in model.Structs) {
-        WriteApplicationLevelStructWrapper(model, sourceWriter, definition);
+        WriteApplicationWrapStructFunctions(model, sourceWriter, definition);
       }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region CopyWrap/CopyUnwrap classes");
+      sourceWriter.WriteLine();
       foreach (var definition in model.Classes) {
-        WriteApplicationLevelClassWrapper(model, sourceWriter, definition);
+        WriteApplicationCCopyClassFunctions(model, sourceWriter, definition);
       }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
       sourceWriter.WriteLine();
@@ -227,10 +246,10 @@ namespace CodeGen {
         WriteApplicationLevelEventForwarder(sourceWriter, eventDefinition);
       }
       sourceWriter.WriteLine("#endregion");
-      sourceWriter.WriteLine();
 
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
+      sourceWriter.WriteLine();
     }
 
     private void WriteLibraryFunctionsClass(LibraryDefinition model, SourceCodeWriter sourceWriter) {
@@ -275,6 +294,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("#endregion");
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
+      sourceWriter.WriteLine();
     }
 
     private void WriteLibraryEventsClass(LibraryDefinition model, SourceCodeWriter sourceWriter) {
@@ -305,6 +325,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("#endregion");
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
+      sourceWriter.WriteLine();
     }
 
     private void WriteFunction(SourceCodeWriter sourceWriter, FunctionDefinition definition) {
@@ -314,7 +335,7 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteApplicationLevelFunctionImplementation(
+    private void WriteApplicationFunctionImplementation(
       LibraryDefinition model,
       SourceCodeWriter sourceWriter,
       FunctionDefinition definition) {
@@ -426,12 +447,12 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteApplicationLevelStructWrapper(
+    private void WriteApplicationWrapStructFunctions(
       LibraryDefinition model,
       SourceCodeWriter sourceWriter,
       BaseTypeDefinition definition) {
       sourceWriter.WriteIndent();
-      sourceWriter.Write("public ");
+      sourceWriter.Write("private ");
       sourceWriter.IsNativeTypes = false;
       sourceWriter.WriteType(definition.Name);
       sourceWriter.Write(" Wrap(int vmid, ");
@@ -451,7 +472,7 @@ namespace CodeGen {
       sourceWriter.WriteLine();
 
       sourceWriter.WriteIndent();
-      sourceWriter.Write("public ");
+      sourceWriter.Write("private ");
       sourceWriter.IsNativeTypes = true;
       sourceWriter.WriteType(definition.Name);
       sourceWriter.Write(" Unwrap(int vmid, ");
@@ -471,12 +492,12 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteApplicationLevelClassWrapper(
+    private void WriteApplicationCCopyClassFunctions(
       LibraryDefinition model,
       SourceCodeWriter sourceWriter,
       BaseTypeDefinition definition) {
       sourceWriter.WriteIndent();
-      sourceWriter.Write("public void CopyWrap(int vmid, ");
+      sourceWriter.Write("private void CopyWrap(int vmid, ");
       sourceWriter.IsNativeTypes = true;
       sourceWriter.WriteType(definition.Name);
       sourceWriter.Write(" infoSrc, ");
@@ -493,7 +514,7 @@ namespace CodeGen {
       sourceWriter.WriteLine();
 
       sourceWriter.WriteIndent();
-      sourceWriter.Write("public void CopyUnwrap(int vmid, ");
+      sourceWriter.Write("private void CopyUnwrap(int vmid, ");
       sourceWriter.IsNativeTypes = false;
       sourceWriter.WriteType(definition.Name);
       sourceWriter.Write(" infoSrc, ");
