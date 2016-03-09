@@ -29,14 +29,16 @@ namespace AccessBridgeExplorer {
       applicationVersionText.Text = string.Format("Version {0}", application.GetName().Version);
 
       try {
-        var libraryVersion = accessBridge.Library.Version;
+        var libraryVersion = accessBridge.LibraryVersion;
+        accessBridgePathText.Text = string.Format("{0}", libraryVersion.FileName);
         accessBridgeProductText.Text = string.Format("{0}", libraryVersion.ProductName);
         accessBridgeVersionText.Text = string.Format("{0}", libraryVersion.FileVersion);
-        accessBridgePathText.Text = string.Format("{0}", libraryVersion.FileName);
+        accessBridgeLegacyText.Text = accessBridge.IsLegacy ? "Yes" : "No";
       } catch (Exception e) {
         accessBridgePathText.Text = e.Message;
         accessBridgeProductText.Text = @"<Error>";
         accessBridgeVersionText.Text = @"<Error>";
+        accessBridgeLegacyText.Text = @"<Error>";
       }
     }
 

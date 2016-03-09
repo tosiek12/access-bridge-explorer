@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -26,7 +27,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// Class used to dynamically load and access the Java Access Bridge DLL.
   /// </summary>
   public class AccessBridge : IDisposable {
-    private UnmanagedLibrary _library;
+    private AccessBridgeLibrary _library;
     private IAccessBridgeFunctions _functions;
     private IAccessBridgeEvents _events;
     private bool _disposed;
@@ -47,15 +48,27 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
-    public UnmanagedLibrary Library {
+    public bool IsLoaded {
       get {
-        ThrowIfDisposed();
-        Initialize();
-        return _library;
+        return _library != null;
       }
     }
 
-    public bool IsLoaded { get { return _library != null; } }
+    public FileVersionInfo LibraryVersion {
+      get {
+        ThrowIfDisposed();
+        Initialize();
+        return _library.Version;
+      }
+    }
+
+    public bool IsLegacy {
+      get {
+        ThrowIfDisposed();
+        Initialize();
+        return _library.IsLegacy;
+      }
+    }
 
     public void Initialize() {
       ThrowIfDisposed();

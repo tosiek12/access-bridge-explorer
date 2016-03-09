@@ -51,6 +51,8 @@ namespace AccessBridgeExplorer {
       this.accessBridgeVersionText = new System.Windows.Forms.TextBox();
       this.accessBridgePathText = new System.Windows.Forms.TextBox();
       this.accessBridgeProductText = new System.Windows.Forms.TextBox();
+      this.label4 = new System.Windows.Forms.Label();
+      this.accessBridgeLegacyText = new System.Windows.Forms.TextBox();
       this.panel1.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -59,7 +61,7 @@ namespace AccessBridgeExplorer {
       // 
       this.okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
       this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.okButton.Location = new System.Drawing.Point(238, 257);
+      this.okButton.Location = new System.Drawing.Point(238, 281);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 0;
@@ -156,6 +158,8 @@ namespace AccessBridgeExplorer {
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.label4);
+      this.groupBox1.Controls.Add(this.accessBridgeLegacyText);
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.label1);
@@ -164,15 +168,15 @@ namespace AccessBridgeExplorer {
       this.groupBox1.Controls.Add(this.accessBridgeProductText);
       this.groupBox1.Location = new System.Drawing.Point(10, 162);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(527, 78);
+      this.groupBox1.Size = new System.Drawing.Size(527, 103);
       this.groupBox1.TabIndex = 6;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Access Bridge version information";
+      this.groupBox1.Text = "Java Access Bridge API details";
       // 
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(3, 57);
+      this.label3.Location = new System.Drawing.Point(3, 59);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(45, 13);
       this.label3.TabIndex = 4;
@@ -181,7 +185,7 @@ namespace AccessBridgeExplorer {
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(3, 38);
+      this.label2.Location = new System.Drawing.Point(3, 39);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(47, 13);
       this.label2.TabIndex = 2;
@@ -204,7 +208,7 @@ namespace AccessBridgeExplorer {
       this.accessBridgeVersionText.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.accessBridgeVersionText.Cursor = System.Windows.Forms.Cursors.IBeam;
       this.accessBridgeVersionText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.accessBridgeVersionText.Location = new System.Drawing.Point(57, 57);
+      this.accessBridgeVersionText.Location = new System.Drawing.Point(57, 59);
       this.accessBridgeVersionText.Name = "accessBridgeVersionText";
       this.accessBridgeVersionText.ReadOnly = true;
       this.accessBridgeVersionText.Size = new System.Drawing.Size(464, 13);
@@ -234,19 +238,43 @@ namespace AccessBridgeExplorer {
       this.accessBridgeProductText.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.accessBridgeProductText.Cursor = System.Windows.Forms.Cursors.IBeam;
       this.accessBridgeProductText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.accessBridgeProductText.Location = new System.Drawing.Point(57, 38);
+      this.accessBridgeProductText.Location = new System.Drawing.Point(57, 39);
       this.accessBridgeProductText.Name = "accessBridgeProductText";
       this.accessBridgeProductText.ReadOnly = true;
       this.accessBridgeProductText.Size = new System.Drawing.Size(464, 13);
       this.accessBridgeProductText.TabIndex = 3;
       this.accessBridgeProductText.Text = "(accessbridge product)";
       // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(3, 79);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(45, 13);
+      this.label4.TabIndex = 6;
+      this.label4.Text = "Legacy:";
+      // 
+      // accessBridgeLegacyText
+      // 
+      this.accessBridgeLegacyText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.accessBridgeLegacyText.BackColor = System.Drawing.SystemColors.Control;
+      this.accessBridgeLegacyText.BorderStyle = System.Windows.Forms.BorderStyle.None;
+      this.accessBridgeLegacyText.Cursor = System.Windows.Forms.Cursors.IBeam;
+      this.accessBridgeLegacyText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.accessBridgeLegacyText.Location = new System.Drawing.Point(57, 79);
+      this.accessBridgeLegacyText.Name = "accessBridgeLegacyText";
+      this.accessBridgeLegacyText.ReadOnly = true;
+      this.accessBridgeLegacyText.Size = new System.Drawing.Size(464, 13);
+      this.accessBridgeLegacyText.TabIndex = 7;
+      this.accessBridgeLegacyText.Text = "(accessbridge legacy)";
+      // 
       // AboutForm
       // 
       this.AcceptButton = this.okButton;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(550, 289);
+      this.ClientSize = new System.Drawing.Size(550, 313);
       this.Controls.Add(this.panel1);
       this.Controls.Add(this.disclaimerText);
       this.Controls.Add(this.githubUrlLinkLabel);
@@ -286,5 +314,7 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.TextBox accessBridgeLegacyText;
   }
 }
