@@ -59,8 +59,6 @@ namespace CodeGen {
           sourceWriter.WriteLine("// ReSharper disable UseObjectOrCollectionInitializer");
 
           sourceWriter.AddUsing("System");
-          //sourceWriter.AddUsing("System.Collections.Generic");
-          //sourceWriter.AddUsing("System.Diagnostics.CodeAnalysis");
           sourceWriter.AddUsing("System.Runtime.InteropServices");
           sourceWriter.AddUsing("System.Text");
           sourceWriter.AddUsing("WindowHandle = System.IntPtr");
@@ -69,10 +67,11 @@ namespace CodeGen {
 
           sourceWriter.StartNamespace("AccessBridgeExplorer.WindowsAccessBridge");
           sourceWriter.IsNativeTypes = false;
-          WriteApplicationLevelInterface(model, sourceWriter);
-          WriteApplicationLevelEventHandlerTypes(model, sourceWriter);
-          WriteApplicationLevelInterfaceImplementation(model, sourceWriter);
-          WriteApplicationLevelEventsClass(model, sourceWriter);
+          WriteApplicationFunctionsInterface(model, sourceWriter);
+          WriteApplicationEventsInterface(model, sourceWriter);
+          WriteApplicationEventHandlerTypes(model, sourceWriter);
+          WriteApplicationFunctionsClass(model, sourceWriter);
+          WriteApplicationEventsClass(model, sourceWriter);
           WriteEnums(model, writer, sourceWriter);
           WriteApplicationStructs(model, sourceWriter, writer);
           WriteApplicationClasses(model, writer, sourceWriter);
@@ -125,10 +124,10 @@ namespace CodeGen {
       });
     }
 
-    private void WriteApplicationLevelInterface(LibraryDefinition model, SourceCodeWriter sourceWriter) {
+    private void WriteApplicationFunctionsInterface(LibraryDefinition model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
       sourceWriter.WriteLine("/// <summary>");
-      sourceWriter.WriteLine("/// Platform agnostic abstraction over WindowAccessBridge DLL entry points");
+      sourceWriter.WriteLine("/// Platform agnostic abstraction over WindowAccessBridge DLL functions");
       sourceWriter.WriteLine("/// </summary>");
       sourceWriter.WriteLine("public interface IAccessBridgeFunctions {{");
       sourceWriter.IncIndent();
@@ -138,9 +137,12 @@ namespace CodeGen {
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
       sourceWriter.WriteLine();
+    }
 
+    private void WriteApplicationEventsInterface(LibraryDefinition model, SourceCodeWriter sourceWriter) {
+      sourceWriter.IsNativeTypes = false;
       sourceWriter.WriteLine("/// <summary>");
-      sourceWriter.WriteLine("/// Platform agnostic abstraction over WindowAccessBridge DLL entry points");
+      sourceWriter.WriteLine("/// Platform agnostic abstraction over WindowAccessBridge DLL events");
       sourceWriter.WriteLine("/// </summary>");
       sourceWriter.WriteLine("public interface IAccessBridgeEvents {{");
       sourceWriter.IncIndent();
@@ -152,7 +154,7 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteApplicationLevelEventHandlerTypes(LibraryDefinition model, SourceCodeWriter sourceWriter) {
+    private void WriteApplicationEventHandlerTypes(LibraryDefinition model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
       foreach (var eventDefinition in model.Events) {
         WriteEventHandlerType(sourceWriter, eventDefinition);
@@ -160,11 +162,11 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteApplicationLevelInterfaceImplementation(LibraryDefinition model, SourceCodeWriter sourceWriter) {
+    private void WriteApplicationFunctionsClass(LibraryDefinition model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
       sourceWriter.IsLegacy = false;
       sourceWriter.WriteLine("/// <summary>");
-      sourceWriter.WriteLine("/// Platform agnostic abstraction over WindowAccessBridge DLL entry points");
+      sourceWriter.WriteLine("/// Implementation of platform agnostic functions");
       sourceWriter.WriteLine("/// </summary>");
       sourceWriter.WriteLine("public partial class AccessBridgeFunctions : IAccessBridgeFunctions {{");
       sourceWriter.IncIndent();
@@ -180,6 +182,55 @@ namespace CodeGen {
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
       sourceWriter.WriteLine();
+    }
+
+    private void WriteApplicationEventsClass(LibraryDefinition model, SourceCodeWriter sourceWriter) {
+      sourceWriter.IsNativeTypes = false;
+      sourceWriter.WriteLine("/// <summary>");
+      sourceWriter.WriteLine("/// Implementation of platform agnostic events");
+      sourceWriter.WriteLine("/// </summary>");
+      sourceWriter.WriteLine("public partial class AccessBridgeEvents : IAccessBridgeEvents {{");
+      sourceWriter.IncIndent();
+
+      sourceWriter.WriteLine("#region Event fields");
+      foreach (var eventDefinition in model.Events) {
+        WriteApplicationLevelEventField(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Event properties");
+      foreach (var eventDefinition in model.Events) {
+        WriteApplicationLevelEventProperty(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Event handlers");
+      foreach (var eventDefinition in model.Events) {
+        WriteApplicationLevelEventHandler(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("private void DetachForwarders() {{");
+      sourceWriter.IncIndent();
+      foreach (var eventDefinition in model.Events) {
+        sourceWriter.WriteLine("NativeEvents.{0} -= Forward{0};", eventDefinition.Name);
+      }
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Event forwarders");
+      foreach (var eventDefinition in model.Events) {
+        WriteApplicationLevelEventForwarder(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
     }
 
     private void WriteLibraryFunctionsClass(LibraryDefinition model, SourceCodeWriter sourceWriter) {
@@ -252,55 +303,6 @@ namespace CodeGen {
         WriteNativeEventHandler(sourceWriter, eventDefinition);
       }
       sourceWriter.WriteLine("#endregion");
-      sourceWriter.DecIndent();
-      sourceWriter.WriteLine("}}");
-    }
-
-    private void WriteApplicationLevelEventsClass(LibraryDefinition model, SourceCodeWriter sourceWriter) {
-      sourceWriter.IsNativeTypes = false;
-      sourceWriter.WriteLine("/// <summary>");
-      sourceWriter.WriteLine("/// Acess Bridge event handlers implementation");
-      sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public partial class AccessBridgeEvents : IAccessBridgeEvents {{");
-      sourceWriter.IncIndent();
-
-      sourceWriter.WriteLine("#region Event fields");
-      foreach (var eventDefinition in model.Events) {
-        WriteApplicationLevelEventField(sourceWriter, eventDefinition);
-      }
-      sourceWriter.WriteLine("#endregion");
-      sourceWriter.WriteLine();
-
-      sourceWriter.WriteLine("#region Event properties");
-      foreach (var eventDefinition in model.Events) {
-        WriteApplicationLevelEventProperty(sourceWriter, eventDefinition);
-      }
-      sourceWriter.WriteLine("#endregion");
-      sourceWriter.WriteLine();
-
-      sourceWriter.WriteLine("#region Event handlers");
-      foreach (var eventDefinition in model.Events) {
-        WriteApplicationLevelEventHandler(sourceWriter, eventDefinition);
-      }
-      sourceWriter.WriteLine("#endregion");
-      sourceWriter.WriteLine();
-
-      sourceWriter.WriteLine("private void DetachForwarders() {{");
-      sourceWriter.IncIndent();
-      foreach (var eventDefinition in model.Events) {
-        sourceWriter.WriteLine("NativeEvents.{0} -= Forward{0};", eventDefinition.Name);
-      }
-      sourceWriter.DecIndent();
-      sourceWriter.WriteLine("}}");
-      sourceWriter.WriteLine();
-
-      sourceWriter.WriteLine("#region Event forwarders");
-      foreach (var eventDefinition in model.Events) {
-        WriteApplicationLevelEventForwarder(sourceWriter, eventDefinition);
-      }
-      sourceWriter.WriteLine("#endregion");
-      sourceWriter.WriteLine();
-
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
     }

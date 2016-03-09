@@ -23,7 +23,7 @@ using BOOL = System.Int32;
 
 namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// <summary>
-  /// Platform agnostic abstraction over WindowAccessBridge DLL entry points
+  /// Platform agnostic abstraction over WindowAccessBridge DLL functions
   /// </summary>
   public interface IAccessBridgeFunctions {
     void Windows_run();
@@ -94,7 +94,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   /// <summary>
-  /// Platform agnostic abstraction over WindowAccessBridge DLL entry points
+  /// Platform agnostic abstraction over WindowAccessBridge DLL events
   /// </summary>
   public interface IAccessBridgeEvents {
     event PropertyChangeEventHandler PropertyChange;
@@ -155,7 +155,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   public delegate void PropertyTableModelChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle src, string oldValue, string newValue);
 
   /// <summary>
-  /// Platform agnostic abstraction over WindowAccessBridge DLL entry points
+  /// Implementation of platform agnostic functions
   /// </summary>
   public partial class AccessBridgeFunctions : IAccessBridgeFunctions {
     public void Windows_run() {
@@ -1083,7 +1083,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   /// <summary>
-  /// Acess Bridge event handlers implementation
+  /// Implementation of platform agnostic events
   /// </summary>
   public partial class AccessBridgeEvents : IAccessBridgeEvents {
     #region Event fields
