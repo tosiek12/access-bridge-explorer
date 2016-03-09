@@ -154,7 +154,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Platform agnostic abstraction over WindowAccessBridge DLL events");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public interface IAccessBridgeEvents {{");
+      sourceWriter.WriteLine("public interface IAccessBridgeEvents : IDisposable {{");
       sourceWriter.IncIndent();
       foreach (var eventDefinition in model.Events) {
         WriteEvent(sourceWriter, eventDefinition);

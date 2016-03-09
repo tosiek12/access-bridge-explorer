@@ -96,7 +96,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// <summary>
   /// Platform agnostic abstraction over WindowAccessBridge DLL events
   /// </summary>
-  public interface IAccessBridgeEvents {
+  public interface IAccessBridgeEvents : IDisposable {
     event PropertyChangeEventHandler PropertyChange;
     event JavaShutdownEventHandler JavaShutdown;
     event FocusGainedEventHandler FocusGained;

@@ -27,8 +27,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// </summary>
   public class AccessBridge : IDisposable {
     private UnmanagedLibrary _library;
-    private AccessBridgeFunctions _functions;
-    private AccessBridgeEvents _events;
+    private IAccessBridgeFunctions _functions;
+    private IAccessBridgeEvents _events;
     private bool _disposed;
 
     public IAccessBridgeFunctions Functions {
