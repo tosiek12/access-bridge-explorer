@@ -260,29 +260,9 @@ namespace CodeGen {
       sourceWriter.WriteLine("public class AccessBridgeLibraryFunctions {{");
       sourceWriter.IncIndent();
 
-      sourceWriter.WriteLine("#region Function delegate types");
-      foreach (var function in model.Functions) {
-        WriteLibrayrFunctionsDelegate(sourceWriter, function);
-      }
-      sourceWriter.WriteLine("#endregion");
-      sourceWriter.WriteLine();
-
       sourceWriter.WriteLine("#region Functions");
       foreach (var function in model.Functions) {
         WriteLibraryFunctionProperty(sourceWriter, function);
-      }
-      sourceWriter.WriteLine("#endregion");
-      sourceWriter.WriteLine();
-
-      sourceWriter.WriteLine("#region Event delegate types");
-      foreach (var definition in model.Events) {
-        sourceWriter.WriteLine("[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]");
-        WriteDelegateType(sourceWriter, definition.DelegateFunction);
-      }
-      sourceWriter.WriteLine();
-      foreach (var eventDefinition in model.Events) {
-        sourceWriter.WriteLine("[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]");
-        WriteLibraryEventDelegateType(sourceWriter, eventDefinition);
       }
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
@@ -292,6 +272,30 @@ namespace CodeGen {
         WriteLibraryEventProperty(sourceWriter, eventDefinition);
       }
       sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Function delegate types");
+      foreach (var function in model.Functions) {
+        WriteLibrayrFunctionsDelegate(sourceWriter, function);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Event delegate types");
+      foreach (var definition in model.Events) {
+        sourceWriter.WriteLine("[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]");
+        WriteDelegateType(sourceWriter, definition.DelegateFunction);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Event function delegate types");
+      foreach (var eventDefinition in model.Events) {
+        sourceWriter.WriteLine("[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]");
+        WriteLibraryEventDelegateType(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
       sourceWriter.WriteLine();
@@ -629,13 +633,13 @@ namespace CodeGen {
 
     private void WriteLibraryEventDelegateType(SourceCodeWriter sourceWriter, EventDefinition definition) {
       sourceWriter.WriteIndent();
-      sourceWriter.Write("public delegate BOOL {0}FP({0}EventHandler handler)", definition.Name);
+      sourceWriter.Write("public delegate BOOL Set{0}FP({0}EventHandler handler)", definition.Name);
       sourceWriter.Write(";");
       sourceWriter.WriteLine();
     }
 
     private void WriteLibraryEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteLine("public {0}FP Set{0} {{ get; set; }}", definition.Name);
+      sourceWriter.WriteLine("public Set{0}FP Set{0} {{ get; set; }}", definition.Name);
     }
 
     private void WriteNativeEventField(SourceCodeWriter sourceWriter, EventDefinition definition) {

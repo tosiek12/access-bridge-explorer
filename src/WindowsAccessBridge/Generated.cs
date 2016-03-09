@@ -1915,6 +1915,104 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// Container of WindowAccessBridge DLL entry points
   /// </summary>
   public class AccessBridgeLibraryFunctions {
+    #region Functions
+    public Windows_runFP Windows_run { get; set; }
+    public IsJavaWindowFP IsJavaWindow { get; set; }
+    public IsSameObjectFP IsSameObject { get; set; }
+    public GetAccessibleContextFromHWNDFP GetAccessibleContextFromHWND { get; set; }
+    public GetHWNDFromAccessibleContextFP GetHWNDFromAccessibleContext { get; set; }
+    public GetAccessibleContextAtFP GetAccessibleContextAt { get; set; }
+    public GetAccessibleContextWithFocusFP GetAccessibleContextWithFocus { get; set; }
+    public GetAccessibleContextInfoFP GetAccessibleContextInfo { get; set; }
+    public GetAccessibleChildFromContextFP GetAccessibleChildFromContext { get; set; }
+    public GetAccessibleParentFromContextFP GetAccessibleParentFromContext { get; set; }
+    public GetAccessibleRelationSetFP GetAccessibleRelationSet { get; set; }
+    public GetAccessibleHypertextFP GetAccessibleHypertext { get; set; }
+    public ActivateAccessibleHyperlinkFP ActivateAccessibleHyperlink { get; set; }
+    public GetAccessibleHyperlinkCountFP GetAccessibleHyperlinkCount { get; set; }
+    public GetAccessibleHypertextExtFP GetAccessibleHypertextExt { get; set; }
+    public GetAccessibleHypertextLinkIndexFP GetAccessibleHypertextLinkIndex { get; set; }
+    public GetAccessibleHyperlinkFP GetAccessibleHyperlink { get; set; }
+    public GetAccessibleKeyBindingsFP GetAccessibleKeyBindings { get; set; }
+    public GetAccessibleIconsFP GetAccessibleIcons { get; set; }
+    public GetAccessibleActionsFP GetAccessibleActions { get; set; }
+    public DoAccessibleActionsFP DoAccessibleActions { get; set; }
+    public GetAccessibleTextInfoFP GetAccessibleTextInfo { get; set; }
+    public GetAccessibleTextItemsFP GetAccessibleTextItems { get; set; }
+    public GetAccessibleTextSelectionInfoFP GetAccessibleTextSelectionInfo { get; set; }
+    public GetAccessibleTextAttributesFP GetAccessibleTextAttributes { get; set; }
+    public GetAccessibleTextRectFP GetAccessibleTextRect { get; set; }
+    public GetAccessibleTextLineBoundsFP GetAccessibleTextLineBounds { get; set; }
+    public GetAccessibleTextRangeFP GetAccessibleTextRange { get; set; }
+    public GetCurrentAccessibleValueFromContextFP GetCurrentAccessibleValueFromContext { get; set; }
+    public GetMaximumAccessibleValueFromContextFP GetMaximumAccessibleValueFromContext { get; set; }
+    public GetMinimumAccessibleValueFromContextFP GetMinimumAccessibleValueFromContext { get; set; }
+    public AddAccessibleSelectionFromContextFP AddAccessibleSelectionFromContext { get; set; }
+    public ClearAccessibleSelectionFromContextFP ClearAccessibleSelectionFromContext { get; set; }
+    public GetAccessibleSelectionFromContextFP GetAccessibleSelectionFromContext { get; set; }
+    public GetAccessibleSelectionCountFromContextFP GetAccessibleSelectionCountFromContext { get; set; }
+    public IsAccessibleChildSelectedFromContextFP IsAccessibleChildSelectedFromContext { get; set; }
+    public RemoveAccessibleSelectionFromContextFP RemoveAccessibleSelectionFromContext { get; set; }
+    public SelectAllAccessibleSelectionFromContextFP SelectAllAccessibleSelectionFromContext { get; set; }
+    public GetAccessibleTableInfoFP GetAccessibleTableInfo { get; set; }
+    public GetAccessibleTableCellInfoFP GetAccessibleTableCellInfo { get; set; }
+    public GetAccessibleTableRowHeaderFP GetAccessibleTableRowHeader { get; set; }
+    public GetAccessibleTableColumnHeaderFP GetAccessibleTableColumnHeader { get; set; }
+    public GetAccessibleTableRowDescriptionFP GetAccessibleTableRowDescription { get; set; }
+    public GetAccessibleTableColumnDescriptionFP GetAccessibleTableColumnDescription { get; set; }
+    public GetAccessibleTableRowSelectionCountFP GetAccessibleTableRowSelectionCount { get; set; }
+    public IsAccessibleTableRowSelectedFP IsAccessibleTableRowSelected { get; set; }
+    public GetAccessibleTableRowSelectionsFP GetAccessibleTableRowSelections { get; set; }
+    public GetAccessibleTableColumnSelectionCountFP GetAccessibleTableColumnSelectionCount { get; set; }
+    public IsAccessibleTableColumnSelectedFP IsAccessibleTableColumnSelected { get; set; }
+    public GetAccessibleTableColumnSelectionsFP GetAccessibleTableColumnSelections { get; set; }
+    public GetAccessibleTableRowFP GetAccessibleTableRow { get; set; }
+    public GetAccessibleTableColumnFP GetAccessibleTableColumn { get; set; }
+    public GetAccessibleTableIndexFP GetAccessibleTableIndex { get; set; }
+    public SetTextContentsFP SetTextContents { get; set; }
+    public GetParentWithRoleFP GetParentWithRole { get; set; }
+    public GetParentWithRoleElseRootFP GetParentWithRoleElseRoot { get; set; }
+    public GetTopLevelObjectFP GetTopLevelObject { get; set; }
+    public GetObjectDepthFP GetObjectDepth { get; set; }
+    public GetActiveDescendentFP GetActiveDescendent { get; set; }
+    public GetVirtualAccessibleNameFP GetVirtualAccessibleName { get; set; }
+    public GetTextAttributesInRangeFP GetTextAttributesInRange { get; set; }
+    public GetCaretLocationFP GetCaretLocation { get; set; }
+    public GetVisibleChildrenCountFP GetVisibleChildrenCount { get; set; }
+    public GetVisibleChildrenFP GetVisibleChildren { get; set; }
+    public GetVersionInfoFP GetVersionInfo { get; set; }
+    #endregion
+
+    #region Event functions
+    public SetPropertyChangeFP SetPropertyChange { get; set; }
+    public SetJavaShutdownFP SetJavaShutdown { get; set; }
+    public SetFocusGainedFP SetFocusGained { get; set; }
+    public SetFocusLostFP SetFocusLost { get; set; }
+    public SetCaretUpdateFP SetCaretUpdate { get; set; }
+    public SetMouseClickedFP SetMouseClicked { get; set; }
+    public SetMouseEnteredFP SetMouseEntered { get; set; }
+    public SetMouseExitedFP SetMouseExited { get; set; }
+    public SetMousePressedFP SetMousePressed { get; set; }
+    public SetMouseReleasedFP SetMouseReleased { get; set; }
+    public SetMenuCanceledFP SetMenuCanceled { get; set; }
+    public SetMenuDeselectedFP SetMenuDeselected { get; set; }
+    public SetMenuSelectedFP SetMenuSelected { get; set; }
+    public SetPopupMenuCanceledFP SetPopupMenuCanceled { get; set; }
+    public SetPopupMenuWillBecomeInvisibleFP SetPopupMenuWillBecomeInvisible { get; set; }
+    public SetPopupMenuWillBecomeVisibleFP SetPopupMenuWillBecomeVisible { get; set; }
+    public SetPropertyNameChangeFP SetPropertyNameChange { get; set; }
+    public SetPropertyDescriptionChangeFP SetPropertyDescriptionChange { get; set; }
+    public SetPropertyStateChangeFP SetPropertyStateChange { get; set; }
+    public SetPropertyValueChangeFP SetPropertyValueChange { get; set; }
+    public SetPropertySelectionChangeFP SetPropertySelectionChange { get; set; }
+    public SetPropertyTextChangeFP SetPropertyTextChange { get; set; }
+    public SetPropertyCaretChangeFP SetPropertyCaretChange { get; set; }
+    public SetPropertyVisibleDataChangeFP SetPropertyVisibleDataChange { get; set; }
+    public SetPropertyChildChangeFP SetPropertyChildChange { get; set; }
+    public SetPropertyActiveDescendentChangeFP SetPropertyActiveDescendentChange { get; set; }
+    public SetPropertyTableModelChangeFP SetPropertyTableModelChange { get; set; }
+    #endregion
+
     #region Function delegate types
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate void Windows_runFP();
@@ -2048,74 +2146,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfoNative info);
     #endregion
 
-    #region Functions
-    public Windows_runFP Windows_run { get; set; }
-    public IsJavaWindowFP IsJavaWindow { get; set; }
-    public IsSameObjectFP IsSameObject { get; set; }
-    public GetAccessibleContextFromHWNDFP GetAccessibleContextFromHWND { get; set; }
-    public GetHWNDFromAccessibleContextFP GetHWNDFromAccessibleContext { get; set; }
-    public GetAccessibleContextAtFP GetAccessibleContextAt { get; set; }
-    public GetAccessibleContextWithFocusFP GetAccessibleContextWithFocus { get; set; }
-    public GetAccessibleContextInfoFP GetAccessibleContextInfo { get; set; }
-    public GetAccessibleChildFromContextFP GetAccessibleChildFromContext { get; set; }
-    public GetAccessibleParentFromContextFP GetAccessibleParentFromContext { get; set; }
-    public GetAccessibleRelationSetFP GetAccessibleRelationSet { get; set; }
-    public GetAccessibleHypertextFP GetAccessibleHypertext { get; set; }
-    public ActivateAccessibleHyperlinkFP ActivateAccessibleHyperlink { get; set; }
-    public GetAccessibleHyperlinkCountFP GetAccessibleHyperlinkCount { get; set; }
-    public GetAccessibleHypertextExtFP GetAccessibleHypertextExt { get; set; }
-    public GetAccessibleHypertextLinkIndexFP GetAccessibleHypertextLinkIndex { get; set; }
-    public GetAccessibleHyperlinkFP GetAccessibleHyperlink { get; set; }
-    public GetAccessibleKeyBindingsFP GetAccessibleKeyBindings { get; set; }
-    public GetAccessibleIconsFP GetAccessibleIcons { get; set; }
-    public GetAccessibleActionsFP GetAccessibleActions { get; set; }
-    public DoAccessibleActionsFP DoAccessibleActions { get; set; }
-    public GetAccessibleTextInfoFP GetAccessibleTextInfo { get; set; }
-    public GetAccessibleTextItemsFP GetAccessibleTextItems { get; set; }
-    public GetAccessibleTextSelectionInfoFP GetAccessibleTextSelectionInfo { get; set; }
-    public GetAccessibleTextAttributesFP GetAccessibleTextAttributes { get; set; }
-    public GetAccessibleTextRectFP GetAccessibleTextRect { get; set; }
-    public GetAccessibleTextLineBoundsFP GetAccessibleTextLineBounds { get; set; }
-    public GetAccessibleTextRangeFP GetAccessibleTextRange { get; set; }
-    public GetCurrentAccessibleValueFromContextFP GetCurrentAccessibleValueFromContext { get; set; }
-    public GetMaximumAccessibleValueFromContextFP GetMaximumAccessibleValueFromContext { get; set; }
-    public GetMinimumAccessibleValueFromContextFP GetMinimumAccessibleValueFromContext { get; set; }
-    public AddAccessibleSelectionFromContextFP AddAccessibleSelectionFromContext { get; set; }
-    public ClearAccessibleSelectionFromContextFP ClearAccessibleSelectionFromContext { get; set; }
-    public GetAccessibleSelectionFromContextFP GetAccessibleSelectionFromContext { get; set; }
-    public GetAccessibleSelectionCountFromContextFP GetAccessibleSelectionCountFromContext { get; set; }
-    public IsAccessibleChildSelectedFromContextFP IsAccessibleChildSelectedFromContext { get; set; }
-    public RemoveAccessibleSelectionFromContextFP RemoveAccessibleSelectionFromContext { get; set; }
-    public SelectAllAccessibleSelectionFromContextFP SelectAllAccessibleSelectionFromContext { get; set; }
-    public GetAccessibleTableInfoFP GetAccessibleTableInfo { get; set; }
-    public GetAccessibleTableCellInfoFP GetAccessibleTableCellInfo { get; set; }
-    public GetAccessibleTableRowHeaderFP GetAccessibleTableRowHeader { get; set; }
-    public GetAccessibleTableColumnHeaderFP GetAccessibleTableColumnHeader { get; set; }
-    public GetAccessibleTableRowDescriptionFP GetAccessibleTableRowDescription { get; set; }
-    public GetAccessibleTableColumnDescriptionFP GetAccessibleTableColumnDescription { get; set; }
-    public GetAccessibleTableRowSelectionCountFP GetAccessibleTableRowSelectionCount { get; set; }
-    public IsAccessibleTableRowSelectedFP IsAccessibleTableRowSelected { get; set; }
-    public GetAccessibleTableRowSelectionsFP GetAccessibleTableRowSelections { get; set; }
-    public GetAccessibleTableColumnSelectionCountFP GetAccessibleTableColumnSelectionCount { get; set; }
-    public IsAccessibleTableColumnSelectedFP IsAccessibleTableColumnSelected { get; set; }
-    public GetAccessibleTableColumnSelectionsFP GetAccessibleTableColumnSelections { get; set; }
-    public GetAccessibleTableRowFP GetAccessibleTableRow { get; set; }
-    public GetAccessibleTableColumnFP GetAccessibleTableColumn { get; set; }
-    public GetAccessibleTableIndexFP GetAccessibleTableIndex { get; set; }
-    public SetTextContentsFP SetTextContents { get; set; }
-    public GetParentWithRoleFP GetParentWithRole { get; set; }
-    public GetParentWithRoleElseRootFP GetParentWithRoleElseRoot { get; set; }
-    public GetTopLevelObjectFP GetTopLevelObject { get; set; }
-    public GetObjectDepthFP GetObjectDepth { get; set; }
-    public GetActiveDescendentFP GetActiveDescendent { get; set; }
-    public GetVirtualAccessibleNameFP GetVirtualAccessibleName { get; set; }
-    public GetTextAttributesInRangeFP GetTextAttributesInRange { get; set; }
-    public GetCaretLocationFP GetCaretLocation { get; set; }
-    public GetVisibleChildrenCountFP GetVisibleChildrenCount { get; set; }
-    public GetVisibleChildrenFP GetVisibleChildren { get; set; }
-    public GetVersionInfoFP GetVersionInfo { get; set; }
-    #endregion
-
     #region Event delegate types
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate void PropertyChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
@@ -2171,91 +2201,63 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public delegate void PropertyActiveDescendentChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldActiveDescendent, JOBJECT64 newActiveDescendent);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate void PropertyTableModelChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
-
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PropertyChangeFP(PropertyChangeEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL JavaShutdownFP(JavaShutdownEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL FocusGainedFP(FocusGainedEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL FocusLostFP(FocusLostEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL CaretUpdateFP(CaretUpdateEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL MouseClickedFP(MouseClickedEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL MouseEnteredFP(MouseEnteredEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL MouseExitedFP(MouseExitedEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL MousePressedFP(MousePressedEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL MouseReleasedFP(MouseReleasedEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL MenuCanceledFP(MenuCanceledEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL MenuDeselectedFP(MenuDeselectedEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL MenuSelectedFP(MenuSelectedEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PopupMenuCanceledFP(PopupMenuCanceledEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PopupMenuWillBecomeInvisibleFP(PopupMenuWillBecomeInvisibleEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PopupMenuWillBecomeVisibleFP(PopupMenuWillBecomeVisibleEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PropertyNameChangeFP(PropertyNameChangeEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PropertyDescriptionChangeFP(PropertyDescriptionChangeEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PropertyStateChangeFP(PropertyStateChangeEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PropertyValueChangeFP(PropertyValueChangeEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PropertySelectionChangeFP(PropertySelectionChangeEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PropertyTextChangeFP(PropertyTextChangeEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PropertyCaretChangeFP(PropertyCaretChangeEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PropertyVisibleDataChangeFP(PropertyVisibleDataChangeEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PropertyChildChangeFP(PropertyChildChangeEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PropertyActiveDescendentChangeFP(PropertyActiveDescendentChangeEventHandler handler);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL PropertyTableModelChangeFP(PropertyTableModelChangeEventHandler handler);
     #endregion
 
-    #region Event functions
-    public PropertyChangeFP SetPropertyChange { get; set; }
-    public JavaShutdownFP SetJavaShutdown { get; set; }
-    public FocusGainedFP SetFocusGained { get; set; }
-    public FocusLostFP SetFocusLost { get; set; }
-    public CaretUpdateFP SetCaretUpdate { get; set; }
-    public MouseClickedFP SetMouseClicked { get; set; }
-    public MouseEnteredFP SetMouseEntered { get; set; }
-    public MouseExitedFP SetMouseExited { get; set; }
-    public MousePressedFP SetMousePressed { get; set; }
-    public MouseReleasedFP SetMouseReleased { get; set; }
-    public MenuCanceledFP SetMenuCanceled { get; set; }
-    public MenuDeselectedFP SetMenuDeselected { get; set; }
-    public MenuSelectedFP SetMenuSelected { get; set; }
-    public PopupMenuCanceledFP SetPopupMenuCanceled { get; set; }
-    public PopupMenuWillBecomeInvisibleFP SetPopupMenuWillBecomeInvisible { get; set; }
-    public PopupMenuWillBecomeVisibleFP SetPopupMenuWillBecomeVisible { get; set; }
-    public PropertyNameChangeFP SetPropertyNameChange { get; set; }
-    public PropertyDescriptionChangeFP SetPropertyDescriptionChange { get; set; }
-    public PropertyStateChangeFP SetPropertyStateChange { get; set; }
-    public PropertyValueChangeFP SetPropertyValueChange { get; set; }
-    public PropertySelectionChangeFP SetPropertySelectionChange { get; set; }
-    public PropertyTextChangeFP SetPropertyTextChange { get; set; }
-    public PropertyCaretChangeFP SetPropertyCaretChange { get; set; }
-    public PropertyVisibleDataChangeFP SetPropertyVisibleDataChange { get; set; }
-    public PropertyChildChangeFP SetPropertyChildChange { get; set; }
-    public PropertyActiveDescendentChangeFP SetPropertyActiveDescendentChange { get; set; }
-    public PropertyTableModelChangeFP SetPropertyTableModelChange { get; set; }
+    #region Event function delegate types
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyChangeFP(PropertyChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetJavaShutdownFP(JavaShutdownEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetFocusGainedFP(FocusGainedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetFocusLostFP(FocusLostEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetCaretUpdateFP(CaretUpdateEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMouseClickedFP(MouseClickedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMouseEnteredFP(MouseEnteredEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMouseExitedFP(MouseExitedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMousePressedFP(MousePressedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMouseReleasedFP(MouseReleasedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMenuCanceledFP(MenuCanceledEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMenuDeselectedFP(MenuDeselectedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetMenuSelectedFP(MenuSelectedEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPopupMenuCanceledFP(PopupMenuCanceledEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPopupMenuWillBecomeInvisibleFP(PopupMenuWillBecomeInvisibleEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPopupMenuWillBecomeVisibleFP(PopupMenuWillBecomeVisibleEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyNameChangeFP(PropertyNameChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyDescriptionChangeFP(PropertyDescriptionChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyStateChangeFP(PropertyStateChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyValueChangeFP(PropertyValueChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertySelectionChangeFP(PropertySelectionChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyTextChangeFP(PropertyTextChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyCaretChangeFP(PropertyCaretChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyVisibleDataChangeFP(PropertyVisibleDataChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyChildChangeFP(PropertyChildChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyActiveDescendentChangeFP(PropertyActiveDescendentChangeEventHandler handler);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL SetPropertyTableModelChangeFP(PropertyTableModelChangeEventHandler handler);
     #endregion
   }
 
