@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeGen.Definitions {
   public class LibraryDefinition {
@@ -40,6 +41,28 @@ namespace CodeGen.Definitions {
 
     public List<ClassDefinition> Classes {
       get { return _classes; }
+    }
+
+    public bool IsStructName(string name) {
+      return Structs.Any(c => c.Name == name);
+    }
+
+    public bool IsClassName(string name) {
+      return Classes.Any(c => c.Name == name);
+    }
+
+    public bool IsStruct(TypeReference type) {
+      var name = type as NameTypeReference;
+      if (name == null)
+        return false;
+      return IsStructName(name.Name);
+    }
+
+    public bool IsClass(TypeReference type) {
+      var name = type as NameTypeReference;
+      if (name == null)
+        return false;
+      return IsClassName(name.Name);
     }
   }
 }

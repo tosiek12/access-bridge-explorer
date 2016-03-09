@@ -38,7 +38,7 @@ namespace CodeGen {
 
     private void WriteFile(LibraryDefinition model) {
       using (var writer = File.CreateText(_outputFilename)) {
-        using (var sourceWriter = new SourceCodeWriter(writer)) {
+        using (var sourceWriter = new SourceCodeWriter(writer, model)) {
           sourceWriter.WriteLine("// Copyright 2016 Google Inc. All Rights Reserved.");
           sourceWriter.WriteLine("// ");
           sourceWriter.WriteLine("// Licensed under the Apache License, Version 2.0 (the \"License\");");
@@ -56,6 +56,8 @@ namespace CodeGen {
 
           sourceWriter.WriteLine("// ReSharper disable InconsistentNaming");
           sourceWriter.WriteLine("// ReSharper disable DelegateSubtraction");
+          sourceWriter.WriteLine("// ReSharper disable UseObjectOrCollectionInitializer");
+
           sourceWriter.AddUsing("System");
           //sourceWriter.AddUsing("System.Collections.Generic");
           //sourceWriter.AddUsing("System.Diagnostics.CodeAnalysis");
@@ -66,13 +68,17 @@ namespace CodeGen {
           sourceWriter.WriteLine();
 
           sourceWriter.StartNamespace("AccessBridgeExplorer.WindowsAccessBridge");
+          sourceWriter.IsNativeTypes = false;
           WriteApplicationLevelInterface(model, sourceWriter);
           WriteApplicationLevelEventHandlerTypes(model, sourceWriter);
           WriteApplicationLevelInterfaceImplementation(model, sourceWriter);
           WriteApplicationLevelEventsClass(model, sourceWriter);
+          WriteEnums(model, writer, sourceWriter);
+          WriteApplicationStructs(model, sourceWriter, writer);
+          WriteApplicationClasses(model, writer, sourceWriter);
+          sourceWriter.IsNativeTypes = true;
           WriteLibraryFunctionsClass(model, sourceWriter);
           WriteLibraryEventsClass(model, sourceWriter);
-          WriteEnums(model, writer, sourceWriter);
           WriteLibraryStructs(model, sourceWriter, writer);
           WriteLibraryClasses(model, writer, sourceWriter);
           sourceWriter.EndNamespace();
@@ -100,6 +106,22 @@ namespace CodeGen {
       model.Classes.ForEach(x => {
         writer.WriteLine();
         WriteClass(model, sourceWriter, x);
+      });
+    }
+
+    private void WriteApplicationStructs(LibraryDefinition model, SourceCodeWriter sourceWriter, StreamWriter writer) {
+      sourceWriter.IsNativeTypes = false;
+      model.Structs.ForEach(x => {
+        writer.WriteLine();
+        WriteApplicationStruct(model, sourceWriter, x);
+      });
+    }
+
+    private void WriteApplicationClasses(LibraryDefinition model, StreamWriter writer, SourceCodeWriter sourceWriter) {
+      sourceWriter.IsNativeTypes = false;
+      model.Classes.ForEach(x => {
+        writer.WriteLine();
+        WriteApplicationClass(model, sourceWriter, x);
       });
     }
 
@@ -144,10 +166,16 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Platform agnostic abstraction over WindowAccessBridge DLL entry points");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public partial class AccessBridgeFunctions: IAccessBridgeFunctions {{");
+      sourceWriter.WriteLine("public partial class AccessBridgeFunctions : IAccessBridgeFunctions {{");
       sourceWriter.IncIndent();
       foreach (var function in model.Functions) {
-        WriteApplicationLevelFunctionImplementation(sourceWriter, function);
+        WriteApplicationLevelFunctionImplementation(model, sourceWriter, function);
+      }
+      foreach (var definition in model.Structs) {
+        WriteApplicationLevelStructWrapper(model, sourceWriter, definition);
+      }
+      foreach (var definition in model.Classes) {
+        WriteApplicationLevelClassWrapper(model, sourceWriter, definition);
       }
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
@@ -284,7 +312,10 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteApplicationLevelFunctionImplementation(SourceCodeWriter sourceWriter, FunctionDefinition definition) {
+    private void WriteApplicationLevelFunctionImplementation(
+      LibraryDefinition model,
+      SourceCodeWriter sourceWriter,
+      FunctionDefinition definition) {
       sourceWriter.WriteIndent();
       sourceWriter.Write("public ");
       WriteFunctionSignature(sourceWriter, definition);
@@ -300,6 +331,29 @@ namespace CodeGen {
         sourceWriter.IsNativeTypes = false;
         sourceWriter.Write(" {0}Temp;", x.Name);
         sourceWriter.WriteLine();
+      }
+
+      var structs =
+        definition.Parameters.Where(p => (p.IsOut || p.IsRef || p.IsOutAttribute) && model.IsStruct(p.Type)).ToList();
+      foreach (var x in structs) {
+        sourceWriter.WriteIndent();
+        sourceWriter.IsNativeTypes = true;
+        sourceWriter.WriteType(x.Type);
+        if (x.IsRef)
+          sourceWriter.Write(" {0}Temp = Unwrap(vmid, {0});", x.Name);
+        else
+          sourceWriter.Write(" {0}Temp;", x.Name);
+        sourceWriter.WriteLine();
+        sourceWriter.IsNativeTypes = false;
+      }
+      var classes = definition.Parameters.Where(p => (p.IsOut || p.IsOutAttribute) && model.IsClass(p.Type)).ToList();
+      foreach (var x in classes) {
+        sourceWriter.WriteIndent();
+        sourceWriter.IsNativeTypes = true;
+        sourceWriter.WriteType(x.Type);
+        sourceWriter.Write(" {0}Temp = new {1}();", x.Name, sourceWriter.GetTypeName(x.Type));
+        sourceWriter.WriteLine();
+        sourceWriter.IsNativeTypes = false;
       }
 
       sourceWriter.WriteIndent();
@@ -321,7 +375,9 @@ namespace CodeGen {
           if (p.IsOut)
             sourceWriter.Write("{0}Temp", p.Name);
           else
-            sourceWriter.Write("Unwrap({0})", p.Name);
+            sourceWriter.Write("Unwrap(vmid, {0})", p.Name);
+        } else if (structs.Contains(p) || classes.Contains(p)) {
+          sourceWriter.Write("{0}Temp", p.Name);
         } else {
           sourceWriter.Write(p.Name);
         }
@@ -331,13 +387,25 @@ namespace CodeGen {
 
       foreach (var x in javaObjects) {
         sourceWriter.WriteIndent();
-        sourceWriter.Write("{0} = Wrap(vmID, {0}Temp);", x.Name);
+        sourceWriter.Write("{0} = Wrap(vmid, {0}Temp);", x.Name);
+        sourceWriter.WriteLine();
+      }
+
+      foreach (var x in structs) {
+        sourceWriter.WriteIndent();
+        sourceWriter.Write("{0} = Wrap(vmid, {0}Temp);", x.Name);
+        sourceWriter.WriteLine();
+      }
+
+      foreach (var x in classes) {
+        sourceWriter.WriteIndent();
+        sourceWriter.Write("CopyWrap(vmid, {0}Temp, {0});", x.Name);
         sourceWriter.WriteLine();
       }
 
       if (!IsVoid(definition.ReturnType)) {
         if (IsJavaObjectHandle(definition.ReturnType)) {
-          sourceWriter.WriteLine("return Wrap(vmID, result);");
+          sourceWriter.WriteLine("return Wrap(vmid, result);");
         } else if (IsBool(definition.ReturnType)) {
           sourceWriter.WriteLine("return ToBool(result);");
         } else {
@@ -350,8 +418,137 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
+    private void WriteApplicationLevelStructWrapper(
+      LibraryDefinition model,
+      SourceCodeWriter sourceWriter,
+      BaseTypeDefinition definition) {
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("public ");
+      sourceWriter.IsNativeTypes = false;
+      sourceWriter.WriteType(definition.Name);
+      sourceWriter.Write(" Wrap(int vmid, ");
+      sourceWriter.IsNativeTypes = true;
+      sourceWriter.WriteType(definition.Name);
+      sourceWriter.Write(" info)");
+      sourceWriter.Write(" {{");
+      sourceWriter.WriteLine();
+      sourceWriter.IncIndent();
+      sourceWriter.IsNativeTypes = false;
+      sourceWriter.WriteLine("var result = new {0}();", sourceWriter.GetTypeName(definition.Name));
+      sourceWriter.IsNativeTypes = true;
+      WriteCopyFields(model, sourceWriter, "info", "result", definition);
+      sourceWriter.WriteLine("return result;");
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("public ");
+      sourceWriter.IsNativeTypes = true;
+      sourceWriter.WriteType(definition.Name);
+      sourceWriter.Write(" Unwrap(int vmid, ");
+      sourceWriter.IsNativeTypes = false;
+      sourceWriter.WriteType(definition.Name);
+      sourceWriter.Write(" info)");
+      sourceWriter.Write(" {{");
+      sourceWriter.WriteLine();
+      sourceWriter.IncIndent();
+      sourceWriter.IsNativeTypes = true;
+      sourceWriter.WriteLine("var result = new {0}();", sourceWriter.GetTypeName(definition.Name));
+      sourceWriter.IsNativeTypes = false;
+      WriteCopyFields(model, sourceWriter, "info", "result", definition);
+      sourceWriter.WriteLine("return result;");
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+      sourceWriter.WriteLine();
+    }
+
+    private void WriteApplicationLevelClassWrapper(
+      LibraryDefinition model,
+      SourceCodeWriter sourceWriter,
+      BaseTypeDefinition definition) {
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("public void CopyWrap(int vmid, ");
+      sourceWriter.IsNativeTypes = true;
+      sourceWriter.WriteType(definition.Name);
+      sourceWriter.Write(" infoSrc, ");
+      sourceWriter.IsNativeTypes = false;
+      sourceWriter.WriteType(definition.Name);
+      sourceWriter.Write(" infoDest)");
+      sourceWriter.Write(" {{");
+      sourceWriter.WriteLine();
+      sourceWriter.IncIndent();
+      //sourceWriter.IsNativeTypes = false;
+      //sourceWriter.WriteLine("var result = new {0}();", sourceWriter.GetTypeName(definition.Name));
+      //sourceWriter.IsNativeTypes = true;
+      //sourceWriter.WriteLine("return result;");
+      sourceWriter.IsNativeTypes = true;
+      WriteCopyFields(model, sourceWriter, "infoSrc", "infoDest", definition);
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteIndent();
+      sourceWriter.Write("public void CopyUnwrap(int vmid, ");
+      sourceWriter.IsNativeTypes = false;
+      sourceWriter.WriteType(definition.Name);
+      sourceWriter.Write(" infoSrc, ");
+      sourceWriter.IsNativeTypes = true;
+      sourceWriter.WriteType(definition.Name);
+      sourceWriter.Write(" infoDest)");
+      sourceWriter.Write(" {{");
+      sourceWriter.WriteLine();
+      sourceWriter.IncIndent();
+      //sourceWriter.IsNativeTypes = false;
+      //sourceWriter.WriteLine("var result = new {0}();", sourceWriter.GetTypeName(definition.Name));
+      //sourceWriter.IsNativeTypes = true;
+      //sourceWriter.WriteLine("return result;");
+      sourceWriter.IsNativeTypes = false;
+      WriteCopyFields(model, sourceWriter, "infoSrc", "infoDest", definition);
+      sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
+      sourceWriter.WriteLine();
+    }
+
+    private void WriteCopyFields(LibraryDefinition model, SourceCodeWriter sourceWriter, string infosrc, string infodest, BaseTypeDefinition definition) {
+      definition.Fields.ForEach(field => {
+        WriteCopyField(model, sourceWriter, infosrc, infodest, "." + field.Name, field.Type);
+      });
+    }
+
+    private void WriteCopyField(LibraryDefinition model, SourceCodeWriter sourceWriter, string infosrc, string infodest, string fieldName, TypeReference type) {
+      if (model.IsStruct(type)) {
+        sourceWriter.WriteLine("{0}{1} = {4}(vmid, {2}{3});", infodest, fieldName, infosrc, fieldName,
+          sourceWriter.IsNativeTypes ? "Wrap" : "Unwrap");
+      } else if (model.IsClass(type)) {
+        sourceWriter.WriteLine("{4}(vmid, {0}{1}, {2}{3});", infosrc, fieldName, infodest, fieldName,
+          sourceWriter.IsNativeTypes ? "CopyWrap" : "CopyUnwrap");
+      } else if (IsJavaObjectHandle(type)) {
+        sourceWriter.WriteLine("{0}{1} = {4}(vmid, {2}{3});", infodest, fieldName, infosrc, fieldName,
+          sourceWriter.IsNativeTypes ? "Wrap" : "Unwrap");
+      } else if (type is ArrayTypeReference) {
+        var elementType = ((ArrayTypeReference)type).ElementType;
+        sourceWriter.WriteLine("if ({0}{1} != null) {{", infosrc, fieldName);
+        sourceWriter.IncIndent();
+        sourceWriter.WriteLine("var count = {0}{1}.Length;", infosrc, fieldName);
+        sourceWriter.IsNativeTypes = !sourceWriter.IsNativeTypes;
+        sourceWriter.WriteLine("{0}{1} = new {2}[count];", infodest, fieldName, sourceWriter.GetTypeName(elementType));
+        sourceWriter.IsNativeTypes = !sourceWriter.IsNativeTypes;
+        sourceWriter.WriteLine("for(var i = 0; i < count; i++) {{");
+        sourceWriter.IncIndent();
+        WriteCopyField(model, sourceWriter, infosrc + fieldName, infodest + fieldName, "[i]", elementType);
+        sourceWriter.DecIndent();
+        sourceWriter.WriteLine("}}");
+        sourceWriter.DecIndent();
+        sourceWriter.WriteLine("}}");
+      } else {
+        sourceWriter.WriteLine("{0}{1} = {2}{3};", infodest, fieldName, infosrc, fieldName);
+      }
+
+    }
+
     private void WriteDelegateType(SourceCodeWriter sourceWriter, FunctionDefinition definition) {
-      WriteMarshalAsLine(sourceWriter, definition.MarshalAs);
+      sourceWriter.WriteMarshalAsLine(definition.MarshalAs);
       sourceWriter.WriteIndent();
       sourceWriter.Write("public delegate ");
       WriteFunctionSignature(sourceWriter, definition);
@@ -568,7 +765,7 @@ namespace CodeGen {
       var name = p as NameTypeReference;
       if (name == null)
         return false;
-      return name.Name == typeof (JavaObjectHandle).Name;
+      return name.Name == typeof(JavaObjectHandle).Name;
     }
 
     private static bool IsBool(TypeReference p) {
@@ -611,8 +808,27 @@ namespace CodeGen {
 
     private void WriteStruct(LibraryDefinition model, SourceCodeWriter sourceWriter, StrucDefinition definition) {
       sourceWriter.WriteLine("[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]");
+      sourceWriter.WriteLine("public struct {0}Native {{", definition.Name);
+      WriteFields(model, sourceWriter, definition);
+      sourceWriter.WriteLine("}}");
+    }
+
+    private void WriteClass(LibraryDefinition model, SourceCodeWriter sourceWriter, ClassDefinition classDefinition) {
+      sourceWriter.WriteLine("[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]");
+      sourceWriter.WriteLine("public class {0}Native {{", classDefinition.Name);
+      WriteFields(model, sourceWriter, classDefinition);
+      sourceWriter.WriteLine("}}");
+    }
+
+    private void WriteApplicationStruct(LibraryDefinition model, SourceCodeWriter sourceWriter, StrucDefinition definition) {
       sourceWriter.WriteLine("public struct {0} {{", definition.Name);
       WriteFields(model, sourceWriter, definition);
+      sourceWriter.WriteLine("}}");
+    }
+
+    private void WriteApplicationClass(LibraryDefinition model, SourceCodeWriter sourceWriter, ClassDefinition classDefinition) {
+      sourceWriter.WriteLine("public class {0} {{", classDefinition.Name);
+      WriteFields(model, sourceWriter, classDefinition);
       sourceWriter.WriteLine("}}");
     }
 
@@ -638,21 +854,13 @@ namespace CodeGen {
     }
 
     private void WriteField(LibraryDefinition model, SourceCodeWriter sourceWriter, FieldDefinition definition) {
-      WriteMarshalAsLine(sourceWriter, definition.MarshalAs);
+      sourceWriter.WriteMarshalAsLine(definition.MarshalAs);
       sourceWriter.WriteIndent();
       sourceWriter.Write("public ");
       sourceWriter.WriteType(definition.Type);
       sourceWriter.Write(" ");
       sourceWriter.Write("{0};", definition.Name);
       sourceWriter.WriteLine();
-    }
-
-    private static void WriteMarshalAsLine(SourceCodeWriter sourceWriter, MarshalAsAttribute marshalAs) {
-      if (marshalAs != null) {
-        sourceWriter.WriteIndent();
-        sourceWriter.WriteMashalAs(marshalAs);
-        sourceWriter.WriteLine();
-      }
     }
 
     private void WriteEnumMembers(LibraryDefinition model, SourceCodeWriter sourceWriter, EnumDefinition definition) {
@@ -667,13 +875,6 @@ namespace CodeGen {
         sourceWriter.WriteLine();
       });
       sourceWriter.DecIndent();
-    }
-
-    private void WriteClass(LibraryDefinition model, SourceCodeWriter sourceWriter, ClassDefinition classDefinition) {
-      sourceWriter.WriteLine("[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]");
-      sourceWriter.WriteLine("public class {0} {{", classDefinition.Name);
-      WriteFields(model, sourceWriter, classDefinition);
-      sourceWriter.WriteLine("}}");
     }
 
     private LibraryDefinition CollectModel() {
@@ -797,7 +998,7 @@ namespace CodeGen {
           MarshalAs = ConvertMashalAs(p),
           IsOutAttribute = !p.ParameterType.IsByRef && p.IsOut,
           IsOut = p.ParameterType.IsByRef && p.IsOut,
-          IsRef = p.ParameterType.IsByRef,
+          IsRef = p.ParameterType.IsByRef && !p.IsOut,
         };
       }
     }

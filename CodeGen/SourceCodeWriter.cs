@@ -14,6 +14,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using CodeGen.Definitions;
 using CodeGen.Interop;
@@ -21,10 +22,12 @@ using CodeGen.Interop;
 namespace CodeGen {
   public class SourceCodeWriter : IDisposable {
     private readonly TextWriter _textWriter;
+    private readonly LibraryDefinition _model;
     private string _indent = "";
 
-    public SourceCodeWriter(TextWriter textWriter) {
+    public SourceCodeWriter(TextWriter textWriter, LibraryDefinition model) {
       _textWriter = textWriter;
+      _model = model;
     }
 
     public TextWriter TextWriter {
@@ -77,13 +80,7 @@ namespace CodeGen {
     }
 
     public void WriteType(TypeReference typeReference) {
-      if (typeReference is ArrayTypeReference) {
-        WriteType((ArrayTypeReference)typeReference);
-      } else if (typeReference is NameTypeReference) {
-        WriteType((NameTypeReference)typeReference);
-      } else {
-        throw new ArgumentException();
-      }
+      Write("{0}", GetTypeName(typeReference));
     }
 
     public void WriteType(ArrayTypeReference typeReference) {
@@ -92,7 +89,11 @@ namespace CodeGen {
     }
 
     public void WriteType(NameTypeReference typeReference) {
-      Write("{0}", GetTypeName(typeReference));
+      Write("{0}", GetTypeName(typeReference.Name));
+    }
+
+    public void WriteType(string typeName) {
+      Write("{0}", GetTypeName(typeName));
     }
 
     public void WriteMashalAs(MarshalAsAttribute attribute) {
@@ -112,20 +113,46 @@ namespace CodeGen {
       Write(")]");
     }
 
-    public string GetTypeName(NameTypeReference type) {
-      if (type.Name == typeof(JavaObjectHandle).Name) {
+    public string GetTypeName(TypeReference typeReference) {
+      if (typeReference is ArrayTypeReference) {
+        return GetTypeName((ArrayTypeReference)typeReference);
+      } else if (typeReference is NameTypeReference) {
+        return GetTypeName((NameTypeReference)typeReference);
+      } else {
+        throw new ArgumentException();
+      }
+    }
+
+    public string GetTypeName(ArrayTypeReference typeReference) {
+      return string.Format("{0}[]", GetTypeName(typeReference.ElementType));
+    }
+
+    public string GetTypeName(NameTypeReference typeReference) {
+      return GetTypeName(typeReference.Name);
+    }
+
+    public string GetTypeName(string typeName) {
+      if (typeName == typeof(JavaObjectHandle).Name) {
         if (IsNativeTypes) {
-          if (IsLegacy)
-            return "JOBJECT32";
-          else
-            return "JOBJECT64";
+          return (IsLegacy ? "JOBJECT32" : "JOBJECT64");
         }
-      } else if (type.Name == "bool") {
+      } else if (typeName == "bool") {
         if (IsNativeTypes)
           return "BOOL";
+      } else if (_model.IsStructName(typeName) || _model.IsClassName(typeName)) {
+        if (IsNativeTypes)
+          return typeName + "Native";
       }
 
-      return type.Name;
+      return typeName;
+    }
+
+    public void WriteMarshalAsLine(MarshalAsAttribute marshalAs) {
+      if (IsNativeTypes && marshalAs != null) {
+        WriteIndent();
+        WriteMashalAs(marshalAs);
+        WriteLine();
+      }
     }
   }
 }

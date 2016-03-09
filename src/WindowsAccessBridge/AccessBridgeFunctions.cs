@@ -32,11 +32,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return value != 0;
     }
 
-    private JavaObjectHandle Wrap(int vmID, JOBJECT64 handle) {
-      return new JavaObjectHandle(vmID, handle);
+    private JavaObjectHandle Wrap(int vmid, JOBJECT64 handle) {
+      return new JavaObjectHandle(vmid, handle);
     }
 
-    private JOBJECT64 Unwrap(JavaObjectHandle objectHandle) {
+    private JOBJECT64 Unwrap(int vmid, JavaObjectHandle objectHandle) {
       return objectHandle.Handle;
     }
   }

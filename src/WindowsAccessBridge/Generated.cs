@@ -14,6 +14,7 @@
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable DelegateSubtraction
+// ReSharper disable UseObjectOrCollectionInitializer
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -27,69 +28,69 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   public interface IAccessBridgeFunctions {
     void Windows_run();
     bool IsJavaWindow(WindowHandle window);
-    bool IsSameObject(int vmID, JavaObjectHandle obj1, JavaObjectHandle obj2);
-    bool GetAccessibleContextFromHWND(WindowHandle window, out int vmID, out JavaObjectHandle ac);
-    WindowHandle GetHWNDFromAccessibleContext(int vmID, JavaObjectHandle ac);
-    bool GetAccessibleContextAt(int vmID, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
-    bool GetAccessibleContextWithFocus(WindowHandle window, out int vmID, out JavaObjectHandle ac);
-    bool GetAccessibleContextInfo(int vmID, JavaObjectHandle ac, out AccessibleContextInfo info);
-    JavaObjectHandle GetAccessibleChildFromContext(int vmID, JavaObjectHandle ac, int i);
-    JavaObjectHandle GetAccessibleParentFromContext(int vmID, JavaObjectHandle ac);
-    bool GetAccessibleRelationSet(int vmID, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo);
-    bool GetAccessibleHypertext(int vmID, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo);
-    bool ActivateAccessibleHyperlink(int vmID, JavaObjectHandle accessibleContext, JavaObjectHandle accessibleHyperlink);
-    int GetAccessibleHyperlinkCount(int vmID, JavaObjectHandle accessibleContext);
-    bool GetAccessibleHypertextExt(int vmID, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo);
-    int GetAccessibleHypertextLinkIndex(int vmID, JavaObjectHandle hypertext, int nIndex);
-    bool GetAccessibleHyperlink(int vmID, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo);
-    bool GetAccessibleKeyBindings(int vmID, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings);
-    bool GetAccessibleIcons(int vmID, JavaObjectHandle accessibleContext, out AccessibleIcons icons);
-    bool GetAccessibleActions(int vmID, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions);
-    bool DoAccessibleActions(int vmID, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
-    bool GetAccessibleTextInfo(int vmID, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y);
-    bool GetAccessibleTextItems(int vmID, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index);
-    bool GetAccessibleTextSelectionInfo(int vmID, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection);
-    bool GetAccessibleTextAttributes(int vmID, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes);
-    bool GetAccessibleTextRect(int vmID, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index);
-    bool GetAccessibleTextLineBounds(int vmID, JavaObjectHandle at, int index, out int startIndex, out int endIndex);
-    bool GetAccessibleTextRange(int vmID, JavaObjectHandle at, int start, int end, StringBuilder text, short len);
-    bool GetCurrentAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len);
-    bool GetMaximumAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len);
-    bool GetMinimumAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len);
-    void AddAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i);
-    void ClearAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel);
-    JavaObjectHandle GetAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i);
-    int GetAccessibleSelectionCountFromContext(int vmID, JavaObjectHandle asel);
-    bool IsAccessibleChildSelectedFromContext(int vmID, JavaObjectHandle asel, int i);
-    void RemoveAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i);
-    void SelectAllAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel);
-    bool GetAccessibleTableInfo(int vmID, JavaObjectHandle ac, out AccessibleTableInfo tableInfo);
-    bool GetAccessibleTableCellInfo(int vmID, JavaObjectHandle accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo);
-    bool GetAccessibleTableRowHeader(int vmID, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
-    bool GetAccessibleTableColumnHeader(int vmID, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
-    JavaObjectHandle GetAccessibleTableRowDescription(int vmID, JavaObjectHandle acParent, int row);
-    JavaObjectHandle GetAccessibleTableColumnDescription(int vmID, JavaObjectHandle acParent, int column);
-    int GetAccessibleTableRowSelectionCount(int vmID, JavaObjectHandle table);
-    bool IsAccessibleTableRowSelected(int vmID, JavaObjectHandle table, int row);
-    bool GetAccessibleTableRowSelections(int vmID, JavaObjectHandle table, int count, [Out]int[] selections);
-    int GetAccessibleTableColumnSelectionCount(int vmID, JavaObjectHandle table);
-    bool IsAccessibleTableColumnSelected(int vmID, JavaObjectHandle table, int column);
-    bool GetAccessibleTableColumnSelections(int vmID, JavaObjectHandle table, int count, [Out]int[] selections);
-    int GetAccessibleTableRow(int vmID, JavaObjectHandle table, int index);
-    int GetAccessibleTableColumn(int vmID, JavaObjectHandle table, int index);
-    int GetAccessibleTableIndex(int vmID, JavaObjectHandle table, int row, int column);
-    bool SetTextContents(int vmID, JavaObjectHandle ac, string text);
-    JavaObjectHandle GetParentWithRole(int vmID, JavaObjectHandle ac, string role);
-    JavaObjectHandle GetParentWithRoleElseRoot(int vmID, JavaObjectHandle ac, string role);
-    JavaObjectHandle GetTopLevelObject(int vmID, JavaObjectHandle ac);
-    int GetObjectDepth(int vmID, JavaObjectHandle ac);
-    JavaObjectHandle GetActiveDescendent(int vmID, JavaObjectHandle ac);
-    bool GetVirtualAccessibleName(int vmID, JavaObjectHandle ac, StringBuilder name, int len);
-    bool GetTextAttributesInRange(int vmID, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len);
-    bool GetCaretLocation(int vmID, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
-    int GetVisibleChildrenCount(int vmID, JavaObjectHandle accessibleContext);
-    bool GetVisibleChildren(int vmID, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children);
-    bool GetVersionInfo(int vmID, out AccessBridgeVersionInfo info);
+    bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2);
+    bool GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac);
+    WindowHandle GetHWNDFromAccessibleContext(int vmid, JavaObjectHandle ac);
+    bool GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
+    bool GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac);
+    bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info);
+    JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i);
+    JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac);
+    bool GetAccessibleRelationSet(int vmid, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo);
+    bool GetAccessibleHypertext(int vmid, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo);
+    bool ActivateAccessibleHyperlink(int vmid, JavaObjectHandle accessibleContext, JavaObjectHandle accessibleHyperlink);
+    int GetAccessibleHyperlinkCount(int vmid, JavaObjectHandle accessibleContext);
+    bool GetAccessibleHypertextExt(int vmid, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo);
+    int GetAccessibleHypertextLinkIndex(int vmid, JavaObjectHandle hypertext, int nIndex);
+    bool GetAccessibleHyperlink(int vmid, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo);
+    bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings);
+    bool GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons);
+    bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions);
+    bool DoAccessibleActions(int vmid, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
+    bool GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y);
+    bool GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index);
+    bool GetAccessibleTextSelectionInfo(int vmid, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection);
+    bool GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes);
+    bool GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index);
+    bool GetAccessibleTextLineBounds(int vmid, JavaObjectHandle at, int index, out int startIndex, out int endIndex);
+    bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, StringBuilder text, short len);
+    bool GetCurrentAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
+    bool GetMaximumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
+    bool GetMinimumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
+    void AddAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i);
+    void ClearAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel);
+    JavaObjectHandle GetAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i);
+    int GetAccessibleSelectionCountFromContext(int vmid, JavaObjectHandle asel);
+    bool IsAccessibleChildSelectedFromContext(int vmid, JavaObjectHandle asel, int i);
+    void RemoveAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i);
+    void SelectAllAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel);
+    bool GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo);
+    bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo);
+    bool GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
+    bool GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
+    JavaObjectHandle GetAccessibleTableRowDescription(int vmid, JavaObjectHandle acParent, int row);
+    JavaObjectHandle GetAccessibleTableColumnDescription(int vmid, JavaObjectHandle acParent, int column);
+    int GetAccessibleTableRowSelectionCount(int vmid, JavaObjectHandle table);
+    bool IsAccessibleTableRowSelected(int vmid, JavaObjectHandle table, int row);
+    bool GetAccessibleTableRowSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections);
+    int GetAccessibleTableColumnSelectionCount(int vmid, JavaObjectHandle table);
+    bool IsAccessibleTableColumnSelected(int vmid, JavaObjectHandle table, int column);
+    bool GetAccessibleTableColumnSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections);
+    int GetAccessibleTableRow(int vmid, JavaObjectHandle table, int index);
+    int GetAccessibleTableColumn(int vmid, JavaObjectHandle table, int index);
+    int GetAccessibleTableIndex(int vmid, JavaObjectHandle table, int row, int column);
+    bool SetTextContents(int vmid, JavaObjectHandle ac, string text);
+    JavaObjectHandle GetParentWithRole(int vmid, JavaObjectHandle ac, string role);
+    JavaObjectHandle GetParentWithRoleElseRoot(int vmid, JavaObjectHandle ac, string role);
+    JavaObjectHandle GetTopLevelObject(int vmid, JavaObjectHandle ac);
+    int GetObjectDepth(int vmid, JavaObjectHandle ac);
+    JavaObjectHandle GetActiveDescendent(int vmid, JavaObjectHandle ac);
+    bool GetVirtualAccessibleName(int vmid, JavaObjectHandle ac, StringBuilder name, int len);
+    bool GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len);
+    bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
+    int GetVisibleChildrenCount(int vmid, JavaObjectHandle accessibleContext);
+    bool GetVisibleChildren(int vmid, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children);
+    bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info);
   }
 
   /// <summary>
@@ -156,7 +157,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// <summary>
   /// Platform agnostic abstraction over WindowAccessBridge DLL entry points
   /// </summary>
-  public partial class AccessBridgeFunctions: IAccessBridgeFunctions {
+  public partial class AccessBridgeFunctions : IAccessBridgeFunctions {
     public void Windows_run() {
       LibraryFunctions.Windows_run();
     }
@@ -166,321 +167,923 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return ToBool(result);
     }
 
-    public bool IsSameObject(int vmID, JavaObjectHandle obj1, JavaObjectHandle obj2) {
-      var result = LibraryFunctions.IsSameObject(vmID, Unwrap(obj1), Unwrap(obj2));
+    public bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2) {
+      var result = LibraryFunctions.IsSameObject(vmid, Unwrap(vmid, obj1), Unwrap(vmid, obj2));
       return ToBool(result);
     }
 
-    public bool GetAccessibleContextFromHWND(WindowHandle window, out int vmID, out JavaObjectHandle ac) {
+    public bool GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac) {
       JOBJECT64 acTemp;
-      var result = LibraryFunctions.GetAccessibleContextFromHWND(window, out vmID, out acTemp);
-      ac = Wrap(vmID, acTemp);
+      var result = LibraryFunctions.GetAccessibleContextFromHWND(window, out vmid, out acTemp);
+      ac = Wrap(vmid, acTemp);
       return ToBool(result);
     }
 
-    public WindowHandle GetHWNDFromAccessibleContext(int vmID, JavaObjectHandle ac) {
-      var result = LibraryFunctions.GetHWNDFromAccessibleContext(vmID, Unwrap(ac));
+    public WindowHandle GetHWNDFromAccessibleContext(int vmid, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetHWNDFromAccessibleContext(vmid, Unwrap(vmid, ac));
       return result;
     }
 
-    public bool GetAccessibleContextAt(int vmID, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac) {
+    public bool GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac) {
       JOBJECT64 acTemp;
-      var result = LibraryFunctions.GetAccessibleContextAt(vmID, Unwrap(acParent), x, y, out acTemp);
-      ac = Wrap(vmID, acTemp);
+      var result = LibraryFunctions.GetAccessibleContextAt(vmid, Unwrap(vmid, acParent), x, y, out acTemp);
+      ac = Wrap(vmid, acTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleContextWithFocus(WindowHandle window, out int vmID, out JavaObjectHandle ac) {
+    public bool GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac) {
       JOBJECT64 acTemp;
-      var result = LibraryFunctions.GetAccessibleContextWithFocus(window, out vmID, out acTemp);
-      ac = Wrap(vmID, acTemp);
+      var result = LibraryFunctions.GetAccessibleContextWithFocus(window, out vmid, out acTemp);
+      ac = Wrap(vmid, acTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleContextInfo(int vmID, JavaObjectHandle ac, out AccessibleContextInfo info) {
-      var result = LibraryFunctions.GetAccessibleContextInfo(vmID, Unwrap(ac), out info);
+    public bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info) {
+      AccessibleContextInfoNative infoTemp;
+      var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), out infoTemp);
+      info = Wrap(vmid, infoTemp);
       return ToBool(result);
     }
 
-    public JavaObjectHandle GetAccessibleChildFromContext(int vmID, JavaObjectHandle ac, int i) {
-      var result = LibraryFunctions.GetAccessibleChildFromContext(vmID, Unwrap(ac), i);
-      return Wrap(vmID, result);
+    public JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i) {
+      var result = LibraryFunctions.GetAccessibleChildFromContext(vmid, Unwrap(vmid, ac), i);
+      return Wrap(vmid, result);
     }
 
-    public JavaObjectHandle GetAccessibleParentFromContext(int vmID, JavaObjectHandle ac) {
-      var result = LibraryFunctions.GetAccessibleParentFromContext(vmID, Unwrap(ac));
-      return Wrap(vmID, result);
+    public JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetAccessibleParentFromContext(vmid, Unwrap(vmid, ac));
+      return Wrap(vmid, result);
     }
 
-    public bool GetAccessibleRelationSet(int vmID, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo) {
-      var result = LibraryFunctions.GetAccessibleRelationSet(vmID, Unwrap(accessibleContext), out relationSetInfo);
+    public bool GetAccessibleRelationSet(int vmid, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo) {
+      AccessibleRelationSetInfoNative relationSetInfoTemp;
+      var result = LibraryFunctions.GetAccessibleRelationSet(vmid, Unwrap(vmid, accessibleContext), out relationSetInfoTemp);
+      relationSetInfo = Wrap(vmid, relationSetInfoTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleHypertext(int vmID, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo) {
-      var result = LibraryFunctions.GetAccessibleHypertext(vmID, Unwrap(accessibleContext), out hypertextInfo);
+    public bool GetAccessibleHypertext(int vmid, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo) {
+      AccessibleHypertextInfoNative hypertextInfoTemp;
+      var result = LibraryFunctions.GetAccessibleHypertext(vmid, Unwrap(vmid, accessibleContext), out hypertextInfoTemp);
+      hypertextInfo = Wrap(vmid, hypertextInfoTemp);
       return ToBool(result);
     }
 
-    public bool ActivateAccessibleHyperlink(int vmID, JavaObjectHandle accessibleContext, JavaObjectHandle accessibleHyperlink) {
-      var result = LibraryFunctions.ActivateAccessibleHyperlink(vmID, Unwrap(accessibleContext), Unwrap(accessibleHyperlink));
+    public bool ActivateAccessibleHyperlink(int vmid, JavaObjectHandle accessibleContext, JavaObjectHandle accessibleHyperlink) {
+      var result = LibraryFunctions.ActivateAccessibleHyperlink(vmid, Unwrap(vmid, accessibleContext), Unwrap(vmid, accessibleHyperlink));
       return ToBool(result);
     }
 
-    public int GetAccessibleHyperlinkCount(int vmID, JavaObjectHandle accessibleContext) {
-      var result = LibraryFunctions.GetAccessibleHyperlinkCount(vmID, Unwrap(accessibleContext));
+    public int GetAccessibleHyperlinkCount(int vmid, JavaObjectHandle accessibleContext) {
+      var result = LibraryFunctions.GetAccessibleHyperlinkCount(vmid, Unwrap(vmid, accessibleContext));
       return result;
     }
 
-    public bool GetAccessibleHypertextExt(int vmID, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo) {
-      var result = LibraryFunctions.GetAccessibleHypertextExt(vmID, Unwrap(accessibleContext), nStartIndex, out hypertextInfo);
+    public bool GetAccessibleHypertextExt(int vmid, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo) {
+      AccessibleHypertextInfoNative hypertextInfoTemp;
+      var result = LibraryFunctions.GetAccessibleHypertextExt(vmid, Unwrap(vmid, accessibleContext), nStartIndex, out hypertextInfoTemp);
+      hypertextInfo = Wrap(vmid, hypertextInfoTemp);
       return ToBool(result);
     }
 
-    public int GetAccessibleHypertextLinkIndex(int vmID, JavaObjectHandle hypertext, int nIndex) {
-      var result = LibraryFunctions.GetAccessibleHypertextLinkIndex(vmID, Unwrap(hypertext), nIndex);
+    public int GetAccessibleHypertextLinkIndex(int vmid, JavaObjectHandle hypertext, int nIndex) {
+      var result = LibraryFunctions.GetAccessibleHypertextLinkIndex(vmid, Unwrap(vmid, hypertext), nIndex);
       return result;
     }
 
-    public bool GetAccessibleHyperlink(int vmID, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo) {
-      var result = LibraryFunctions.GetAccessibleHyperlink(vmID, Unwrap(hypertext), nIndex, out hyperlinkInfo);
+    public bool GetAccessibleHyperlink(int vmid, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo) {
+      AccessibleHyperlinkInfoNative hyperlinkInfoTemp;
+      var result = LibraryFunctions.GetAccessibleHyperlink(vmid, Unwrap(vmid, hypertext), nIndex, out hyperlinkInfoTemp);
+      hyperlinkInfo = Wrap(vmid, hyperlinkInfoTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleKeyBindings(int vmID, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings) {
-      var result = LibraryFunctions.GetAccessibleKeyBindings(vmID, Unwrap(accessibleContext), out keyBindings);
+    public bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings) {
+      AccessibleKeyBindingsNative keyBindingsTemp;
+      var result = LibraryFunctions.GetAccessibleKeyBindings(vmid, Unwrap(vmid, accessibleContext), out keyBindingsTemp);
+      keyBindings = Wrap(vmid, keyBindingsTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleIcons(int vmID, JavaObjectHandle accessibleContext, out AccessibleIcons icons) {
-      var result = LibraryFunctions.GetAccessibleIcons(vmID, Unwrap(accessibleContext), out icons);
+    public bool GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons) {
+      AccessibleIconsNative iconsTemp;
+      var result = LibraryFunctions.GetAccessibleIcons(vmid, Unwrap(vmid, accessibleContext), out iconsTemp);
+      icons = Wrap(vmid, iconsTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleActions(int vmID, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions) {
-      var result = LibraryFunctions.GetAccessibleActions(vmID, Unwrap(accessibleContext), actions);
+    public bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions) {
+      AccessibleActionsNative actionsTemp = new AccessibleActionsNative();
+      var result = LibraryFunctions.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actionsTemp);
+      CopyWrap(vmid, actionsTemp, actions);
       return ToBool(result);
     }
 
-    public bool DoAccessibleActions(int vmID, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure) {
-      var result = LibraryFunctions.DoAccessibleActions(vmID, Unwrap(accessibleContext), ref actionsToDo, out failure);
+    public bool DoAccessibleActions(int vmid, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure) {
+      AccessibleActionsToDoNative actionsToDoTemp = Unwrap(vmid, actionsToDo);
+      var result = LibraryFunctions.DoAccessibleActions(vmid, Unwrap(vmid, accessibleContext), ref actionsToDoTemp, out failure);
+      actionsToDo = Wrap(vmid, actionsToDoTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleTextInfo(int vmID, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y) {
-      var result = LibraryFunctions.GetAccessibleTextInfo(vmID, Unwrap(at), out textInfo, x, y);
+    public bool GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y) {
+      AccessibleTextInfoNative textInfoTemp;
+      var result = LibraryFunctions.GetAccessibleTextInfo(vmid, Unwrap(vmid, at), out textInfoTemp, x, y);
+      textInfo = Wrap(vmid, textInfoTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleTextItems(int vmID, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index) {
-      var result = LibraryFunctions.GetAccessibleTextItems(vmID, Unwrap(at), out textItems, index);
+    public bool GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index) {
+      AccessibleTextItemsInfoNative textItemsTemp;
+      var result = LibraryFunctions.GetAccessibleTextItems(vmid, Unwrap(vmid, at), out textItemsTemp, index);
+      textItems = Wrap(vmid, textItemsTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleTextSelectionInfo(int vmID, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection) {
-      var result = LibraryFunctions.GetAccessibleTextSelectionInfo(vmID, Unwrap(at), out textSelection);
+    public bool GetAccessibleTextSelectionInfo(int vmid, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection) {
+      AccessibleTextSelectionInfoNative textSelectionTemp;
+      var result = LibraryFunctions.GetAccessibleTextSelectionInfo(vmid, Unwrap(vmid, at), out textSelectionTemp);
+      textSelection = Wrap(vmid, textSelectionTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleTextAttributes(int vmID, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes) {
-      var result = LibraryFunctions.GetAccessibleTextAttributes(vmID, Unwrap(at), index, out attributes);
+    public bool GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes) {
+      AccessibleTextAttributesInfoNative attributesTemp;
+      var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, out attributesTemp);
+      attributes = Wrap(vmid, attributesTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleTextRect(int vmID, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index) {
-      var result = LibraryFunctions.GetAccessibleTextRect(vmID, Unwrap(at), out rectInfo, index);
+    public bool GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index) {
+      AccessibleTextRectInfoNative rectInfoTemp;
+      var result = LibraryFunctions.GetAccessibleTextRect(vmid, Unwrap(vmid, at), out rectInfoTemp, index);
+      rectInfo = Wrap(vmid, rectInfoTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleTextLineBounds(int vmID, JavaObjectHandle at, int index, out int startIndex, out int endIndex) {
-      var result = LibraryFunctions.GetAccessibleTextLineBounds(vmID, Unwrap(at), index, out startIndex, out endIndex);
+    public bool GetAccessibleTextLineBounds(int vmid, JavaObjectHandle at, int index, out int startIndex, out int endIndex) {
+      var result = LibraryFunctions.GetAccessibleTextLineBounds(vmid, Unwrap(vmid, at), index, out startIndex, out endIndex);
       return ToBool(result);
     }
 
-    public bool GetAccessibleTextRange(int vmID, JavaObjectHandle at, int start, int end, StringBuilder text, short len) {
-      var result = LibraryFunctions.GetAccessibleTextRange(vmID, Unwrap(at), start, end, text, len);
+    public bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, StringBuilder text, short len) {
+      var result = LibraryFunctions.GetAccessibleTextRange(vmid, Unwrap(vmid, at), start, end, text, len);
       return ToBool(result);
     }
 
-    public bool GetCurrentAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len) {
-      var result = LibraryFunctions.GetCurrentAccessibleValueFromContext(vmID, Unwrap(av), value, len);
+    public bool GetCurrentAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len) {
+      var result = LibraryFunctions.GetCurrentAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
       return ToBool(result);
     }
 
-    public bool GetMaximumAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len) {
-      var result = LibraryFunctions.GetMaximumAccessibleValueFromContext(vmID, Unwrap(av), value, len);
+    public bool GetMaximumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len) {
+      var result = LibraryFunctions.GetMaximumAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
       return ToBool(result);
     }
 
-    public bool GetMinimumAccessibleValueFromContext(int vmID, JavaObjectHandle av, StringBuilder value, short len) {
-      var result = LibraryFunctions.GetMinimumAccessibleValueFromContext(vmID, Unwrap(av), value, len);
+    public bool GetMinimumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len) {
+      var result = LibraryFunctions.GetMinimumAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
       return ToBool(result);
     }
 
-    public void AddAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i) {
-      LibraryFunctions.AddAccessibleSelectionFromContext(vmID, Unwrap(asel), i);
+    public void AddAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i) {
+      LibraryFunctions.AddAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
     }
 
-    public void ClearAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel) {
-      LibraryFunctions.ClearAccessibleSelectionFromContext(vmID, Unwrap(asel));
+    public void ClearAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel) {
+      LibraryFunctions.ClearAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel));
     }
 
-    public JavaObjectHandle GetAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i) {
-      var result = LibraryFunctions.GetAccessibleSelectionFromContext(vmID, Unwrap(asel), i);
-      return Wrap(vmID, result);
+    public JavaObjectHandle GetAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i) {
+      var result = LibraryFunctions.GetAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
+      return Wrap(vmid, result);
     }
 
-    public int GetAccessibleSelectionCountFromContext(int vmID, JavaObjectHandle asel) {
-      var result = LibraryFunctions.GetAccessibleSelectionCountFromContext(vmID, Unwrap(asel));
+    public int GetAccessibleSelectionCountFromContext(int vmid, JavaObjectHandle asel) {
+      var result = LibraryFunctions.GetAccessibleSelectionCountFromContext(vmid, Unwrap(vmid, asel));
       return result;
     }
 
-    public bool IsAccessibleChildSelectedFromContext(int vmID, JavaObjectHandle asel, int i) {
-      var result = LibraryFunctions.IsAccessibleChildSelectedFromContext(vmID, Unwrap(asel), i);
+    public bool IsAccessibleChildSelectedFromContext(int vmid, JavaObjectHandle asel, int i) {
+      var result = LibraryFunctions.IsAccessibleChildSelectedFromContext(vmid, Unwrap(vmid, asel), i);
       return ToBool(result);
     }
 
-    public void RemoveAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel, int i) {
-      LibraryFunctions.RemoveAccessibleSelectionFromContext(vmID, Unwrap(asel), i);
+    public void RemoveAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i) {
+      LibraryFunctions.RemoveAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
     }
 
-    public void SelectAllAccessibleSelectionFromContext(int vmID, JavaObjectHandle asel) {
-      LibraryFunctions.SelectAllAccessibleSelectionFromContext(vmID, Unwrap(asel));
+    public void SelectAllAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel) {
+      LibraryFunctions.SelectAllAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel));
     }
 
-    public bool GetAccessibleTableInfo(int vmID, JavaObjectHandle ac, out AccessibleTableInfo tableInfo) {
-      var result = LibraryFunctions.GetAccessibleTableInfo(vmID, Unwrap(ac), out tableInfo);
+    public bool GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo) {
+      AccessibleTableInfoNative tableInfoTemp;
+      var result = LibraryFunctions.GetAccessibleTableInfo(vmid, Unwrap(vmid, ac), out tableInfoTemp);
+      tableInfo = Wrap(vmid, tableInfoTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleTableCellInfo(int vmID, JavaObjectHandle accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
-      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmID, Unwrap(accessibleTable), row, column, out tableCellInfo);
+    public bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
+      AccessibleTableCellInfoNative tableCellInfoTemp;
+      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, accessibleTable), row, column, out tableCellInfoTemp);
+      tableCellInfo = Wrap(vmid, tableCellInfoTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleTableRowHeader(int vmID, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
-      var result = LibraryFunctions.GetAccessibleTableRowHeader(vmID, Unwrap(acParent), out tableInfo);
+    public bool GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
+      AccessibleTableInfoNative tableInfoTemp;
+      var result = LibraryFunctions.GetAccessibleTableRowHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
+      tableInfo = Wrap(vmid, tableInfoTemp);
       return ToBool(result);
     }
 
-    public bool GetAccessibleTableColumnHeader(int vmID, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
-      var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmID, Unwrap(acParent), out tableInfo);
+    public bool GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
+      AccessibleTableInfoNative tableInfoTemp;
+      var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
+      tableInfo = Wrap(vmid, tableInfoTemp);
       return ToBool(result);
     }
 
-    public JavaObjectHandle GetAccessibleTableRowDescription(int vmID, JavaObjectHandle acParent, int row) {
-      var result = LibraryFunctions.GetAccessibleTableRowDescription(vmID, Unwrap(acParent), row);
-      return Wrap(vmID, result);
+    public JavaObjectHandle GetAccessibleTableRowDescription(int vmid, JavaObjectHandle acParent, int row) {
+      var result = LibraryFunctions.GetAccessibleTableRowDescription(vmid, Unwrap(vmid, acParent), row);
+      return Wrap(vmid, result);
     }
 
-    public JavaObjectHandle GetAccessibleTableColumnDescription(int vmID, JavaObjectHandle acParent, int column) {
-      var result = LibraryFunctions.GetAccessibleTableColumnDescription(vmID, Unwrap(acParent), column);
-      return Wrap(vmID, result);
+    public JavaObjectHandle GetAccessibleTableColumnDescription(int vmid, JavaObjectHandle acParent, int column) {
+      var result = LibraryFunctions.GetAccessibleTableColumnDescription(vmid, Unwrap(vmid, acParent), column);
+      return Wrap(vmid, result);
     }
 
-    public int GetAccessibleTableRowSelectionCount(int vmID, JavaObjectHandle table) {
-      var result = LibraryFunctions.GetAccessibleTableRowSelectionCount(vmID, Unwrap(table));
+    public int GetAccessibleTableRowSelectionCount(int vmid, JavaObjectHandle table) {
+      var result = LibraryFunctions.GetAccessibleTableRowSelectionCount(vmid, Unwrap(vmid, table));
       return result;
     }
 
-    public bool IsAccessibleTableRowSelected(int vmID, JavaObjectHandle table, int row) {
-      var result = LibraryFunctions.IsAccessibleTableRowSelected(vmID, Unwrap(table), row);
+    public bool IsAccessibleTableRowSelected(int vmid, JavaObjectHandle table, int row) {
+      var result = LibraryFunctions.IsAccessibleTableRowSelected(vmid, Unwrap(vmid, table), row);
       return ToBool(result);
     }
 
-    public bool GetAccessibleTableRowSelections(int vmID, JavaObjectHandle table, int count, [Out]int[] selections) {
-      var result = LibraryFunctions.GetAccessibleTableRowSelections(vmID, Unwrap(table), count, selections);
+    public bool GetAccessibleTableRowSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections) {
+      var result = LibraryFunctions.GetAccessibleTableRowSelections(vmid, Unwrap(vmid, table), count, selections);
       return ToBool(result);
     }
 
-    public int GetAccessibleTableColumnSelectionCount(int vmID, JavaObjectHandle table) {
-      var result = LibraryFunctions.GetAccessibleTableColumnSelectionCount(vmID, Unwrap(table));
+    public int GetAccessibleTableColumnSelectionCount(int vmid, JavaObjectHandle table) {
+      var result = LibraryFunctions.GetAccessibleTableColumnSelectionCount(vmid, Unwrap(vmid, table));
       return result;
     }
 
-    public bool IsAccessibleTableColumnSelected(int vmID, JavaObjectHandle table, int column) {
-      var result = LibraryFunctions.IsAccessibleTableColumnSelected(vmID, Unwrap(table), column);
+    public bool IsAccessibleTableColumnSelected(int vmid, JavaObjectHandle table, int column) {
+      var result = LibraryFunctions.IsAccessibleTableColumnSelected(vmid, Unwrap(vmid, table), column);
       return ToBool(result);
     }
 
-    public bool GetAccessibleTableColumnSelections(int vmID, JavaObjectHandle table, int count, [Out]int[] selections) {
-      var result = LibraryFunctions.GetAccessibleTableColumnSelections(vmID, Unwrap(table), count, selections);
+    public bool GetAccessibleTableColumnSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections) {
+      var result = LibraryFunctions.GetAccessibleTableColumnSelections(vmid, Unwrap(vmid, table), count, selections);
       return ToBool(result);
     }
 
-    public int GetAccessibleTableRow(int vmID, JavaObjectHandle table, int index) {
-      var result = LibraryFunctions.GetAccessibleTableRow(vmID, Unwrap(table), index);
+    public int GetAccessibleTableRow(int vmid, JavaObjectHandle table, int index) {
+      var result = LibraryFunctions.GetAccessibleTableRow(vmid, Unwrap(vmid, table), index);
       return result;
     }
 
-    public int GetAccessibleTableColumn(int vmID, JavaObjectHandle table, int index) {
-      var result = LibraryFunctions.GetAccessibleTableColumn(vmID, Unwrap(table), index);
+    public int GetAccessibleTableColumn(int vmid, JavaObjectHandle table, int index) {
+      var result = LibraryFunctions.GetAccessibleTableColumn(vmid, Unwrap(vmid, table), index);
       return result;
     }
 
-    public int GetAccessibleTableIndex(int vmID, JavaObjectHandle table, int row, int column) {
-      var result = LibraryFunctions.GetAccessibleTableIndex(vmID, Unwrap(table), row, column);
+    public int GetAccessibleTableIndex(int vmid, JavaObjectHandle table, int row, int column) {
+      var result = LibraryFunctions.GetAccessibleTableIndex(vmid, Unwrap(vmid, table), row, column);
       return result;
     }
 
-    public bool SetTextContents(int vmID, JavaObjectHandle ac, string text) {
-      var result = LibraryFunctions.SetTextContents(vmID, Unwrap(ac), text);
+    public bool SetTextContents(int vmid, JavaObjectHandle ac, string text) {
+      var result = LibraryFunctions.SetTextContents(vmid, Unwrap(vmid, ac), text);
       return ToBool(result);
     }
 
-    public JavaObjectHandle GetParentWithRole(int vmID, JavaObjectHandle ac, string role) {
-      var result = LibraryFunctions.GetParentWithRole(vmID, Unwrap(ac), role);
-      return Wrap(vmID, result);
+    public JavaObjectHandle GetParentWithRole(int vmid, JavaObjectHandle ac, string role) {
+      var result = LibraryFunctions.GetParentWithRole(vmid, Unwrap(vmid, ac), role);
+      return Wrap(vmid, result);
     }
 
-    public JavaObjectHandle GetParentWithRoleElseRoot(int vmID, JavaObjectHandle ac, string role) {
-      var result = LibraryFunctions.GetParentWithRoleElseRoot(vmID, Unwrap(ac), role);
-      return Wrap(vmID, result);
+    public JavaObjectHandle GetParentWithRoleElseRoot(int vmid, JavaObjectHandle ac, string role) {
+      var result = LibraryFunctions.GetParentWithRoleElseRoot(vmid, Unwrap(vmid, ac), role);
+      return Wrap(vmid, result);
     }
 
-    public JavaObjectHandle GetTopLevelObject(int vmID, JavaObjectHandle ac) {
-      var result = LibraryFunctions.GetTopLevelObject(vmID, Unwrap(ac));
-      return Wrap(vmID, result);
+    public JavaObjectHandle GetTopLevelObject(int vmid, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetTopLevelObject(vmid, Unwrap(vmid, ac));
+      return Wrap(vmid, result);
     }
 
-    public int GetObjectDepth(int vmID, JavaObjectHandle ac) {
-      var result = LibraryFunctions.GetObjectDepth(vmID, Unwrap(ac));
+    public int GetObjectDepth(int vmid, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetObjectDepth(vmid, Unwrap(vmid, ac));
       return result;
     }
 
-    public JavaObjectHandle GetActiveDescendent(int vmID, JavaObjectHandle ac) {
-      var result = LibraryFunctions.GetActiveDescendent(vmID, Unwrap(ac));
-      return Wrap(vmID, result);
+    public JavaObjectHandle GetActiveDescendent(int vmid, JavaObjectHandle ac) {
+      var result = LibraryFunctions.GetActiveDescendent(vmid, Unwrap(vmid, ac));
+      return Wrap(vmid, result);
     }
 
-    public bool GetVirtualAccessibleName(int vmID, JavaObjectHandle ac, StringBuilder name, int len) {
-      var result = LibraryFunctions.GetVirtualAccessibleName(vmID, Unwrap(ac), name, len);
+    public bool GetVirtualAccessibleName(int vmid, JavaObjectHandle ac, StringBuilder name, int len) {
+      var result = LibraryFunctions.GetVirtualAccessibleName(vmid, Unwrap(vmid, ac), name, len);
       return ToBool(result);
     }
 
-    public bool GetTextAttributesInRange(int vmID, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len) {
-      var result = LibraryFunctions.GetTextAttributesInRange(vmID, Unwrap(accessibleContext), startIndex, endIndex, out attributes, out len);
+    public bool GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len) {
+      AccessibleTextAttributesInfoNative attributesTemp;
+      var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, out attributesTemp, out len);
+      attributes = Wrap(vmid, attributesTemp);
       return ToBool(result);
     }
 
-    public bool GetCaretLocation(int vmID, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index) {
-      var result = LibraryFunctions.GetCaretLocation(vmID, Unwrap(ac), out rectInfo, index);
+    public bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index) {
+      AccessibleTextRectInfoNative rectInfoTemp;
+      var result = LibraryFunctions.GetCaretLocation(vmid, Unwrap(vmid, ac), out rectInfoTemp, index);
+      rectInfo = Wrap(vmid, rectInfoTemp);
       return ToBool(result);
     }
 
-    public int GetVisibleChildrenCount(int vmID, JavaObjectHandle accessibleContext) {
-      var result = LibraryFunctions.GetVisibleChildrenCount(vmID, Unwrap(accessibleContext));
+    public int GetVisibleChildrenCount(int vmid, JavaObjectHandle accessibleContext) {
+      var result = LibraryFunctions.GetVisibleChildrenCount(vmid, Unwrap(vmid, accessibleContext));
       return result;
     }
 
-    public bool GetVisibleChildren(int vmID, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children) {
-      var result = LibraryFunctions.GetVisibleChildren(vmID, Unwrap(accessibleContext), startIndex, out children);
+    public bool GetVisibleChildren(int vmid, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children) {
+      VisibleChildrenInfoNative childrenTemp;
+      var result = LibraryFunctions.GetVisibleChildren(vmid, Unwrap(vmid, accessibleContext), startIndex, out childrenTemp);
+      children = Wrap(vmid, childrenTemp);
       return ToBool(result);
     }
 
-    public bool GetVersionInfo(int vmID, out AccessBridgeVersionInfo info) {
-      var result = LibraryFunctions.GetVersionInfo(vmID, out info);
+    public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
+      AccessBridgeVersionInfoNative infoTemp;
+      var result = LibraryFunctions.GetVersionInfo(vmid, out infoTemp);
+      info = Wrap(vmid, infoTemp);
       return ToBool(result);
+    }
+
+    public AccessBridgeVersionInfo Wrap(int vmid, AccessBridgeVersionInfoNative info) {
+      var result = new AccessBridgeVersionInfo();
+      result.VMversion = info.VMversion;
+      result.bridgeJavaClassVersion = info.bridgeJavaClassVersion;
+      result.bridgeJavaDLLVersion = info.bridgeJavaDLLVersion;
+      result.bridgeWinDLLVersion = info.bridgeWinDLLVersion;
+      return result;
+    }
+
+    public AccessBridgeVersionInfoNative Unwrap(int vmid, AccessBridgeVersionInfo info) {
+      var result = new AccessBridgeVersionInfoNative();
+      result.VMversion = info.VMversion;
+      result.bridgeJavaClassVersion = info.bridgeJavaClassVersion;
+      result.bridgeJavaDLLVersion = info.bridgeJavaDLLVersion;
+      result.bridgeWinDLLVersion = info.bridgeWinDLLVersion;
+      return result;
+    }
+
+    public AccessibleActionInfo Wrap(int vmid, AccessibleActionInfoNative info) {
+      var result = new AccessibleActionInfo();
+      result.name = info.name;
+      return result;
+    }
+
+    public AccessibleActionInfoNative Unwrap(int vmid, AccessibleActionInfo info) {
+      var result = new AccessibleActionInfoNative();
+      result.name = info.name;
+      return result;
+    }
+
+    public AccessibleActionsToDo Wrap(int vmid, AccessibleActionsToDoNative info) {
+      var result = new AccessibleActionsToDo();
+      result.actionsCount = info.actionsCount;
+      if (info.actions != null) {
+        var count = info.actions.Length;
+        result.actions = new AccessibleActionInfo[count];
+        for(var i = 0; i < count; i++) {
+          result.actions[i] = Wrap(vmid, info.actions[i]);
+        }
+      }
+      return result;
+    }
+
+    public AccessibleActionsToDoNative Unwrap(int vmid, AccessibleActionsToDo info) {
+      var result = new AccessibleActionsToDoNative();
+      result.actionsCount = info.actionsCount;
+      if (info.actions != null) {
+        var count = info.actions.Length;
+        result.actions = new AccessibleActionInfoNative[count];
+        for(var i = 0; i < count; i++) {
+          result.actions[i] = Unwrap(vmid, info.actions[i]);
+        }
+      }
+      return result;
+    }
+
+    public AccessibleContextInfo Wrap(int vmid, AccessibleContextInfoNative info) {
+      var result = new AccessibleContextInfo();
+      result.name = info.name;
+      result.description = info.description;
+      result.role = info.role;
+      result.role_en_US = info.role_en_US;
+      result.states = info.states;
+      result.states_en_US = info.states_en_US;
+      result.indexInParent = info.indexInParent;
+      result.childrenCount = info.childrenCount;
+      result.x = info.x;
+      result.y = info.y;
+      result.width = info.width;
+      result.height = info.height;
+      result.accessibleComponent = info.accessibleComponent;
+      result.accessibleAction = info.accessibleAction;
+      result.accessibleSelection = info.accessibleSelection;
+      result.accessibleText = info.accessibleText;
+      result.accessibleInterfaces = info.accessibleInterfaces;
+      return result;
+    }
+
+    public AccessibleContextInfoNative Unwrap(int vmid, AccessibleContextInfo info) {
+      var result = new AccessibleContextInfoNative();
+      result.name = info.name;
+      result.description = info.description;
+      result.role = info.role;
+      result.role_en_US = info.role_en_US;
+      result.states = info.states;
+      result.states_en_US = info.states_en_US;
+      result.indexInParent = info.indexInParent;
+      result.childrenCount = info.childrenCount;
+      result.x = info.x;
+      result.y = info.y;
+      result.width = info.width;
+      result.height = info.height;
+      result.accessibleComponent = info.accessibleComponent;
+      result.accessibleAction = info.accessibleAction;
+      result.accessibleSelection = info.accessibleSelection;
+      result.accessibleText = info.accessibleText;
+      result.accessibleInterfaces = info.accessibleInterfaces;
+      return result;
+    }
+
+    public AccessibleHyperlinkInfo Wrap(int vmid, AccessibleHyperlinkInfoNative info) {
+      var result = new AccessibleHyperlinkInfo();
+      result.text = info.text;
+      result.startIndex = info.startIndex;
+      result.endIndex = info.endIndex;
+      result.accessibleHyperlink = Wrap(vmid, info.accessibleHyperlink);
+      return result;
+    }
+
+    public AccessibleHyperlinkInfoNative Unwrap(int vmid, AccessibleHyperlinkInfo info) {
+      var result = new AccessibleHyperlinkInfoNative();
+      result.text = info.text;
+      result.startIndex = info.startIndex;
+      result.endIndex = info.endIndex;
+      result.accessibleHyperlink = Unwrap(vmid, info.accessibleHyperlink);
+      return result;
+    }
+
+    public AccessibleHypertextInfo Wrap(int vmid, AccessibleHypertextInfoNative info) {
+      var result = new AccessibleHypertextInfo();
+      result.linkCount = info.linkCount;
+      if (info.links != null) {
+        var count = info.links.Length;
+        result.links = new AccessibleHyperlinkInfo[count];
+        for(var i = 0; i < count; i++) {
+          result.links[i] = Wrap(vmid, info.links[i]);
+        }
+      }
+      result.accessibleHypertext = Wrap(vmid, info.accessibleHypertext);
+      return result;
+    }
+
+    public AccessibleHypertextInfoNative Unwrap(int vmid, AccessibleHypertextInfo info) {
+      var result = new AccessibleHypertextInfoNative();
+      result.linkCount = info.linkCount;
+      if (info.links != null) {
+        var count = info.links.Length;
+        result.links = new AccessibleHyperlinkInfoNative[count];
+        for(var i = 0; i < count; i++) {
+          result.links[i] = Unwrap(vmid, info.links[i]);
+        }
+      }
+      result.accessibleHypertext = Unwrap(vmid, info.accessibleHypertext);
+      return result;
+    }
+
+    public AccessibleIconInfo Wrap(int vmid, AccessibleIconInfoNative info) {
+      var result = new AccessibleIconInfo();
+      result.description = info.description;
+      result.height = info.height;
+      result.width = info.width;
+      return result;
+    }
+
+    public AccessibleIconInfoNative Unwrap(int vmid, AccessibleIconInfo info) {
+      var result = new AccessibleIconInfoNative();
+      result.description = info.description;
+      result.height = info.height;
+      result.width = info.width;
+      return result;
+    }
+
+    public AccessibleIcons Wrap(int vmid, AccessibleIconsNative info) {
+      var result = new AccessibleIcons();
+      result.iconsCount = info.iconsCount;
+      if (info.iconInfo != null) {
+        var count = info.iconInfo.Length;
+        result.iconInfo = new AccessibleIconInfo[count];
+        for(var i = 0; i < count; i++) {
+          result.iconInfo[i] = Wrap(vmid, info.iconInfo[i]);
+        }
+      }
+      return result;
+    }
+
+    public AccessibleIconsNative Unwrap(int vmid, AccessibleIcons info) {
+      var result = new AccessibleIconsNative();
+      result.iconsCount = info.iconsCount;
+      if (info.iconInfo != null) {
+        var count = info.iconInfo.Length;
+        result.iconInfo = new AccessibleIconInfoNative[count];
+        for(var i = 0; i < count; i++) {
+          result.iconInfo[i] = Unwrap(vmid, info.iconInfo[i]);
+        }
+      }
+      return result;
+    }
+
+    public AccessibleKeyBindingInfo Wrap(int vmid, AccessibleKeyBindingInfoNative info) {
+      var result = new AccessibleKeyBindingInfo();
+      result.character = info.character;
+      result.modifiers = info.modifiers;
+      return result;
+    }
+
+    public AccessibleKeyBindingInfoNative Unwrap(int vmid, AccessibleKeyBindingInfo info) {
+      var result = new AccessibleKeyBindingInfoNative();
+      result.character = info.character;
+      result.modifiers = info.modifiers;
+      return result;
+    }
+
+    public AccessibleKeyBindings Wrap(int vmid, AccessibleKeyBindingsNative info) {
+      var result = new AccessibleKeyBindings();
+      result.keyBindingsCount = info.keyBindingsCount;
+      if (info.keyBindingInfo != null) {
+        var count = info.keyBindingInfo.Length;
+        result.keyBindingInfo = new AccessibleKeyBindingInfo[count];
+        for(var i = 0; i < count; i++) {
+          result.keyBindingInfo[i] = Wrap(vmid, info.keyBindingInfo[i]);
+        }
+      }
+      return result;
+    }
+
+    public AccessibleKeyBindingsNative Unwrap(int vmid, AccessibleKeyBindings info) {
+      var result = new AccessibleKeyBindingsNative();
+      result.keyBindingsCount = info.keyBindingsCount;
+      if (info.keyBindingInfo != null) {
+        var count = info.keyBindingInfo.Length;
+        result.keyBindingInfo = new AccessibleKeyBindingInfoNative[count];
+        for(var i = 0; i < count; i++) {
+          result.keyBindingInfo[i] = Unwrap(vmid, info.keyBindingInfo[i]);
+        }
+      }
+      return result;
+    }
+
+    public AccessibleRelationInfo Wrap(int vmid, AccessibleRelationInfoNative info) {
+      var result = new AccessibleRelationInfo();
+      result.key = info.key;
+      result.targetCount = info.targetCount;
+      if (info.targets != null) {
+        var count = info.targets.Length;
+        result.targets = new JavaObjectHandle[count];
+        for(var i = 0; i < count; i++) {
+          result.targets[i] = Wrap(vmid, info.targets[i]);
+        }
+      }
+      return result;
+    }
+
+    public AccessibleRelationInfoNative Unwrap(int vmid, AccessibleRelationInfo info) {
+      var result = new AccessibleRelationInfoNative();
+      result.key = info.key;
+      result.targetCount = info.targetCount;
+      if (info.targets != null) {
+        var count = info.targets.Length;
+        result.targets = new JOBJECT64[count];
+        for(var i = 0; i < count; i++) {
+          result.targets[i] = Unwrap(vmid, info.targets[i]);
+        }
+      }
+      return result;
+    }
+
+    public AccessibleRelationSetInfo Wrap(int vmid, AccessibleRelationSetInfoNative info) {
+      var result = new AccessibleRelationSetInfo();
+      result.relationCount = info.relationCount;
+      if (info.relations != null) {
+        var count = info.relations.Length;
+        result.relations = new AccessibleRelationInfo[count];
+        for(var i = 0; i < count; i++) {
+          result.relations[i] = Wrap(vmid, info.relations[i]);
+        }
+      }
+      return result;
+    }
+
+    public AccessibleRelationSetInfoNative Unwrap(int vmid, AccessibleRelationSetInfo info) {
+      var result = new AccessibleRelationSetInfoNative();
+      result.relationCount = info.relationCount;
+      if (info.relations != null) {
+        var count = info.relations.Length;
+        result.relations = new AccessibleRelationInfoNative[count];
+        for(var i = 0; i < count; i++) {
+          result.relations[i] = Unwrap(vmid, info.relations[i]);
+        }
+      }
+      return result;
+    }
+
+    public AccessibleTableCellInfo Wrap(int vmid, AccessibleTableCellInfoNative info) {
+      var result = new AccessibleTableCellInfo();
+      result.accessibleContext = Wrap(vmid, info.accessibleContext);
+      result.index = info.index;
+      result.row = info.row;
+      result.column = info.column;
+      result.rowExtent = info.rowExtent;
+      result.columnExtent = info.columnExtent;
+      result.isSelected = info.isSelected;
+      return result;
+    }
+
+    public AccessibleTableCellInfoNative Unwrap(int vmid, AccessibleTableCellInfo info) {
+      var result = new AccessibleTableCellInfoNative();
+      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
+      result.index = info.index;
+      result.row = info.row;
+      result.column = info.column;
+      result.rowExtent = info.rowExtent;
+      result.columnExtent = info.columnExtent;
+      result.isSelected = info.isSelected;
+      return result;
+    }
+
+    public AccessibleTableInfo Wrap(int vmid, AccessibleTableInfoNative info) {
+      var result = new AccessibleTableInfo();
+      result.caption = Wrap(vmid, info.caption);
+      result.summary = Wrap(vmid, info.summary);
+      result.rowCount = info.rowCount;
+      result.columnCount = info.columnCount;
+      result.accessibleContext = Wrap(vmid, info.accessibleContext);
+      result.accessibleTable = Wrap(vmid, info.accessibleTable);
+      return result;
+    }
+
+    public AccessibleTableInfoNative Unwrap(int vmid, AccessibleTableInfo info) {
+      var result = new AccessibleTableInfoNative();
+      result.caption = Unwrap(vmid, info.caption);
+      result.summary = Unwrap(vmid, info.summary);
+      result.rowCount = info.rowCount;
+      result.columnCount = info.columnCount;
+      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
+      result.accessibleTable = Unwrap(vmid, info.accessibleTable);
+      return result;
+    }
+
+    public AccessibleTextAttributesInfo Wrap(int vmid, AccessibleTextAttributesInfoNative info) {
+      var result = new AccessibleTextAttributesInfo();
+      result.bold = info.bold;
+      result.italic = info.italic;
+      result.underline = info.underline;
+      result.strikethrough = info.strikethrough;
+      result.superscript = info.superscript;
+      result.subscript = info.subscript;
+      result.backgroundColor = info.backgroundColor;
+      result.foregroundColor = info.foregroundColor;
+      result.fontFamily = info.fontFamily;
+      result.fontSize = info.fontSize;
+      result.alignment = info.alignment;
+      result.bidiLevel = info.bidiLevel;
+      result.firstLineIndent = info.firstLineIndent;
+      result.leftIndent = info.leftIndent;
+      result.rightIndent = info.rightIndent;
+      result.lineSpacing = info.lineSpacing;
+      result.spaceAbove = info.spaceAbove;
+      result.spaceBelow = info.spaceBelow;
+      result.fullAttributesString = info.fullAttributesString;
+      return result;
+    }
+
+    public AccessibleTextAttributesInfoNative Unwrap(int vmid, AccessibleTextAttributesInfo info) {
+      var result = new AccessibleTextAttributesInfoNative();
+      result.bold = info.bold;
+      result.italic = info.italic;
+      result.underline = info.underline;
+      result.strikethrough = info.strikethrough;
+      result.superscript = info.superscript;
+      result.subscript = info.subscript;
+      result.backgroundColor = info.backgroundColor;
+      result.foregroundColor = info.foregroundColor;
+      result.fontFamily = info.fontFamily;
+      result.fontSize = info.fontSize;
+      result.alignment = info.alignment;
+      result.bidiLevel = info.bidiLevel;
+      result.firstLineIndent = info.firstLineIndent;
+      result.leftIndent = info.leftIndent;
+      result.rightIndent = info.rightIndent;
+      result.lineSpacing = info.lineSpacing;
+      result.spaceAbove = info.spaceAbove;
+      result.spaceBelow = info.spaceBelow;
+      result.fullAttributesString = info.fullAttributesString;
+      return result;
+    }
+
+    public AccessibleTextInfo Wrap(int vmid, AccessibleTextInfoNative info) {
+      var result = new AccessibleTextInfo();
+      result.charCount = info.charCount;
+      result.caretIndex = info.caretIndex;
+      result.indexAtPoint = info.indexAtPoint;
+      return result;
+    }
+
+    public AccessibleTextInfoNative Unwrap(int vmid, AccessibleTextInfo info) {
+      var result = new AccessibleTextInfoNative();
+      result.charCount = info.charCount;
+      result.caretIndex = info.caretIndex;
+      result.indexAtPoint = info.indexAtPoint;
+      return result;
+    }
+
+    public AccessibleTextItemsInfo Wrap(int vmid, AccessibleTextItemsInfoNative info) {
+      var result = new AccessibleTextItemsInfo();
+      result.letter = info.letter;
+      result.word = info.word;
+      result.sentence = info.sentence;
+      return result;
+    }
+
+    public AccessibleTextItemsInfoNative Unwrap(int vmid, AccessibleTextItemsInfo info) {
+      var result = new AccessibleTextItemsInfoNative();
+      result.letter = info.letter;
+      result.word = info.word;
+      result.sentence = info.sentence;
+      return result;
+    }
+
+    public AccessibleTextRectInfo Wrap(int vmid, AccessibleTextRectInfoNative info) {
+      var result = new AccessibleTextRectInfo();
+      result.x = info.x;
+      result.y = info.y;
+      result.width = info.width;
+      result.height = info.height;
+      return result;
+    }
+
+    public AccessibleTextRectInfoNative Unwrap(int vmid, AccessibleTextRectInfo info) {
+      var result = new AccessibleTextRectInfoNative();
+      result.x = info.x;
+      result.y = info.y;
+      result.width = info.width;
+      result.height = info.height;
+      return result;
+    }
+
+    public AccessibleTextSelectionInfo Wrap(int vmid, AccessibleTextSelectionInfoNative info) {
+      var result = new AccessibleTextSelectionInfo();
+      result.selectionStartIndex = info.selectionStartIndex;
+      result.selectionEndIndex = info.selectionEndIndex;
+      result.selectedText = info.selectedText;
+      return result;
+    }
+
+    public AccessibleTextSelectionInfoNative Unwrap(int vmid, AccessibleTextSelectionInfo info) {
+      var result = new AccessibleTextSelectionInfoNative();
+      result.selectionStartIndex = info.selectionStartIndex;
+      result.selectionEndIndex = info.selectionEndIndex;
+      result.selectedText = info.selectedText;
+      return result;
+    }
+
+    public DoAccessibleActionsPackage Wrap(int vmid, DoAccessibleActionsPackageNative info) {
+      var result = new DoAccessibleActionsPackage();
+      result.vmID = info.vmID;
+      result.accessibleContext = Wrap(vmid, info.accessibleContext);
+      result.actionsToDo = Wrap(vmid, info.actionsToDo);
+      result.rResult = info.rResult;
+      result.failure = info.failure;
+      return result;
+    }
+
+    public DoAccessibleActionsPackageNative Unwrap(int vmid, DoAccessibleActionsPackage info) {
+      var result = new DoAccessibleActionsPackageNative();
+      result.vmID = info.vmID;
+      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
+      result.actionsToDo = Unwrap(vmid, info.actionsToDo);
+      result.rResult = info.rResult;
+      result.failure = info.failure;
+      return result;
+    }
+
+    public GetAccessibleActionsPackage Wrap(int vmid, GetAccessibleActionsPackageNative info) {
+      var result = new GetAccessibleActionsPackage();
+      result.vmID = info.vmID;
+      result.accessibleContext = Wrap(vmid, info.accessibleContext);
+      CopyWrap(vmid, info.rAccessibleActions, result.rAccessibleActions);
+      return result;
+    }
+
+    public GetAccessibleActionsPackageNative Unwrap(int vmid, GetAccessibleActionsPackage info) {
+      var result = new GetAccessibleActionsPackageNative();
+      result.vmID = info.vmID;
+      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
+      CopyUnwrap(vmid, info.rAccessibleActions, result.rAccessibleActions);
+      return result;
+    }
+
+    public GetAccessibleIconsPackage Wrap(int vmid, GetAccessibleIconsPackageNative info) {
+      var result = new GetAccessibleIconsPackage();
+      result.vmID = info.vmID;
+      result.accessibleContext = Wrap(vmid, info.accessibleContext);
+      result.rAccessibleIcons = Wrap(vmid, info.rAccessibleIcons);
+      return result;
+    }
+
+    public GetAccessibleIconsPackageNative Unwrap(int vmid, GetAccessibleIconsPackage info) {
+      var result = new GetAccessibleIconsPackageNative();
+      result.vmID = info.vmID;
+      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
+      result.rAccessibleIcons = Unwrap(vmid, info.rAccessibleIcons);
+      return result;
+    }
+
+    public GetAccessibleKeyBindingsPackage Wrap(int vmid, GetAccessibleKeyBindingsPackageNative info) {
+      var result = new GetAccessibleKeyBindingsPackage();
+      result.vmID = info.vmID;
+      result.accessibleContext = Wrap(vmid, info.accessibleContext);
+      result.rAccessibleKeyBindings = Wrap(vmid, info.rAccessibleKeyBindings);
+      return result;
+    }
+
+    public GetAccessibleKeyBindingsPackageNative Unwrap(int vmid, GetAccessibleKeyBindingsPackage info) {
+      var result = new GetAccessibleKeyBindingsPackageNative();
+      result.vmID = info.vmID;
+      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
+      result.rAccessibleKeyBindings = Unwrap(vmid, info.rAccessibleKeyBindings);
+      return result;
+    }
+
+    public VisibleChildrenInfo Wrap(int vmid, VisibleChildrenInfoNative info) {
+      var result = new VisibleChildrenInfo();
+      result.returnedChildrenCount = info.returnedChildrenCount;
+      if (info.children != null) {
+        var count = info.children.Length;
+        result.children = new JavaObjectHandle[count];
+        for(var i = 0; i < count; i++) {
+          result.children[i] = Wrap(vmid, info.children[i]);
+        }
+      }
+      return result;
+    }
+
+    public VisibleChildrenInfoNative Unwrap(int vmid, VisibleChildrenInfo info) {
+      var result = new VisibleChildrenInfoNative();
+      result.returnedChildrenCount = info.returnedChildrenCount;
+      if (info.children != null) {
+        var count = info.children.Length;
+        result.children = new JOBJECT64[count];
+        for(var i = 0; i < count; i++) {
+          result.children[i] = Unwrap(vmid, info.children[i]);
+        }
+      }
+      return result;
+    }
+
+    public void CopyWrap(int vmid, AccessibleActionsNative infoSrc, AccessibleActions infoDest) {
+      infoDest.actionsCount = infoSrc.actionsCount;
+      if (infoSrc.actionInfo != null) {
+        var count = infoSrc.actionInfo.Length;
+        infoDest.actionInfo = new AccessibleActionInfo[count];
+        for(var i = 0; i < count; i++) {
+          infoDest.actionInfo[i] = Wrap(vmid, infoSrc.actionInfo[i]);
+        }
+      }
+    }
+
+    public void CopyUnwrap(int vmid, AccessibleActions infoSrc, AccessibleActionsNative infoDest) {
+      infoDest.actionsCount = infoSrc.actionsCount;
+      if (infoSrc.actionInfo != null) {
+        var count = infoSrc.actionInfo.Length;
+        infoDest.actionInfo = new AccessibleActionInfoNative[count];
+        for(var i = 0; i < count; i++) {
+          infoDest.actionInfo[i] = Unwrap(vmid, infoSrc.actionInfo[i]);
+        }
+      }
     }
 
   }
@@ -1099,6 +1702,232 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     #endregion
 
   }
+
+  [Flags]
+  public enum AccessibleInterfaces {
+    cAccessibleValueInterface = 1,
+    cAccessibleActionInterface = 2,
+    cAccessibleComponentInterface = 4,
+    cAccessibleSelectionInterface = 8,
+    cAccessibleTableInterface = 16,
+    cAccessibleTextInterface = 32,
+    cAccessibleHypertextInterface = 64,
+  }
+
+  public enum AccessibleKeyCode : ushort {
+    ACCESSIBLE_VK_BACK_SPACE = 8,
+    ACCESSIBLE_VK_DELETE = 127,
+    ACCESSIBLE_VK_DOWN = 40,
+    ACCESSIBLE_VK_END = 35,
+    ACCESSIBLE_VK_HOME = 36,
+    ACCESSIBLE_VK_INSERT = 155,
+    ACCESSIBLE_VK_KP_DOWN = 225,
+    ACCESSIBLE_VK_KP_LEFT = 226,
+    ACCESSIBLE_VK_KP_RIGHT = 227,
+    ACCESSIBLE_VK_KP_UP = 224,
+    ACCESSIBLE_VK_LEFT = 37,
+    ACCESSIBLE_VK_PAGE_DOWN = 34,
+    ACCESSIBLE_VK_PAGE_UP = 33,
+    ACCESSIBLE_VK_RIGHT = 39,
+    ACCESSIBLE_VK_UP = 38,
+  }
+
+  [Flags]
+  public enum AccessibleModifiers {
+    ACCESSIBLE_SHIFT_KEYSTROKE = 1,
+    ACCESSIBLE_CONTROL_KEYSTROKE = 2,
+    ACCESSIBLE_META_KEYSTROKE = 4,
+    ACCESSIBLE_ALT_KEYSTROKE = 8,
+    ACCESSIBLE_ALT_GRAPH_KEYSTROKE = 16,
+    ACCESSIBLE_BUTTON1_KEYSTROKE = 32,
+    ACCESSIBLE_BUTTON2_KEYSTROKE = 64,
+    ACCESSIBLE_BUTTON3_KEYSTROKE = 128,
+    ACCESSIBLE_FKEY_KEYSTROKE = 256,
+    ACCESSIBLE_CONTROLCODE_KEYSTROKE = 512,
+  }
+
+  public struct AccessBridgeVersionInfo {
+    public string VMversion;
+    public string bridgeJavaClassVersion;
+    public string bridgeJavaDLLVersion;
+    public string bridgeWinDLLVersion;
+  }
+
+  public struct AccessibleActionInfo {
+    public string name;
+  }
+
+  public struct AccessibleActionsToDo {
+    public int actionsCount;
+    public AccessibleActionInfo[] actions;
+  }
+
+  public struct AccessibleContextInfo {
+    public string name;
+    public string description;
+    public string role;
+    public string role_en_US;
+    public string states;
+    public string states_en_US;
+    public int indexInParent;
+    public int childrenCount;
+    public int x;
+    public int y;
+    public int width;
+    public int height;
+    public int accessibleComponent;
+    public int accessibleAction;
+    public int accessibleSelection;
+    public int accessibleText;
+    public AccessibleInterfaces accessibleInterfaces;
+  }
+
+  public struct AccessibleHyperlinkInfo {
+    public string text;
+    public int startIndex;
+    public int endIndex;
+    public JavaObjectHandle accessibleHyperlink;
+  }
+
+  public struct AccessibleHypertextInfo {
+    public int linkCount;
+    public AccessibleHyperlinkInfo[] links;
+    public JavaObjectHandle accessibleHypertext;
+  }
+
+  public struct AccessibleIconInfo {
+    public string description;
+    public int height;
+    public int width;
+  }
+
+  public struct AccessibleIcons {
+    public int iconsCount;
+    public AccessibleIconInfo[] iconInfo;
+  }
+
+  public struct AccessibleKeyBindingInfo {
+    public AccessibleKeyCode character;
+    public AccessibleModifiers modifiers;
+  }
+
+  public struct AccessibleKeyBindings {
+    public int keyBindingsCount;
+    public AccessibleKeyBindingInfo[] keyBindingInfo;
+  }
+
+  public struct AccessibleRelationInfo {
+    public string key;
+    public int targetCount;
+    public JavaObjectHandle[] targets;
+  }
+
+  public struct AccessibleRelationSetInfo {
+    public int relationCount;
+    public AccessibleRelationInfo[] relations;
+  }
+
+  public struct AccessibleTableCellInfo {
+    public JavaObjectHandle accessibleContext;
+    public int index;
+    public int row;
+    public int column;
+    public int rowExtent;
+    public int columnExtent;
+    public byte isSelected;
+  }
+
+  public struct AccessibleTableInfo {
+    public JavaObjectHandle caption;
+    public JavaObjectHandle summary;
+    public int rowCount;
+    public int columnCount;
+    public JavaObjectHandle accessibleContext;
+    public JavaObjectHandle accessibleTable;
+  }
+
+  public struct AccessibleTextAttributesInfo {
+    public int bold;
+    public int italic;
+    public int underline;
+    public int strikethrough;
+    public int superscript;
+    public int subscript;
+    public string backgroundColor;
+    public string foregroundColor;
+    public string fontFamily;
+    public int fontSize;
+    public int alignment;
+    public int bidiLevel;
+    public float firstLineIndent;
+    public float leftIndent;
+    public float rightIndent;
+    public float lineSpacing;
+    public float spaceAbove;
+    public float spaceBelow;
+    public string fullAttributesString;
+  }
+
+  public struct AccessibleTextInfo {
+    public int charCount;
+    public int caretIndex;
+    public int indexAtPoint;
+  }
+
+  public struct AccessibleTextItemsInfo {
+    public char letter;
+    public string word;
+    public string sentence;
+  }
+
+  public struct AccessibleTextRectInfo {
+    public int x;
+    public int y;
+    public int width;
+    public int height;
+  }
+
+  public struct AccessibleTextSelectionInfo {
+    public int selectionStartIndex;
+    public int selectionEndIndex;
+    public string selectedText;
+  }
+
+  public struct DoAccessibleActionsPackage {
+    public int vmID;
+    public JavaObjectHandle accessibleContext;
+    public AccessibleActionsToDo actionsToDo;
+    public int rResult;
+    public int failure;
+  }
+
+  public struct GetAccessibleActionsPackage {
+    public int vmID;
+    public JavaObjectHandle accessibleContext;
+    public AccessibleActions rAccessibleActions;
+  }
+
+  public struct GetAccessibleIconsPackage {
+    public int vmID;
+    public JavaObjectHandle accessibleContext;
+    public AccessibleIcons rAccessibleIcons;
+  }
+
+  public struct GetAccessibleKeyBindingsPackage {
+    public int vmID;
+    public JavaObjectHandle accessibleContext;
+    public AccessibleKeyBindings rAccessibleKeyBindings;
+  }
+
+  public struct VisibleChildrenInfo {
+    public int returnedChildrenCount;
+    public JavaObjectHandle[] children;
+  }
+
+  public class AccessibleActions {
+    public int actionsCount;
+    public AccessibleActionInfo[] actionInfo;
+  }
   /// <summary>
   /// Container of WindowAccessBridge DLL entry points
   /// </summary>
@@ -1109,131 +1938,131 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL IsJavaWindowFP(WindowHandle window);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL IsSameObjectFP(int vmID, JOBJECT64 obj1, JOBJECT64 obj2);
+    public delegate BOOL IsSameObjectFP(int vmid, JOBJECT64 obj1, JOBJECT64 obj2);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextFromHWNDFP(WindowHandle window, out int vmID, out JOBJECT64 ac);
+    public delegate BOOL GetAccessibleContextFromHWNDFP(WindowHandle window, out int vmid, out JOBJECT64 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate WindowHandle GetHWNDFromAccessibleContextFP(int vmID, JOBJECT64 ac);
+    public delegate WindowHandle GetHWNDFromAccessibleContextFP(int vmid, JOBJECT64 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextAtFP(int vmID, JOBJECT64 acParent, int x, int y, out JOBJECT64 ac);
+    public delegate BOOL GetAccessibleContextAtFP(int vmid, JOBJECT64 acParent, int x, int y, out JOBJECT64 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextWithFocusFP(WindowHandle window, out int vmID, out JOBJECT64 ac);
+    public delegate BOOL GetAccessibleContextWithFocusFP(WindowHandle window, out int vmid, out JOBJECT64 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextInfoFP(int vmID, JOBJECT64 ac, out AccessibleContextInfo info);
+    public delegate BOOL GetAccessibleContextInfoFP(int vmid, JOBJECT64 ac, out AccessibleContextInfoNative info);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetAccessibleChildFromContextFP(int vmID, JOBJECT64 ac, int i);
+    public delegate JOBJECT64 GetAccessibleChildFromContextFP(int vmid, JOBJECT64 ac, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetAccessibleParentFromContextFP(int vmID, JOBJECT64 ac);
+    public delegate JOBJECT64 GetAccessibleParentFromContextFP(int vmid, JOBJECT64 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleRelationSetFP(int vmID, JOBJECT64 accessibleContext, out AccessibleRelationSetInfo relationSetInfo);
+    public delegate BOOL GetAccessibleRelationSetFP(int vmid, JOBJECT64 accessibleContext, out AccessibleRelationSetInfoNative relationSetInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleHypertextFP(int vmID, JOBJECT64 accessibleContext, out AccessibleHypertextInfo hypertextInfo);
+    public delegate BOOL GetAccessibleHypertextFP(int vmid, JOBJECT64 accessibleContext, out AccessibleHypertextInfoNative hypertextInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL ActivateAccessibleHyperlinkFP(int vmID, JOBJECT64 accessibleContext, JOBJECT64 accessibleHyperlink);
+    public delegate BOOL ActivateAccessibleHyperlinkFP(int vmid, JOBJECT64 accessibleContext, JOBJECT64 accessibleHyperlink);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleHyperlinkCountFP(int vmID, JOBJECT64 accessibleContext);
+    public delegate int GetAccessibleHyperlinkCountFP(int vmid, JOBJECT64 accessibleContext);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleHypertextExtFP(int vmID, JOBJECT64 accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo);
+    public delegate BOOL GetAccessibleHypertextExtFP(int vmid, JOBJECT64 accessibleContext, int nStartIndex, out AccessibleHypertextInfoNative hypertextInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleHypertextLinkIndexFP(int vmID, JOBJECT64 hypertext, int nIndex);
+    public delegate int GetAccessibleHypertextLinkIndexFP(int vmid, JOBJECT64 hypertext, int nIndex);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleHyperlinkFP(int vmID, JOBJECT64 hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo);
+    public delegate BOOL GetAccessibleHyperlinkFP(int vmid, JOBJECT64 hypertext, int nIndex, out AccessibleHyperlinkInfoNative hyperlinkInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleKeyBindingsFP(int vmID, JOBJECT64 accessibleContext, out AccessibleKeyBindings keyBindings);
+    public delegate BOOL GetAccessibleKeyBindingsFP(int vmid, JOBJECT64 accessibleContext, out AccessibleKeyBindingsNative keyBindings);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleIconsFP(int vmID, JOBJECT64 accessibleContext, out AccessibleIcons icons);
+    public delegate BOOL GetAccessibleIconsFP(int vmid, JOBJECT64 accessibleContext, out AccessibleIconsNative icons);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleActionsFP(int vmID, JOBJECT64 accessibleContext, [Out]AccessibleActions actions);
+    public delegate BOOL GetAccessibleActionsFP(int vmid, JOBJECT64 accessibleContext, [Out]AccessibleActionsNative actions);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL DoAccessibleActionsFP(int vmID, JOBJECT64 accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
+    public delegate BOOL DoAccessibleActionsFP(int vmid, JOBJECT64 accessibleContext, ref AccessibleActionsToDoNative actionsToDo, out int failure);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextInfoFP(int vmID, JOBJECT64 at, out AccessibleTextInfo textInfo, int x, int y);
+    public delegate BOOL GetAccessibleTextInfoFP(int vmid, JOBJECT64 at, out AccessibleTextInfoNative textInfo, int x, int y);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextItemsFP(int vmID, JOBJECT64 at, out AccessibleTextItemsInfo textItems, int index);
+    public delegate BOOL GetAccessibleTextItemsFP(int vmid, JOBJECT64 at, out AccessibleTextItemsInfoNative textItems, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmID, JOBJECT64 at, out AccessibleTextSelectionInfo textSelection);
+    public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmid, JOBJECT64 at, out AccessibleTextSelectionInfoNative textSelection);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextAttributesFP(int vmID, JOBJECT64 at, int index, out AccessibleTextAttributesInfo attributes);
+    public delegate BOOL GetAccessibleTextAttributesFP(int vmid, JOBJECT64 at, int index, out AccessibleTextAttributesInfoNative attributes);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextRectFP(int vmID, JOBJECT64 at, out AccessibleTextRectInfo rectInfo, int index);
+    public delegate BOOL GetAccessibleTextRectFP(int vmid, JOBJECT64 at, out AccessibleTextRectInfoNative rectInfo, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextLineBoundsFP(int vmID, JOBJECT64 at, int index, out int startIndex, out int endIndex);
+    public delegate BOOL GetAccessibleTextLineBoundsFP(int vmid, JOBJECT64 at, int index, out int startIndex, out int endIndex);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextRangeFP(int vmID, JOBJECT64 at, int start, int end, StringBuilder text, short len);
+    public delegate BOOL GetAccessibleTextRangeFP(int vmid, JOBJECT64 at, int start, int end, StringBuilder text, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetCurrentAccessibleValueFromContextFP(int vmID, JOBJECT64 av, StringBuilder value, short len);
+    public delegate BOOL GetCurrentAccessibleValueFromContextFP(int vmid, JOBJECT64 av, StringBuilder value, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetMaximumAccessibleValueFromContextFP(int vmID, JOBJECT64 av, StringBuilder value, short len);
+    public delegate BOOL GetMaximumAccessibleValueFromContextFP(int vmid, JOBJECT64 av, StringBuilder value, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetMinimumAccessibleValueFromContextFP(int vmID, JOBJECT64 av, StringBuilder value, short len);
+    public delegate BOOL GetMinimumAccessibleValueFromContextFP(int vmid, JOBJECT64 av, StringBuilder value, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void AddAccessibleSelectionFromContextFP(int vmID, JOBJECT64 asel, int i);
+    public delegate void AddAccessibleSelectionFromContextFP(int vmid, JOBJECT64 asel, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void ClearAccessibleSelectionFromContextFP(int vmID, JOBJECT64 asel);
+    public delegate void ClearAccessibleSelectionFromContextFP(int vmid, JOBJECT64 asel);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetAccessibleSelectionFromContextFP(int vmID, JOBJECT64 asel, int i);
+    public delegate JOBJECT64 GetAccessibleSelectionFromContextFP(int vmid, JOBJECT64 asel, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleSelectionCountFromContextFP(int vmID, JOBJECT64 asel);
+    public delegate int GetAccessibleSelectionCountFromContextFP(int vmid, JOBJECT64 asel);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL IsAccessibleChildSelectedFromContextFP(int vmID, JOBJECT64 asel, int i);
+    public delegate BOOL IsAccessibleChildSelectedFromContextFP(int vmid, JOBJECT64 asel, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void RemoveAccessibleSelectionFromContextFP(int vmID, JOBJECT64 asel, int i);
+    public delegate void RemoveAccessibleSelectionFromContextFP(int vmid, JOBJECT64 asel, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void SelectAllAccessibleSelectionFromContextFP(int vmID, JOBJECT64 asel);
+    public delegate void SelectAllAccessibleSelectionFromContextFP(int vmid, JOBJECT64 asel);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableInfoFP(int vmID, JOBJECT64 ac, out AccessibleTableInfo tableInfo);
+    public delegate BOOL GetAccessibleTableInfoFP(int vmid, JOBJECT64 ac, out AccessibleTableInfoNative tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableCellInfoFP(int vmID, JOBJECT64 accessibleTable, int row, int column, out AccessibleTableCellInfo tableCellInfo);
+    public delegate BOOL GetAccessibleTableCellInfoFP(int vmid, JOBJECT64 accessibleTable, int row, int column, out AccessibleTableCellInfoNative tableCellInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableRowHeaderFP(int vmID, JOBJECT64 acParent, out AccessibleTableInfo tableInfo);
+    public delegate BOOL GetAccessibleTableRowHeaderFP(int vmid, JOBJECT64 acParent, out AccessibleTableInfoNative tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableColumnHeaderFP(int vmID, JOBJECT64 acParent, out AccessibleTableInfo tableInfo);
+    public delegate BOOL GetAccessibleTableColumnHeaderFP(int vmid, JOBJECT64 acParent, out AccessibleTableInfoNative tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetAccessibleTableRowDescriptionFP(int vmID, JOBJECT64 acParent, int row);
+    public delegate JOBJECT64 GetAccessibleTableRowDescriptionFP(int vmid, JOBJECT64 acParent, int row);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetAccessibleTableColumnDescriptionFP(int vmID, JOBJECT64 acParent, int column);
+    public delegate JOBJECT64 GetAccessibleTableColumnDescriptionFP(int vmid, JOBJECT64 acParent, int column);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleTableRowSelectionCountFP(int vmID, JOBJECT64 table);
+    public delegate int GetAccessibleTableRowSelectionCountFP(int vmid, JOBJECT64 table);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL IsAccessibleTableRowSelectedFP(int vmID, JOBJECT64 table, int row);
+    public delegate BOOL IsAccessibleTableRowSelectedFP(int vmid, JOBJECT64 table, int row);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableRowSelectionsFP(int vmID, JOBJECT64 table, int count, [Out][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]int[] selections);
+    public delegate BOOL GetAccessibleTableRowSelectionsFP(int vmid, JOBJECT64 table, int count, [Out][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]int[] selections);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleTableColumnSelectionCountFP(int vmID, JOBJECT64 table);
+    public delegate int GetAccessibleTableColumnSelectionCountFP(int vmid, JOBJECT64 table);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL IsAccessibleTableColumnSelectedFP(int vmID, JOBJECT64 table, int column);
+    public delegate BOOL IsAccessibleTableColumnSelectedFP(int vmid, JOBJECT64 table, int column);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableColumnSelectionsFP(int vmID, JOBJECT64 table, int count, [Out][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]int[] selections);
+    public delegate BOOL GetAccessibleTableColumnSelectionsFP(int vmid, JOBJECT64 table, int count, [Out][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]int[] selections);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleTableRowFP(int vmID, JOBJECT64 table, int index);
+    public delegate int GetAccessibleTableRowFP(int vmid, JOBJECT64 table, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleTableColumnFP(int vmID, JOBJECT64 table, int index);
+    public delegate int GetAccessibleTableColumnFP(int vmid, JOBJECT64 table, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleTableIndexFP(int vmID, JOBJECT64 table, int row, int column);
+    public delegate int GetAccessibleTableIndexFP(int vmid, JOBJECT64 table, int row, int column);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL SetTextContentsFP(int vmID, JOBJECT64 ac, string text);
+    public delegate BOOL SetTextContentsFP(int vmid, JOBJECT64 ac, string text);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetParentWithRoleFP(int vmID, JOBJECT64 ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
+    public delegate JOBJECT64 GetParentWithRoleFP(int vmid, JOBJECT64 ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetParentWithRoleElseRootFP(int vmID, JOBJECT64 ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
+    public delegate JOBJECT64 GetParentWithRoleElseRootFP(int vmid, JOBJECT64 ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetTopLevelObjectFP(int vmID, JOBJECT64 ac);
+    public delegate JOBJECT64 GetTopLevelObjectFP(int vmid, JOBJECT64 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetObjectDepthFP(int vmID, JOBJECT64 ac);
+    public delegate int GetObjectDepthFP(int vmid, JOBJECT64 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetActiveDescendentFP(int vmID, JOBJECT64 ac);
+    public delegate JOBJECT64 GetActiveDescendentFP(int vmid, JOBJECT64 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetVirtualAccessibleNameFP(int vmID, JOBJECT64 ac, StringBuilder name, int len);
+    public delegate BOOL GetVirtualAccessibleNameFP(int vmid, JOBJECT64 ac, StringBuilder name, int len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetTextAttributesInRangeFP(int vmID, JOBJECT64 accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len);
+    public delegate BOOL GetTextAttributesInRangeFP(int vmid, JOBJECT64 accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfoNative attributes, out short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetCaretLocationFP(int vmID, JOBJECT64 ac, out AccessibleTextRectInfo rectInfo, int index);
+    public delegate BOOL GetCaretLocationFP(int vmid, JOBJECT64 ac, out AccessibleTextRectInfoNative rectInfo, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetVisibleChildrenCountFP(int vmID, JOBJECT64 accessibleContext);
+    public delegate int GetVisibleChildrenCountFP(int vmid, JOBJECT64 accessibleContext);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetVisibleChildrenFP(int vmID, JOBJECT64 accessibleContext, int startIndex, out VisibleChildrenInfo children);
+    public delegate BOOL GetVisibleChildrenFP(int vmid, JOBJECT64 accessibleContext, int startIndex, out VisibleChildrenInfoNative children);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetVersionInfoFP(int vmID, out AccessBridgeVersionInfo info);
+    public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfoNative info);
     #endregion
 
     #region Functions
@@ -1946,51 +2775,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     #endregion
   }
 
-  [Flags]
-  public enum AccessibleInterfaces {
-    cAccessibleValueInterface = 1,
-    cAccessibleActionInterface = 2,
-    cAccessibleComponentInterface = 4,
-    cAccessibleSelectionInterface = 8,
-    cAccessibleTableInterface = 16,
-    cAccessibleTextInterface = 32,
-    cAccessibleHypertextInterface = 64,
-  }
-
-  public enum AccessibleKeyCode : ushort {
-    ACCESSIBLE_VK_BACK_SPACE = 8,
-    ACCESSIBLE_VK_DELETE = 127,
-    ACCESSIBLE_VK_DOWN = 40,
-    ACCESSIBLE_VK_END = 35,
-    ACCESSIBLE_VK_HOME = 36,
-    ACCESSIBLE_VK_INSERT = 155,
-    ACCESSIBLE_VK_KP_DOWN = 225,
-    ACCESSIBLE_VK_KP_LEFT = 226,
-    ACCESSIBLE_VK_KP_RIGHT = 227,
-    ACCESSIBLE_VK_KP_UP = 224,
-    ACCESSIBLE_VK_LEFT = 37,
-    ACCESSIBLE_VK_PAGE_DOWN = 34,
-    ACCESSIBLE_VK_PAGE_UP = 33,
-    ACCESSIBLE_VK_RIGHT = 39,
-    ACCESSIBLE_VK_UP = 38,
-  }
-
-  [Flags]
-  public enum AccessibleModifiers {
-    ACCESSIBLE_SHIFT_KEYSTROKE = 1,
-    ACCESSIBLE_CONTROL_KEYSTROKE = 2,
-    ACCESSIBLE_META_KEYSTROKE = 4,
-    ACCESSIBLE_ALT_KEYSTROKE = 8,
-    ACCESSIBLE_ALT_GRAPH_KEYSTROKE = 16,
-    ACCESSIBLE_BUTTON1_KEYSTROKE = 32,
-    ACCESSIBLE_BUTTON2_KEYSTROKE = 64,
-    ACCESSIBLE_BUTTON3_KEYSTROKE = 128,
-    ACCESSIBLE_FKEY_KEYSTROKE = 256,
-    ACCESSIBLE_CONTROLCODE_KEYSTROKE = 512,
-  }
-
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessBridgeVersionInfo {
+  public struct AccessBridgeVersionInfoNative {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string VMversion;
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
@@ -2002,20 +2788,20 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleActionInfo {
+  public struct AccessibleActionInfoNative {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string name;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleActionsToDo {
+  public struct AccessibleActionsToDoNative {
     public int actionsCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-    public AccessibleActionInfo[] actions;
+    public AccessibleActionInfoNative[] actions;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleContextInfo {
+  public struct AccessibleContextInfoNative {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
     public string name;
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
@@ -2042,7 +2828,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleHyperlinkInfo {
+  public struct AccessibleHyperlinkInfoNative {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string text;
     public int startIndex;
@@ -2051,15 +2837,15 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleHypertextInfo {
+  public struct AccessibleHypertextInfoNative {
     public int linkCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-    public AccessibleHyperlinkInfo[] links;
+    public AccessibleHyperlinkInfoNative[] links;
     public JOBJECT64 accessibleHypertext;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleIconInfo {
+  public struct AccessibleIconInfoNative {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string description;
     public int height;
@@ -2067,27 +2853,27 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleIcons {
+  public struct AccessibleIconsNative {
     public int iconsCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-    public AccessibleIconInfo[] iconInfo;
+    public AccessibleIconInfoNative[] iconInfo;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleKeyBindingInfo {
+  public struct AccessibleKeyBindingInfoNative {
     public AccessibleKeyCode character;
     public AccessibleModifiers modifiers;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleKeyBindings {
+  public struct AccessibleKeyBindingsNative {
     public int keyBindingsCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public AccessibleKeyBindingInfo[] keyBindingInfo;
+    public AccessibleKeyBindingInfoNative[] keyBindingInfo;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleRelationInfo {
+  public struct AccessibleRelationInfoNative {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string key;
     public int targetCount;
@@ -2096,14 +2882,14 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleRelationSetInfo {
+  public struct AccessibleRelationSetInfoNative {
     public int relationCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-    public AccessibleRelationInfo[] relations;
+    public AccessibleRelationInfoNative[] relations;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTableCellInfo {
+  public struct AccessibleTableCellInfoNative {
     public JOBJECT64 accessibleContext;
     public int index;
     public int row;
@@ -2114,7 +2900,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTableInfo {
+  public struct AccessibleTableInfoNative {
     public JOBJECT64 caption;
     public JOBJECT64 summary;
     public int rowCount;
@@ -2124,7 +2910,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextAttributesInfo {
+  public struct AccessibleTextAttributesInfoNative {
     public int bold;
     public int italic;
     public int underline;
@@ -2151,14 +2937,14 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextInfo {
+  public struct AccessibleTextInfoNative {
     public int charCount;
     public int caretIndex;
     public int indexAtPoint;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextItemsInfo {
+  public struct AccessibleTextItemsInfoNative {
     public char letter;
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string word;
@@ -2167,7 +2953,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextRectInfo {
+  public struct AccessibleTextRectInfoNative {
     public int x;
     public int y;
     public int width;
@@ -2175,7 +2961,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextSelectionInfo {
+  public struct AccessibleTextSelectionInfoNative {
     public int selectionStartIndex;
     public int selectionEndIndex;
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
@@ -2183,53 +2969,46 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct DoAccessibleActionsPackage {
+  public struct DoAccessibleActionsPackageNative {
     public int vmID;
     public JOBJECT64 accessibleContext;
-    public AccessibleActionsToDo actionsToDo;
+    public AccessibleActionsToDoNative actionsToDo;
     public int rResult;
     public int failure;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct GetAccessibleActionsPackage {
+  public struct GetAccessibleActionsPackageNative {
     public int vmID;
     public JOBJECT64 accessibleContext;
-    public AccessibleActions rAccessibleActions;
+    public AccessibleActionsNative rAccessibleActions;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct GetAccessibleIconsPackage {
+  public struct GetAccessibleIconsPackageNative {
     public int vmID;
     public JOBJECT64 accessibleContext;
-    public AccessibleIcons rAccessibleIcons;
+    public AccessibleIconsNative rAccessibleIcons;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct GetAccessibleKeyBindingsPackage {
+  public struct GetAccessibleKeyBindingsPackageNative {
     public int vmID;
     public JOBJECT64 accessibleContext;
-    public AccessibleKeyBindings rAccessibleKeyBindings;
+    public AccessibleKeyBindingsNative rAccessibleKeyBindings;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct GetAccessibleRelationSetPackage {
-    public int vmID;
-    public JOBJECT64 accessibleContext;
-    public AccessibleRelationSetInfo rAccessibleRelationSetInfo;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct VisibleChildrenInfo {
+  public struct VisibleChildrenInfoNative {
     public int returnedChildrenCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
     public JOBJECT64[] children;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public class AccessibleActions {
+  public class AccessibleActionsNative {
     public int actionsCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-    public AccessibleActionInfo[] actionInfo;
+    public AccessibleActionInfoNative[] actionInfo;
   }
 }

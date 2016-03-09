@@ -400,11 +400,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           group.Expanded = false;
           VisibleChildrenInfo childrenInfo;
           if (Succeeded(AccessBridge.Functions.GetVisibleChildren(JvmId, _ac, 0, out childrenInfo))) {
-            var handles = Enumerable
-              .Range(0, childrenInfo.returnedChildrenCount)
-              .Select(i => new JavaObjectHandle(JvmId, childrenInfo.children[i]))
-              .ToList();
-
+            var handles = childrenInfo.children.Take(childrenInfo.returnedChildrenCount).ToList();
             var childNodes = handles.Select(x => new AccessibleContextNode(AccessBridge, x)).ToList();
             var childIndex = 0;
             foreach (var childNode in childNodes) {
@@ -428,7 +424,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
               .SelectMany(i =>
                 Enumerable
                   .Range(0, relationSetInfo.relations[i].targetCount)
-                  .Select(j => new JavaObjectHandle(JvmId, relationSetInfo.relations[i].targets[j]))).ToList();
+                  .Select(j => relationSetInfo.relations[i].targets[j])).ToList();
 
             var group = list.AddGroup("Relation Set", relationSetInfo.relationCount);
             group.Expanded = false;
@@ -472,37 +468,16 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
-    public class AccessibleTableInfoWrapper {
-      public JavaObjectHandle Caption; // AccessibleContext
-      public JavaObjectHandle Summary; // AccessibleContext
-      public int RowCount;
-      public int ColumnCount;
-      public JavaObjectHandle AccessibleContext;
-      public JavaObjectHandle AccessibleTable;
-    }
-
-    public AccessibleTableInfoWrapper WrapTableInfo(AccessibleTableInfo info) {
-      return new AccessibleTableInfoWrapper {
-        Caption = new JavaObjectHandle(JvmId, info.caption),
-        Summary = new JavaObjectHandle(JvmId, info.summary),
-        RowCount = info.rowCount,
-        ColumnCount = info.columnCount,
-        AccessibleContext = new JavaObjectHandle(JvmId, info.accessibleContext),
-        AccessibleTable = new JavaObjectHandle(JvmId, info.accessibleTable),
-      };
-    }
-
     private void AddTableProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleTable) != 0) {
         var nodeInfo = GetInfo();
         if ((nodeInfo.accessibleInterfaces & AccessibleInterfaces.cAccessibleTableInterface) != 0) {
           var group = list.AddGroup("Table");
           group.Expanded = false;
-          AccessibleTableInfo tableInfoNative;
-          if (Failed(AccessBridge.Functions.GetAccessibleTableInfo(JvmId, _ac, out tableInfoNative))) {
+          AccessibleTableInfo tableInfo;
+          if (Failed(AccessBridge.Functions.GetAccessibleTableInfo(JvmId, _ac, out tableInfo))) {
             group.AddProperty("Error", "Error retrieving table info");
           } else {
-            var tableInfo = WrapTableInfo(tableInfoNative);
             AddTableInfo(group, tableInfo);
 
 #if false
@@ -519,14 +494,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             // Get the column headers
             var columnHeaderGroup = group.AddGroup("Column Header");
             columnHeaderGroup.Expanded = false;
-            AccessibleTableInfo columnInfoNative;
-            if (Failed(AccessBridge.Functions.GetAccessibleTableColumnHeader(JvmId, _ac, out columnInfoNative))) {
+            AccessibleTableInfo columnInfo;
+            if (Failed(AccessBridge.Functions.GetAccessibleTableColumnHeader(JvmId, _ac, out columnInfo))) {
               columnHeaderGroup.AddProperty("Error", "Error retrieving column header info");
             } else {
-              var columnInfo = WrapTableInfo(columnInfoNative);
               AddTableInfo(columnHeaderGroup, columnInfo);
-              for (var rowIndex = 0; rowIndex < columnInfo.RowCount; rowIndex++) {
-                for (var colunmnIndex = 0; colunmnIndex < columnInfo.ColumnCount; colunmnIndex++) {
+              for (var rowIndex = 0; rowIndex < columnInfo.rowCount; rowIndex++) {
+                for (var colunmnIndex = 0; colunmnIndex < columnInfo.columnCount; colunmnIndex++) {
                   var chGroup = columnHeaderGroup.AddGroup(string.Format("Column Header[Row={0},Column={1}]", rowIndex, colunmnIndex));
 
                 }
@@ -536,21 +510,20 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             // Get the row headers
             var rowHeaderGroup = group.AddGroup("Row Header");
             rowHeaderGroup.Expanded = false;
-            AccessibleTableInfo rowInfoNative;
-            if (Failed(AccessBridge.Functions.GetAccessibleTableRowHeader(JvmId, _ac, out rowInfoNative))) {
+            AccessibleTableInfo rowInfo;
+            if (Failed(AccessBridge.Functions.GetAccessibleTableRowHeader(JvmId, _ac, out rowInfo))) {
               rowHeaderGroup.AddProperty("Error", "Error retrieving column header info");
             } else {
-              var rowInfo = WrapTableInfo(rowInfoNative);
               AddTableInfo(rowHeaderGroup, rowInfo);
             }
 
             // Get the selected columns
-            var numColSelections = AccessBridge.Functions.GetAccessibleTableColumnSelectionCount(JvmId, tableInfo.AccessibleTable);
+            var numColSelections = AccessBridge.Functions.GetAccessibleTableColumnSelectionCount(JvmId, tableInfo.accessibleTable);
             var selColGroup = group.AddGroup("Column selections", numColSelections);
             selColGroup.Expanded = false;
             if (numColSelections > 0) {
               var selections = new int[numColSelections];
-              if (Failed(AccessBridge.Functions.GetAccessibleTableColumnSelections(JvmId, tableInfo.AccessibleTable, numColSelections, selections))) {
+              if (Failed(AccessBridge.Functions.GetAccessibleTableColumnSelections(JvmId, tableInfo.accessibleTable, numColSelections, selections))) {
                 selColGroup.AddProperty("Error", "Error getting column selections");
               } else {
                 for (var j = 0; j < numColSelections; j++) {
@@ -560,12 +533,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             }
 
             // Get the selected rows
-            var numRowSelections = AccessBridge.Functions.GetAccessibleTableRowSelectionCount(JvmId, tableInfo.AccessibleTable);
+            var numRowSelections = AccessBridge.Functions.GetAccessibleTableRowSelectionCount(JvmId, tableInfo.accessibleTable);
             var selRowGroup = group.AddGroup("Row selections", numRowSelections);
             selRowGroup.Expanded = false;
             if (numRowSelections > 0) {
               var selections = new int[numRowSelections];
-              if (Failed(AccessBridge.Functions.GetAccessibleTableRowSelections(JvmId, tableInfo.AccessibleTable, numRowSelections, selections))) {
+              if (Failed(AccessBridge.Functions.GetAccessibleTableRowSelections(JvmId, tableInfo.accessibleTable, numRowSelections, selections))) {
                 selRowGroup.AddProperty("Error", "Error getting row selections");
               } else {
                 for (var j = 0; j < numRowSelections; j++) {
@@ -578,17 +551,16 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             if ((options & PropertyOptions.AccessibleTableCells) != 0) {
               var cellsGroup = group.AddGroup("Cells");
               cellsGroup.Expanded = false;
-              for (var rowIndex = 0; rowIndex < tableInfo.RowCount; rowIndex++) {
-                for (var colunmnIndex = 0; colunmnIndex < tableInfo.ColumnCount; colunmnIndex++) {
+              for (var rowIndex = 0; rowIndex < tableInfo.rowCount; rowIndex++) {
+                for (var colunmnIndex = 0; colunmnIndex < tableInfo.columnCount; colunmnIndex++) {
                   var cellGroup = cellsGroup.AddGroup(string.Format("Cell[Row={0},Column={1}]", rowIndex, colunmnIndex));
 
                   AccessibleTableCellInfo tableCellInfo;
-                  if (Failed(AccessBridge.Functions.GetAccessibleTableCellInfo(tableInfo.AccessibleTable.JvmId,
-                      tableInfo.AccessibleTable, rowIndex, colunmnIndex, out tableCellInfo))) {
+                  if (Failed(AccessBridge.Functions.GetAccessibleTableCellInfo(tableInfo.accessibleTable.JvmId,
+                      tableInfo.accessibleTable, rowIndex, colunmnIndex, out tableCellInfo))) {
                     cellGroup.AddProperty("Error", "Error retrieving cell info");
                   } else {
-                    var cellHandle = new JavaObjectHandle(tableInfo.AccessibleTable.JvmId,
-                      tableCellInfo.accessibleContext);
+                    var cellHandle = tableCellInfo.accessibleContext;
                     cellGroup.AddProperty("Index", tableCellInfo.index);
                     cellGroup.AddProperty("Row extent", tableCellInfo.rowExtent);
                     cellGroup.AddProperty("Column extent", tableCellInfo.columnExtent);
@@ -604,9 +576,9 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
-    private void AddTableInfo(PropertyGroup group, AccessibleTableInfoWrapper tableInfo) {
-      group.AddProperty("Row count", tableInfo.RowCount);
-      group.AddProperty("Column count", tableInfo.ColumnCount);
+    private void AddTableInfo(PropertyGroup group, AccessibleTableInfo tableInfo) {
+      group.AddProperty("Row count", tableInfo.rowCount);
+      group.AddProperty("Column count", tableInfo.columnCount);
     }
 
     private void AddTextProperties(PropertyList list, PropertyOptions options) {
@@ -666,13 +638,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         return;
       }
 #endif
-        var hyperText = new JavaObjectHandle(JvmId, hyperTextInfo.accessibleHypertext);
+        var hyperText = hyperTextInfo.accessibleHypertext;
         var linksGroup = group.AddGroup("Hyperlinks", hyperTextInfo.linkCount);
         for (var i = 0; i < hyperTextInfo.linkCount; i++) {
-          var hyperlinkHandle = new JavaObjectHandle(JvmId, hyperTextInfo.links[i].accessibleHyperlink);
+          var hyperlinkHandle = hyperTextInfo.links[i].accessibleHyperlink;
 
           var linkGroup = linksGroup.AddGroup(string.Format("Hyperlink #{0}", i + 1));
-          var hyperLink = new JavaObjectHandle(JvmId, hyperTextInfo.links[i].accessibleHyperlink);
+          var hyperLink = hyperTextInfo.links[i].accessibleHyperlink;
           linkGroup.AddProperty("Start index", hyperTextInfo.links[i].startIndex);
           linkGroup.AddProperty("End index", hyperTextInfo.links[i].endIndex);
           linkGroup.AddProperty("Text", hyperTextInfo.links[i].text);
