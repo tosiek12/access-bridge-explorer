@@ -167,11 +167,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return _info.Value;
     }
 
-    public override int GetChildrenCount() {
-      return GetInfo().childrenCount;
+    protected override int GetChildrenCount() {
+      // We limit to 256 to avoid (almost) infinite loop when # of children
+      // is really huge (e.g. an app exposing a worksheet with thousand of cells).
+      return Math.Min(256, GetInfo().childrenCount);
     }
 
-    public override AccessibleNode GetChildAt(int i) {
+    protected override AccessibleNode GetChildAt(int i) {
       ThrowIfDisposed();
       return _childList[i].Value;
     }

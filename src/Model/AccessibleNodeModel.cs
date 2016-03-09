@@ -39,8 +39,8 @@ namespace AccessBridgeExplorer.Model {
     }
 
     public override void SetupTreeNode(TreeNode node) {
-      var childrenCount = _accessibleNode.GetChildrenCount();
-      if (childrenCount > 0) {
+      var hasChildren = _accessibleNode.GetChildren().Any();
+      if (hasChildren) {
         AddFakeChild(node);
       }
 

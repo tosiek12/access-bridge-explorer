@@ -40,11 +40,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       get { return _vmId; }
     }
 
-    public override int GetChildrenCount() {
+    protected override int GetChildrenCount() {
       return _windows.Count;
     }
 
-    public override AccessibleNode GetChildAt(int i) {
+    protected override AccessibleNode GetChildAt(int i) {
       return _windows[i];
     }
 
@@ -69,10 +69,15 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         }
       });
 
+      var legacyText = "";
+      if (AccessBridge.IsLegacy) {
+        legacyText = " [Legacy]";
+      }
+
       if (sb.Length > 0) { 
-        return string.Format("JVM {0}: {1}", JvmId, sb);
+        return string.Format("JVM {0}{1}: {2}", JvmId, legacyText, sb);
       } else {
-        return string.Format("JVM {0}", JvmId);
+        return string.Format("JVM {0}{1}", legacyText, JvmId);
       }
     }
 
