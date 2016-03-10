@@ -284,7 +284,7 @@ namespace AccessBridgeExplorer {
       this.Controls.Add(this.okButton);
       this.MaximizeBox = false;
       this.MinimizeBox = false;
-      this.MinimumSize = new System.Drawing.Size(566, 324);
+      this.MinimumSize = new System.Drawing.Size(566, 348);
       this.Name = "AboutForm";
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
