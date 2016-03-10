@@ -35,6 +35,7 @@ namespace AccessBridgeExplorer {
 
     ToolStripMenuItem PropertiesMenu { get; }
     ToolStripMenuItem EventsMenu { get; }
+    ToolStripMenuItem EnumerationSizesMenu { get; }
 
     ToolStripStatusLabel StatusLabel { get; }
 

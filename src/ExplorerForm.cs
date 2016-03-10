@@ -374,6 +374,10 @@ namespace AccessBridgeExplorer {
       get { return _eventsMenu; }
     }
 
+    ToolStripMenuItem IExplorerFormView.EnumerationSizesMenu {
+      get { return _enumerationSizeMenu; }
+    }
+
     ToolStripStatusLabel IExplorerFormView.StatusLabel {
       get { return _statusLabel; }
     }

@@ -32,6 +32,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     private IAccessBridgeEvents _events;
     private bool _disposed;
 
+    public AccessBridge() {
+      CollectionSizeLimit = 100;
+    }
+
     public IAccessBridgeFunctions Functions {
       get {
         ThrowIfDisposed();
@@ -70,11 +74,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
-    public int CollectionSizeLimit {
-      get {
-        return 100;
-      }
-    }
+    public int CollectionSizeLimit { get; set; }
 
     public void Initialize() {
       ThrowIfDisposed();

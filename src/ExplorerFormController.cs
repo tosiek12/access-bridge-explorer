@@ -207,6 +207,38 @@ namespace AccessBridgeExplorer {
       };
     }
 
+    private void CreateEnumerationSizesMenuItems() {
+      int index = 0;
+      foreach (var size in new int[] {10, 20, 50, 100, 250, 500, 1000, 2000}) {
+        CreateEnumerationSizesMenuItem(size, index);
+        index++;
+      }
+    }
+
+    private void CreateEnumerationSizesMenuItem(int size, int index) {
+      // Create menu item (fixed font for alignment)
+      var item = new ToolStripMenuItem();
+      char mnemonicCharacter = (char)(index < 10 ? '0' + index : 'A' + index - 10);
+      item.Text = string.Format("&{0} - {1}", mnemonicCharacter, size);
+      item.CheckOnClick = false;
+      item.CheckState = size == 100  ? CheckState.Checked : CheckState.Unchecked;
+      _view.EnumerationSizesMenu.DropDownItems.Add(item);
+
+      // Create click handler
+      item.Click += (sender, args) => {
+        if (item.Checked)
+          return;
+
+        for(var i = 0; i < _view.EnumerationSizesMenu.DropDownItems.Count; i++) {
+          var subItem = (ToolStripMenuItem)_view.EnumerationSizesMenu.DropDownItems[i];
+          if (subItem.Checked)
+            subItem.Checked = false;
+        }
+        item.Checked = true;
+        _accessBridge.CollectionSizeLimit = size;
+      };
+    }
+
     public void Initialize() {
       _overlayWindow.TopMost = true;
       _overlayWindow.Visible = true;
@@ -228,6 +260,7 @@ namespace AccessBridgeExplorer {
 
         CreateEventMenuItems();
         CreatePropertyOptionsMenuItems();
+        CreateEnumerationSizesMenuItems();
         LogMessage("Ready!");
       });
     }

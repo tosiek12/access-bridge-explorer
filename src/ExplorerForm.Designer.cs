@@ -106,6 +106,7 @@ namespace AccessBridgeExplorer {
       this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.notificationPanel = new AccessBridgeExplorer.NotificationPanel();
       this.updateChecker = new AccessBridgeExplorer.UpdateChecker(this.components);
+      this._enumerationSizeMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
       this.mainToolStrip.SuspendLayout();
@@ -215,6 +216,7 @@ namespace AccessBridgeExplorer {
       this.optionsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._propertiesMenu,
             this._eventsMenu,
+            this._enumerationSizeMenu,
             this.separator5,
             this.showOverlayMenuItem});
       this.optionsMenu.Name = "optionsMenu";
@@ -639,9 +641,9 @@ namespace AccessBridgeExplorer {
       // 
       this._eventListPage.Controls.Add(this._eventList);
       this._eventListPage.Controls.Add(this.eventsToolStrip);
-      this._eventListPage.Location = new System.Drawing.Point(4, 24);
+      this._eventListPage.Location = new System.Drawing.Point(4, 22);
       this._eventListPage.Name = "_eventListPage";
-      this._eventListPage.Size = new System.Drawing.Size(1000, 211);
+      this._eventListPage.Size = new System.Drawing.Size(1000, 213);
       this._eventListPage.TabIndex = 0;
       this._eventListPage.Text = "Events";
       this._eventListPage.UseVisualStyleBackColor = true;
@@ -663,7 +665,7 @@ namespace AccessBridgeExplorer {
       this._eventList.Location = new System.Drawing.Point(25, 0);
       this._eventList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this._eventList.Name = "_eventList";
-      this._eventList.Size = new System.Drawing.Size(975, 211);
+      this._eventList.Size = new System.Drawing.Size(975, 213);
       this._eventList.TabIndex = 5;
       this._eventList.UseCompatibleStateImageBehavior = false;
       this._eventList.View = System.Windows.Forms.View.Details;
@@ -711,7 +713,7 @@ namespace AccessBridgeExplorer {
             this.clearEventsButton});
       this.eventsToolStrip.Location = new System.Drawing.Point(0, 0);
       this.eventsToolStrip.Name = "eventsToolStrip";
-      this.eventsToolStrip.Size = new System.Drawing.Size(25, 211);
+      this.eventsToolStrip.Size = new System.Drawing.Size(25, 213);
       this.eventsToolStrip.TabIndex = 0;
       this.eventsToolStrip.TabStop = true;
       this.eventsToolStrip.Text = "Events";
@@ -753,6 +755,12 @@ namespace AccessBridgeExplorer {
       this.updateChecker.Url = "https://google.github.io/access-bridge-explorer/latest_version.txt";
       this.updateChecker.UpdateInfoAvailable += new System.EventHandler<AccessBridgeExplorer.UpdateInfoArgs>(this.updateChecker_UpdateInfoAvailable);
       this.updateChecker.UpdateInfoError += new System.EventHandler<System.IO.ErrorEventArgs>(this.updateChecker_UpdateInfoError);
+      // 
+      // _enumerationSizeMenu
+      // 
+      this._enumerationSizeMenu.Name = "_enumerationSizeMenu";
+      this._enumerationSizeMenu.Size = new System.Drawing.Size(168, 22);
+      this._enumerationSizeMenu.Text = "Enumeration Size";
       // 
       // ExplorerForm
       // 
@@ -879,6 +887,7 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripMenuItem checkForUpdateMenuItem;
     private System.Windows.Forms.ToolStripMenuItem automaticallyCheckForUpdatesMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+    private System.Windows.Forms.ToolStripMenuItem _enumerationSizeMenu;
   }
 }
 
