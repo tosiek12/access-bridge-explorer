@@ -173,8 +173,15 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           try {
             library = new AccessBridgeLibrary("WindowsAccessBridge-32.dll");
           } catch {
-            library = new AccessBridgeLibrary("WindowsAccessBridge.dll");
-            library.IsLegacy = true;
+            try {
+              library = new AccessBridgeLibrary("WindowsAccessBridge.dll");
+              library.IsLegacy = true;
+            } catch {
+              // Ignore, we'll trow the initial exception
+              library = null;
+            }
+            if (library == null)
+              throw;
           }
         } else if (IntPtr.Size == 8) {
           library = new AccessBridgeLibrary("WindowsAccessBridge-64.dll");
