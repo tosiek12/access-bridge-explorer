@@ -72,6 +72,26 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         throw new ObjectDisposedException("accessibility context");
     }
 
+    private int LimitSize(int count) {
+      return Math.Min(AccessBridge.CollectionSizeLimit, count);
+    }
+
+    /// <summary>
+    /// Limit the values of count1 and count2 by the same factor so that
+    /// their product is less than or equal to the maximum collection size.
+    /// </summary>
+    private KeyValuePair<int, int> LimitSize(int count1, int count2) {
+      if (count1 <= 0 || count2 <= 0)
+        return new KeyValuePair<int, int>(0, 0);
+
+      double c1 = count1;
+      double c2 = count2;
+      double limit = AccessBridge.CollectionSizeLimit;
+      int c1Max = (int)Math.Round(Math.Sqrt(limit * c2 / c1));
+      int c2Max = (int)Math.Round(limit / c1Max);
+      return new KeyValuePair<int, int>(Math.Min(c1Max, count1), Math.Min(c2Max, count2));
+    }
+
     public AccessibleContextInfo FetchNodeInfo() {
       ThrowIfDisposed();
       _childList.Clear();
@@ -80,7 +100,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       if (Failed(AccessBridge.Functions.GetAccessibleContextInfo(JvmId, _ac, out info))) {
         throw new ApplicationException("Error retrieving accessible context info");
       }
-      _childList.AddRange(Enumerable.Range(0, info.childrenCount).Select(i => new Lazy<AccessibleNode>(() => FetchChildNode(i))));
+      _childList.AddRange(
+        Enumerable
+        .Range(0, LimitSize(info.childrenCount))
+        .Select(i => new Lazy<AccessibleNode>(() => FetchChildNode(i))));
+
       return info;
     }
 
@@ -146,7 +170,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     private AccessibleContextNode FindNodeInSelection(int childIndex) {
       var selCount = AccessBridge.Functions.GetAccessibleSelectionCountFromContext(JvmId, _ac);
       if (selCount > 0) {
-        for (var selIndex = 0; selIndex < selCount; selIndex++) {
+        for (var selIndex = 0; selIndex < LimitSize(selCount); selIndex++) {
           var selectedContext = AccessBridge.Functions.GetAccessibleSelectionFromContext(JvmId, _ac, selIndex);
           if (!selectedContext.IsNull) {
             var selectedNode = new AccessibleContextNode(AccessBridge, selectedContext);
@@ -170,7 +194,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     protected override int GetChildrenCount() {
       // We limit to 256 to avoid (almost) infinite loop when # of children
       // is really huge (e.g. an app exposing a worksheet with thousand of cells).
-      return Math.Min(256, GetInfo().childrenCount);
+      return LimitSize(GetInfo().childrenCount);
     }
 
     protected override AccessibleNode GetChildAt(int i) {
@@ -327,7 +351,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           var group = list.AddGroup("Selections", selCount);
           group.Expanded = false;
           if (selCount > 0) {
-            for (var i = 0; i < selCount; i++) {
+            for (var i = 0; i < LimitSize(selCount); i++) {
               var selGroup = group.AddGroup(string.Format("Selection {0} of {1}", i + 1, selCount));
               var selectedContext = AccessBridge.Functions.GetAccessibleSelectionFromContext(JvmId, _ac, i);
               if (selectedContext.IsNull) {
@@ -348,7 +372,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           if (keyBindings.keyBindingsCount > 0) {
             var group = list.AddGroup("Key Bindings", keyBindings.keyBindingsCount);
             group.Expanded = false;
-            for (var i = 0; i < keyBindings.keyBindingsCount; i++) {
+            for (var i = 0; i < LimitSize(keyBindings.keyBindingsCount); i++) {
               var keyGroup = group.AddGroup(string.Format("Key binding {0} of {1}", i + 1, keyBindings.keyBindingsCount));
               keyGroup.AddProperty("Character", keyBindings.keyBindingInfo[i].character);
               keyGroup.AddProperty("Modifiers", keyBindings.keyBindingInfo[i].modifiers);
@@ -365,7 +389,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           if (icons.iconsCount > 0) {
             var group = list.AddGroup("Icons", icons.iconsCount);
             group.Expanded = false;
-            for (var i = 0; i < icons.iconsCount; i++) {
+            for (var i = 0; i < LimitSize(icons.iconsCount); i++) {
               var iconGroup = group.AddGroup(string.Format("Icon {0} of {1}", i + 1, icons.iconsCount));
               iconGroup.AddProperty("Height", icons.iconInfo[i].height);
               iconGroup.AddProperty("Width", icons.iconInfo[i].width);
@@ -383,7 +407,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             var group = list.AddGroup("Actions", actions.actionsCount);
             group.Expanded = false;
             if (actions.actionsCount > 0) {
-              for (var i = 0; i < actions.actionsCount; i++) {
+              for (var i = 0; i < LimitSize(actions.actionsCount); i++) {
                 group.AddProperty(
                   string.Format("Action {0} of {1}", i + 1, actions.actionsCount),
                   actions.actionInfo[i].name);
@@ -402,7 +426,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           group.Expanded = false;
           VisibleChildrenInfo childrenInfo;
           if (Succeeded(AccessBridge.Functions.GetVisibleChildren(JvmId, _ac, 0, out childrenInfo))) {
-            var handles = childrenInfo.children.Take(childrenInfo.returnedChildrenCount).ToList();
+            var handles = childrenInfo.children.Take(LimitSize(childrenInfo.returnedChildrenCount)).ToList();
             var childNodes = handles.Select(x => new AccessibleContextNode(AccessBridge, x)).ToList();
             var childIndex = 0;
             foreach (var childNode in childNodes) {
@@ -432,13 +456,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             group.Expanded = false;
 
             var handleIndex = 0;
-            for (var i = 0; i < relationSetInfo.relationCount; i++) {
+            for (var i = 0; i < LimitSize(relationSetInfo.relationCount); i++) {
               var relationInfo = relationSetInfo.relations[i];
               var relGroup = group.AddGroup(string.Format("Relation {0} of {1}", i + 1, relationSetInfo.relationCount));
               relGroup.AddProperty("Key", relationInfo.key);
 
               var relSubGroup = relGroup.AddGroup("Targets", relationInfo.targetCount);
-              for (var j = 0; j < relationInfo.targetCount; j++) {
+              for (var j = 0; j < LimitSize(relationInfo.targetCount); j++) {
                 var targetGroup = relSubGroup.AddGroup(string.Format("Target {0} of {1}", j + 1, relationInfo.targetCount));
                 AddSubContextProperties(targetGroup.Children, options, handles[handleIndex]);
                 handleIndex++;
@@ -501,8 +525,9 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
               columnHeaderGroup.AddProperty("Error", "Error retrieving column header info");
             } else {
               AddTableInfo(columnHeaderGroup, columnInfo);
-              for (var rowIndex = 0; rowIndex < columnInfo.rowCount; rowIndex++) {
-                for (var colunmnIndex = 0; colunmnIndex < columnInfo.columnCount; colunmnIndex++) {
+              var limits = LimitSize(columnInfo.rowCount, columnInfo.columnCount);
+              for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
+                for (var colunmnIndex = 0; colunmnIndex < limits.Value; colunmnIndex++) {
                   var chGroup = columnHeaderGroup.AddGroup(string.Format("Column Header[Row={0},Column={1}]", rowIndex, colunmnIndex));
 
                 }
@@ -528,7 +553,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
               if (Failed(AccessBridge.Functions.GetAccessibleTableColumnSelections(JvmId, tableInfo.accessibleTable, numColSelections, selections))) {
                 selColGroup.AddProperty("Error", "Error getting column selections");
               } else {
-                for (var j = 0; j < numColSelections; j++) {
+                for (var j = 0; j < LimitSize(numColSelections); j++) {
                   selColGroup.AddProperty(string.Format("Column index {0} of {1}", j + 1, numColSelections), selections[j]);
                 }
               }
@@ -543,7 +568,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
               if (Failed(AccessBridge.Functions.GetAccessibleTableRowSelections(JvmId, tableInfo.accessibleTable, numRowSelections, selections))) {
                 selRowGroup.AddProperty("Error", "Error getting row selections");
               } else {
-                for (var j = 0; j < numRowSelections; j++) {
+                for (var j = 0; j < LimitSize(numRowSelections); j++) {
                   selRowGroup.AddProperty(string.Format("Row index {0} of {1}", j + 1, numRowSelections), selections[j]);
                 }
               }
@@ -553,8 +578,9 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
             if ((options & PropertyOptions.AccessibleTableCells) != 0) {
               var cellsGroup = group.AddGroup("Cells");
               cellsGroup.Expanded = false;
-              for (var rowIndex = 0; rowIndex < tableInfo.rowCount; rowIndex++) {
-                for (var colunmnIndex = 0; colunmnIndex < tableInfo.columnCount; colunmnIndex++) {
+              var limits = LimitSize(tableInfo.rowCount, tableInfo.columnCount);
+              for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
+                for (var colunmnIndex = 0; colunmnIndex < limits.Value; colunmnIndex++) {
                   var cellGroup = cellsGroup.AddGroup(string.Format("Cell[Row={0},Column={1}]", rowIndex, colunmnIndex));
 
                   AccessibleTableCellInfo tableCellInfo;
@@ -642,7 +668,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 #endif
         var hyperText = hyperTextInfo.accessibleHypertext;
         var linksGroup = group.AddGroup("Hyperlinks", hyperTextInfo.linkCount);
-        for (var i = 0; i < hyperTextInfo.linkCount; i++) {
+        for (var i = 0; i < LimitSize(hyperTextInfo.linkCount); i++) {
           var hyperlinkHandle = hyperTextInfo.links[i].accessibleHyperlink;
 
           var linkGroup = linksGroup.AddGroup(string.Format("Hyperlink #{0}", i + 1));

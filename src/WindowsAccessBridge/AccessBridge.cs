@@ -70,6 +70,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
+    public int CollectionSizeLimit {
+      get {
+        return 100;
+      }
+    }
+
     public void Initialize() {
       ThrowIfDisposed();
       if (_library != null)
