@@ -336,6 +336,13 @@ namespace CodeGen {
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
 
+      sourceWriter.WriteLine("#region Event delegate fields");
+      foreach (var eventDefinition in model.Events) {
+        WriteNativeEventDelegateField(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
       sourceWriter.WriteLine("#region Event properties");
       foreach (var eventDefinition in model.Events) {
         WriteNativeEventProperty(sourceWriter, eventDefinition);
@@ -699,16 +706,23 @@ namespace CodeGen {
         GetLegacySuffix(sourceWriter), definition.Name, ToPascalCase(definition));
     }
 
+    private void WriteNativeEventDelegateField(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.WriteLine("private AccessBridgeLibraryFunctions{0}.{1}EventHandler _on{1}KeepAliveDelegate;",
+        GetLegacySuffix(sourceWriter), definition.Name);
+    }
+
     private void WriteNativeEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
       sourceWriter.WriteLine("public event AccessBridgeLibraryFunctions{0}.{1}EventHandler {1} {{",
         GetLegacySuffix(sourceWriter), definition.Name);
       sourceWriter.IncIndent();
       sourceWriter.WriteLine("add {{");
       sourceWriter.IncIndent();
-      sourceWriter.WriteLine("if (_{0} == null)", ToPascalCase(definition));
+      sourceWriter.WriteLine("if (_{0} == null) {{", ToPascalCase(definition));
       sourceWriter.IncIndent();
-      sourceWriter.WriteLine("LibraryFunctions.Set{0}(On{0});", definition.Name);
+      sourceWriter.WriteLine("_on{0}KeepAliveDelegate = On{0};", definition.Name);
+      sourceWriter.WriteLine("LibraryFunctions.Set{0}(_on{0}KeepAliveDelegate);", definition.Name);
       sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
       sourceWriter.DecIndent();
 
       sourceWriter.IncIndent();
@@ -718,10 +732,12 @@ namespace CodeGen {
       sourceWriter.WriteLine("remove{{");
       sourceWriter.IncIndent();
       sourceWriter.WriteLine("_{0} -= value;", ToPascalCase(definition));
-      sourceWriter.WriteLine("if (_{0} == null)", ToPascalCase(definition));
+      sourceWriter.WriteLine("if (_{0} == null) {{", ToPascalCase(definition));
       sourceWriter.IncIndent();
       sourceWriter.WriteLine("LibraryFunctions.Set{0}(null);", definition.Name);
+      sourceWriter.WriteLine("_on{0}KeepAliveDelegate = null;", definition.Name);
       sourceWriter.DecIndent();
+      sourceWriter.WriteLine("}}");
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
       sourceWriter.DecIndent();

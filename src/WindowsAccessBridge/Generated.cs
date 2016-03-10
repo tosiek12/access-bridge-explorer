@@ -4327,329 +4327,467 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     private AccessBridgeLibraryFunctions.PropertyTableModelChangeEventHandler _propertyTableModelChange;
     #endregion
 
+    #region Event delegate fields
+    private AccessBridgeLibraryFunctions.PropertyChangeEventHandler _onPropertyChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.JavaShutdownEventHandler _onJavaShutdownKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.FocusGainedEventHandler _onFocusGainedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.FocusLostEventHandler _onFocusLostKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.CaretUpdateEventHandler _onCaretUpdateKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.MouseClickedEventHandler _onMouseClickedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.MouseEnteredEventHandler _onMouseEnteredKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.MouseExitedEventHandler _onMouseExitedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.MousePressedEventHandler _onMousePressedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.MouseReleasedEventHandler _onMouseReleasedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.MenuCanceledEventHandler _onMenuCanceledKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.MenuDeselectedEventHandler _onMenuDeselectedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.MenuSelectedEventHandler _onMenuSelectedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PopupMenuCanceledEventHandler _onPopupMenuCanceledKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PopupMenuWillBecomeInvisibleEventHandler _onPopupMenuWillBecomeInvisibleKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PopupMenuWillBecomeVisibleEventHandler _onPopupMenuWillBecomeVisibleKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PropertyNameChangeEventHandler _onPropertyNameChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PropertyDescriptionChangeEventHandler _onPropertyDescriptionChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PropertyStateChangeEventHandler _onPropertyStateChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PropertyValueChangeEventHandler _onPropertyValueChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PropertySelectionChangeEventHandler _onPropertySelectionChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PropertyTextChangeEventHandler _onPropertyTextChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PropertyCaretChangeEventHandler _onPropertyCaretChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PropertyVisibleDataChangeEventHandler _onPropertyVisibleDataChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PropertyChildChangeEventHandler _onPropertyChildChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PropertyActiveDescendentChangeEventHandler _onPropertyActiveDescendentChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctions.PropertyTableModelChangeEventHandler _onPropertyTableModelChangeKeepAliveDelegate;
+    #endregion
+
     #region Event properties
     public event AccessBridgeLibraryFunctions.PropertyChangeEventHandler PropertyChange {
       add {
-        if (_propertyChange == null)
-          LibraryFunctions.SetPropertyChange(OnPropertyChange);
+        if (_propertyChange == null) {
+          _onPropertyChangeKeepAliveDelegate = OnPropertyChange;
+          LibraryFunctions.SetPropertyChange(_onPropertyChangeKeepAliveDelegate);
+        }
         _propertyChange += value;
       }
       remove{
         _propertyChange -= value;
-        if (_propertyChange == null)
+        if (_propertyChange == null) {
           LibraryFunctions.SetPropertyChange(null);
+          _onPropertyChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.JavaShutdownEventHandler JavaShutdown {
       add {
-        if (_javaShutdown == null)
-          LibraryFunctions.SetJavaShutdown(OnJavaShutdown);
+        if (_javaShutdown == null) {
+          _onJavaShutdownKeepAliveDelegate = OnJavaShutdown;
+          LibraryFunctions.SetJavaShutdown(_onJavaShutdownKeepAliveDelegate);
+        }
         _javaShutdown += value;
       }
       remove{
         _javaShutdown -= value;
-        if (_javaShutdown == null)
+        if (_javaShutdown == null) {
           LibraryFunctions.SetJavaShutdown(null);
+          _onJavaShutdownKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.FocusGainedEventHandler FocusGained {
       add {
-        if (_focusGained == null)
-          LibraryFunctions.SetFocusGained(OnFocusGained);
+        if (_focusGained == null) {
+          _onFocusGainedKeepAliveDelegate = OnFocusGained;
+          LibraryFunctions.SetFocusGained(_onFocusGainedKeepAliveDelegate);
+        }
         _focusGained += value;
       }
       remove{
         _focusGained -= value;
-        if (_focusGained == null)
+        if (_focusGained == null) {
           LibraryFunctions.SetFocusGained(null);
+          _onFocusGainedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.FocusLostEventHandler FocusLost {
       add {
-        if (_focusLost == null)
-          LibraryFunctions.SetFocusLost(OnFocusLost);
+        if (_focusLost == null) {
+          _onFocusLostKeepAliveDelegate = OnFocusLost;
+          LibraryFunctions.SetFocusLost(_onFocusLostKeepAliveDelegate);
+        }
         _focusLost += value;
       }
       remove{
         _focusLost -= value;
-        if (_focusLost == null)
+        if (_focusLost == null) {
           LibraryFunctions.SetFocusLost(null);
+          _onFocusLostKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.CaretUpdateEventHandler CaretUpdate {
       add {
-        if (_caretUpdate == null)
-          LibraryFunctions.SetCaretUpdate(OnCaretUpdate);
+        if (_caretUpdate == null) {
+          _onCaretUpdateKeepAliveDelegate = OnCaretUpdate;
+          LibraryFunctions.SetCaretUpdate(_onCaretUpdateKeepAliveDelegate);
+        }
         _caretUpdate += value;
       }
       remove{
         _caretUpdate -= value;
-        if (_caretUpdate == null)
+        if (_caretUpdate == null) {
           LibraryFunctions.SetCaretUpdate(null);
+          _onCaretUpdateKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.MouseClickedEventHandler MouseClicked {
       add {
-        if (_mouseClicked == null)
-          LibraryFunctions.SetMouseClicked(OnMouseClicked);
+        if (_mouseClicked == null) {
+          _onMouseClickedKeepAliveDelegate = OnMouseClicked;
+          LibraryFunctions.SetMouseClicked(_onMouseClickedKeepAliveDelegate);
+        }
         _mouseClicked += value;
       }
       remove{
         _mouseClicked -= value;
-        if (_mouseClicked == null)
+        if (_mouseClicked == null) {
           LibraryFunctions.SetMouseClicked(null);
+          _onMouseClickedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.MouseEnteredEventHandler MouseEntered {
       add {
-        if (_mouseEntered == null)
-          LibraryFunctions.SetMouseEntered(OnMouseEntered);
+        if (_mouseEntered == null) {
+          _onMouseEnteredKeepAliveDelegate = OnMouseEntered;
+          LibraryFunctions.SetMouseEntered(_onMouseEnteredKeepAliveDelegate);
+        }
         _mouseEntered += value;
       }
       remove{
         _mouseEntered -= value;
-        if (_mouseEntered == null)
+        if (_mouseEntered == null) {
           LibraryFunctions.SetMouseEntered(null);
+          _onMouseEnteredKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.MouseExitedEventHandler MouseExited {
       add {
-        if (_mouseExited == null)
-          LibraryFunctions.SetMouseExited(OnMouseExited);
+        if (_mouseExited == null) {
+          _onMouseExitedKeepAliveDelegate = OnMouseExited;
+          LibraryFunctions.SetMouseExited(_onMouseExitedKeepAliveDelegate);
+        }
         _mouseExited += value;
       }
       remove{
         _mouseExited -= value;
-        if (_mouseExited == null)
+        if (_mouseExited == null) {
           LibraryFunctions.SetMouseExited(null);
+          _onMouseExitedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.MousePressedEventHandler MousePressed {
       add {
-        if (_mousePressed == null)
-          LibraryFunctions.SetMousePressed(OnMousePressed);
+        if (_mousePressed == null) {
+          _onMousePressedKeepAliveDelegate = OnMousePressed;
+          LibraryFunctions.SetMousePressed(_onMousePressedKeepAliveDelegate);
+        }
         _mousePressed += value;
       }
       remove{
         _mousePressed -= value;
-        if (_mousePressed == null)
+        if (_mousePressed == null) {
           LibraryFunctions.SetMousePressed(null);
+          _onMousePressedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.MouseReleasedEventHandler MouseReleased {
       add {
-        if (_mouseReleased == null)
-          LibraryFunctions.SetMouseReleased(OnMouseReleased);
+        if (_mouseReleased == null) {
+          _onMouseReleasedKeepAliveDelegate = OnMouseReleased;
+          LibraryFunctions.SetMouseReleased(_onMouseReleasedKeepAliveDelegate);
+        }
         _mouseReleased += value;
       }
       remove{
         _mouseReleased -= value;
-        if (_mouseReleased == null)
+        if (_mouseReleased == null) {
           LibraryFunctions.SetMouseReleased(null);
+          _onMouseReleasedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.MenuCanceledEventHandler MenuCanceled {
       add {
-        if (_menuCanceled == null)
-          LibraryFunctions.SetMenuCanceled(OnMenuCanceled);
+        if (_menuCanceled == null) {
+          _onMenuCanceledKeepAliveDelegate = OnMenuCanceled;
+          LibraryFunctions.SetMenuCanceled(_onMenuCanceledKeepAliveDelegate);
+        }
         _menuCanceled += value;
       }
       remove{
         _menuCanceled -= value;
-        if (_menuCanceled == null)
+        if (_menuCanceled == null) {
           LibraryFunctions.SetMenuCanceled(null);
+          _onMenuCanceledKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.MenuDeselectedEventHandler MenuDeselected {
       add {
-        if (_menuDeselected == null)
-          LibraryFunctions.SetMenuDeselected(OnMenuDeselected);
+        if (_menuDeselected == null) {
+          _onMenuDeselectedKeepAliveDelegate = OnMenuDeselected;
+          LibraryFunctions.SetMenuDeselected(_onMenuDeselectedKeepAliveDelegate);
+        }
         _menuDeselected += value;
       }
       remove{
         _menuDeselected -= value;
-        if (_menuDeselected == null)
+        if (_menuDeselected == null) {
           LibraryFunctions.SetMenuDeselected(null);
+          _onMenuDeselectedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.MenuSelectedEventHandler MenuSelected {
       add {
-        if (_menuSelected == null)
-          LibraryFunctions.SetMenuSelected(OnMenuSelected);
+        if (_menuSelected == null) {
+          _onMenuSelectedKeepAliveDelegate = OnMenuSelected;
+          LibraryFunctions.SetMenuSelected(_onMenuSelectedKeepAliveDelegate);
+        }
         _menuSelected += value;
       }
       remove{
         _menuSelected -= value;
-        if (_menuSelected == null)
+        if (_menuSelected == null) {
           LibraryFunctions.SetMenuSelected(null);
+          _onMenuSelectedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PopupMenuCanceledEventHandler PopupMenuCanceled {
       add {
-        if (_popupMenuCanceled == null)
-          LibraryFunctions.SetPopupMenuCanceled(OnPopupMenuCanceled);
+        if (_popupMenuCanceled == null) {
+          _onPopupMenuCanceledKeepAliveDelegate = OnPopupMenuCanceled;
+          LibraryFunctions.SetPopupMenuCanceled(_onPopupMenuCanceledKeepAliveDelegate);
+        }
         _popupMenuCanceled += value;
       }
       remove{
         _popupMenuCanceled -= value;
-        if (_popupMenuCanceled == null)
+        if (_popupMenuCanceled == null) {
           LibraryFunctions.SetPopupMenuCanceled(null);
+          _onPopupMenuCanceledKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible {
       add {
-        if (_popupMenuWillBecomeInvisible == null)
-          LibraryFunctions.SetPopupMenuWillBecomeInvisible(OnPopupMenuWillBecomeInvisible);
+        if (_popupMenuWillBecomeInvisible == null) {
+          _onPopupMenuWillBecomeInvisibleKeepAliveDelegate = OnPopupMenuWillBecomeInvisible;
+          LibraryFunctions.SetPopupMenuWillBecomeInvisible(_onPopupMenuWillBecomeInvisibleKeepAliveDelegate);
+        }
         _popupMenuWillBecomeInvisible += value;
       }
       remove{
         _popupMenuWillBecomeInvisible -= value;
-        if (_popupMenuWillBecomeInvisible == null)
+        if (_popupMenuWillBecomeInvisible == null) {
           LibraryFunctions.SetPopupMenuWillBecomeInvisible(null);
+          _onPopupMenuWillBecomeInvisibleKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible {
       add {
-        if (_popupMenuWillBecomeVisible == null)
-          LibraryFunctions.SetPopupMenuWillBecomeVisible(OnPopupMenuWillBecomeVisible);
+        if (_popupMenuWillBecomeVisible == null) {
+          _onPopupMenuWillBecomeVisibleKeepAliveDelegate = OnPopupMenuWillBecomeVisible;
+          LibraryFunctions.SetPopupMenuWillBecomeVisible(_onPopupMenuWillBecomeVisibleKeepAliveDelegate);
+        }
         _popupMenuWillBecomeVisible += value;
       }
       remove{
         _popupMenuWillBecomeVisible -= value;
-        if (_popupMenuWillBecomeVisible == null)
+        if (_popupMenuWillBecomeVisible == null) {
           LibraryFunctions.SetPopupMenuWillBecomeVisible(null);
+          _onPopupMenuWillBecomeVisibleKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PropertyNameChangeEventHandler PropertyNameChange {
       add {
-        if (_propertyNameChange == null)
-          LibraryFunctions.SetPropertyNameChange(OnPropertyNameChange);
+        if (_propertyNameChange == null) {
+          _onPropertyNameChangeKeepAliveDelegate = OnPropertyNameChange;
+          LibraryFunctions.SetPropertyNameChange(_onPropertyNameChangeKeepAliveDelegate);
+        }
         _propertyNameChange += value;
       }
       remove{
         _propertyNameChange -= value;
-        if (_propertyNameChange == null)
+        if (_propertyNameChange == null) {
           LibraryFunctions.SetPropertyNameChange(null);
+          _onPropertyNameChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PropertyDescriptionChangeEventHandler PropertyDescriptionChange {
       add {
-        if (_propertyDescriptionChange == null)
-          LibraryFunctions.SetPropertyDescriptionChange(OnPropertyDescriptionChange);
+        if (_propertyDescriptionChange == null) {
+          _onPropertyDescriptionChangeKeepAliveDelegate = OnPropertyDescriptionChange;
+          LibraryFunctions.SetPropertyDescriptionChange(_onPropertyDescriptionChangeKeepAliveDelegate);
+        }
         _propertyDescriptionChange += value;
       }
       remove{
         _propertyDescriptionChange -= value;
-        if (_propertyDescriptionChange == null)
+        if (_propertyDescriptionChange == null) {
           LibraryFunctions.SetPropertyDescriptionChange(null);
+          _onPropertyDescriptionChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PropertyStateChangeEventHandler PropertyStateChange {
       add {
-        if (_propertyStateChange == null)
-          LibraryFunctions.SetPropertyStateChange(OnPropertyStateChange);
+        if (_propertyStateChange == null) {
+          _onPropertyStateChangeKeepAliveDelegate = OnPropertyStateChange;
+          LibraryFunctions.SetPropertyStateChange(_onPropertyStateChangeKeepAliveDelegate);
+        }
         _propertyStateChange += value;
       }
       remove{
         _propertyStateChange -= value;
-        if (_propertyStateChange == null)
+        if (_propertyStateChange == null) {
           LibraryFunctions.SetPropertyStateChange(null);
+          _onPropertyStateChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PropertyValueChangeEventHandler PropertyValueChange {
       add {
-        if (_propertyValueChange == null)
-          LibraryFunctions.SetPropertyValueChange(OnPropertyValueChange);
+        if (_propertyValueChange == null) {
+          _onPropertyValueChangeKeepAliveDelegate = OnPropertyValueChange;
+          LibraryFunctions.SetPropertyValueChange(_onPropertyValueChangeKeepAliveDelegate);
+        }
         _propertyValueChange += value;
       }
       remove{
         _propertyValueChange -= value;
-        if (_propertyValueChange == null)
+        if (_propertyValueChange == null) {
           LibraryFunctions.SetPropertyValueChange(null);
+          _onPropertyValueChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PropertySelectionChangeEventHandler PropertySelectionChange {
       add {
-        if (_propertySelectionChange == null)
-          LibraryFunctions.SetPropertySelectionChange(OnPropertySelectionChange);
+        if (_propertySelectionChange == null) {
+          _onPropertySelectionChangeKeepAliveDelegate = OnPropertySelectionChange;
+          LibraryFunctions.SetPropertySelectionChange(_onPropertySelectionChangeKeepAliveDelegate);
+        }
         _propertySelectionChange += value;
       }
       remove{
         _propertySelectionChange -= value;
-        if (_propertySelectionChange == null)
+        if (_propertySelectionChange == null) {
           LibraryFunctions.SetPropertySelectionChange(null);
+          _onPropertySelectionChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PropertyTextChangeEventHandler PropertyTextChange {
       add {
-        if (_propertyTextChange == null)
-          LibraryFunctions.SetPropertyTextChange(OnPropertyTextChange);
+        if (_propertyTextChange == null) {
+          _onPropertyTextChangeKeepAliveDelegate = OnPropertyTextChange;
+          LibraryFunctions.SetPropertyTextChange(_onPropertyTextChangeKeepAliveDelegate);
+        }
         _propertyTextChange += value;
       }
       remove{
         _propertyTextChange -= value;
-        if (_propertyTextChange == null)
+        if (_propertyTextChange == null) {
           LibraryFunctions.SetPropertyTextChange(null);
+          _onPropertyTextChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PropertyCaretChangeEventHandler PropertyCaretChange {
       add {
-        if (_propertyCaretChange == null)
-          LibraryFunctions.SetPropertyCaretChange(OnPropertyCaretChange);
+        if (_propertyCaretChange == null) {
+          _onPropertyCaretChangeKeepAliveDelegate = OnPropertyCaretChange;
+          LibraryFunctions.SetPropertyCaretChange(_onPropertyCaretChangeKeepAliveDelegate);
+        }
         _propertyCaretChange += value;
       }
       remove{
         _propertyCaretChange -= value;
-        if (_propertyCaretChange == null)
+        if (_propertyCaretChange == null) {
           LibraryFunctions.SetPropertyCaretChange(null);
+          _onPropertyCaretChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange {
       add {
-        if (_propertyVisibleDataChange == null)
-          LibraryFunctions.SetPropertyVisibleDataChange(OnPropertyVisibleDataChange);
+        if (_propertyVisibleDataChange == null) {
+          _onPropertyVisibleDataChangeKeepAliveDelegate = OnPropertyVisibleDataChange;
+          LibraryFunctions.SetPropertyVisibleDataChange(_onPropertyVisibleDataChangeKeepAliveDelegate);
+        }
         _propertyVisibleDataChange += value;
       }
       remove{
         _propertyVisibleDataChange -= value;
-        if (_propertyVisibleDataChange == null)
+        if (_propertyVisibleDataChange == null) {
           LibraryFunctions.SetPropertyVisibleDataChange(null);
+          _onPropertyVisibleDataChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PropertyChildChangeEventHandler PropertyChildChange {
       add {
-        if (_propertyChildChange == null)
-          LibraryFunctions.SetPropertyChildChange(OnPropertyChildChange);
+        if (_propertyChildChange == null) {
+          _onPropertyChildChangeKeepAliveDelegate = OnPropertyChildChange;
+          LibraryFunctions.SetPropertyChildChange(_onPropertyChildChangeKeepAliveDelegate);
+        }
         _propertyChildChange += value;
       }
       remove{
         _propertyChildChange -= value;
-        if (_propertyChildChange == null)
+        if (_propertyChildChange == null) {
           LibraryFunctions.SetPropertyChildChange(null);
+          _onPropertyChildChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange {
       add {
-        if (_propertyActiveDescendentChange == null)
-          LibraryFunctions.SetPropertyActiveDescendentChange(OnPropertyActiveDescendentChange);
+        if (_propertyActiveDescendentChange == null) {
+          _onPropertyActiveDescendentChangeKeepAliveDelegate = OnPropertyActiveDescendentChange;
+          LibraryFunctions.SetPropertyActiveDescendentChange(_onPropertyActiveDescendentChangeKeepAliveDelegate);
+        }
         _propertyActiveDescendentChange += value;
       }
       remove{
         _propertyActiveDescendentChange -= value;
-        if (_propertyActiveDescendentChange == null)
+        if (_propertyActiveDescendentChange == null) {
           LibraryFunctions.SetPropertyActiveDescendentChange(null);
+          _onPropertyActiveDescendentChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctions.PropertyTableModelChangeEventHandler PropertyTableModelChange {
       add {
-        if (_propertyTableModelChange == null)
-          LibraryFunctions.SetPropertyTableModelChange(OnPropertyTableModelChange);
+        if (_propertyTableModelChange == null) {
+          _onPropertyTableModelChangeKeepAliveDelegate = OnPropertyTableModelChange;
+          LibraryFunctions.SetPropertyTableModelChange(_onPropertyTableModelChangeKeepAliveDelegate);
+        }
         _propertyTableModelChange += value;
       }
       remove{
         _propertyTableModelChange -= value;
-        if (_propertyTableModelChange == null)
+        if (_propertyTableModelChange == null) {
           LibraryFunctions.SetPropertyTableModelChange(null);
+          _onPropertyTableModelChangeKeepAliveDelegate = null;
+        }
       }
     }
     #endregion
@@ -4827,329 +4965,467 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     private AccessBridgeLibraryFunctionsLegacy.PropertyTableModelChangeEventHandler _propertyTableModelChange;
     #endregion
 
+    #region Event delegate fields
+    private AccessBridgeLibraryFunctionsLegacy.PropertyChangeEventHandler _onPropertyChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.JavaShutdownEventHandler _onJavaShutdownKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.FocusGainedEventHandler _onFocusGainedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.FocusLostEventHandler _onFocusLostKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.CaretUpdateEventHandler _onCaretUpdateKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MouseClickedEventHandler _onMouseClickedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MouseEnteredEventHandler _onMouseEnteredKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MouseExitedEventHandler _onMouseExitedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MousePressedEventHandler _onMousePressedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MouseReleasedEventHandler _onMouseReleasedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MenuCanceledEventHandler _onMenuCanceledKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MenuDeselectedEventHandler _onMenuDeselectedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MenuSelectedEventHandler _onMenuSelectedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PopupMenuCanceledEventHandler _onPopupMenuCanceledKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeInvisibleEventHandler _onPopupMenuWillBecomeInvisibleKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeVisibleEventHandler _onPopupMenuWillBecomeVisibleKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyNameChangeEventHandler _onPropertyNameChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyDescriptionChangeEventHandler _onPropertyDescriptionChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyStateChangeEventHandler _onPropertyStateChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyValueChangeEventHandler _onPropertyValueChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertySelectionChangeEventHandler _onPropertySelectionChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyTextChangeEventHandler _onPropertyTextChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyCaretChangeEventHandler _onPropertyCaretChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyVisibleDataChangeEventHandler _onPropertyVisibleDataChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyChildChangeEventHandler _onPropertyChildChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyActiveDescendentChangeEventHandler _onPropertyActiveDescendentChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyTableModelChangeEventHandler _onPropertyTableModelChangeKeepAliveDelegate;
+    #endregion
+
     #region Event properties
     public event AccessBridgeLibraryFunctionsLegacy.PropertyChangeEventHandler PropertyChange {
       add {
-        if (_propertyChange == null)
-          LibraryFunctions.SetPropertyChange(OnPropertyChange);
+        if (_propertyChange == null) {
+          _onPropertyChangeKeepAliveDelegate = OnPropertyChange;
+          LibraryFunctions.SetPropertyChange(_onPropertyChangeKeepAliveDelegate);
+        }
         _propertyChange += value;
       }
       remove{
         _propertyChange -= value;
-        if (_propertyChange == null)
+        if (_propertyChange == null) {
           LibraryFunctions.SetPropertyChange(null);
+          _onPropertyChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.JavaShutdownEventHandler JavaShutdown {
       add {
-        if (_javaShutdown == null)
-          LibraryFunctions.SetJavaShutdown(OnJavaShutdown);
+        if (_javaShutdown == null) {
+          _onJavaShutdownKeepAliveDelegate = OnJavaShutdown;
+          LibraryFunctions.SetJavaShutdown(_onJavaShutdownKeepAliveDelegate);
+        }
         _javaShutdown += value;
       }
       remove{
         _javaShutdown -= value;
-        if (_javaShutdown == null)
+        if (_javaShutdown == null) {
           LibraryFunctions.SetJavaShutdown(null);
+          _onJavaShutdownKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.FocusGainedEventHandler FocusGained {
       add {
-        if (_focusGained == null)
-          LibraryFunctions.SetFocusGained(OnFocusGained);
+        if (_focusGained == null) {
+          _onFocusGainedKeepAliveDelegate = OnFocusGained;
+          LibraryFunctions.SetFocusGained(_onFocusGainedKeepAliveDelegate);
+        }
         _focusGained += value;
       }
       remove{
         _focusGained -= value;
-        if (_focusGained == null)
+        if (_focusGained == null) {
           LibraryFunctions.SetFocusGained(null);
+          _onFocusGainedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.FocusLostEventHandler FocusLost {
       add {
-        if (_focusLost == null)
-          LibraryFunctions.SetFocusLost(OnFocusLost);
+        if (_focusLost == null) {
+          _onFocusLostKeepAliveDelegate = OnFocusLost;
+          LibraryFunctions.SetFocusLost(_onFocusLostKeepAliveDelegate);
+        }
         _focusLost += value;
       }
       remove{
         _focusLost -= value;
-        if (_focusLost == null)
+        if (_focusLost == null) {
           LibraryFunctions.SetFocusLost(null);
+          _onFocusLostKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.CaretUpdateEventHandler CaretUpdate {
       add {
-        if (_caretUpdate == null)
-          LibraryFunctions.SetCaretUpdate(OnCaretUpdate);
+        if (_caretUpdate == null) {
+          _onCaretUpdateKeepAliveDelegate = OnCaretUpdate;
+          LibraryFunctions.SetCaretUpdate(_onCaretUpdateKeepAliveDelegate);
+        }
         _caretUpdate += value;
       }
       remove{
         _caretUpdate -= value;
-        if (_caretUpdate == null)
+        if (_caretUpdate == null) {
           LibraryFunctions.SetCaretUpdate(null);
+          _onCaretUpdateKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.MouseClickedEventHandler MouseClicked {
       add {
-        if (_mouseClicked == null)
-          LibraryFunctions.SetMouseClicked(OnMouseClicked);
+        if (_mouseClicked == null) {
+          _onMouseClickedKeepAliveDelegate = OnMouseClicked;
+          LibraryFunctions.SetMouseClicked(_onMouseClickedKeepAliveDelegate);
+        }
         _mouseClicked += value;
       }
       remove{
         _mouseClicked -= value;
-        if (_mouseClicked == null)
+        if (_mouseClicked == null) {
           LibraryFunctions.SetMouseClicked(null);
+          _onMouseClickedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.MouseEnteredEventHandler MouseEntered {
       add {
-        if (_mouseEntered == null)
-          LibraryFunctions.SetMouseEntered(OnMouseEntered);
+        if (_mouseEntered == null) {
+          _onMouseEnteredKeepAliveDelegate = OnMouseEntered;
+          LibraryFunctions.SetMouseEntered(_onMouseEnteredKeepAliveDelegate);
+        }
         _mouseEntered += value;
       }
       remove{
         _mouseEntered -= value;
-        if (_mouseEntered == null)
+        if (_mouseEntered == null) {
           LibraryFunctions.SetMouseEntered(null);
+          _onMouseEnteredKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.MouseExitedEventHandler MouseExited {
       add {
-        if (_mouseExited == null)
-          LibraryFunctions.SetMouseExited(OnMouseExited);
+        if (_mouseExited == null) {
+          _onMouseExitedKeepAliveDelegate = OnMouseExited;
+          LibraryFunctions.SetMouseExited(_onMouseExitedKeepAliveDelegate);
+        }
         _mouseExited += value;
       }
       remove{
         _mouseExited -= value;
-        if (_mouseExited == null)
+        if (_mouseExited == null) {
           LibraryFunctions.SetMouseExited(null);
+          _onMouseExitedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.MousePressedEventHandler MousePressed {
       add {
-        if (_mousePressed == null)
-          LibraryFunctions.SetMousePressed(OnMousePressed);
+        if (_mousePressed == null) {
+          _onMousePressedKeepAliveDelegate = OnMousePressed;
+          LibraryFunctions.SetMousePressed(_onMousePressedKeepAliveDelegate);
+        }
         _mousePressed += value;
       }
       remove{
         _mousePressed -= value;
-        if (_mousePressed == null)
+        if (_mousePressed == null) {
           LibraryFunctions.SetMousePressed(null);
+          _onMousePressedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.MouseReleasedEventHandler MouseReleased {
       add {
-        if (_mouseReleased == null)
-          LibraryFunctions.SetMouseReleased(OnMouseReleased);
+        if (_mouseReleased == null) {
+          _onMouseReleasedKeepAliveDelegate = OnMouseReleased;
+          LibraryFunctions.SetMouseReleased(_onMouseReleasedKeepAliveDelegate);
+        }
         _mouseReleased += value;
       }
       remove{
         _mouseReleased -= value;
-        if (_mouseReleased == null)
+        if (_mouseReleased == null) {
           LibraryFunctions.SetMouseReleased(null);
+          _onMouseReleasedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.MenuCanceledEventHandler MenuCanceled {
       add {
-        if (_menuCanceled == null)
-          LibraryFunctions.SetMenuCanceled(OnMenuCanceled);
+        if (_menuCanceled == null) {
+          _onMenuCanceledKeepAliveDelegate = OnMenuCanceled;
+          LibraryFunctions.SetMenuCanceled(_onMenuCanceledKeepAliveDelegate);
+        }
         _menuCanceled += value;
       }
       remove{
         _menuCanceled -= value;
-        if (_menuCanceled == null)
+        if (_menuCanceled == null) {
           LibraryFunctions.SetMenuCanceled(null);
+          _onMenuCanceledKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.MenuDeselectedEventHandler MenuDeselected {
       add {
-        if (_menuDeselected == null)
-          LibraryFunctions.SetMenuDeselected(OnMenuDeselected);
+        if (_menuDeselected == null) {
+          _onMenuDeselectedKeepAliveDelegate = OnMenuDeselected;
+          LibraryFunctions.SetMenuDeselected(_onMenuDeselectedKeepAliveDelegate);
+        }
         _menuDeselected += value;
       }
       remove{
         _menuDeselected -= value;
-        if (_menuDeselected == null)
+        if (_menuDeselected == null) {
           LibraryFunctions.SetMenuDeselected(null);
+          _onMenuDeselectedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.MenuSelectedEventHandler MenuSelected {
       add {
-        if (_menuSelected == null)
-          LibraryFunctions.SetMenuSelected(OnMenuSelected);
+        if (_menuSelected == null) {
+          _onMenuSelectedKeepAliveDelegate = OnMenuSelected;
+          LibraryFunctions.SetMenuSelected(_onMenuSelectedKeepAliveDelegate);
+        }
         _menuSelected += value;
       }
       remove{
         _menuSelected -= value;
-        if (_menuSelected == null)
+        if (_menuSelected == null) {
           LibraryFunctions.SetMenuSelected(null);
+          _onMenuSelectedKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PopupMenuCanceledEventHandler PopupMenuCanceled {
       add {
-        if (_popupMenuCanceled == null)
-          LibraryFunctions.SetPopupMenuCanceled(OnPopupMenuCanceled);
+        if (_popupMenuCanceled == null) {
+          _onPopupMenuCanceledKeepAliveDelegate = OnPopupMenuCanceled;
+          LibraryFunctions.SetPopupMenuCanceled(_onPopupMenuCanceledKeepAliveDelegate);
+        }
         _popupMenuCanceled += value;
       }
       remove{
         _popupMenuCanceled -= value;
-        if (_popupMenuCanceled == null)
+        if (_popupMenuCanceled == null) {
           LibraryFunctions.SetPopupMenuCanceled(null);
+          _onPopupMenuCanceledKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible {
       add {
-        if (_popupMenuWillBecomeInvisible == null)
-          LibraryFunctions.SetPopupMenuWillBecomeInvisible(OnPopupMenuWillBecomeInvisible);
+        if (_popupMenuWillBecomeInvisible == null) {
+          _onPopupMenuWillBecomeInvisibleKeepAliveDelegate = OnPopupMenuWillBecomeInvisible;
+          LibraryFunctions.SetPopupMenuWillBecomeInvisible(_onPopupMenuWillBecomeInvisibleKeepAliveDelegate);
+        }
         _popupMenuWillBecomeInvisible += value;
       }
       remove{
         _popupMenuWillBecomeInvisible -= value;
-        if (_popupMenuWillBecomeInvisible == null)
+        if (_popupMenuWillBecomeInvisible == null) {
           LibraryFunctions.SetPopupMenuWillBecomeInvisible(null);
+          _onPopupMenuWillBecomeInvisibleKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible {
       add {
-        if (_popupMenuWillBecomeVisible == null)
-          LibraryFunctions.SetPopupMenuWillBecomeVisible(OnPopupMenuWillBecomeVisible);
+        if (_popupMenuWillBecomeVisible == null) {
+          _onPopupMenuWillBecomeVisibleKeepAliveDelegate = OnPopupMenuWillBecomeVisible;
+          LibraryFunctions.SetPopupMenuWillBecomeVisible(_onPopupMenuWillBecomeVisibleKeepAliveDelegate);
+        }
         _popupMenuWillBecomeVisible += value;
       }
       remove{
         _popupMenuWillBecomeVisible -= value;
-        if (_popupMenuWillBecomeVisible == null)
+        if (_popupMenuWillBecomeVisible == null) {
           LibraryFunctions.SetPopupMenuWillBecomeVisible(null);
+          _onPopupMenuWillBecomeVisibleKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PropertyNameChangeEventHandler PropertyNameChange {
       add {
-        if (_propertyNameChange == null)
-          LibraryFunctions.SetPropertyNameChange(OnPropertyNameChange);
+        if (_propertyNameChange == null) {
+          _onPropertyNameChangeKeepAliveDelegate = OnPropertyNameChange;
+          LibraryFunctions.SetPropertyNameChange(_onPropertyNameChangeKeepAliveDelegate);
+        }
         _propertyNameChange += value;
       }
       remove{
         _propertyNameChange -= value;
-        if (_propertyNameChange == null)
+        if (_propertyNameChange == null) {
           LibraryFunctions.SetPropertyNameChange(null);
+          _onPropertyNameChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PropertyDescriptionChangeEventHandler PropertyDescriptionChange {
       add {
-        if (_propertyDescriptionChange == null)
-          LibraryFunctions.SetPropertyDescriptionChange(OnPropertyDescriptionChange);
+        if (_propertyDescriptionChange == null) {
+          _onPropertyDescriptionChangeKeepAliveDelegate = OnPropertyDescriptionChange;
+          LibraryFunctions.SetPropertyDescriptionChange(_onPropertyDescriptionChangeKeepAliveDelegate);
+        }
         _propertyDescriptionChange += value;
       }
       remove{
         _propertyDescriptionChange -= value;
-        if (_propertyDescriptionChange == null)
+        if (_propertyDescriptionChange == null) {
           LibraryFunctions.SetPropertyDescriptionChange(null);
+          _onPropertyDescriptionChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PropertyStateChangeEventHandler PropertyStateChange {
       add {
-        if (_propertyStateChange == null)
-          LibraryFunctions.SetPropertyStateChange(OnPropertyStateChange);
+        if (_propertyStateChange == null) {
+          _onPropertyStateChangeKeepAliveDelegate = OnPropertyStateChange;
+          LibraryFunctions.SetPropertyStateChange(_onPropertyStateChangeKeepAliveDelegate);
+        }
         _propertyStateChange += value;
       }
       remove{
         _propertyStateChange -= value;
-        if (_propertyStateChange == null)
+        if (_propertyStateChange == null) {
           LibraryFunctions.SetPropertyStateChange(null);
+          _onPropertyStateChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PropertyValueChangeEventHandler PropertyValueChange {
       add {
-        if (_propertyValueChange == null)
-          LibraryFunctions.SetPropertyValueChange(OnPropertyValueChange);
+        if (_propertyValueChange == null) {
+          _onPropertyValueChangeKeepAliveDelegate = OnPropertyValueChange;
+          LibraryFunctions.SetPropertyValueChange(_onPropertyValueChangeKeepAliveDelegate);
+        }
         _propertyValueChange += value;
       }
       remove{
         _propertyValueChange -= value;
-        if (_propertyValueChange == null)
+        if (_propertyValueChange == null) {
           LibraryFunctions.SetPropertyValueChange(null);
+          _onPropertyValueChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PropertySelectionChangeEventHandler PropertySelectionChange {
       add {
-        if (_propertySelectionChange == null)
-          LibraryFunctions.SetPropertySelectionChange(OnPropertySelectionChange);
+        if (_propertySelectionChange == null) {
+          _onPropertySelectionChangeKeepAliveDelegate = OnPropertySelectionChange;
+          LibraryFunctions.SetPropertySelectionChange(_onPropertySelectionChangeKeepAliveDelegate);
+        }
         _propertySelectionChange += value;
       }
       remove{
         _propertySelectionChange -= value;
-        if (_propertySelectionChange == null)
+        if (_propertySelectionChange == null) {
           LibraryFunctions.SetPropertySelectionChange(null);
+          _onPropertySelectionChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PropertyTextChangeEventHandler PropertyTextChange {
       add {
-        if (_propertyTextChange == null)
-          LibraryFunctions.SetPropertyTextChange(OnPropertyTextChange);
+        if (_propertyTextChange == null) {
+          _onPropertyTextChangeKeepAliveDelegate = OnPropertyTextChange;
+          LibraryFunctions.SetPropertyTextChange(_onPropertyTextChangeKeepAliveDelegate);
+        }
         _propertyTextChange += value;
       }
       remove{
         _propertyTextChange -= value;
-        if (_propertyTextChange == null)
+        if (_propertyTextChange == null) {
           LibraryFunctions.SetPropertyTextChange(null);
+          _onPropertyTextChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PropertyCaretChangeEventHandler PropertyCaretChange {
       add {
-        if (_propertyCaretChange == null)
-          LibraryFunctions.SetPropertyCaretChange(OnPropertyCaretChange);
+        if (_propertyCaretChange == null) {
+          _onPropertyCaretChangeKeepAliveDelegate = OnPropertyCaretChange;
+          LibraryFunctions.SetPropertyCaretChange(_onPropertyCaretChangeKeepAliveDelegate);
+        }
         _propertyCaretChange += value;
       }
       remove{
         _propertyCaretChange -= value;
-        if (_propertyCaretChange == null)
+        if (_propertyCaretChange == null) {
           LibraryFunctions.SetPropertyCaretChange(null);
+          _onPropertyCaretChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange {
       add {
-        if (_propertyVisibleDataChange == null)
-          LibraryFunctions.SetPropertyVisibleDataChange(OnPropertyVisibleDataChange);
+        if (_propertyVisibleDataChange == null) {
+          _onPropertyVisibleDataChangeKeepAliveDelegate = OnPropertyVisibleDataChange;
+          LibraryFunctions.SetPropertyVisibleDataChange(_onPropertyVisibleDataChangeKeepAliveDelegate);
+        }
         _propertyVisibleDataChange += value;
       }
       remove{
         _propertyVisibleDataChange -= value;
-        if (_propertyVisibleDataChange == null)
+        if (_propertyVisibleDataChange == null) {
           LibraryFunctions.SetPropertyVisibleDataChange(null);
+          _onPropertyVisibleDataChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PropertyChildChangeEventHandler PropertyChildChange {
       add {
-        if (_propertyChildChange == null)
-          LibraryFunctions.SetPropertyChildChange(OnPropertyChildChange);
+        if (_propertyChildChange == null) {
+          _onPropertyChildChangeKeepAliveDelegate = OnPropertyChildChange;
+          LibraryFunctions.SetPropertyChildChange(_onPropertyChildChangeKeepAliveDelegate);
+        }
         _propertyChildChange += value;
       }
       remove{
         _propertyChildChange -= value;
-        if (_propertyChildChange == null)
+        if (_propertyChildChange == null) {
           LibraryFunctions.SetPropertyChildChange(null);
+          _onPropertyChildChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange {
       add {
-        if (_propertyActiveDescendentChange == null)
-          LibraryFunctions.SetPropertyActiveDescendentChange(OnPropertyActiveDescendentChange);
+        if (_propertyActiveDescendentChange == null) {
+          _onPropertyActiveDescendentChangeKeepAliveDelegate = OnPropertyActiveDescendentChange;
+          LibraryFunctions.SetPropertyActiveDescendentChange(_onPropertyActiveDescendentChangeKeepAliveDelegate);
+        }
         _propertyActiveDescendentChange += value;
       }
       remove{
         _propertyActiveDescendentChange -= value;
-        if (_propertyActiveDescendentChange == null)
+        if (_propertyActiveDescendentChange == null) {
           LibraryFunctions.SetPropertyActiveDescendentChange(null);
+          _onPropertyActiveDescendentChangeKeepAliveDelegate = null;
+        }
       }
     }
     public event AccessBridgeLibraryFunctionsLegacy.PropertyTableModelChangeEventHandler PropertyTableModelChange {
       add {
-        if (_propertyTableModelChange == null)
-          LibraryFunctions.SetPropertyTableModelChange(OnPropertyTableModelChange);
+        if (_propertyTableModelChange == null) {
+          _onPropertyTableModelChangeKeepAliveDelegate = OnPropertyTableModelChange;
+          LibraryFunctions.SetPropertyTableModelChange(_onPropertyTableModelChangeKeepAliveDelegate);
+        }
         _propertyTableModelChange += value;
       }
       remove{
         _propertyTableModelChange -= value;
-        if (_propertyTableModelChange == null)
+        if (_propertyTableModelChange == null) {
           LibraryFunctions.SetPropertyTableModelChange(null);
+          _onPropertyTableModelChangeKeepAliveDelegate = null;
+        }
       }
     }
     #endregion
