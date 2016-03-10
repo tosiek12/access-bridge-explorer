@@ -76,6 +76,9 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     public int CollectionSizeLimit { get; set; }
 
+    public event EventHandler Initilized;
+    public event EventHandler Disposed;
+
     public void Initialize() {
       ThrowIfDisposed();
       if (_library != null)
@@ -102,6 +105,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         _events = events;
       }
       _functions.Windows_run();
+      OnInitilized();
     }
 
     public void Dispose() {
@@ -119,6 +123,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
 
       _disposed = true;
+      OnDisposed();
     }
 
     private void ThrowIfDisposed() {
@@ -249,6 +254,16 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           throw new ArgumentException(string.Format("Error loading function {0} from access bridge library", name), e);
         }
       }
+    }
+
+    protected virtual void OnInitilized() {
+      var handler = Initilized;
+      if (handler != null) handler(this, EventArgs.Empty);
+    }
+
+    protected virtual void OnDisposed() {
+      var handler = Disposed;
+      if (handler != null) handler(this, EventArgs.Empty);
     }
   }
 }

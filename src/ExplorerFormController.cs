@@ -42,6 +42,10 @@ namespace AccessBridgeExplorer {
       _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
       _overlayWindowEnabled = true;
 
+      _view.EventsMenu.Enabled = false;
+      _view.PropertiesMenu.Enabled = false;
+      _view.EnumerationSizesMenu.Enabled = false;
+
       _view.AccessibilityTree.AfterSelect += AccessibilityTreeAfterSelect;
       _view.AccessibilityTree.BeforeExpand += AccessibilityTreeBeforeExpand;
       _view.AccessibilityTree.KeyDown += AccessibilityTreeOnKeyDown;
@@ -69,6 +73,37 @@ namespace AccessBridgeExplorer {
 
     public IExplorerFormNavigation Navigation {
       get { return _navigation; }
+    }
+
+    public void Initialize() {
+      _overlayWindow.TopMost = true;
+      _overlayWindow.Visible = true;
+      _overlayWindow.Size = new Size(0, 0);
+      _overlayWindow.Location = new Point(-10, -10);
+      _overlayWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
+
+      _tooltipWindow.TopMost = true;
+      _tooltipWindow.Visible = true;
+      _tooltipWindow.Size = new Size(0, 0);
+      _tooltipWindow.Location = new Point(-10, -10);
+      _tooltipWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
+
+      LogMessage("Initializing Java Access Bridge and enumerating active Java application windows.");
+      _accessBridge.Initilized += (sender, args) => {
+        CreateEventMenuItems();
+        CreatePropertyOptionsMenuItems();
+        CreateEnumerationSizesMenuItems();
+        _view.EventsMenu.Enabled = true;
+        _view.PropertiesMenu.Enabled = true;
+        _view.EnumerationSizesMenu.Enabled = true;
+        LogMessage("Ready!");
+      };
+
+      UiAction(() => {
+        //TODO: We initialize now so that the access bridge DLL has time to
+        // discover the list of JVMs by the time we enumerate all windows.
+        _accessBridge.Initialize();
+      });
     }
 
     private void AccessibilityEventListOnKeyDown(object sender, KeyEventArgs e) {
@@ -237,32 +272,6 @@ namespace AccessBridgeExplorer {
         item.Checked = true;
         _accessBridge.CollectionSizeLimit = size;
       };
-    }
-
-    public void Initialize() {
-      _overlayWindow.TopMost = true;
-      _overlayWindow.Visible = true;
-      _overlayWindow.Size = new Size(0, 0);
-      _overlayWindow.Location = new Point(-10, -10);
-      _overlayWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
-
-      _tooltipWindow.TopMost = true;
-      _tooltipWindow.Visible = true;
-      _tooltipWindow.Size = new Size(0, 0);
-      _tooltipWindow.Location = new Point(-10, -10);
-      _tooltipWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
-
-      LogMessage("Initializing Java Access Bridge and enumerating active Java application windows.");
-      UiAction(() => {
-        //TODO: We initialize now so that the access bridge DLL has time to
-        // discover the list of JVMs by the time we enumerate all windows.
-        _accessBridge.Initialize();
-
-        CreateEventMenuItems();
-        CreatePropertyOptionsMenuItems();
-        CreateEnumerationSizesMenuItems();
-        LogMessage("Ready!");
-      });
     }
 
     public void Dispose() {
