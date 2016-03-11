@@ -709,14 +709,14 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     private void AddHyperTextProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleHyperText) != 0) {
         var info = GetInfo();
-        if (info.accessibleText != 0) {
+        if ((info.accessibleInterfaces & AccessibleInterfaces.cAccessibleHypertextInterface) != 0) {
           var group = list.AddGroup("Accessible Hyper Text");
           group.Expanded = false;
           group.LoadChildren = () => {
             AccessibleHypertextInfo hyperTextInfo;
 #if true
             if (Failed(AccessBridge.Functions.GetAccessibleHypertextExt(JvmId, _ac, 0, out hyperTextInfo))) {
-              group.AddProperty("Error", "No hyper text data");
+              group.AddProperty("Error", "Error retrieving hyper text info");
               return;
             }
 #else
@@ -727,11 +727,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
 #endif
             var linksGroup = group.AddGroup("Hyperlinks", hyperTextInfo.linkCount);
+            linksGroup.Expanded = false;
             for (var i = 0; i < LimitSize(hyperTextInfo.linkCount); i++) {
               var linkGroup = linksGroup.AddGroup(string.Format("Hyperlink #{0}", i + 1));
               linkGroup.AddProperty("Start index", hyperTextInfo.links[i].startIndex);
               linkGroup.AddProperty("End index", hyperTextInfo.links[i].endIndex);
               linkGroup.AddProperty("Text", hyperTextInfo.links[i].text);
+              //AddSubContextProperties(linkGroup.Children, options, hyperTextInfo.links[i].accessibleHyperlink);
             }
           };
         }
