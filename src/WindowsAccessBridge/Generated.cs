@@ -385,7 +385,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac) {
       JOBJECT64 acTemp;
       var result = LibraryFunctions.GetAccessibleContextFromHWND(window, out vmid, out acTemp);
-      ac = Wrap(vmid, acTemp);
+      if (ToBool(result)) {
+        ac = Wrap(vmid, acTemp);
+      } else {
+        acTemp = default(JOBJECT64);
+        ac = Wrap(vmid, acTemp);
+      }
       return ToBool(result);
     }
 
@@ -399,14 +404,24 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       JOBJECT64 acTemp;
       var result = LibraryFunctions.GetAccessibleContextAt(vmid, Unwrap(vmid, acParent), x, y, out acTemp);
       GC.KeepAlive(acParent);
-      ac = Wrap(vmid, acTemp);
+      if (ToBool(result)) {
+        ac = Wrap(vmid, acTemp);
+      } else {
+        acTemp = default(JOBJECT64);
+        ac = Wrap(vmid, acTemp);
+      }
       return ToBool(result);
     }
 
     public bool GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac) {
       JOBJECT64 acTemp;
       var result = LibraryFunctions.GetAccessibleContextWithFocus(window, out vmid, out acTemp);
-      ac = Wrap(vmid, acTemp);
+      if (ToBool(result)) {
+        ac = Wrap(vmid, acTemp);
+      } else {
+        acTemp = default(JOBJECT64);
+        ac = Wrap(vmid, acTemp);
+      }
       return ToBool(result);
     }
 
@@ -2002,7 +2017,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public bool GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac) {
       JOBJECT32 acTemp;
       var result = LibraryFunctions.GetAccessibleContextFromHWND(window, out vmid, out acTemp);
-      ac = Wrap(vmid, acTemp);
+      if (ToBool(result)) {
+        ac = Wrap(vmid, acTemp);
+      } else {
+        acTemp = default(JOBJECT32);
+        ac = Wrap(vmid, acTemp);
+      }
       return ToBool(result);
     }
 
@@ -2016,14 +2036,24 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       JOBJECT32 acTemp;
       var result = LibraryFunctions.GetAccessibleContextAt(vmid, Unwrap(vmid, acParent), x, y, out acTemp);
       GC.KeepAlive(acParent);
-      ac = Wrap(vmid, acTemp);
+      if (ToBool(result)) {
+        ac = Wrap(vmid, acTemp);
+      } else {
+        acTemp = default(JOBJECT32);
+        ac = Wrap(vmid, acTemp);
+      }
       return ToBool(result);
     }
 
     public bool GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac) {
       JOBJECT32 acTemp;
       var result = LibraryFunctions.GetAccessibleContextWithFocus(window, out vmid, out acTemp);
-      ac = Wrap(vmid, acTemp);
+      if (ToBool(result)) {
+        ac = Wrap(vmid, acTemp);
+      } else {
+        acTemp = default(JOBJECT32);
+        ac = Wrap(vmid, acTemp);
+      }
       return ToBool(result);
     }
 

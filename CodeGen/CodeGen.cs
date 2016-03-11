@@ -456,7 +456,23 @@ namespace CodeGen {
       // Generate code to copy back temporary local variables to ref/out parameters.
       //
       foreach (var x in javaOutObjects) {
-        sourceWriter.WriteLine("{0} = Wrap(vmid, {0}Temp);", x.Name);
+        var wrapExpression = string.Format("{0} = Wrap(vmid, {0}Temp)", x.Name);
+        if (IsStatusResult(definition.ReturnType)) {
+          sourceWriter.WriteLine("if (ToBool(result)) {{");
+          sourceWriter.IncIndent();
+          sourceWriter.WriteLine("{0};", wrapExpression);
+          sourceWriter.DecIndent();
+          sourceWriter.WriteLine("}} else {{");
+          sourceWriter.IncIndent();
+          sourceWriter.IsNativeTypes = true;
+          sourceWriter.WriteLine("{0}Temp = default({1});", x.Name, sourceWriter.GetTypeName(x.Type));
+          sourceWriter.IsNativeTypes = false;
+          sourceWriter.WriteLine("{0};", wrapExpression);
+          sourceWriter.DecIndent();
+          sourceWriter.WriteLine("}}");
+        } else {
+          sourceWriter.WriteLine("{0};", wrapExpression);
+        }
       }
 
       foreach (var x in outStructs) {
