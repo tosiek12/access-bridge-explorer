@@ -149,7 +149,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("public interface IAccessBridgeFunctions {{");
       sourceWriter.IncIndent();
       foreach (var function in model.Functions) {
-        WriteFunction(sourceWriter, function);
+        WriteFunction(model, sourceWriter, function);
       }
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
@@ -175,7 +175,7 @@ namespace CodeGen {
       sourceWriter.IsNativeTypes = false;
       sourceWriter.WriteLine("#region Platform agnostic event handler delegate types");
       foreach (var eventDefinition in model.Events) {
-        WriteEventHandlerType(sourceWriter, eventDefinition);
+        WriteEventHandlerType(model, sourceWriter, eventDefinition);
       }
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
@@ -243,7 +243,7 @@ namespace CodeGen {
 
       sourceWriter.WriteLine("#region Event handlers");
       foreach (var eventDefinition in model.Events) {
-        WriteApplicationLevelEventHandler(sourceWriter, eventDefinition);
+        WriteApplicationLevelEventHandler(model, sourceWriter, eventDefinition);
       }
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
@@ -259,7 +259,7 @@ namespace CodeGen {
 
       sourceWriter.WriteLine("#region Event forwarders");
       foreach (var eventDefinition in model.Events) {
-        WriteApplicationLevelEventForwarder(sourceWriter, eventDefinition);
+        WriteApplicationLevelEventForwarder(model, sourceWriter, eventDefinition);
       }
       sourceWriter.WriteLine("#endregion");
 
@@ -292,7 +292,7 @@ namespace CodeGen {
 
       sourceWriter.WriteLine("#region Function delegate types");
       foreach (var function in model.Functions) {
-        WriteLibrayrFunctionsDelegate(sourceWriter, function);
+        WriteLibrayrFunctionsDelegate(model, sourceWriter, function);
       }
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
@@ -300,7 +300,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("#region Event delegate types");
       foreach (var definition in model.Events) {
         sourceWriter.WriteLine("[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]");
-        WriteDelegateType(sourceWriter, definition.DelegateFunction);
+        WriteDelegateType(model, sourceWriter, definition.DelegateFunction);
       }
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
@@ -351,7 +351,7 @@ namespace CodeGen {
       sourceWriter.WriteLine();
       sourceWriter.WriteLine("#region Event handlers");
       foreach (var eventDefinition in model.Events) {
-        WriteNativeEventHandler(sourceWriter, eventDefinition);
+        WriteNativeEventHandler(model, sourceWriter, eventDefinition);
       }
       sourceWriter.WriteLine("#endregion");
       sourceWriter.DecIndent();
@@ -359,20 +359,17 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteFunction(SourceCodeWriter sourceWriter, FunctionDefinition definition) {
+    private void WriteFunction(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition definition) {
       sourceWriter.WriteIndent();
-      WriteFunctionSignature(sourceWriter, definition);
+      WriteFunctionSignature(model, sourceWriter, definition);
       sourceWriter.Write(";");
       sourceWriter.WriteLine();
     }
 
-    private void WriteApplicationFunctionImplementation(
-      WindowsAccessBridgeModel model,
-      SourceCodeWriter sourceWriter,
-      FunctionDefinition definition) {
+    private void WriteApplicationFunctionImplementation(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition definition) {
       sourceWriter.WriteIndent();
       sourceWriter.Write("public ");
-      WriteFunctionSignature(sourceWriter, definition);
+      WriteFunctionSignature(model, sourceWriter, definition);
       sourceWriter.Write(" {{");
       sourceWriter.WriteLine();
       sourceWriter.IncIndent();
@@ -653,20 +650,20 @@ namespace CodeGen {
       }
     }
 
-    private void WriteDelegateType(SourceCodeWriter sourceWriter, FunctionDefinition definition) {
+    private void WriteDelegateType(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition definition) {
       sourceWriter.WriteMarshalAsLine(definition.MarshalAs);
       sourceWriter.WriteIndent();
       sourceWriter.Write("public delegate ");
-      WriteFunctionSignature(sourceWriter, definition);
+      WriteFunctionSignature(model, sourceWriter, definition);
       sourceWriter.Write(";");
       sourceWriter.WriteLine();
     }
 
-    private void WriteFunctionSignature(SourceCodeWriter sourceWriter, FunctionDefinition definition) {
-      WriteFunctionSignature(sourceWriter, definition, definition.Name);
+    private void WriteFunctionSignature(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition definition) {
+      WriteFunctionSignature(model, sourceWriter, definition, definition.Name);
     }
 
-    private void WriteFunctionSignature(SourceCodeWriter sourceWriter, FunctionDefinition definition, string name) {
+    private void WriteFunctionSignature(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition definition, string name) {
       sourceWriter.WriteType(definition.ReturnType);
       sourceWriter.Write(" ");
       sourceWriter.Write(name);
@@ -678,12 +675,12 @@ namespace CodeGen {
         else {
           sourceWriter.Write(", ");
         }
-        WriteParameter(sourceWriter, p);
+        WriteParameter(model, sourceWriter, p);
       }
       sourceWriter.Write(")");
     }
 
-    private void WriteLibrayrFunctionsDelegate(SourceCodeWriter sourceWriter, FunctionDefinition function) {
+    private void WriteLibrayrFunctionsDelegate(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition function) {
       sourceWriter.WriteLine("[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]");
       sourceWriter.WriteIndent();
       sourceWriter.Write("public delegate ");
@@ -698,7 +695,7 @@ namespace CodeGen {
         else {
           sourceWriter.Write(", ");
         }
-        WriteParameter(sourceWriter, p);
+        WriteParameter(model, sourceWriter, p);
       }
       sourceWriter.Write(");");
       sourceWriter.WriteLine();
@@ -794,10 +791,10 @@ namespace CodeGen {
       sourceWriter.WriteLine("}}");
     }
 
-    private void WriteNativeEventHandler(SourceCodeWriter sourceWriter, EventDefinition definition) {
+    private void WriteNativeEventHandler(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, EventDefinition definition) {
       sourceWriter.WriteIndent();
       sourceWriter.Write("protected virtual ");
-      WriteFunctionSignature(sourceWriter, definition.DelegateFunction, "On" + definition.Name);
+      WriteFunctionSignature(model, sourceWriter, definition.DelegateFunction, "On" + definition.Name);
       sourceWriter.Write(" {{");
       sourceWriter.WriteLine();
       sourceWriter.IncIndent();
@@ -821,10 +818,10 @@ namespace CodeGen {
       sourceWriter.WriteLine("}}");
     }
 
-    private void WriteApplicationLevelEventHandler(SourceCodeWriter sourceWriter, EventDefinition definition) {
+    private void WriteApplicationLevelEventHandler(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, EventDefinition definition) {
       sourceWriter.WriteIndent();
       sourceWriter.Write("protected virtual ");
-      WriteFunctionSignature(sourceWriter, definition.DelegateFunction, "On" + definition.Name);
+      WriteFunctionSignature(model, sourceWriter, definition.DelegateFunction, "On" + definition.Name);
       sourceWriter.Write(" {{");
       sourceWriter.WriteLine();
       sourceWriter.IncIndent();
@@ -848,11 +845,11 @@ namespace CodeGen {
       sourceWriter.WriteLine("}}");
     }
 
-    private void WriteApplicationLevelEventForwarder(SourceCodeWriter sourceWriter, EventDefinition definition) {
+    private void WriteApplicationLevelEventForwarder(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, EventDefinition definition) {
       sourceWriter.IsNativeTypes = true;
       sourceWriter.WriteIndent();
       sourceWriter.Write("private ");
-      WriteFunctionSignature(sourceWriter, definition.DelegateFunction, "Forward" + definition.Name);
+      WriteFunctionSignature(model, sourceWriter, definition.DelegateFunction, "Forward" + definition.Name);
       sourceWriter.Write(" {{");
       sourceWriter.WriteLine();
 
@@ -906,7 +903,7 @@ namespace CodeGen {
       return name.Name == "void";
     }
 
-    private void WriteParameter(SourceCodeWriter sourceWriter, ParameterDefinition parameterDefinition) {
+    private void WriteParameter(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, ParameterDefinition parameterDefinition) {
       if (parameterDefinition.IsOutAttribute) {
         sourceWriter.Write("[Out]");
       }
@@ -926,8 +923,8 @@ namespace CodeGen {
       sourceWriter.WriteLine("event {0}EventHandler {0};", eventDefinition.Name);
     }
 
-    private void WriteEventHandlerType(SourceCodeWriter sourceWriter, EventDefinition eventDefinition) {
-      WriteDelegateType(sourceWriter, eventDefinition.DelegateFunction);
+    private void WriteEventHandlerType(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, EventDefinition eventDefinition) {
+      WriteDelegateType(model, sourceWriter, eventDefinition.DelegateFunction);
     }
 
     private void WriteLibraryStruct(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, StrucDefinition definition) {
