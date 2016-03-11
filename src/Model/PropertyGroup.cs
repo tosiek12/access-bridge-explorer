@@ -11,6 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+using System;
+
 namespace AccessBridgeExplorer.Model {
   /// <summary>
   /// A property node that can have children (as a <see cref="PropertyList"/>).
@@ -30,8 +33,17 @@ namespace AccessBridgeExplorer.Model {
       return _children.AddGroup(name, value);
     }
 
+    public Action LoadChildren { get; set; }
+
     public PropertyList Children {
-      get { return _children; }
+      get {
+        if (LoadChildren != null) {
+          var temp = LoadChildren;
+          LoadChildren = null;
+          temp();
+        }
+        return _children;
+      }
     }
 
     public bool Expanded { get; set; }

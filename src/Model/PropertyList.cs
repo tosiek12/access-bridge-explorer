@@ -20,7 +20,7 @@ namespace AccessBridgeExplorer.Model {
   /// </summary>
   public class PropertyList : List<PropertyNode> {
     public PropertyNode AddProperty(string name, object value) {
-      var prop = new PropertyGroup(name, value);
+      var prop = new PropertyNode(name, value);
       Add(prop);
       return prop;
     }
