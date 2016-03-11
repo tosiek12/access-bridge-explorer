@@ -43,7 +43,7 @@ namespace CodeGen.Interop {
     StatusResult GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
 
     StatusResult GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac);
-    StatusResult GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info);
+    StatusResult GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, [Out]AccessibleContextInfo info);
     JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i);
     JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac);
 

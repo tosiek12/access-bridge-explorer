@@ -19,7 +19,7 @@ using jint = System.Int32;
 namespace CodeGen.Interop.NativeStructures {
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleContextInfo {
+  public class AccessibleContextInfo {
 
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = Constants.MAX_STRING_SIZE)]
     public string name;          // the AccessibleName of the object

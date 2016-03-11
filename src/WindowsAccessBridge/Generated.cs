@@ -218,26 +218,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public AccessibleActionInfo[] actions;
   }
 
-  public struct AccessibleContextInfo {
-    public string name;
-    public string description;
-    public string role;
-    public string role_en_US;
-    public string states;
-    public string states_en_US;
-    public int indexInParent;
-    public int childrenCount;
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-    public int accessibleComponent;
-    public int accessibleAction;
-    public int accessibleSelection;
-    public int accessibleText;
-    public AccessibleInterfaces accessibleInterfaces;
-  }
-
   public struct AccessibleHyperlinkInfo {
     public string text;
     public int startIndex;
@@ -359,6 +339,26 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public AccessibleActionInfo[] actionInfo;
   }
 
+  public class AccessibleContextInfo {
+    public string name;
+    public string description;
+    public string role;
+    public string role_en_US;
+    public string states;
+    public string states_en_US;
+    public int indexInParent;
+    public int childrenCount;
+    public int x;
+    public int y;
+    public int width;
+    public int height;
+    public int accessibleComponent;
+    public int accessibleAction;
+    public int accessibleSelection;
+    public int accessibleText;
+    public AccessibleInterfaces accessibleInterfaces;
+  }
+
   /// <summary>
   /// Implementation of platform agnostic functions
   /// </summary>
@@ -426,13 +426,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     public bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info) {
-      AccessibleContextInfoNative infoTemp;
-      var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), out infoTemp);
+      AccessibleContextInfoNative infoTemp = new AccessibleContextInfoNative();
+      var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), infoTemp);
       GC.KeepAlive(ac);
+      info = new AccessibleContextInfo();
       if (Succeeded(result))
-        info = Wrap(vmid, infoTemp);
-      else
-        info = default(AccessibleContextInfo);
+        CopyWrap(vmid, infoTemp, info);
       return Succeeded(result);
     }
 
@@ -936,50 +935,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    private AccessibleContextInfo Wrap(int vmid, AccessibleContextInfoNative info) {
-      var result = new AccessibleContextInfo();
-      result.name = info.name;
-      result.description = info.description;
-      result.role = info.role;
-      result.role_en_US = info.role_en_US;
-      result.states = info.states;
-      result.states_en_US = info.states_en_US;
-      result.indexInParent = info.indexInParent;
-      result.childrenCount = info.childrenCount;
-      result.x = info.x;
-      result.y = info.y;
-      result.width = info.width;
-      result.height = info.height;
-      result.accessibleComponent = info.accessibleComponent;
-      result.accessibleAction = info.accessibleAction;
-      result.accessibleSelection = info.accessibleSelection;
-      result.accessibleText = info.accessibleText;
-      result.accessibleInterfaces = info.accessibleInterfaces;
-      return result;
-    }
-
-    private AccessibleContextInfoNative Unwrap(int vmid, AccessibleContextInfo info) {
-      var result = new AccessibleContextInfoNative();
-      result.name = info.name;
-      result.description = info.description;
-      result.role = info.role;
-      result.role_en_US = info.role_en_US;
-      result.states = info.states;
-      result.states_en_US = info.states_en_US;
-      result.indexInParent = info.indexInParent;
-      result.childrenCount = info.childrenCount;
-      result.x = info.x;
-      result.y = info.y;
-      result.width = info.width;
-      result.height = info.height;
-      result.accessibleComponent = info.accessibleComponent;
-      result.accessibleAction = info.accessibleAction;
-      result.accessibleSelection = info.accessibleSelection;
-      result.accessibleText = info.accessibleText;
-      result.accessibleInterfaces = info.accessibleInterfaces;
-      return result;
-    }
-
     private AccessibleHyperlinkInfo Wrap(int vmid, AccessibleHyperlinkInfoNative info) {
       var result = new AccessibleHyperlinkInfo();
       result.text = info.text;
@@ -1372,6 +1327,46 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           infoDest.actionInfo[i] = Unwrap(vmid, infoSrc.actionInfo[i]);
         }
       }
+    }
+
+    private void CopyWrap(int vmid, AccessibleContextInfoNative infoSrc, AccessibleContextInfo infoDest) {
+      infoDest.name = infoSrc.name;
+      infoDest.description = infoSrc.description;
+      infoDest.role = infoSrc.role;
+      infoDest.role_en_US = infoSrc.role_en_US;
+      infoDest.states = infoSrc.states;
+      infoDest.states_en_US = infoSrc.states_en_US;
+      infoDest.indexInParent = infoSrc.indexInParent;
+      infoDest.childrenCount = infoSrc.childrenCount;
+      infoDest.x = infoSrc.x;
+      infoDest.y = infoSrc.y;
+      infoDest.width = infoSrc.width;
+      infoDest.height = infoSrc.height;
+      infoDest.accessibleComponent = infoSrc.accessibleComponent;
+      infoDest.accessibleAction = infoSrc.accessibleAction;
+      infoDest.accessibleSelection = infoSrc.accessibleSelection;
+      infoDest.accessibleText = infoSrc.accessibleText;
+      infoDest.accessibleInterfaces = infoSrc.accessibleInterfaces;
+    }
+
+    private void CopyUnwrap(int vmid, AccessibleContextInfo infoSrc, AccessibleContextInfoNative infoDest) {
+      infoDest.name = infoSrc.name;
+      infoDest.description = infoSrc.description;
+      infoDest.role = infoSrc.role;
+      infoDest.role_en_US = infoSrc.role_en_US;
+      infoDest.states = infoSrc.states;
+      infoDest.states_en_US = infoSrc.states_en_US;
+      infoDest.indexInParent = infoSrc.indexInParent;
+      infoDest.childrenCount = infoSrc.childrenCount;
+      infoDest.x = infoSrc.x;
+      infoDest.y = infoSrc.y;
+      infoDest.width = infoSrc.width;
+      infoDest.height = infoSrc.height;
+      infoDest.accessibleComponent = infoSrc.accessibleComponent;
+      infoDest.accessibleAction = infoSrc.accessibleAction;
+      infoDest.accessibleSelection = infoSrc.accessibleSelection;
+      infoDest.accessibleText = infoSrc.accessibleText;
+      infoDest.accessibleInterfaces = infoSrc.accessibleInterfaces;
     }
 
     #endregion
@@ -2059,13 +2054,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     public bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info) {
-      AccessibleContextInfoNativeLegacy infoTemp;
-      var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), out infoTemp);
+      AccessibleContextInfoNativeLegacy infoTemp = new AccessibleContextInfoNativeLegacy();
+      var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), infoTemp);
       GC.KeepAlive(ac);
+      info = new AccessibleContextInfo();
       if (Succeeded(result))
-        info = Wrap(vmid, infoTemp);
-      else
-        info = default(AccessibleContextInfo);
+        CopyWrap(vmid, infoTemp, info);
       return Succeeded(result);
     }
 
@@ -2569,50 +2563,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    private AccessibleContextInfo Wrap(int vmid, AccessibleContextInfoNativeLegacy info) {
-      var result = new AccessibleContextInfo();
-      result.name = info.name;
-      result.description = info.description;
-      result.role = info.role;
-      result.role_en_US = info.role_en_US;
-      result.states = info.states;
-      result.states_en_US = info.states_en_US;
-      result.indexInParent = info.indexInParent;
-      result.childrenCount = info.childrenCount;
-      result.x = info.x;
-      result.y = info.y;
-      result.width = info.width;
-      result.height = info.height;
-      result.accessibleComponent = info.accessibleComponent;
-      result.accessibleAction = info.accessibleAction;
-      result.accessibleSelection = info.accessibleSelection;
-      result.accessibleText = info.accessibleText;
-      result.accessibleInterfaces = info.accessibleInterfaces;
-      return result;
-    }
-
-    private AccessibleContextInfoNativeLegacy Unwrap(int vmid, AccessibleContextInfo info) {
-      var result = new AccessibleContextInfoNativeLegacy();
-      result.name = info.name;
-      result.description = info.description;
-      result.role = info.role;
-      result.role_en_US = info.role_en_US;
-      result.states = info.states;
-      result.states_en_US = info.states_en_US;
-      result.indexInParent = info.indexInParent;
-      result.childrenCount = info.childrenCount;
-      result.x = info.x;
-      result.y = info.y;
-      result.width = info.width;
-      result.height = info.height;
-      result.accessibleComponent = info.accessibleComponent;
-      result.accessibleAction = info.accessibleAction;
-      result.accessibleSelection = info.accessibleSelection;
-      result.accessibleText = info.accessibleText;
-      result.accessibleInterfaces = info.accessibleInterfaces;
-      return result;
-    }
-
     private AccessibleHyperlinkInfo Wrap(int vmid, AccessibleHyperlinkInfoNativeLegacy info) {
       var result = new AccessibleHyperlinkInfo();
       result.text = info.text;
@@ -3005,6 +2955,46 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           infoDest.actionInfo[i] = Unwrap(vmid, infoSrc.actionInfo[i]);
         }
       }
+    }
+
+    private void CopyWrap(int vmid, AccessibleContextInfoNativeLegacy infoSrc, AccessibleContextInfo infoDest) {
+      infoDest.name = infoSrc.name;
+      infoDest.description = infoSrc.description;
+      infoDest.role = infoSrc.role;
+      infoDest.role_en_US = infoSrc.role_en_US;
+      infoDest.states = infoSrc.states;
+      infoDest.states_en_US = infoSrc.states_en_US;
+      infoDest.indexInParent = infoSrc.indexInParent;
+      infoDest.childrenCount = infoSrc.childrenCount;
+      infoDest.x = infoSrc.x;
+      infoDest.y = infoSrc.y;
+      infoDest.width = infoSrc.width;
+      infoDest.height = infoSrc.height;
+      infoDest.accessibleComponent = infoSrc.accessibleComponent;
+      infoDest.accessibleAction = infoSrc.accessibleAction;
+      infoDest.accessibleSelection = infoSrc.accessibleSelection;
+      infoDest.accessibleText = infoSrc.accessibleText;
+      infoDest.accessibleInterfaces = infoSrc.accessibleInterfaces;
+    }
+
+    private void CopyUnwrap(int vmid, AccessibleContextInfo infoSrc, AccessibleContextInfoNativeLegacy infoDest) {
+      infoDest.name = infoSrc.name;
+      infoDest.description = infoSrc.description;
+      infoDest.role = infoSrc.role;
+      infoDest.role_en_US = infoSrc.role_en_US;
+      infoDest.states = infoSrc.states;
+      infoDest.states_en_US = infoSrc.states_en_US;
+      infoDest.indexInParent = infoSrc.indexInParent;
+      infoDest.childrenCount = infoSrc.childrenCount;
+      infoDest.x = infoSrc.x;
+      infoDest.y = infoSrc.y;
+      infoDest.width = infoSrc.width;
+      infoDest.height = infoSrc.height;
+      infoDest.accessibleComponent = infoSrc.accessibleComponent;
+      infoDest.accessibleAction = infoSrc.accessibleAction;
+      infoDest.accessibleSelection = infoSrc.accessibleSelection;
+      infoDest.accessibleText = infoSrc.accessibleText;
+      infoDest.accessibleInterfaces = infoSrc.accessibleInterfaces;
     }
 
     #endregion
@@ -3743,7 +3733,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleContextWithFocusFP(WindowHandle window, out int vmid, out JOBJECT64 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextInfoFP(int vmid, JOBJECT64 ac, out AccessibleContextInfoNative info);
+    public delegate BOOL GetAccessibleContextInfoFP(int vmid, JOBJECT64 ac, [Out]AccessibleContextInfoNative info);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate JOBJECT64 GetAccessibleChildFromContextFP(int vmid, JOBJECT64 ac, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -4093,7 +4083,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleContextWithFocusFP(WindowHandle window, out int vmid, out JOBJECT32 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextInfoFP(int vmid, JOBJECT32 ac, out AccessibleContextInfoNativeLegacy info);
+    public delegate BOOL GetAccessibleContextInfoFP(int vmid, JOBJECT32 ac, [Out]AccessibleContextInfoNativeLegacy info);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate JOBJECT32 GetAccessibleChildFromContextFP(int vmid, JOBJECT32 ac, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -5627,33 +5617,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleContextInfoNative {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string name;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string description;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string role;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string role_en_US;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string states;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string states_en_US;
-    public int indexInParent;
-    public int childrenCount;
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-    public int accessibleComponent;
-    public int accessibleAction;
-    public int accessibleSelection;
-    public int accessibleText;
-    public AccessibleInterfaces accessibleInterfaces;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleHyperlinkInfoNative {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string text;
@@ -5809,32 +5772,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessBridgeVersionInfoNativeLegacy {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string VMversion;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string bridgeJavaClassVersion;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string bridgeJavaDLLVersion;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string bridgeWinDLLVersion;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleActionInfoNativeLegacy {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string name;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleActionsToDoNativeLegacy {
-    public int actionsCount;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-    public AccessibleActionInfoNativeLegacy[] actions;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleContextInfoNativeLegacy {
+  public class AccessibleContextInfoNative {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
     public string name;
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
@@ -5858,6 +5796,31 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public int accessibleSelection;
     public int accessibleText;
     public AccessibleInterfaces accessibleInterfaces;
+  }
+
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+  public struct AccessBridgeVersionInfoNativeLegacy {
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string VMversion;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string bridgeJavaClassVersion;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string bridgeJavaDLLVersion;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string bridgeWinDLLVersion;
+  }
+
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+  public struct AccessibleActionInfoNativeLegacy {
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string name;
+  }
+
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+  public struct AccessibleActionsToDoNativeLegacy {
+    public int actionsCount;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+    public AccessibleActionInfoNativeLegacy[] actions;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -6013,6 +5976,33 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public int actionsCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
     public AccessibleActionInfoNativeLegacy[] actionInfo;
+  }
+
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+  public class AccessibleContextInfoNativeLegacy {
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
+    public string name;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
+    public string description;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string role;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string role_en_US;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string states;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string states_en_US;
+    public int indexInParent;
+    public int childrenCount;
+    public int x;
+    public int y;
+    public int width;
+    public int height;
+    public int accessibleComponent;
+    public int accessibleAction;
+    public int accessibleSelection;
+    public int accessibleText;
+    public AccessibleInterfaces accessibleInterfaces;
   }
 
 }
