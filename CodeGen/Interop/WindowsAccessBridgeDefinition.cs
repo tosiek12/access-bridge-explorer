@@ -43,7 +43,7 @@ namespace CodeGen.Interop {
     StatusResult GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
 
     StatusResult GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac);
-    StatusResult GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, [Out]AccessibleContextInfo info);
+    StatusResult GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, [Out] AccessibleContextInfo info);
     JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i);
     JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac);
 
@@ -94,7 +94,7 @@ namespace CodeGen.Interop {
     StatusResult GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y);
     StatusResult GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index);
     StatusResult GetAccessibleTextSelectionInfo(int vmid, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection);
-    StatusResult GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes);
+    StatusResult GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, [Out] AccessibleTextAttributesInfo attributes);
 
     StatusResult GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index);
     StatusResult GetAccessibleTextLineBounds(int vmid, JavaObjectHandle at, int index, out int startIndex, out int endIndex);
@@ -116,10 +116,10 @@ namespace CodeGen.Interop {
 
     #region AccessibleTable
 
-    StatusResult GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo);
-    StatusResult GetAccessibleTableCellInfo(int vmid, JavaObjectHandle at, int row, int column, out AccessibleTableCellInfo tableCellInfo);
-    StatusResult GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
-    StatusResult GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
+    StatusResult GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, [Out] AccessibleTableInfo tableInfo);
+    StatusResult GetAccessibleTableCellInfo(int vmid, JavaObjectHandle at, int row, int column, [Out] AccessibleTableCellInfo tableCellInfo);
+    StatusResult GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, [Out] AccessibleTableInfo tableInfo);
+    StatusResult GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, [Out] AccessibleTableInfo tableInfo);
     JavaObjectHandle GetAccessibleTableRowDescription(int vmid, JavaObjectHandle acParent, int row);
     JavaObjectHandle GetAccessibleTableColumnDescription(int vmid, JavaObjectHandle acParent, int column);
     int GetAccessibleTableRowSelectionCount(int vmid, JavaObjectHandle table);
@@ -162,7 +162,7 @@ namespace CodeGen.Interop {
 
     StatusResult GetVirtualAccessibleName(int vmid, JavaObjectHandle ac, StringBuilder name, int len);
 
-    StatusResult GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len);
+    StatusResult GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, [Out] AccessibleTextAttributesInfo attributes, out short len);
 
     StatusResult GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
 

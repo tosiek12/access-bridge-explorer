@@ -22,7 +22,7 @@ namespace CodeGen.Interop.NativeStructures {
 
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTableCellInfo {
+  public class AccessibleTableCellInfo {
     public AccessibleContext accessibleContext;
     public jint index;
     public jint row;

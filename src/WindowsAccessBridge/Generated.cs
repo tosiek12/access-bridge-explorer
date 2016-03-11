@@ -263,47 +263,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public AccessibleRelationInfo[] relations;
   }
 
-  public struct AccessibleTableCellInfo {
-    public JavaObjectHandle accessibleContext;
-    public int index;
-    public int row;
-    public int column;
-    public int rowExtent;
-    public int columnExtent;
-    public byte isSelected;
-  }
-
-  public struct AccessibleTableInfo {
-    public JavaObjectHandle caption;
-    public JavaObjectHandle summary;
-    public int rowCount;
-    public int columnCount;
-    public JavaObjectHandle accessibleContext;
-    public JavaObjectHandle accessibleTable;
-  }
-
-  public struct AccessibleTextAttributesInfo {
-    public int bold;
-    public int italic;
-    public int underline;
-    public int strikethrough;
-    public int superscript;
-    public int subscript;
-    public string backgroundColor;
-    public string foregroundColor;
-    public string fontFamily;
-    public int fontSize;
-    public int alignment;
-    public int bidiLevel;
-    public float firstLineIndent;
-    public float leftIndent;
-    public float rightIndent;
-    public float lineSpacing;
-    public float spaceAbove;
-    public float spaceBelow;
-    public string fullAttributesString;
-  }
-
   public struct AccessibleTextInfo {
     public int charCount;
     public int caretIndex;
@@ -357,6 +316,47 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public int accessibleSelection;
     public int accessibleText;
     public AccessibleInterfaces accessibleInterfaces;
+  }
+
+  public class AccessibleTableCellInfo {
+    public JavaObjectHandle accessibleContext;
+    public int index;
+    public int row;
+    public int column;
+    public int rowExtent;
+    public int columnExtent;
+    public byte isSelected;
+  }
+
+  public class AccessibleTableInfo {
+    public JavaObjectHandle caption;
+    public JavaObjectHandle summary;
+    public int rowCount;
+    public int columnCount;
+    public JavaObjectHandle accessibleContext;
+    public JavaObjectHandle accessibleTable;
+  }
+
+  public class AccessibleTextAttributesInfo {
+    public int bold;
+    public int italic;
+    public int underline;
+    public int strikethrough;
+    public int superscript;
+    public int subscript;
+    public string backgroundColor;
+    public string foregroundColor;
+    public string fontFamily;
+    public int fontSize;
+    public int alignment;
+    public int bidiLevel;
+    public float firstLineIndent;
+    public float leftIndent;
+    public float rightIndent;
+    public float lineSpacing;
+    public float spaceAbove;
+    public float spaceBelow;
+    public string fullAttributesString;
   }
 
   /// <summary>
@@ -585,13 +585,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     public bool GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes) {
-      AccessibleTextAttributesInfoNative attributesTemp;
-      var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, out attributesTemp);
+      AccessibleTextAttributesInfoNative attributesTemp = new AccessibleTextAttributesInfoNative();
+      var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, attributesTemp);
       GC.KeepAlive(at);
+      attributes = new AccessibleTextAttributesInfo();
       if (Succeeded(result))
-        attributes = Wrap(vmid, attributesTemp);
-      else
-        attributes = default(AccessibleTextAttributesInfo);
+        CopyWrap(vmid, attributesTemp, attributes);
       return Succeeded(result);
     }
 
@@ -675,46 +674,42 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     public bool GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo) {
-      AccessibleTableInfoNative tableInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTableInfo(vmid, Unwrap(vmid, ac), out tableInfoTemp);
+      AccessibleTableInfoNative tableInfoTemp = new AccessibleTableInfoNative();
+      var result = LibraryFunctions.GetAccessibleTableInfo(vmid, Unwrap(vmid, ac), tableInfoTemp);
       GC.KeepAlive(ac);
+      tableInfo = new AccessibleTableInfo();
       if (Succeeded(result))
-        tableInfo = Wrap(vmid, tableInfoTemp);
-      else
-        tableInfo = default(AccessibleTableInfo);
+        CopyWrap(vmid, tableInfoTemp, tableInfo);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle at, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
-      AccessibleTableCellInfoNative tableCellInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, at), row, column, out tableCellInfoTemp);
+      AccessibleTableCellInfoNative tableCellInfoTemp = new AccessibleTableCellInfoNative();
+      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, at), row, column, tableCellInfoTemp);
       GC.KeepAlive(at);
+      tableCellInfo = new AccessibleTableCellInfo();
       if (Succeeded(result))
-        tableCellInfo = Wrap(vmid, tableCellInfoTemp);
-      else
-        tableCellInfo = default(AccessibleTableCellInfo);
+        CopyWrap(vmid, tableCellInfoTemp, tableCellInfo);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
-      AccessibleTableInfoNative tableInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTableRowHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
+      AccessibleTableInfoNative tableInfoTemp = new AccessibleTableInfoNative();
+      var result = LibraryFunctions.GetAccessibleTableRowHeader(vmid, Unwrap(vmid, acParent), tableInfoTemp);
       GC.KeepAlive(acParent);
+      tableInfo = new AccessibleTableInfo();
       if (Succeeded(result))
-        tableInfo = Wrap(vmid, tableInfoTemp);
-      else
-        tableInfo = default(AccessibleTableInfo);
+        CopyWrap(vmid, tableInfoTemp, tableInfo);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
-      AccessibleTableInfoNative tableInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
+      AccessibleTableInfoNative tableInfoTemp = new AccessibleTableInfoNative();
+      var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmid, Unwrap(vmid, acParent), tableInfoTemp);
       GC.KeepAlive(acParent);
+      tableInfo = new AccessibleTableInfo();
       if (Succeeded(result))
-        tableInfo = Wrap(vmid, tableInfoTemp);
-      else
-        tableInfo = default(AccessibleTableInfo);
+        CopyWrap(vmid, tableInfoTemp, tableInfo);
       return Succeeded(result);
     }
 
@@ -827,13 +822,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     public bool GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len) {
-      AccessibleTextAttributesInfoNative attributesTemp;
-      var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, out attributesTemp, out len);
+      AccessibleTextAttributesInfoNative attributesTemp = new AccessibleTextAttributesInfoNative();
+      var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, attributesTemp, out len);
       GC.KeepAlive(accessibleContext);
+      attributes = new AccessibleTextAttributesInfo();
       if (Succeeded(result))
-        attributes = Wrap(vmid, attributesTemp);
-      else
-        attributes = default(AccessibleTextAttributesInfo);
+        CopyWrap(vmid, attributesTemp, attributes);
       return Succeeded(result);
     }
 
@@ -1117,100 +1111,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    private AccessibleTableCellInfo Wrap(int vmid, AccessibleTableCellInfoNative info) {
-      var result = new AccessibleTableCellInfo();
-      result.accessibleContext = Wrap(vmid, info.accessibleContext);
-      result.index = info.index;
-      result.row = info.row;
-      result.column = info.column;
-      result.rowExtent = info.rowExtent;
-      result.columnExtent = info.columnExtent;
-      result.isSelected = info.isSelected;
-      return result;
-    }
-
-    private AccessibleTableCellInfoNative Unwrap(int vmid, AccessibleTableCellInfo info) {
-      var result = new AccessibleTableCellInfoNative();
-      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
-      result.index = info.index;
-      result.row = info.row;
-      result.column = info.column;
-      result.rowExtent = info.rowExtent;
-      result.columnExtent = info.columnExtent;
-      result.isSelected = info.isSelected;
-      return result;
-    }
-
-    private AccessibleTableInfo Wrap(int vmid, AccessibleTableInfoNative info) {
-      var result = new AccessibleTableInfo();
-      result.caption = Wrap(vmid, info.caption);
-      result.summary = Wrap(vmid, info.summary);
-      result.rowCount = info.rowCount;
-      result.columnCount = info.columnCount;
-      result.accessibleContext = Wrap(vmid, info.accessibleContext);
-      result.accessibleTable = Wrap(vmid, info.accessibleTable);
-      return result;
-    }
-
-    private AccessibleTableInfoNative Unwrap(int vmid, AccessibleTableInfo info) {
-      var result = new AccessibleTableInfoNative();
-      result.caption = Unwrap(vmid, info.caption);
-      result.summary = Unwrap(vmid, info.summary);
-      result.rowCount = info.rowCount;
-      result.columnCount = info.columnCount;
-      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
-      result.accessibleTable = Unwrap(vmid, info.accessibleTable);
-      return result;
-    }
-
-    private AccessibleTextAttributesInfo Wrap(int vmid, AccessibleTextAttributesInfoNative info) {
-      var result = new AccessibleTextAttributesInfo();
-      result.bold = info.bold;
-      result.italic = info.italic;
-      result.underline = info.underline;
-      result.strikethrough = info.strikethrough;
-      result.superscript = info.superscript;
-      result.subscript = info.subscript;
-      result.backgroundColor = info.backgroundColor;
-      result.foregroundColor = info.foregroundColor;
-      result.fontFamily = info.fontFamily;
-      result.fontSize = info.fontSize;
-      result.alignment = info.alignment;
-      result.bidiLevel = info.bidiLevel;
-      result.firstLineIndent = info.firstLineIndent;
-      result.leftIndent = info.leftIndent;
-      result.rightIndent = info.rightIndent;
-      result.lineSpacing = info.lineSpacing;
-      result.spaceAbove = info.spaceAbove;
-      result.spaceBelow = info.spaceBelow;
-      result.fullAttributesString = info.fullAttributesString;
-      return result;
-    }
-
-    private AccessibleTextAttributesInfoNative Unwrap(int vmid, AccessibleTextAttributesInfo info) {
-      var result = new AccessibleTextAttributesInfoNative();
-      result.bold = info.bold;
-      result.italic = info.italic;
-      result.underline = info.underline;
-      result.strikethrough = info.strikethrough;
-      result.superscript = info.superscript;
-      result.subscript = info.subscript;
-      result.backgroundColor = info.backgroundColor;
-      result.foregroundColor = info.foregroundColor;
-      result.fontFamily = info.fontFamily;
-      result.fontSize = info.fontSize;
-      result.alignment = info.alignment;
-      result.bidiLevel = info.bidiLevel;
-      result.firstLineIndent = info.firstLineIndent;
-      result.leftIndent = info.leftIndent;
-      result.rightIndent = info.rightIndent;
-      result.lineSpacing = info.lineSpacing;
-      result.spaceAbove = info.spaceAbove;
-      result.spaceBelow = info.spaceBelow;
-      result.fullAttributesString = info.fullAttributesString;
-      return result;
-    }
-
     private AccessibleTextInfo Wrap(int vmid, AccessibleTextInfoNative info) {
       var result = new AccessibleTextInfo();
       result.charCount = info.charCount;
@@ -1367,6 +1267,88 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       infoDest.accessibleSelection = infoSrc.accessibleSelection;
       infoDest.accessibleText = infoSrc.accessibleText;
       infoDest.accessibleInterfaces = infoSrc.accessibleInterfaces;
+    }
+
+    private void CopyWrap(int vmid, AccessibleTableCellInfoNative infoSrc, AccessibleTableCellInfo infoDest) {
+      infoDest.accessibleContext = Wrap(vmid, infoSrc.accessibleContext);
+      infoDest.index = infoSrc.index;
+      infoDest.row = infoSrc.row;
+      infoDest.column = infoSrc.column;
+      infoDest.rowExtent = infoSrc.rowExtent;
+      infoDest.columnExtent = infoSrc.columnExtent;
+      infoDest.isSelected = infoSrc.isSelected;
+    }
+
+    private void CopyUnwrap(int vmid, AccessibleTableCellInfo infoSrc, AccessibleTableCellInfoNative infoDest) {
+      infoDest.accessibleContext = Unwrap(vmid, infoSrc.accessibleContext);
+      infoDest.index = infoSrc.index;
+      infoDest.row = infoSrc.row;
+      infoDest.column = infoSrc.column;
+      infoDest.rowExtent = infoSrc.rowExtent;
+      infoDest.columnExtent = infoSrc.columnExtent;
+      infoDest.isSelected = infoSrc.isSelected;
+    }
+
+    private void CopyWrap(int vmid, AccessibleTableInfoNative infoSrc, AccessibleTableInfo infoDest) {
+      infoDest.caption = Wrap(vmid, infoSrc.caption);
+      infoDest.summary = Wrap(vmid, infoSrc.summary);
+      infoDest.rowCount = infoSrc.rowCount;
+      infoDest.columnCount = infoSrc.columnCount;
+      infoDest.accessibleContext = Wrap(vmid, infoSrc.accessibleContext);
+      infoDest.accessibleTable = Wrap(vmid, infoSrc.accessibleTable);
+    }
+
+    private void CopyUnwrap(int vmid, AccessibleTableInfo infoSrc, AccessibleTableInfoNative infoDest) {
+      infoDest.caption = Unwrap(vmid, infoSrc.caption);
+      infoDest.summary = Unwrap(vmid, infoSrc.summary);
+      infoDest.rowCount = infoSrc.rowCount;
+      infoDest.columnCount = infoSrc.columnCount;
+      infoDest.accessibleContext = Unwrap(vmid, infoSrc.accessibleContext);
+      infoDest.accessibleTable = Unwrap(vmid, infoSrc.accessibleTable);
+    }
+
+    private void CopyWrap(int vmid, AccessibleTextAttributesInfoNative infoSrc, AccessibleTextAttributesInfo infoDest) {
+      infoDest.bold = infoSrc.bold;
+      infoDest.italic = infoSrc.italic;
+      infoDest.underline = infoSrc.underline;
+      infoDest.strikethrough = infoSrc.strikethrough;
+      infoDest.superscript = infoSrc.superscript;
+      infoDest.subscript = infoSrc.subscript;
+      infoDest.backgroundColor = infoSrc.backgroundColor;
+      infoDest.foregroundColor = infoSrc.foregroundColor;
+      infoDest.fontFamily = infoSrc.fontFamily;
+      infoDest.fontSize = infoSrc.fontSize;
+      infoDest.alignment = infoSrc.alignment;
+      infoDest.bidiLevel = infoSrc.bidiLevel;
+      infoDest.firstLineIndent = infoSrc.firstLineIndent;
+      infoDest.leftIndent = infoSrc.leftIndent;
+      infoDest.rightIndent = infoSrc.rightIndent;
+      infoDest.lineSpacing = infoSrc.lineSpacing;
+      infoDest.spaceAbove = infoSrc.spaceAbove;
+      infoDest.spaceBelow = infoSrc.spaceBelow;
+      infoDest.fullAttributesString = infoSrc.fullAttributesString;
+    }
+
+    private void CopyUnwrap(int vmid, AccessibleTextAttributesInfo infoSrc, AccessibleTextAttributesInfoNative infoDest) {
+      infoDest.bold = infoSrc.bold;
+      infoDest.italic = infoSrc.italic;
+      infoDest.underline = infoSrc.underline;
+      infoDest.strikethrough = infoSrc.strikethrough;
+      infoDest.superscript = infoSrc.superscript;
+      infoDest.subscript = infoSrc.subscript;
+      infoDest.backgroundColor = infoSrc.backgroundColor;
+      infoDest.foregroundColor = infoSrc.foregroundColor;
+      infoDest.fontFamily = infoSrc.fontFamily;
+      infoDest.fontSize = infoSrc.fontSize;
+      infoDest.alignment = infoSrc.alignment;
+      infoDest.bidiLevel = infoSrc.bidiLevel;
+      infoDest.firstLineIndent = infoSrc.firstLineIndent;
+      infoDest.leftIndent = infoSrc.leftIndent;
+      infoDest.rightIndent = infoSrc.rightIndent;
+      infoDest.lineSpacing = infoSrc.lineSpacing;
+      infoDest.spaceAbove = infoSrc.spaceAbove;
+      infoDest.spaceBelow = infoSrc.spaceBelow;
+      infoDest.fullAttributesString = infoSrc.fullAttributesString;
     }
 
     #endregion
@@ -2213,13 +2195,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     public bool GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes) {
-      AccessibleTextAttributesInfoNativeLegacy attributesTemp;
-      var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, out attributesTemp);
+      AccessibleTextAttributesInfoNativeLegacy attributesTemp = new AccessibleTextAttributesInfoNativeLegacy();
+      var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, attributesTemp);
       GC.KeepAlive(at);
+      attributes = new AccessibleTextAttributesInfo();
       if (Succeeded(result))
-        attributes = Wrap(vmid, attributesTemp);
-      else
-        attributes = default(AccessibleTextAttributesInfo);
+        CopyWrap(vmid, attributesTemp, attributes);
       return Succeeded(result);
     }
 
@@ -2303,46 +2284,42 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     public bool GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo) {
-      AccessibleTableInfoNativeLegacy tableInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTableInfo(vmid, Unwrap(vmid, ac), out tableInfoTemp);
+      AccessibleTableInfoNativeLegacy tableInfoTemp = new AccessibleTableInfoNativeLegacy();
+      var result = LibraryFunctions.GetAccessibleTableInfo(vmid, Unwrap(vmid, ac), tableInfoTemp);
       GC.KeepAlive(ac);
+      tableInfo = new AccessibleTableInfo();
       if (Succeeded(result))
-        tableInfo = Wrap(vmid, tableInfoTemp);
-      else
-        tableInfo = default(AccessibleTableInfo);
+        CopyWrap(vmid, tableInfoTemp, tableInfo);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle at, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
-      AccessibleTableCellInfoNativeLegacy tableCellInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, at), row, column, out tableCellInfoTemp);
+      AccessibleTableCellInfoNativeLegacy tableCellInfoTemp = new AccessibleTableCellInfoNativeLegacy();
+      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, at), row, column, tableCellInfoTemp);
       GC.KeepAlive(at);
+      tableCellInfo = new AccessibleTableCellInfo();
       if (Succeeded(result))
-        tableCellInfo = Wrap(vmid, tableCellInfoTemp);
-      else
-        tableCellInfo = default(AccessibleTableCellInfo);
+        CopyWrap(vmid, tableCellInfoTemp, tableCellInfo);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
-      AccessibleTableInfoNativeLegacy tableInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTableRowHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
+      AccessibleTableInfoNativeLegacy tableInfoTemp = new AccessibleTableInfoNativeLegacy();
+      var result = LibraryFunctions.GetAccessibleTableRowHeader(vmid, Unwrap(vmid, acParent), tableInfoTemp);
       GC.KeepAlive(acParent);
+      tableInfo = new AccessibleTableInfo();
       if (Succeeded(result))
-        tableInfo = Wrap(vmid, tableInfoTemp);
-      else
-        tableInfo = default(AccessibleTableInfo);
+        CopyWrap(vmid, tableInfoTemp, tableInfo);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
-      AccessibleTableInfoNativeLegacy tableInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmid, Unwrap(vmid, acParent), out tableInfoTemp);
+      AccessibleTableInfoNativeLegacy tableInfoTemp = new AccessibleTableInfoNativeLegacy();
+      var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmid, Unwrap(vmid, acParent), tableInfoTemp);
       GC.KeepAlive(acParent);
+      tableInfo = new AccessibleTableInfo();
       if (Succeeded(result))
-        tableInfo = Wrap(vmid, tableInfoTemp);
-      else
-        tableInfo = default(AccessibleTableInfo);
+        CopyWrap(vmid, tableInfoTemp, tableInfo);
       return Succeeded(result);
     }
 
@@ -2455,13 +2432,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     public bool GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len) {
-      AccessibleTextAttributesInfoNativeLegacy attributesTemp;
-      var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, out attributesTemp, out len);
+      AccessibleTextAttributesInfoNativeLegacy attributesTemp = new AccessibleTextAttributesInfoNativeLegacy();
+      var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, attributesTemp, out len);
       GC.KeepAlive(accessibleContext);
+      attributes = new AccessibleTextAttributesInfo();
       if (Succeeded(result))
-        attributes = Wrap(vmid, attributesTemp);
-      else
-        attributes = default(AccessibleTextAttributesInfo);
+        CopyWrap(vmid, attributesTemp, attributes);
       return Succeeded(result);
     }
 
@@ -2745,100 +2721,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return result;
     }
 
-    private AccessibleTableCellInfo Wrap(int vmid, AccessibleTableCellInfoNativeLegacy info) {
-      var result = new AccessibleTableCellInfo();
-      result.accessibleContext = Wrap(vmid, info.accessibleContext);
-      result.index = info.index;
-      result.row = info.row;
-      result.column = info.column;
-      result.rowExtent = info.rowExtent;
-      result.columnExtent = info.columnExtent;
-      result.isSelected = info.isSelected;
-      return result;
-    }
-
-    private AccessibleTableCellInfoNativeLegacy Unwrap(int vmid, AccessibleTableCellInfo info) {
-      var result = new AccessibleTableCellInfoNativeLegacy();
-      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
-      result.index = info.index;
-      result.row = info.row;
-      result.column = info.column;
-      result.rowExtent = info.rowExtent;
-      result.columnExtent = info.columnExtent;
-      result.isSelected = info.isSelected;
-      return result;
-    }
-
-    private AccessibleTableInfo Wrap(int vmid, AccessibleTableInfoNativeLegacy info) {
-      var result = new AccessibleTableInfo();
-      result.caption = Wrap(vmid, info.caption);
-      result.summary = Wrap(vmid, info.summary);
-      result.rowCount = info.rowCount;
-      result.columnCount = info.columnCount;
-      result.accessibleContext = Wrap(vmid, info.accessibleContext);
-      result.accessibleTable = Wrap(vmid, info.accessibleTable);
-      return result;
-    }
-
-    private AccessibleTableInfoNativeLegacy Unwrap(int vmid, AccessibleTableInfo info) {
-      var result = new AccessibleTableInfoNativeLegacy();
-      result.caption = Unwrap(vmid, info.caption);
-      result.summary = Unwrap(vmid, info.summary);
-      result.rowCount = info.rowCount;
-      result.columnCount = info.columnCount;
-      result.accessibleContext = Unwrap(vmid, info.accessibleContext);
-      result.accessibleTable = Unwrap(vmid, info.accessibleTable);
-      return result;
-    }
-
-    private AccessibleTextAttributesInfo Wrap(int vmid, AccessibleTextAttributesInfoNativeLegacy info) {
-      var result = new AccessibleTextAttributesInfo();
-      result.bold = info.bold;
-      result.italic = info.italic;
-      result.underline = info.underline;
-      result.strikethrough = info.strikethrough;
-      result.superscript = info.superscript;
-      result.subscript = info.subscript;
-      result.backgroundColor = info.backgroundColor;
-      result.foregroundColor = info.foregroundColor;
-      result.fontFamily = info.fontFamily;
-      result.fontSize = info.fontSize;
-      result.alignment = info.alignment;
-      result.bidiLevel = info.bidiLevel;
-      result.firstLineIndent = info.firstLineIndent;
-      result.leftIndent = info.leftIndent;
-      result.rightIndent = info.rightIndent;
-      result.lineSpacing = info.lineSpacing;
-      result.spaceAbove = info.spaceAbove;
-      result.spaceBelow = info.spaceBelow;
-      result.fullAttributesString = info.fullAttributesString;
-      return result;
-    }
-
-    private AccessibleTextAttributesInfoNativeLegacy Unwrap(int vmid, AccessibleTextAttributesInfo info) {
-      var result = new AccessibleTextAttributesInfoNativeLegacy();
-      result.bold = info.bold;
-      result.italic = info.italic;
-      result.underline = info.underline;
-      result.strikethrough = info.strikethrough;
-      result.superscript = info.superscript;
-      result.subscript = info.subscript;
-      result.backgroundColor = info.backgroundColor;
-      result.foregroundColor = info.foregroundColor;
-      result.fontFamily = info.fontFamily;
-      result.fontSize = info.fontSize;
-      result.alignment = info.alignment;
-      result.bidiLevel = info.bidiLevel;
-      result.firstLineIndent = info.firstLineIndent;
-      result.leftIndent = info.leftIndent;
-      result.rightIndent = info.rightIndent;
-      result.lineSpacing = info.lineSpacing;
-      result.spaceAbove = info.spaceAbove;
-      result.spaceBelow = info.spaceBelow;
-      result.fullAttributesString = info.fullAttributesString;
-      return result;
-    }
-
     private AccessibleTextInfo Wrap(int vmid, AccessibleTextInfoNativeLegacy info) {
       var result = new AccessibleTextInfo();
       result.charCount = info.charCount;
@@ -2995,6 +2877,88 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       infoDest.accessibleSelection = infoSrc.accessibleSelection;
       infoDest.accessibleText = infoSrc.accessibleText;
       infoDest.accessibleInterfaces = infoSrc.accessibleInterfaces;
+    }
+
+    private void CopyWrap(int vmid, AccessibleTableCellInfoNativeLegacy infoSrc, AccessibleTableCellInfo infoDest) {
+      infoDest.accessibleContext = Wrap(vmid, infoSrc.accessibleContext);
+      infoDest.index = infoSrc.index;
+      infoDest.row = infoSrc.row;
+      infoDest.column = infoSrc.column;
+      infoDest.rowExtent = infoSrc.rowExtent;
+      infoDest.columnExtent = infoSrc.columnExtent;
+      infoDest.isSelected = infoSrc.isSelected;
+    }
+
+    private void CopyUnwrap(int vmid, AccessibleTableCellInfo infoSrc, AccessibleTableCellInfoNativeLegacy infoDest) {
+      infoDest.accessibleContext = Unwrap(vmid, infoSrc.accessibleContext);
+      infoDest.index = infoSrc.index;
+      infoDest.row = infoSrc.row;
+      infoDest.column = infoSrc.column;
+      infoDest.rowExtent = infoSrc.rowExtent;
+      infoDest.columnExtent = infoSrc.columnExtent;
+      infoDest.isSelected = infoSrc.isSelected;
+    }
+
+    private void CopyWrap(int vmid, AccessibleTableInfoNativeLegacy infoSrc, AccessibleTableInfo infoDest) {
+      infoDest.caption = Wrap(vmid, infoSrc.caption);
+      infoDest.summary = Wrap(vmid, infoSrc.summary);
+      infoDest.rowCount = infoSrc.rowCount;
+      infoDest.columnCount = infoSrc.columnCount;
+      infoDest.accessibleContext = Wrap(vmid, infoSrc.accessibleContext);
+      infoDest.accessibleTable = Wrap(vmid, infoSrc.accessibleTable);
+    }
+
+    private void CopyUnwrap(int vmid, AccessibleTableInfo infoSrc, AccessibleTableInfoNativeLegacy infoDest) {
+      infoDest.caption = Unwrap(vmid, infoSrc.caption);
+      infoDest.summary = Unwrap(vmid, infoSrc.summary);
+      infoDest.rowCount = infoSrc.rowCount;
+      infoDest.columnCount = infoSrc.columnCount;
+      infoDest.accessibleContext = Unwrap(vmid, infoSrc.accessibleContext);
+      infoDest.accessibleTable = Unwrap(vmid, infoSrc.accessibleTable);
+    }
+
+    private void CopyWrap(int vmid, AccessibleTextAttributesInfoNativeLegacy infoSrc, AccessibleTextAttributesInfo infoDest) {
+      infoDest.bold = infoSrc.bold;
+      infoDest.italic = infoSrc.italic;
+      infoDest.underline = infoSrc.underline;
+      infoDest.strikethrough = infoSrc.strikethrough;
+      infoDest.superscript = infoSrc.superscript;
+      infoDest.subscript = infoSrc.subscript;
+      infoDest.backgroundColor = infoSrc.backgroundColor;
+      infoDest.foregroundColor = infoSrc.foregroundColor;
+      infoDest.fontFamily = infoSrc.fontFamily;
+      infoDest.fontSize = infoSrc.fontSize;
+      infoDest.alignment = infoSrc.alignment;
+      infoDest.bidiLevel = infoSrc.bidiLevel;
+      infoDest.firstLineIndent = infoSrc.firstLineIndent;
+      infoDest.leftIndent = infoSrc.leftIndent;
+      infoDest.rightIndent = infoSrc.rightIndent;
+      infoDest.lineSpacing = infoSrc.lineSpacing;
+      infoDest.spaceAbove = infoSrc.spaceAbove;
+      infoDest.spaceBelow = infoSrc.spaceBelow;
+      infoDest.fullAttributesString = infoSrc.fullAttributesString;
+    }
+
+    private void CopyUnwrap(int vmid, AccessibleTextAttributesInfo infoSrc, AccessibleTextAttributesInfoNativeLegacy infoDest) {
+      infoDest.bold = infoSrc.bold;
+      infoDest.italic = infoSrc.italic;
+      infoDest.underline = infoSrc.underline;
+      infoDest.strikethrough = infoSrc.strikethrough;
+      infoDest.superscript = infoSrc.superscript;
+      infoDest.subscript = infoSrc.subscript;
+      infoDest.backgroundColor = infoSrc.backgroundColor;
+      infoDest.foregroundColor = infoSrc.foregroundColor;
+      infoDest.fontFamily = infoSrc.fontFamily;
+      infoDest.fontSize = infoSrc.fontSize;
+      infoDest.alignment = infoSrc.alignment;
+      infoDest.bidiLevel = infoSrc.bidiLevel;
+      infoDest.firstLineIndent = infoSrc.firstLineIndent;
+      infoDest.leftIndent = infoSrc.leftIndent;
+      infoDest.rightIndent = infoSrc.rightIndent;
+      infoDest.lineSpacing = infoSrc.lineSpacing;
+      infoDest.spaceAbove = infoSrc.spaceAbove;
+      infoDest.spaceBelow = infoSrc.spaceBelow;
+      infoDest.fullAttributesString = infoSrc.fullAttributesString;
     }
 
     #endregion
@@ -3767,7 +3731,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmid, JOBJECT64 at, out AccessibleTextSelectionInfoNative textSelection);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextAttributesFP(int vmid, JOBJECT64 at, int index, out AccessibleTextAttributesInfoNative attributes);
+    public delegate BOOL GetAccessibleTextAttributesFP(int vmid, JOBJECT64 at, int index, [Out]AccessibleTextAttributesInfoNative attributes);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleTextRectFP(int vmid, JOBJECT64 at, out AccessibleTextRectInfoNative rectInfo, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -3795,13 +3759,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate void SelectAllAccessibleSelectionFromContextFP(int vmid, JOBJECT64 asel);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableInfoFP(int vmid, JOBJECT64 ac, out AccessibleTableInfoNative tableInfo);
+    public delegate BOOL GetAccessibleTableInfoFP(int vmid, JOBJECT64 ac, [Out]AccessibleTableInfoNative tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableCellInfoFP(int vmid, JOBJECT64 at, int row, int column, out AccessibleTableCellInfoNative tableCellInfo);
+    public delegate BOOL GetAccessibleTableCellInfoFP(int vmid, JOBJECT64 at, int row, int column, [Out]AccessibleTableCellInfoNative tableCellInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableRowHeaderFP(int vmid, JOBJECT64 acParent, out AccessibleTableInfoNative tableInfo);
+    public delegate BOOL GetAccessibleTableRowHeaderFP(int vmid, JOBJECT64 acParent, [Out]AccessibleTableInfoNative tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableColumnHeaderFP(int vmid, JOBJECT64 acParent, out AccessibleTableInfoNative tableInfo);
+    public delegate BOOL GetAccessibleTableColumnHeaderFP(int vmid, JOBJECT64 acParent, [Out]AccessibleTableInfoNative tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate JOBJECT64 GetAccessibleTableRowDescriptionFP(int vmid, JOBJECT64 acParent, int row);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -3839,7 +3803,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetVirtualAccessibleNameFP(int vmid, JOBJECT64 ac, StringBuilder name, int len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetTextAttributesInRangeFP(int vmid, JOBJECT64 accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfoNative attributes, out short len);
+    public delegate BOOL GetTextAttributesInRangeFP(int vmid, JOBJECT64 accessibleContext, int startIndex, int endIndex, [Out]AccessibleTextAttributesInfoNative attributes, out short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetCaretLocationFP(int vmid, JOBJECT64 ac, out AccessibleTextRectInfoNative rectInfo, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -4117,7 +4081,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmid, JOBJECT32 at, out AccessibleTextSelectionInfoNativeLegacy textSelection);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextAttributesFP(int vmid, JOBJECT32 at, int index, out AccessibleTextAttributesInfoNativeLegacy attributes);
+    public delegate BOOL GetAccessibleTextAttributesFP(int vmid, JOBJECT32 at, int index, [Out]AccessibleTextAttributesInfoNativeLegacy attributes);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleTextRectFP(int vmid, JOBJECT32 at, out AccessibleTextRectInfoNativeLegacy rectInfo, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -4145,13 +4109,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate void SelectAllAccessibleSelectionFromContextFP(int vmid, JOBJECT32 asel);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableInfoFP(int vmid, JOBJECT32 ac, out AccessibleTableInfoNativeLegacy tableInfo);
+    public delegate BOOL GetAccessibleTableInfoFP(int vmid, JOBJECT32 ac, [Out]AccessibleTableInfoNativeLegacy tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableCellInfoFP(int vmid, JOBJECT32 at, int row, int column, out AccessibleTableCellInfoNativeLegacy tableCellInfo);
+    public delegate BOOL GetAccessibleTableCellInfoFP(int vmid, JOBJECT32 at, int row, int column, [Out]AccessibleTableCellInfoNativeLegacy tableCellInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableRowHeaderFP(int vmid, JOBJECT32 acParent, out AccessibleTableInfoNativeLegacy tableInfo);
+    public delegate BOOL GetAccessibleTableRowHeaderFP(int vmid, JOBJECT32 acParent, [Out]AccessibleTableInfoNativeLegacy tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableColumnHeaderFP(int vmid, JOBJECT32 acParent, out AccessibleTableInfoNativeLegacy tableInfo);
+    public delegate BOOL GetAccessibleTableColumnHeaderFP(int vmid, JOBJECT32 acParent, [Out]AccessibleTableInfoNativeLegacy tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate JOBJECT32 GetAccessibleTableRowDescriptionFP(int vmid, JOBJECT32 acParent, int row);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -4189,7 +4153,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetVirtualAccessibleNameFP(int vmid, JOBJECT32 ac, StringBuilder name, int len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetTextAttributesInRangeFP(int vmid, JOBJECT32 accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfoNativeLegacy attributes, out short len);
+    public delegate BOOL GetTextAttributesInRangeFP(int vmid, JOBJECT32 accessibleContext, int startIndex, int endIndex, [Out]AccessibleTextAttributesInfoNativeLegacy attributes, out short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetCaretLocationFP(int vmid, JOBJECT32 ac, out AccessibleTextRectInfoNativeLegacy rectInfo, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -5678,54 +5642,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTableCellInfoNative {
-    public JOBJECT64 accessibleContext;
-    public int index;
-    public int row;
-    public int column;
-    public int rowExtent;
-    public int columnExtent;
-    public byte isSelected;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTableInfoNative {
-    public JOBJECT64 caption;
-    public JOBJECT64 summary;
-    public int rowCount;
-    public int columnCount;
-    public JOBJECT64 accessibleContext;
-    public JOBJECT64 accessibleTable;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextAttributesInfoNative {
-    public int bold;
-    public int italic;
-    public int underline;
-    public int strikethrough;
-    public int superscript;
-    public int subscript;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string backgroundColor;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string foregroundColor;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string fontFamily;
-    public int fontSize;
-    public int alignment;
-    public int bidiLevel;
-    public float firstLineIndent;
-    public float leftIndent;
-    public float rightIndent;
-    public float lineSpacing;
-    public float spaceAbove;
-    public float spaceBelow;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string fullAttributesString;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleTextInfoNative {
     public int charCount;
     public int caretIndex;
@@ -5796,6 +5712,54 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public int accessibleSelection;
     public int accessibleText;
     public AccessibleInterfaces accessibleInterfaces;
+  }
+
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+  public class AccessibleTableCellInfoNative {
+    public JOBJECT64 accessibleContext;
+    public int index;
+    public int row;
+    public int column;
+    public int rowExtent;
+    public int columnExtent;
+    public byte isSelected;
+  }
+
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+  public class AccessibleTableInfoNative {
+    public JOBJECT64 caption;
+    public JOBJECT64 summary;
+    public int rowCount;
+    public int columnCount;
+    public JOBJECT64 accessibleContext;
+    public JOBJECT64 accessibleTable;
+  }
+
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+  public class AccessibleTextAttributesInfoNative {
+    public int bold;
+    public int italic;
+    public int underline;
+    public int strikethrough;
+    public int superscript;
+    public int subscript;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string backgroundColor;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string foregroundColor;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string fontFamily;
+    public int fontSize;
+    public int alignment;
+    public int bidiLevel;
+    public float firstLineIndent;
+    public float leftIndent;
+    public float rightIndent;
+    public float lineSpacing;
+    public float spaceAbove;
+    public float spaceBelow;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
+    public string fullAttributesString;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -5885,54 +5849,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTableCellInfoNativeLegacy {
-    public JOBJECT32 accessibleContext;
-    public int index;
-    public int row;
-    public int column;
-    public int rowExtent;
-    public int columnExtent;
-    public byte isSelected;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTableInfoNativeLegacy {
-    public JOBJECT32 caption;
-    public JOBJECT32 summary;
-    public int rowCount;
-    public int columnCount;
-    public JOBJECT32 accessibleContext;
-    public JOBJECT32 accessibleTable;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextAttributesInfoNativeLegacy {
-    public int bold;
-    public int italic;
-    public int underline;
-    public int strikethrough;
-    public int superscript;
-    public int subscript;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string backgroundColor;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string foregroundColor;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string fontFamily;
-    public int fontSize;
-    public int alignment;
-    public int bidiLevel;
-    public float firstLineIndent;
-    public float leftIndent;
-    public float rightIndent;
-    public float lineSpacing;
-    public float spaceAbove;
-    public float spaceBelow;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string fullAttributesString;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleTextInfoNativeLegacy {
     public int charCount;
     public int caretIndex;
@@ -6003,6 +5919,54 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public int accessibleSelection;
     public int accessibleText;
     public AccessibleInterfaces accessibleInterfaces;
+  }
+
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+  public class AccessibleTableCellInfoNativeLegacy {
+    public JOBJECT32 accessibleContext;
+    public int index;
+    public int row;
+    public int column;
+    public int rowExtent;
+    public int columnExtent;
+    public byte isSelected;
+  }
+
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+  public class AccessibleTableInfoNativeLegacy {
+    public JOBJECT32 caption;
+    public JOBJECT32 summary;
+    public int rowCount;
+    public int columnCount;
+    public JOBJECT32 accessibleContext;
+    public JOBJECT32 accessibleTable;
+  }
+
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+  public class AccessibleTextAttributesInfoNativeLegacy {
+    public int bold;
+    public int italic;
+    public int underline;
+    public int strikethrough;
+    public int superscript;
+    public int subscript;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string backgroundColor;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string foregroundColor;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string fontFamily;
+    public int fontSize;
+    public int alignment;
+    public int bidiLevel;
+    public float firstLineIndent;
+    public float leftIndent;
+    public float rightIndent;
+    public float lineSpacing;
+    public float spaceAbove;
+    public float spaceBelow;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
+    public string fullAttributesString;
   }
 
 }

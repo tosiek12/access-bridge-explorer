@@ -20,7 +20,7 @@ using jint = System.Int32;
 namespace CodeGen.Interop.NativeStructures {
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTableInfo {
+  public class AccessibleTableInfo {
     public AccessibleContext caption; // AccessibleContext
     public AccessibleContext summary; // AccessibleContext
     public jint rowCount;

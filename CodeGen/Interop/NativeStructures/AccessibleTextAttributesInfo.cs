@@ -22,7 +22,7 @@ namespace CodeGen.Interop.NativeStructures {
   // standard attributes for text; note: tabstops are not supported
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextAttributesInfo {
+  public class AccessibleTextAttributesInfo {
     public BOOL bold;
     public BOOL italic;
     public BOOL underline;
