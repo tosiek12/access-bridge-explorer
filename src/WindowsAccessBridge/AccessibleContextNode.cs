@@ -450,8 +450,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     private void AddActionProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleActions) != 0) {
-        AccessibleActions actions = new AccessibleActions();
-        if (Succeeded(AccessBridge.Functions.GetAccessibleActions(JvmId, _ac, actions))) {
+        AccessibleActions actions;
+        if (Succeeded(AccessBridge.Functions.GetAccessibleActions(JvmId, _ac, out actions))) {
           if (actions.actionsCount > 0) {
             var group = list.AddGroup("Actions", actions.actionsCount);
             group.Expanded = false;

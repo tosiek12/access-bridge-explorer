@@ -48,7 +48,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     bool GetAccessibleHyperlink(int vmid, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo);
     bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings);
     bool GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons);
-    bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions);
+    bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, out AccessibleActions actions);
     bool DoAccessibleActions(int vmid, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
     bool GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y);
     bool GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index);
@@ -533,10 +533,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return Succeeded(result);
     }
 
-    public bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions) {
+    public bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, out AccessibleActions actions) {
       AccessibleActionsNative actionsTemp = new AccessibleActionsNative();
       var result = LibraryFunctions.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actionsTemp);
       GC.KeepAlive(accessibleContext);
+      actions = new AccessibleActions();
       if (Succeeded(result))
         CopyWrap(vmid, actionsTemp, actions);
       return Succeeded(result);
@@ -2165,10 +2166,11 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return Succeeded(result);
     }
 
-    public bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, [Out]AccessibleActions actions) {
+    public bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, out AccessibleActions actions) {
       AccessibleActionsNativeLegacy actionsTemp = new AccessibleActionsNativeLegacy();
       var result = LibraryFunctions.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actionsTemp);
       GC.KeepAlive(accessibleContext);
+      actions = new AccessibleActions();
       if (Succeeded(result))
         CopyWrap(vmid, actionsTemp, actions);
       return Succeeded(result);

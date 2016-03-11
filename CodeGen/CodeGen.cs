@@ -209,7 +209,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("#region CopyWrap/CopyUnwrap classes");
       sourceWriter.WriteLine();
       foreach (var definition in model.Classes) {
-        WriteApplicationCCopyClassFunctions(model, sourceWriter, definition);
+        WriteApplicationCopyClassFunctions(model, sourceWriter, definition);
       }
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
@@ -491,6 +491,10 @@ namespace CodeGen {
       }
 
       foreach (var x in outClasses) {
+        if (x.IsOutAttribute && !sourceWriter.IsNativeTypes) {
+          sourceWriter.WriteLine("{0} = new {1}();", x.Name, sourceWriter.GetTypeName(x.Type));
+        }
+
         var wrapExpression = string.Format("CopyWrap(vmid, {0}Temp, {0})", x.Name);
         if (IsStatusResult(definition.ReturnType)) {
           sourceWriter.WriteLine("if (Succeeded(result))");
@@ -570,7 +574,7 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteApplicationCCopyClassFunctions(
+    private void WriteApplicationCopyClassFunctions(
       WindowsAccessBridgeModel model,
       SourceCodeWriter sourceWriter,
       BaseTypeDefinition definition) {
@@ -905,10 +909,13 @@ namespace CodeGen {
 
     private void WriteParameter(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, ParameterDefinition parameterDefinition) {
       if (parameterDefinition.IsOutAttribute) {
-        sourceWriter.Write("[Out]");
+        if (sourceWriter.IsNativeTypes || !model.IsClass(parameterDefinition.Type))
+          sourceWriter.Write("[Out]");
       }
 
       if (parameterDefinition.IsOut) {
+        sourceWriter.Write("out ");
+      } else if (parameterDefinition.IsOutAttribute && model.IsClass(parameterDefinition.Type) && !sourceWriter.IsNativeTypes) {
         sourceWriter.Write("out ");
       } else if (parameterDefinition.IsRef) {
         sourceWriter.Write("ref ");
