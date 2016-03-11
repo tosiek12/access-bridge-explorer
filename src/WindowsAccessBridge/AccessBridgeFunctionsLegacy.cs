@@ -32,6 +32,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return value != 0;
     }
 
+    private bool Succeeded(int value) {
+      return ToBool(value);
+    }
+
     private JavaObjectHandle Wrap(int vmid, JOBJECT32 handle) {
       return new JavaObjectHandle(vmid, handle);
     }

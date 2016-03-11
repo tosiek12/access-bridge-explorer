@@ -458,7 +458,7 @@ namespace CodeGen {
       foreach (var x in javaOutObjects) {
         var wrapExpression = string.Format("{0} = Wrap(vmid, {0}Temp)", x.Name);
         if (IsStatusResult(definition.ReturnType)) {
-          sourceWriter.WriteLine("if (ToBool(result)) {{");
+          sourceWriter.WriteLine("if (Succeeded(result)) {{");
           sourceWriter.IncIndent();
           sourceWriter.WriteLine("{0};", wrapExpression);
           sourceWriter.DecIndent();
@@ -478,7 +478,7 @@ namespace CodeGen {
       foreach (var x in outStructs) {
         var wrapExpression = string.Format("{0} = Wrap(vmid, {0}Temp)", x.Name);
         if (IsStatusResult(definition.ReturnType)) {
-          sourceWriter.WriteLine("if (ToBool(result))");
+          sourceWriter.WriteLine("if (Succeeded(result))");
           sourceWriter.IncIndent();
           sourceWriter.WriteLine("{0};", wrapExpression);
           sourceWriter.DecIndent();
@@ -496,7 +496,7 @@ namespace CodeGen {
       foreach (var x in outClasses) {
         var wrapExpression = string.Format("CopyWrap(vmid, {0}Temp, {0})", x.Name);
         if (IsStatusResult(definition.ReturnType)) {
-          sourceWriter.WriteLine("if (ToBool(result))");
+          sourceWriter.WriteLine("if (Succeeded(result))");
           sourceWriter.IncIndent();
           sourceWriter.WriteLine("{0};", wrapExpression);
           sourceWriter.DecIndent();
@@ -514,8 +514,10 @@ namespace CodeGen {
       if (!IsVoid(definition.ReturnType)) {
         if (IsJavaObjectHandle(definition.ReturnType)) {
           sourceWriter.WriteLine("return Wrap(vmid, result);");
-        } else if (IsBool(definition.ReturnType) || IsStatusResult(definition.ReturnType)) {
+        } else if (IsBool(definition.ReturnType)) {
           sourceWriter.WriteLine("return ToBool(result);");
+        } else if (IsStatusResult(definition.ReturnType)) {
+          sourceWriter.WriteLine("return Succeeded(result);");
         } else {
           sourceWriter.WriteLine("return result;");
         }
