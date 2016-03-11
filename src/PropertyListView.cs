@@ -135,13 +135,11 @@ namespace AccessBridgeExplorer {
 
       var propertyGroup = propertyNode as PropertyGroup;
       if (propertyGroup != null) {
-        if (propertyGroup.Children.Count > 0) {
-          expandedNodeState.ApplyGroupState(propertyNodePath, propertyGroup);
-          item.ImageIndex = (propertyGroup.Expanded ? 1 : 0);
-          if (propertyGroup.Expanded) {
-            foreach (var child in propertyGroup.Children) {
-              AddListViewItem(child, indent + 1, propertyNodePath, itemList, expandedNodeState);
-            }
+        expandedNodeState.ApplyGroupState(propertyNodePath, propertyGroup);
+        item.ImageIndex = (propertyGroup.Expanded ? 1 : 0);
+        if (propertyGroup.Expanded) {
+          foreach (var child in propertyGroup.Children) {
+            AddListViewItem(child, indent + 1, propertyNodePath, itemList, expandedNodeState);
           }
         }
       }

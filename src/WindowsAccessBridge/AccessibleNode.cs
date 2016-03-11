@@ -75,16 +75,16 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     /// Returns a <see cref="PropertyList"/> suitable for displaying in a tool
     /// tip window.
     /// </summary>
-    public PropertyList GetToolTipProperties() {
+    public PropertyList GetToolTipProperties(PropertyOptions options) {
       var result = new PropertyList();
-      AddToolTipProperties(result);
+      AddToolTipProperties(result, options);
       return result;
     }
 
     protected virtual void AddProperties(PropertyList list, PropertyOptions options) {
     }
 
-    protected virtual void AddToolTipProperties(PropertyList list) {
+    protected virtual void AddToolTipProperties(PropertyList list, PropertyOptions options) {
     }
 
     /// <summary>

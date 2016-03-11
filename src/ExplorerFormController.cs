@@ -769,7 +769,7 @@ namespace AccessBridgeExplorer {
         var node = nodePath.LeafNode;
 
         var sb = new StringBuilder();
-        foreach (var x in node.GetToolTipProperties()) {
+        foreach (var x in node.GetToolTipProperties(PropertyOptions)) {
           if (sb.Length > 0)
             sb.Append("\r\n");
           sb.AppendFormat("{0}: {1}", x.Name, x.Value);

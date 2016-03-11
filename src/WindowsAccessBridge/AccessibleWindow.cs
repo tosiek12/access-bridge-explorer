@@ -34,9 +34,9 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return new AccessibleJvm(AccessBridge, JvmId);
     }
 
-    protected override void AddToolTipProperties(PropertyList list) {
+    protected override void AddToolTipProperties(PropertyList list, PropertyOptions options) {
       list.AddProperty("Window", _hWnd);
-      base.AddToolTipProperties(list);
+      base.AddToolTipProperties(list, options);
     }
 
     protected override void AddProperties(PropertyList list, PropertyOptions options) {

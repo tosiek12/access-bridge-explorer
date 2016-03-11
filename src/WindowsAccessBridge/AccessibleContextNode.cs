@@ -319,6 +319,32 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       AddValueProperties(list, options);
       AddTableProperties(list, options);
       AddTextProperties(list, options);
+      AddHyperTextProperties(list, options);
+    }
+
+    private void AddContextProperties(PropertyList list, PropertyOptions options) {
+      if ((options & PropertyOptions.AccessibleContextInfo) != 0) {
+        var info = GetInfo();
+        list.AddProperty("Name", info.name ?? "-");
+        list.AddProperty("Description", info.description ?? "-");
+        list.AddProperty("Name (JAWS algorithm)", GetVirtualAccessibleName());
+        if ((options & PropertyOptions.ObjectDepth) != 0) {
+          var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
+          list.AddProperty("Object Depth", depth);
+        }
+        list.AddProperty("Bounds", string.Format("[{0}, {1}, {2}, {3}]", info.x, info.y, info.width, info.height));
+        list.AddProperty("Role", info.role ?? "-");
+        list.AddProperty("Role_en_US", info.role_en_US ?? "-");
+        list.AddProperty("States", info.states ?? "-");
+        list.AddProperty("States_en_US", info.states_en_US ?? "-");
+        list.AddProperty("Children count", info.childrenCount);
+        list.AddProperty("Index in parent", info.indexInParent);
+        list.AddProperty("AccessibleComponent supported", info.accessibleComponent);
+        list.AddProperty("AccessibleAction supported", info.accessibleAction);
+        list.AddProperty("AccessibleSelection supported", info.accessibleSelection);
+        list.AddProperty("AccessibleText supported", info.accessibleText);
+        list.AddProperty("AccessibleInterfaces supported", info.accessibleInterfaces);
+      }
     }
 
     private void AddTopLevelWindowProperties(PropertyList list, PropertyOptions options) {
@@ -443,24 +469,30 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     private void AddVisibleChildrenProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.VisibleChildren) != 0) {
-        var visibleCount = AccessBridge.Functions.GetVisibleChildrenCount(JvmId, _ac);
-        if (visibleCount > 0) {
-          var group = list.AddGroup("Visible Children", visibleCount);
-          group.Expanded = false;
-          group.LoadChildren = () => {
+        var group = list.AddGroup("Visible Children");
+        group.Expanded = false;
+        group.LoadChildren = () => {
+          var visibleCount = AccessBridge.Functions.GetVisibleChildrenCount(JvmId, _ac);
+          group.AddProperty("Count", visibleCount);
+          if (visibleCount > 0) {
             VisibleChildrenInfo childrenInfo;
             if (Succeeded(AccessBridge.Functions.GetVisibleChildren(JvmId, _ac, 0, out childrenInfo))) {
-              var handles = childrenInfo.children.Take(LimitSize(childrenInfo.returnedChildrenCount)).ToList();
-              var childNodes = handles.Select(x => new AccessibleContextNode(AccessBridge, x)).ToList();
+              var childNodes = childrenInfo.children
+                .Take(LimitSize(childrenInfo.returnedChildrenCount))
+                .ToList().Select(x => new AccessibleContextNode(AccessBridge, x))
+                .ToList();
               var childIndex = 0;
-              foreach (var childNode in childNodes) {
-                var childGroup = group.AddGroup(string.Format("Child {0} of {1}", childIndex + 1, childNodes.Count));
-                AddSubContextProperties(childGroup.Children, options, childNode);
+              childNodes.ForEach(childNode => {
+                var childGroup = group.AddGroup(string.Format("Child {0} of {1}", childIndex + 1, visibleCount));
+                childGroup.Expanded = false;
+                childGroup.LoadChildren = () => {
+                  AddSubContextProperties(childGroup.Children, options, childNode);
+                };
                 childIndex++;
-              }
+              });
             }
-          };
-        }
+          }
+        };
       }
     }
 
@@ -636,11 +668,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
-    private void AddTableInfo(PropertyGroup group, AccessibleTableInfo tableInfo) {
-      group.AddProperty("Row count", tableInfo.rowCount);
-      group.AddProperty("Column count", tableInfo.columnCount);
-    }
-
     private void AddTextProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleText) != 0) {
         var info = GetInfo();
@@ -665,8 +692,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
               group.AddProperty("Selected text", textSelection.selectedText);
             }
 
-            AddHyperTextProperties(group.Children, options);
-
             /* ===== AccessibleText information at the mouse point ===== */
 
             var mouseGroup = group.AddGroup(string.Format("Mouse point at index {0} attributes", textInfo.indexAtPoint));
@@ -682,16 +707,18 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     private void AddHyperTextProperties(PropertyList list, PropertyOptions options) {
-      if ((options & PropertyOptions.AccessibleText) != 0) {
-        var group = list.AddGroup("Accessible Hyper Text");
-        group.Expanded = false;
-        group.LoadChildren = () => {
-          AccessibleHypertextInfo hyperTextInfo;
+      if ((options & PropertyOptions.AccessibleHyperText) != 0) {
+        var info = GetInfo();
+        if (info.accessibleText != 0) {
+          var group = list.AddGroup("Accessible Hyper Text");
+          group.Expanded = false;
+          group.LoadChildren = () => {
+            AccessibleHypertextInfo hyperTextInfo;
 #if true
-          if (Failed(AccessBridge.Functions.GetAccessibleHypertextExt(JvmId, _ac, 0, out hyperTextInfo))) {
-            group.AddProperty("Error", "No hyper text data");
-            return;
-          }
+            if (Failed(AccessBridge.Functions.GetAccessibleHypertextExt(JvmId, _ac, 0, out hyperTextInfo))) {
+              group.AddProperty("Error", "No hyper text data");
+              return;
+            }
 #else
   // Note: This call does *not* return any value in the "hyperTextInfo.links" array
       if (Failed(AccessBridge.Functions.GetAccessibleHypertext(JvmId, _ac.Handle, out hyperTextInfo))) {
@@ -699,18 +726,15 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         return;
       }
 #endif
-          var hyperText = hyperTextInfo.accessibleHypertext;
-          var linksGroup = group.AddGroup("Hyperlinks", hyperTextInfo.linkCount);
-          for (var i = 0; i < LimitSize(hyperTextInfo.linkCount); i++) {
-            var hyperlinkHandle = hyperTextInfo.links[i].accessibleHyperlink;
-
-            var linkGroup = linksGroup.AddGroup(string.Format("Hyperlink #{0}", i + 1));
-            var hyperLink = hyperTextInfo.links[i].accessibleHyperlink;
-            linkGroup.AddProperty("Start index", hyperTextInfo.links[i].startIndex);
-            linkGroup.AddProperty("End index", hyperTextInfo.links[i].endIndex);
-            linkGroup.AddProperty("Text", hyperTextInfo.links[i].text);
-          }
-        };
+            var linksGroup = group.AddGroup("Hyperlinks", hyperTextInfo.linkCount);
+            for (var i = 0; i < LimitSize(hyperTextInfo.linkCount); i++) {
+              var linkGroup = linksGroup.AddGroup(string.Format("Hyperlink #{0}", i + 1));
+              linkGroup.AddProperty("Start index", hyperTextInfo.links[i].startIndex);
+              linkGroup.AddProperty("End index", hyperTextInfo.links[i].endIndex);
+              linkGroup.AddProperty("Text", hyperTextInfo.links[i].text);
+            }
+          };
+        }
       }
     }
 
@@ -770,29 +794,9 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       }
     }
 
-    private void AddContextProperties(PropertyList list, PropertyOptions options) {
-      if ((options & PropertyOptions.AccessibleContextInfo) != 0) {
-        var info = GetInfo();
-        list.AddProperty("Name", info.name ?? "-");
-        list.AddProperty("Description", info.description ?? "-");
-        list.AddProperty("Name (JAWS algorithm)", GetVirtualAccessibleName());
-        if ((options & PropertyOptions.ObjectDepth) != 0) {
-          var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
-          list.AddProperty("Object Depth", depth);
-        }
-        list.AddProperty("Bounds", string.Format("[{0}, {1}, {2}, {3}]", info.x, info.y, info.width, info.height));
-        list.AddProperty("Role", info.role ?? "-");
-        list.AddProperty("Role_en_US", info.role_en_US ?? "-");
-        list.AddProperty("States", info.states ?? "-");
-        list.AddProperty("States_en_US", info.states_en_US ?? "-");
-        list.AddProperty("Children count", info.childrenCount);
-        list.AddProperty("Index in parent", info.indexInParent);
-        list.AddProperty("AccessibleComponent supported", info.accessibleComponent);
-        list.AddProperty("AccessibleAction supported", info.accessibleAction);
-        list.AddProperty("AccessibleSelection supported", info.accessibleSelection);
-        list.AddProperty("AccessibleText supported", info.accessibleText);
-        list.AddProperty("AccessibleInterfaces supported", info.accessibleInterfaces);
-      }
+    private void AddTableInfo(PropertyGroup group, AccessibleTableInfo tableInfo) {
+      group.AddProperty("Row count", tableInfo.rowCount);
+      group.AddProperty("Column count", tableInfo.columnCount);
     }
 
     private void AddSubContextProperties(PropertyList list, PropertyOptions options, JavaObjectHandle contextHandle) {
