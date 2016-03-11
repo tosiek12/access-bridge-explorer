@@ -38,6 +38,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Definitions\WindowsAccessBridgeModelCollector.cs" />
     <Compile Include="CodeGen.cs" />
     <Compile Include="Definitions\ArrayTypeReference.cs" />
     <Compile Include="Definitions\ClassDefinition.cs" />
@@ -76,7 +77,7 @@
     <Compile Include="Definitions\ParameterDefinition.cs" />
     <Compile Include="Definitions\StrucDefintion.cs" />
     <Compile Include="Definitions\EventDefinition.cs" />
-    <Compile Include="Definitions\LibraryDefinition.cs" />
+    <Compile Include="Definitions\WindowsAccessBridgeModel.cs" />
     <Compile Include="Interop\StatusResult.cs" />
     <Compile Include="Interop\WindowHandle.cs" />
     <Compile Include="Interop\JavaObjectHandle.cs" />

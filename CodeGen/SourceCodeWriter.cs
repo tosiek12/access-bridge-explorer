@@ -21,10 +21,10 @@ using CodeGen.Interop;
 namespace CodeGen {
   public class SourceCodeWriter : IDisposable {
     private readonly TextWriter _textWriter;
-    private readonly LibraryDefinition _model;
+    private readonly WindowsAccessBridgeModel _model;
     private string _indent = "";
 
-    public SourceCodeWriter(TextWriter textWriter, LibraryDefinition model) {
+    public SourceCodeWriter(TextWriter textWriter, WindowsAccessBridgeModel model) {
       _textWriter = textWriter;
       _model = model;
     }
