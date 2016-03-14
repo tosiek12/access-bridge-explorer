@@ -1,4 +1,4 @@
-// Copyright 2016 Google Inc. All Rights Reserved.
+// Copyright 2015 Google Inc. All Rights Reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,15 +13,15 @@
 // limitations under the License.
 
 namespace WindowsAccessBridgeInterop {
-  partial class AccessBridgeEventsNativeLegacy {
-    private readonly AccessBridgeLibraryFunctionsLegacy _libraryFunctions;
+  partial class AccessBridgeNativeEventsForwarder {
+    private readonly AccessBridgeEntryPoints _entryPoints;
 
-    public AccessBridgeEventsNativeLegacy(AccessBridgeLibraryFunctionsLegacy libraryFunctions) {
-      _libraryFunctions = libraryFunctions;
+    public AccessBridgeNativeEventsForwarder(AccessBridgeEntryPoints entryPoints) {
+      _entryPoints = entryPoints;
     }
 
-    public AccessBridgeLibraryFunctionsLegacy LibraryFunctions {
-      get { return _libraryFunctions; }
+    public AccessBridgeEntryPoints EntryPoints {
+      get { return _entryPoints; }
     }
   }
 }

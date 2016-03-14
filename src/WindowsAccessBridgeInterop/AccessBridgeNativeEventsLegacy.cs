@@ -19,15 +19,15 @@ namespace WindowsAccessBridgeInterop {
   /// Single entry point to access all events exposed by the Java Access Bridge
   /// DLL (<see cref="AccessBridge.Events"/>).
   /// </summary>
-  partial class AccessBridgeEventsLegacy : IDisposable {
-    private readonly AccessBridgeEventsNativeLegacy _nativeEvents;
+  partial class AccessBridgeNativeEventsLegacy {
+    private readonly AccessBridgeNativeEventsForwarderLegacy _nativeEventsForwarder;
 
-    public AccessBridgeEventsLegacy(AccessBridgeLibraryFunctionsLegacy libraryFunctions) {
-      _nativeEvents = new AccessBridgeEventsNativeLegacy(libraryFunctions);
+    public AccessBridgeNativeEventsLegacy(AccessBridgeEntryPointsLegacy libraryFunctions) {
+      _nativeEventsForwarder = new AccessBridgeNativeEventsForwarderLegacy(libraryFunctions);
     }
 
-    public AccessBridgeEventsNativeLegacy NativeEvents {
-      get { return _nativeEvents; }
+    public AccessBridgeNativeEventsForwarderLegacy NativeEventsForwarder {
+      get { return _nativeEventsForwarder; }
     }
 
     public void Dispose() {

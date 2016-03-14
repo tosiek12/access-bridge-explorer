@@ -28,21 +28,21 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Implementation of platform agnostic functions
   /// </summary>
-  internal partial class AccessBridgeFunctionsLegacy : IAccessBridgeFunctions {
+  internal partial class AccessBridgeNativeFunctionsLegacy : IAccessBridgeFunctions {
 
     #region Function implementations
 
     public void Windows_run() {
-      LibraryFunctions.Windows_run();
+      EntryPoints.Windows_run();
     }
 
     public bool IsJavaWindow(WindowHandle window) {
-      var result = LibraryFunctions.IsJavaWindow(window);
+      var result = EntryPoints.IsJavaWindow(window);
       return ToBool(result);
     }
 
     public bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2) {
-      var result = LibraryFunctions.IsSameObject(vmid, Unwrap(vmid, obj1), Unwrap(vmid, obj2));
+      var result = EntryPoints.IsSameObject(vmid, Unwrap(vmid, obj1), Unwrap(vmid, obj2));
       GC.KeepAlive(obj1);
       GC.KeepAlive(obj2);
       return ToBool(result);
@@ -50,7 +50,7 @@ namespace WindowsAccessBridgeInterop {
 
     public bool GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac) {
       JOBJECT32 acTemp;
-      var result = LibraryFunctions.GetAccessibleContextFromHWND(window, out vmid, out acTemp);
+      var result = EntryPoints.GetAccessibleContextFromHWND(window, out vmid, out acTemp);
       if (Succeeded(result)) {
         ac = Wrap(vmid, acTemp);
       } else {
@@ -61,14 +61,14 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public WindowHandle GetHWNDFromAccessibleContext(int vmid, JavaObjectHandle ac) {
-      var result = LibraryFunctions.GetHWNDFromAccessibleContext(vmid, Unwrap(vmid, ac));
+      var result = EntryPoints.GetHWNDFromAccessibleContext(vmid, Unwrap(vmid, ac));
       GC.KeepAlive(ac);
       return result;
     }
 
     public bool GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac) {
       JOBJECT32 acTemp;
-      var result = LibraryFunctions.GetAccessibleContextAt(vmid, Unwrap(vmid, acParent), x, y, out acTemp);
+      var result = EntryPoints.GetAccessibleContextAt(vmid, Unwrap(vmid, acParent), x, y, out acTemp);
       GC.KeepAlive(acParent);
       if (Succeeded(result)) {
         ac = Wrap(vmid, acTemp);
@@ -81,7 +81,7 @@ namespace WindowsAccessBridgeInterop {
 
     public bool GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac) {
       JOBJECT32 acTemp;
-      var result = LibraryFunctions.GetAccessibleContextWithFocus(window, out vmid, out acTemp);
+      var result = EntryPoints.GetAccessibleContextWithFocus(window, out vmid, out acTemp);
       if (Succeeded(result)) {
         ac = Wrap(vmid, acTemp);
       } else {
@@ -93,26 +93,26 @@ namespace WindowsAccessBridgeInterop {
 
     public bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info) {
       info = new AccessibleContextInfo();
-      var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), info);
+      var result = EntryPoints.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), info);
       GC.KeepAlive(ac);
       return Succeeded(result);
     }
 
     public JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i) {
-      var result = LibraryFunctions.GetAccessibleChildFromContext(vmid, Unwrap(vmid, ac), i);
+      var result = EntryPoints.GetAccessibleChildFromContext(vmid, Unwrap(vmid, ac), i);
       GC.KeepAlive(ac);
       return Wrap(vmid, result);
     }
 
     public JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac) {
-      var result = LibraryFunctions.GetAccessibleParentFromContext(vmid, Unwrap(vmid, ac));
+      var result = EntryPoints.GetAccessibleParentFromContext(vmid, Unwrap(vmid, ac));
       GC.KeepAlive(ac);
       return Wrap(vmid, result);
     }
 
     public bool GetAccessibleRelationSet(int vmid, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo) {
       AccessibleRelationSetInfoNativeLegacy relationSetInfoTemp;
-      var result = LibraryFunctions.GetAccessibleRelationSet(vmid, Unwrap(vmid, accessibleContext), out relationSetInfoTemp);
+      var result = EntryPoints.GetAccessibleRelationSet(vmid, Unwrap(vmid, accessibleContext), out relationSetInfoTemp);
       GC.KeepAlive(accessibleContext);
       if (Succeeded(result))
         relationSetInfo = Wrap(vmid, relationSetInfoTemp);
@@ -123,7 +123,7 @@ namespace WindowsAccessBridgeInterop {
 
     public bool GetAccessibleHypertext(int vmid, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo) {
       AccessibleHypertextInfoNativeLegacy hypertextInfoTemp;
-      var result = LibraryFunctions.GetAccessibleHypertext(vmid, Unwrap(vmid, accessibleContext), out hypertextInfoTemp);
+      var result = EntryPoints.GetAccessibleHypertext(vmid, Unwrap(vmid, accessibleContext), out hypertextInfoTemp);
       GC.KeepAlive(accessibleContext);
       if (Succeeded(result))
         hypertextInfo = Wrap(vmid, hypertextInfoTemp);
@@ -133,21 +133,21 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool ActivateAccessibleHyperlink(int vmid, JavaObjectHandle accessibleContext, JavaObjectHandle accessibleHyperlink) {
-      var result = LibraryFunctions.ActivateAccessibleHyperlink(vmid, Unwrap(vmid, accessibleContext), Unwrap(vmid, accessibleHyperlink));
+      var result = EntryPoints.ActivateAccessibleHyperlink(vmid, Unwrap(vmid, accessibleContext), Unwrap(vmid, accessibleHyperlink));
       GC.KeepAlive(accessibleContext);
       GC.KeepAlive(accessibleHyperlink);
       return ToBool(result);
     }
 
     public int GetAccessibleHyperlinkCount(int vmid, JavaObjectHandle accessibleContext) {
-      var result = LibraryFunctions.GetAccessibleHyperlinkCount(vmid, Unwrap(vmid, accessibleContext));
+      var result = EntryPoints.GetAccessibleHyperlinkCount(vmid, Unwrap(vmid, accessibleContext));
       GC.KeepAlive(accessibleContext);
       return result;
     }
 
     public bool GetAccessibleHypertextExt(int vmid, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo) {
       AccessibleHypertextInfoNativeLegacy hypertextInfoTemp;
-      var result = LibraryFunctions.GetAccessibleHypertextExt(vmid, Unwrap(vmid, accessibleContext), nStartIndex, out hypertextInfoTemp);
+      var result = EntryPoints.GetAccessibleHypertextExt(vmid, Unwrap(vmid, accessibleContext), nStartIndex, out hypertextInfoTemp);
       GC.KeepAlive(accessibleContext);
       if (Succeeded(result))
         hypertextInfo = Wrap(vmid, hypertextInfoTemp);
@@ -157,14 +157,14 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public int GetAccessibleHypertextLinkIndex(int vmid, JavaObjectHandle hypertext, int nIndex) {
-      var result = LibraryFunctions.GetAccessibleHypertextLinkIndex(vmid, Unwrap(vmid, hypertext), nIndex);
+      var result = EntryPoints.GetAccessibleHypertextLinkIndex(vmid, Unwrap(vmid, hypertext), nIndex);
       GC.KeepAlive(hypertext);
       return result;
     }
 
     public bool GetAccessibleHyperlink(int vmid, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo) {
       AccessibleHyperlinkInfoNativeLegacy hyperlinkInfoTemp;
-      var result = LibraryFunctions.GetAccessibleHyperlink(vmid, Unwrap(vmid, hypertext), nIndex, out hyperlinkInfoTemp);
+      var result = EntryPoints.GetAccessibleHyperlink(vmid, Unwrap(vmid, hypertext), nIndex, out hyperlinkInfoTemp);
       GC.KeepAlive(hypertext);
       if (Succeeded(result))
         hyperlinkInfo = Wrap(vmid, hyperlinkInfoTemp);
@@ -174,132 +174,132 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings) {
-      var result = LibraryFunctions.GetAccessibleKeyBindings(vmid, Unwrap(vmid, accessibleContext), out keyBindings);
+      var result = EntryPoints.GetAccessibleKeyBindings(vmid, Unwrap(vmid, accessibleContext), out keyBindings);
       GC.KeepAlive(accessibleContext);
       return Succeeded(result);
     }
 
     public bool GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons) {
-      var result = LibraryFunctions.GetAccessibleIcons(vmid, Unwrap(vmid, accessibleContext), out icons);
+      var result = EntryPoints.GetAccessibleIcons(vmid, Unwrap(vmid, accessibleContext), out icons);
       GC.KeepAlive(accessibleContext);
       return Succeeded(result);
     }
 
     public bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, out AccessibleActions actions) {
       actions = new AccessibleActions();
-      var result = LibraryFunctions.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actions);
+      var result = EntryPoints.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actions);
       GC.KeepAlive(accessibleContext);
       return Succeeded(result);
     }
 
     public bool DoAccessibleActions(int vmid, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure) {
-      var result = LibraryFunctions.DoAccessibleActions(vmid, Unwrap(vmid, accessibleContext), ref actionsToDo, out failure);
+      var result = EntryPoints.DoAccessibleActions(vmid, Unwrap(vmid, accessibleContext), ref actionsToDo, out failure);
       GC.KeepAlive(accessibleContext);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y) {
-      var result = LibraryFunctions.GetAccessibleTextInfo(vmid, Unwrap(vmid, at), out textInfo, x, y);
+      var result = EntryPoints.GetAccessibleTextInfo(vmid, Unwrap(vmid, at), out textInfo, x, y);
       GC.KeepAlive(at);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index) {
-      var result = LibraryFunctions.GetAccessibleTextItems(vmid, Unwrap(vmid, at), out textItems, index);
+      var result = EntryPoints.GetAccessibleTextItems(vmid, Unwrap(vmid, at), out textItems, index);
       GC.KeepAlive(at);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextSelectionInfo(int vmid, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection) {
-      var result = LibraryFunctions.GetAccessibleTextSelectionInfo(vmid, Unwrap(vmid, at), out textSelection);
+      var result = EntryPoints.GetAccessibleTextSelectionInfo(vmid, Unwrap(vmid, at), out textSelection);
       GC.KeepAlive(at);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes) {
       attributes = new AccessibleTextAttributesInfo();
-      var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, attributes);
+      var result = EntryPoints.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, attributes);
       GC.KeepAlive(at);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index) {
-      var result = LibraryFunctions.GetAccessibleTextRect(vmid, Unwrap(vmid, at), out rectInfo, index);
+      var result = EntryPoints.GetAccessibleTextRect(vmid, Unwrap(vmid, at), out rectInfo, index);
       GC.KeepAlive(at);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextLineBounds(int vmid, JavaObjectHandle at, int index, out int startIndex, out int endIndex) {
-      var result = LibraryFunctions.GetAccessibleTextLineBounds(vmid, Unwrap(vmid, at), index, out startIndex, out endIndex);
+      var result = EntryPoints.GetAccessibleTextLineBounds(vmid, Unwrap(vmid, at), index, out startIndex, out endIndex);
       GC.KeepAlive(at);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, [Out]char[] text, short len) {
-      var result = LibraryFunctions.GetAccessibleTextRange(vmid, Unwrap(vmid, at), start, end, text, len);
+      var result = EntryPoints.GetAccessibleTextRange(vmid, Unwrap(vmid, at), start, end, text, len);
       GC.KeepAlive(at);
       return Succeeded(result);
     }
 
     public bool GetCurrentAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len) {
-      var result = LibraryFunctions.GetCurrentAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
+      var result = EntryPoints.GetCurrentAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
       GC.KeepAlive(av);
       return Succeeded(result);
     }
 
     public bool GetMaximumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len) {
-      var result = LibraryFunctions.GetMaximumAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
+      var result = EntryPoints.GetMaximumAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
       GC.KeepAlive(av);
       return Succeeded(result);
     }
 
     public bool GetMinimumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len) {
-      var result = LibraryFunctions.GetMinimumAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
+      var result = EntryPoints.GetMinimumAccessibleValueFromContext(vmid, Unwrap(vmid, av), value, len);
       GC.KeepAlive(av);
       return Succeeded(result);
     }
 
     public void AddAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i) {
-      LibraryFunctions.AddAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
+      EntryPoints.AddAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
       GC.KeepAlive(asel);
     }
 
     public void ClearAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel) {
-      LibraryFunctions.ClearAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel));
+      EntryPoints.ClearAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel));
       GC.KeepAlive(asel);
     }
 
     public JavaObjectHandle GetAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i) {
-      var result = LibraryFunctions.GetAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
+      var result = EntryPoints.GetAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
       GC.KeepAlive(asel);
       return Wrap(vmid, result);
     }
 
     public int GetAccessibleSelectionCountFromContext(int vmid, JavaObjectHandle asel) {
-      var result = LibraryFunctions.GetAccessibleSelectionCountFromContext(vmid, Unwrap(vmid, asel));
+      var result = EntryPoints.GetAccessibleSelectionCountFromContext(vmid, Unwrap(vmid, asel));
       GC.KeepAlive(asel);
       return result;
     }
 
     public bool IsAccessibleChildSelectedFromContext(int vmid, JavaObjectHandle asel, int i) {
-      var result = LibraryFunctions.IsAccessibleChildSelectedFromContext(vmid, Unwrap(vmid, asel), i);
+      var result = EntryPoints.IsAccessibleChildSelectedFromContext(vmid, Unwrap(vmid, asel), i);
       GC.KeepAlive(asel);
       return ToBool(result);
     }
 
     public void RemoveAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i) {
-      LibraryFunctions.RemoveAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
+      EntryPoints.RemoveAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel), i);
       GC.KeepAlive(asel);
     }
 
     public void SelectAllAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel) {
-      LibraryFunctions.SelectAllAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel));
+      EntryPoints.SelectAllAccessibleSelectionFromContext(vmid, Unwrap(vmid, asel));
       GC.KeepAlive(asel);
     }
 
     public bool GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo) {
       AccessibleTableInfoNativeLegacy tableInfoTemp = new AccessibleTableInfoNativeLegacy();
-      var result = LibraryFunctions.GetAccessibleTableInfo(vmid, Unwrap(vmid, ac), tableInfoTemp);
+      var result = EntryPoints.GetAccessibleTableInfo(vmid, Unwrap(vmid, ac), tableInfoTemp);
       GC.KeepAlive(ac);
       tableInfo = new AccessibleTableInfo();
       if (Succeeded(result))
@@ -309,7 +309,7 @@ namespace WindowsAccessBridgeInterop {
 
     public bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle at, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
       AccessibleTableCellInfoNativeLegacy tableCellInfoTemp = new AccessibleTableCellInfoNativeLegacy();
-      var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, at), row, column, tableCellInfoTemp);
+      var result = EntryPoints.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, at), row, column, tableCellInfoTemp);
       GC.KeepAlive(at);
       tableCellInfo = new AccessibleTableCellInfo();
       if (Succeeded(result))
@@ -319,7 +319,7 @@ namespace WindowsAccessBridgeInterop {
 
     public bool GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
       AccessibleTableInfoNativeLegacy tableInfoTemp = new AccessibleTableInfoNativeLegacy();
-      var result = LibraryFunctions.GetAccessibleTableRowHeader(vmid, Unwrap(vmid, acParent), tableInfoTemp);
+      var result = EntryPoints.GetAccessibleTableRowHeader(vmid, Unwrap(vmid, acParent), tableInfoTemp);
       GC.KeepAlive(acParent);
       tableInfo = new AccessibleTableInfo();
       if (Succeeded(result))
@@ -329,7 +329,7 @@ namespace WindowsAccessBridgeInterop {
 
     public bool GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
       AccessibleTableInfoNativeLegacy tableInfoTemp = new AccessibleTableInfoNativeLegacy();
-      var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmid, Unwrap(vmid, acParent), tableInfoTemp);
+      var result = EntryPoints.GetAccessibleTableColumnHeader(vmid, Unwrap(vmid, acParent), tableInfoTemp);
       GC.KeepAlive(acParent);
       tableInfo = new AccessibleTableInfo();
       if (Succeeded(result))
@@ -338,135 +338,135 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public JavaObjectHandle GetAccessibleTableRowDescription(int vmid, JavaObjectHandle acParent, int row) {
-      var result = LibraryFunctions.GetAccessibleTableRowDescription(vmid, Unwrap(vmid, acParent), row);
+      var result = EntryPoints.GetAccessibleTableRowDescription(vmid, Unwrap(vmid, acParent), row);
       GC.KeepAlive(acParent);
       return Wrap(vmid, result);
     }
 
     public JavaObjectHandle GetAccessibleTableColumnDescription(int vmid, JavaObjectHandle acParent, int column) {
-      var result = LibraryFunctions.GetAccessibleTableColumnDescription(vmid, Unwrap(vmid, acParent), column);
+      var result = EntryPoints.GetAccessibleTableColumnDescription(vmid, Unwrap(vmid, acParent), column);
       GC.KeepAlive(acParent);
       return Wrap(vmid, result);
     }
 
     public int GetAccessibleTableRowSelectionCount(int vmid, JavaObjectHandle table) {
-      var result = LibraryFunctions.GetAccessibleTableRowSelectionCount(vmid, Unwrap(vmid, table));
+      var result = EntryPoints.GetAccessibleTableRowSelectionCount(vmid, Unwrap(vmid, table));
       GC.KeepAlive(table);
       return result;
     }
 
     public bool IsAccessibleTableRowSelected(int vmid, JavaObjectHandle table, int row) {
-      var result = LibraryFunctions.IsAccessibleTableRowSelected(vmid, Unwrap(vmid, table), row);
+      var result = EntryPoints.IsAccessibleTableRowSelected(vmid, Unwrap(vmid, table), row);
       GC.KeepAlive(table);
       return ToBool(result);
     }
 
     public bool GetAccessibleTableRowSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections) {
-      var result = LibraryFunctions.GetAccessibleTableRowSelections(vmid, Unwrap(vmid, table), count, selections);
+      var result = EntryPoints.GetAccessibleTableRowSelections(vmid, Unwrap(vmid, table), count, selections);
       GC.KeepAlive(table);
       return Succeeded(result);
     }
 
     public int GetAccessibleTableColumnSelectionCount(int vmid, JavaObjectHandle table) {
-      var result = LibraryFunctions.GetAccessibleTableColumnSelectionCount(vmid, Unwrap(vmid, table));
+      var result = EntryPoints.GetAccessibleTableColumnSelectionCount(vmid, Unwrap(vmid, table));
       GC.KeepAlive(table);
       return result;
     }
 
     public bool IsAccessibleTableColumnSelected(int vmid, JavaObjectHandle table, int column) {
-      var result = LibraryFunctions.IsAccessibleTableColumnSelected(vmid, Unwrap(vmid, table), column);
+      var result = EntryPoints.IsAccessibleTableColumnSelected(vmid, Unwrap(vmid, table), column);
       GC.KeepAlive(table);
       return ToBool(result);
     }
 
     public bool GetAccessibleTableColumnSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections) {
-      var result = LibraryFunctions.GetAccessibleTableColumnSelections(vmid, Unwrap(vmid, table), count, selections);
+      var result = EntryPoints.GetAccessibleTableColumnSelections(vmid, Unwrap(vmid, table), count, selections);
       GC.KeepAlive(table);
       return Succeeded(result);
     }
 
     public int GetAccessibleTableRow(int vmid, JavaObjectHandle table, int index) {
-      var result = LibraryFunctions.GetAccessibleTableRow(vmid, Unwrap(vmid, table), index);
+      var result = EntryPoints.GetAccessibleTableRow(vmid, Unwrap(vmid, table), index);
       GC.KeepAlive(table);
       return result;
     }
 
     public int GetAccessibleTableColumn(int vmid, JavaObjectHandle table, int index) {
-      var result = LibraryFunctions.GetAccessibleTableColumn(vmid, Unwrap(vmid, table), index);
+      var result = EntryPoints.GetAccessibleTableColumn(vmid, Unwrap(vmid, table), index);
       GC.KeepAlive(table);
       return result;
     }
 
     public int GetAccessibleTableIndex(int vmid, JavaObjectHandle table, int row, int column) {
-      var result = LibraryFunctions.GetAccessibleTableIndex(vmid, Unwrap(vmid, table), row, column);
+      var result = EntryPoints.GetAccessibleTableIndex(vmid, Unwrap(vmid, table), row, column);
       GC.KeepAlive(table);
       return result;
     }
 
     public bool SetTextContents(int vmid, JavaObjectHandle ac, string text) {
-      var result = LibraryFunctions.SetTextContents(vmid, Unwrap(vmid, ac), text);
+      var result = EntryPoints.SetTextContents(vmid, Unwrap(vmid, ac), text);
       GC.KeepAlive(ac);
       return Succeeded(result);
     }
 
     public JavaObjectHandle GetParentWithRole(int vmid, JavaObjectHandle ac, string role) {
-      var result = LibraryFunctions.GetParentWithRole(vmid, Unwrap(vmid, ac), role);
+      var result = EntryPoints.GetParentWithRole(vmid, Unwrap(vmid, ac), role);
       GC.KeepAlive(ac);
       return Wrap(vmid, result);
     }
 
     public JavaObjectHandle GetParentWithRoleElseRoot(int vmid, JavaObjectHandle ac, string role) {
-      var result = LibraryFunctions.GetParentWithRoleElseRoot(vmid, Unwrap(vmid, ac), role);
+      var result = EntryPoints.GetParentWithRoleElseRoot(vmid, Unwrap(vmid, ac), role);
       GC.KeepAlive(ac);
       return Wrap(vmid, result);
     }
 
     public JavaObjectHandle GetTopLevelObject(int vmid, JavaObjectHandle ac) {
-      var result = LibraryFunctions.GetTopLevelObject(vmid, Unwrap(vmid, ac));
+      var result = EntryPoints.GetTopLevelObject(vmid, Unwrap(vmid, ac));
       GC.KeepAlive(ac);
       return Wrap(vmid, result);
     }
 
     public int GetObjectDepth(int vmid, JavaObjectHandle ac) {
-      var result = LibraryFunctions.GetObjectDepth(vmid, Unwrap(vmid, ac));
+      var result = EntryPoints.GetObjectDepth(vmid, Unwrap(vmid, ac));
       GC.KeepAlive(ac);
       return result;
     }
 
     public JavaObjectHandle GetActiveDescendent(int vmid, JavaObjectHandle ac) {
-      var result = LibraryFunctions.GetActiveDescendent(vmid, Unwrap(vmid, ac));
+      var result = EntryPoints.GetActiveDescendent(vmid, Unwrap(vmid, ac));
       GC.KeepAlive(ac);
       return Wrap(vmid, result);
     }
 
     public bool GetVirtualAccessibleName(int vmid, JavaObjectHandle ac, StringBuilder name, int len) {
-      var result = LibraryFunctions.GetVirtualAccessibleName(vmid, Unwrap(vmid, ac), name, len);
+      var result = EntryPoints.GetVirtualAccessibleName(vmid, Unwrap(vmid, ac), name, len);
       GC.KeepAlive(ac);
       return Succeeded(result);
     }
 
     public bool GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len) {
       attributes = new AccessibleTextAttributesInfo();
-      var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, attributes, out len);
+      var result = EntryPoints.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, attributes, out len);
       GC.KeepAlive(accessibleContext);
       return Succeeded(result);
     }
 
     public bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index) {
-      var result = LibraryFunctions.GetCaretLocation(vmid, Unwrap(vmid, ac), out rectInfo, index);
+      var result = EntryPoints.GetCaretLocation(vmid, Unwrap(vmid, ac), out rectInfo, index);
       GC.KeepAlive(ac);
       return Succeeded(result);
     }
 
     public int GetVisibleChildrenCount(int vmid, JavaObjectHandle accessibleContext) {
-      var result = LibraryFunctions.GetVisibleChildrenCount(vmid, Unwrap(vmid, accessibleContext));
+      var result = EntryPoints.GetVisibleChildrenCount(vmid, Unwrap(vmid, accessibleContext));
       GC.KeepAlive(accessibleContext);
       return result;
     }
 
     public bool GetVisibleChildren(int vmid, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children) {
       VisibleChildrenInfoNativeLegacy childrenTemp;
-      var result = LibraryFunctions.GetVisibleChildren(vmid, Unwrap(vmid, accessibleContext), startIndex, out childrenTemp);
+      var result = EntryPoints.GetVisibleChildren(vmid, Unwrap(vmid, accessibleContext), startIndex, out childrenTemp);
       GC.KeepAlive(accessibleContext);
       if (Succeeded(result))
         children = Wrap(vmid, childrenTemp);
@@ -476,7 +476,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
-      var result = LibraryFunctions.GetVersionInfo(vmid, out info);
+      var result = EntryPoints.GetVersionInfo(vmid, out info);
       return Succeeded(result);
     }
 
@@ -659,7 +659,7 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Implementation of platform agnostic events
   /// </summary>
-  internal partial class AccessBridgeEventsLegacy : IAccessBridgeEvents {
+  internal partial class AccessBridgeNativeEventsLegacy : IAccessBridgeEvents {
     #region Event fields
     private PropertyChangeEventHandler _propertyChange;
     private JavaShutdownEventHandler _javaShutdown;
@@ -694,325 +694,325 @@ namespace WindowsAccessBridgeInterop {
     public event PropertyChangeEventHandler PropertyChange {
       add {
         if (_propertyChange == null)
-          NativeEvents.PropertyChange += ForwardPropertyChange;
+          NativeEventsForwarder.PropertyChange += ForwardPropertyChange;
         _propertyChange += value;
       }
       remove{
         _propertyChange -= value;
         if (_propertyChange == null)
-          NativeEvents.PropertyChange -= ForwardPropertyChange;
+          NativeEventsForwarder.PropertyChange -= ForwardPropertyChange;
       }
     }
     public event JavaShutdownEventHandler JavaShutdown {
       add {
         if (_javaShutdown == null)
-          NativeEvents.JavaShutdown += ForwardJavaShutdown;
+          NativeEventsForwarder.JavaShutdown += ForwardJavaShutdown;
         _javaShutdown += value;
       }
       remove{
         _javaShutdown -= value;
         if (_javaShutdown == null)
-          NativeEvents.JavaShutdown -= ForwardJavaShutdown;
+          NativeEventsForwarder.JavaShutdown -= ForwardJavaShutdown;
       }
     }
     public event FocusGainedEventHandler FocusGained {
       add {
         if (_focusGained == null)
-          NativeEvents.FocusGained += ForwardFocusGained;
+          NativeEventsForwarder.FocusGained += ForwardFocusGained;
         _focusGained += value;
       }
       remove{
         _focusGained -= value;
         if (_focusGained == null)
-          NativeEvents.FocusGained -= ForwardFocusGained;
+          NativeEventsForwarder.FocusGained -= ForwardFocusGained;
       }
     }
     public event FocusLostEventHandler FocusLost {
       add {
         if (_focusLost == null)
-          NativeEvents.FocusLost += ForwardFocusLost;
+          NativeEventsForwarder.FocusLost += ForwardFocusLost;
         _focusLost += value;
       }
       remove{
         _focusLost -= value;
         if (_focusLost == null)
-          NativeEvents.FocusLost -= ForwardFocusLost;
+          NativeEventsForwarder.FocusLost -= ForwardFocusLost;
       }
     }
     public event CaretUpdateEventHandler CaretUpdate {
       add {
         if (_caretUpdate == null)
-          NativeEvents.CaretUpdate += ForwardCaretUpdate;
+          NativeEventsForwarder.CaretUpdate += ForwardCaretUpdate;
         _caretUpdate += value;
       }
       remove{
         _caretUpdate -= value;
         if (_caretUpdate == null)
-          NativeEvents.CaretUpdate -= ForwardCaretUpdate;
+          NativeEventsForwarder.CaretUpdate -= ForwardCaretUpdate;
       }
     }
     public event MouseClickedEventHandler MouseClicked {
       add {
         if (_mouseClicked == null)
-          NativeEvents.MouseClicked += ForwardMouseClicked;
+          NativeEventsForwarder.MouseClicked += ForwardMouseClicked;
         _mouseClicked += value;
       }
       remove{
         _mouseClicked -= value;
         if (_mouseClicked == null)
-          NativeEvents.MouseClicked -= ForwardMouseClicked;
+          NativeEventsForwarder.MouseClicked -= ForwardMouseClicked;
       }
     }
     public event MouseEnteredEventHandler MouseEntered {
       add {
         if (_mouseEntered == null)
-          NativeEvents.MouseEntered += ForwardMouseEntered;
+          NativeEventsForwarder.MouseEntered += ForwardMouseEntered;
         _mouseEntered += value;
       }
       remove{
         _mouseEntered -= value;
         if (_mouseEntered == null)
-          NativeEvents.MouseEntered -= ForwardMouseEntered;
+          NativeEventsForwarder.MouseEntered -= ForwardMouseEntered;
       }
     }
     public event MouseExitedEventHandler MouseExited {
       add {
         if (_mouseExited == null)
-          NativeEvents.MouseExited += ForwardMouseExited;
+          NativeEventsForwarder.MouseExited += ForwardMouseExited;
         _mouseExited += value;
       }
       remove{
         _mouseExited -= value;
         if (_mouseExited == null)
-          NativeEvents.MouseExited -= ForwardMouseExited;
+          NativeEventsForwarder.MouseExited -= ForwardMouseExited;
       }
     }
     public event MousePressedEventHandler MousePressed {
       add {
         if (_mousePressed == null)
-          NativeEvents.MousePressed += ForwardMousePressed;
+          NativeEventsForwarder.MousePressed += ForwardMousePressed;
         _mousePressed += value;
       }
       remove{
         _mousePressed -= value;
         if (_mousePressed == null)
-          NativeEvents.MousePressed -= ForwardMousePressed;
+          NativeEventsForwarder.MousePressed -= ForwardMousePressed;
       }
     }
     public event MouseReleasedEventHandler MouseReleased {
       add {
         if (_mouseReleased == null)
-          NativeEvents.MouseReleased += ForwardMouseReleased;
+          NativeEventsForwarder.MouseReleased += ForwardMouseReleased;
         _mouseReleased += value;
       }
       remove{
         _mouseReleased -= value;
         if (_mouseReleased == null)
-          NativeEvents.MouseReleased -= ForwardMouseReleased;
+          NativeEventsForwarder.MouseReleased -= ForwardMouseReleased;
       }
     }
     public event MenuCanceledEventHandler MenuCanceled {
       add {
         if (_menuCanceled == null)
-          NativeEvents.MenuCanceled += ForwardMenuCanceled;
+          NativeEventsForwarder.MenuCanceled += ForwardMenuCanceled;
         _menuCanceled += value;
       }
       remove{
         _menuCanceled -= value;
         if (_menuCanceled == null)
-          NativeEvents.MenuCanceled -= ForwardMenuCanceled;
+          NativeEventsForwarder.MenuCanceled -= ForwardMenuCanceled;
       }
     }
     public event MenuDeselectedEventHandler MenuDeselected {
       add {
         if (_menuDeselected == null)
-          NativeEvents.MenuDeselected += ForwardMenuDeselected;
+          NativeEventsForwarder.MenuDeselected += ForwardMenuDeselected;
         _menuDeselected += value;
       }
       remove{
         _menuDeselected -= value;
         if (_menuDeselected == null)
-          NativeEvents.MenuDeselected -= ForwardMenuDeselected;
+          NativeEventsForwarder.MenuDeselected -= ForwardMenuDeselected;
       }
     }
     public event MenuSelectedEventHandler MenuSelected {
       add {
         if (_menuSelected == null)
-          NativeEvents.MenuSelected += ForwardMenuSelected;
+          NativeEventsForwarder.MenuSelected += ForwardMenuSelected;
         _menuSelected += value;
       }
       remove{
         _menuSelected -= value;
         if (_menuSelected == null)
-          NativeEvents.MenuSelected -= ForwardMenuSelected;
+          NativeEventsForwarder.MenuSelected -= ForwardMenuSelected;
       }
     }
     public event PopupMenuCanceledEventHandler PopupMenuCanceled {
       add {
         if (_popupMenuCanceled == null)
-          NativeEvents.PopupMenuCanceled += ForwardPopupMenuCanceled;
+          NativeEventsForwarder.PopupMenuCanceled += ForwardPopupMenuCanceled;
         _popupMenuCanceled += value;
       }
       remove{
         _popupMenuCanceled -= value;
         if (_popupMenuCanceled == null)
-          NativeEvents.PopupMenuCanceled -= ForwardPopupMenuCanceled;
+          NativeEventsForwarder.PopupMenuCanceled -= ForwardPopupMenuCanceled;
       }
     }
     public event PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible {
       add {
         if (_popupMenuWillBecomeInvisible == null)
-          NativeEvents.PopupMenuWillBecomeInvisible += ForwardPopupMenuWillBecomeInvisible;
+          NativeEventsForwarder.PopupMenuWillBecomeInvisible += ForwardPopupMenuWillBecomeInvisible;
         _popupMenuWillBecomeInvisible += value;
       }
       remove{
         _popupMenuWillBecomeInvisible -= value;
         if (_popupMenuWillBecomeInvisible == null)
-          NativeEvents.PopupMenuWillBecomeInvisible -= ForwardPopupMenuWillBecomeInvisible;
+          NativeEventsForwarder.PopupMenuWillBecomeInvisible -= ForwardPopupMenuWillBecomeInvisible;
       }
     }
     public event PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible {
       add {
         if (_popupMenuWillBecomeVisible == null)
-          NativeEvents.PopupMenuWillBecomeVisible += ForwardPopupMenuWillBecomeVisible;
+          NativeEventsForwarder.PopupMenuWillBecomeVisible += ForwardPopupMenuWillBecomeVisible;
         _popupMenuWillBecomeVisible += value;
       }
       remove{
         _popupMenuWillBecomeVisible -= value;
         if (_popupMenuWillBecomeVisible == null)
-          NativeEvents.PopupMenuWillBecomeVisible -= ForwardPopupMenuWillBecomeVisible;
+          NativeEventsForwarder.PopupMenuWillBecomeVisible -= ForwardPopupMenuWillBecomeVisible;
       }
     }
     public event PropertyNameChangeEventHandler PropertyNameChange {
       add {
         if (_propertyNameChange == null)
-          NativeEvents.PropertyNameChange += ForwardPropertyNameChange;
+          NativeEventsForwarder.PropertyNameChange += ForwardPropertyNameChange;
         _propertyNameChange += value;
       }
       remove{
         _propertyNameChange -= value;
         if (_propertyNameChange == null)
-          NativeEvents.PropertyNameChange -= ForwardPropertyNameChange;
+          NativeEventsForwarder.PropertyNameChange -= ForwardPropertyNameChange;
       }
     }
     public event PropertyDescriptionChangeEventHandler PropertyDescriptionChange {
       add {
         if (_propertyDescriptionChange == null)
-          NativeEvents.PropertyDescriptionChange += ForwardPropertyDescriptionChange;
+          NativeEventsForwarder.PropertyDescriptionChange += ForwardPropertyDescriptionChange;
         _propertyDescriptionChange += value;
       }
       remove{
         _propertyDescriptionChange -= value;
         if (_propertyDescriptionChange == null)
-          NativeEvents.PropertyDescriptionChange -= ForwardPropertyDescriptionChange;
+          NativeEventsForwarder.PropertyDescriptionChange -= ForwardPropertyDescriptionChange;
       }
     }
     public event PropertyStateChangeEventHandler PropertyStateChange {
       add {
         if (_propertyStateChange == null)
-          NativeEvents.PropertyStateChange += ForwardPropertyStateChange;
+          NativeEventsForwarder.PropertyStateChange += ForwardPropertyStateChange;
         _propertyStateChange += value;
       }
       remove{
         _propertyStateChange -= value;
         if (_propertyStateChange == null)
-          NativeEvents.PropertyStateChange -= ForwardPropertyStateChange;
+          NativeEventsForwarder.PropertyStateChange -= ForwardPropertyStateChange;
       }
     }
     public event PropertyValueChangeEventHandler PropertyValueChange {
       add {
         if (_propertyValueChange == null)
-          NativeEvents.PropertyValueChange += ForwardPropertyValueChange;
+          NativeEventsForwarder.PropertyValueChange += ForwardPropertyValueChange;
         _propertyValueChange += value;
       }
       remove{
         _propertyValueChange -= value;
         if (_propertyValueChange == null)
-          NativeEvents.PropertyValueChange -= ForwardPropertyValueChange;
+          NativeEventsForwarder.PropertyValueChange -= ForwardPropertyValueChange;
       }
     }
     public event PropertySelectionChangeEventHandler PropertySelectionChange {
       add {
         if (_propertySelectionChange == null)
-          NativeEvents.PropertySelectionChange += ForwardPropertySelectionChange;
+          NativeEventsForwarder.PropertySelectionChange += ForwardPropertySelectionChange;
         _propertySelectionChange += value;
       }
       remove{
         _propertySelectionChange -= value;
         if (_propertySelectionChange == null)
-          NativeEvents.PropertySelectionChange -= ForwardPropertySelectionChange;
+          NativeEventsForwarder.PropertySelectionChange -= ForwardPropertySelectionChange;
       }
     }
     public event PropertyTextChangeEventHandler PropertyTextChange {
       add {
         if (_propertyTextChange == null)
-          NativeEvents.PropertyTextChange += ForwardPropertyTextChange;
+          NativeEventsForwarder.PropertyTextChange += ForwardPropertyTextChange;
         _propertyTextChange += value;
       }
       remove{
         _propertyTextChange -= value;
         if (_propertyTextChange == null)
-          NativeEvents.PropertyTextChange -= ForwardPropertyTextChange;
+          NativeEventsForwarder.PropertyTextChange -= ForwardPropertyTextChange;
       }
     }
     public event PropertyCaretChangeEventHandler PropertyCaretChange {
       add {
         if (_propertyCaretChange == null)
-          NativeEvents.PropertyCaretChange += ForwardPropertyCaretChange;
+          NativeEventsForwarder.PropertyCaretChange += ForwardPropertyCaretChange;
         _propertyCaretChange += value;
       }
       remove{
         _propertyCaretChange -= value;
         if (_propertyCaretChange == null)
-          NativeEvents.PropertyCaretChange -= ForwardPropertyCaretChange;
+          NativeEventsForwarder.PropertyCaretChange -= ForwardPropertyCaretChange;
       }
     }
     public event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange {
       add {
         if (_propertyVisibleDataChange == null)
-          NativeEvents.PropertyVisibleDataChange += ForwardPropertyVisibleDataChange;
+          NativeEventsForwarder.PropertyVisibleDataChange += ForwardPropertyVisibleDataChange;
         _propertyVisibleDataChange += value;
       }
       remove{
         _propertyVisibleDataChange -= value;
         if (_propertyVisibleDataChange == null)
-          NativeEvents.PropertyVisibleDataChange -= ForwardPropertyVisibleDataChange;
+          NativeEventsForwarder.PropertyVisibleDataChange -= ForwardPropertyVisibleDataChange;
       }
     }
     public event PropertyChildChangeEventHandler PropertyChildChange {
       add {
         if (_propertyChildChange == null)
-          NativeEvents.PropertyChildChange += ForwardPropertyChildChange;
+          NativeEventsForwarder.PropertyChildChange += ForwardPropertyChildChange;
         _propertyChildChange += value;
       }
       remove{
         _propertyChildChange -= value;
         if (_propertyChildChange == null)
-          NativeEvents.PropertyChildChange -= ForwardPropertyChildChange;
+          NativeEventsForwarder.PropertyChildChange -= ForwardPropertyChildChange;
       }
     }
     public event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange {
       add {
         if (_propertyActiveDescendentChange == null)
-          NativeEvents.PropertyActiveDescendentChange += ForwardPropertyActiveDescendentChange;
+          NativeEventsForwarder.PropertyActiveDescendentChange += ForwardPropertyActiveDescendentChange;
         _propertyActiveDescendentChange += value;
       }
       remove{
         _propertyActiveDescendentChange -= value;
         if (_propertyActiveDescendentChange == null)
-          NativeEvents.PropertyActiveDescendentChange -= ForwardPropertyActiveDescendentChange;
+          NativeEventsForwarder.PropertyActiveDescendentChange -= ForwardPropertyActiveDescendentChange;
       }
     }
     public event PropertyTableModelChangeEventHandler PropertyTableModelChange {
       add {
         if (_propertyTableModelChange == null)
-          NativeEvents.PropertyTableModelChange += ForwardPropertyTableModelChange;
+          NativeEventsForwarder.PropertyTableModelChange += ForwardPropertyTableModelChange;
         _propertyTableModelChange += value;
       }
       remove{
         _propertyTableModelChange -= value;
         if (_propertyTableModelChange == null)
-          NativeEvents.PropertyTableModelChange -= ForwardPropertyTableModelChange;
+          NativeEventsForwarder.PropertyTableModelChange -= ForwardPropertyTableModelChange;
       }
     }
     #endregion
@@ -1156,33 +1156,33 @@ namespace WindowsAccessBridgeInterop {
     #endregion
 
     private void DetachForwarders() {
-      NativeEvents.PropertyChange -= ForwardPropertyChange;
-      NativeEvents.JavaShutdown -= ForwardJavaShutdown;
-      NativeEvents.FocusGained -= ForwardFocusGained;
-      NativeEvents.FocusLost -= ForwardFocusLost;
-      NativeEvents.CaretUpdate -= ForwardCaretUpdate;
-      NativeEvents.MouseClicked -= ForwardMouseClicked;
-      NativeEvents.MouseEntered -= ForwardMouseEntered;
-      NativeEvents.MouseExited -= ForwardMouseExited;
-      NativeEvents.MousePressed -= ForwardMousePressed;
-      NativeEvents.MouseReleased -= ForwardMouseReleased;
-      NativeEvents.MenuCanceled -= ForwardMenuCanceled;
-      NativeEvents.MenuDeselected -= ForwardMenuDeselected;
-      NativeEvents.MenuSelected -= ForwardMenuSelected;
-      NativeEvents.PopupMenuCanceled -= ForwardPopupMenuCanceled;
-      NativeEvents.PopupMenuWillBecomeInvisible -= ForwardPopupMenuWillBecomeInvisible;
-      NativeEvents.PopupMenuWillBecomeVisible -= ForwardPopupMenuWillBecomeVisible;
-      NativeEvents.PropertyNameChange -= ForwardPropertyNameChange;
-      NativeEvents.PropertyDescriptionChange -= ForwardPropertyDescriptionChange;
-      NativeEvents.PropertyStateChange -= ForwardPropertyStateChange;
-      NativeEvents.PropertyValueChange -= ForwardPropertyValueChange;
-      NativeEvents.PropertySelectionChange -= ForwardPropertySelectionChange;
-      NativeEvents.PropertyTextChange -= ForwardPropertyTextChange;
-      NativeEvents.PropertyCaretChange -= ForwardPropertyCaretChange;
-      NativeEvents.PropertyVisibleDataChange -= ForwardPropertyVisibleDataChange;
-      NativeEvents.PropertyChildChange -= ForwardPropertyChildChange;
-      NativeEvents.PropertyActiveDescendentChange -= ForwardPropertyActiveDescendentChange;
-      NativeEvents.PropertyTableModelChange -= ForwardPropertyTableModelChange;
+      NativeEventsForwarder.PropertyChange -= ForwardPropertyChange;
+      NativeEventsForwarder.JavaShutdown -= ForwardJavaShutdown;
+      NativeEventsForwarder.FocusGained -= ForwardFocusGained;
+      NativeEventsForwarder.FocusLost -= ForwardFocusLost;
+      NativeEventsForwarder.CaretUpdate -= ForwardCaretUpdate;
+      NativeEventsForwarder.MouseClicked -= ForwardMouseClicked;
+      NativeEventsForwarder.MouseEntered -= ForwardMouseEntered;
+      NativeEventsForwarder.MouseExited -= ForwardMouseExited;
+      NativeEventsForwarder.MousePressed -= ForwardMousePressed;
+      NativeEventsForwarder.MouseReleased -= ForwardMouseReleased;
+      NativeEventsForwarder.MenuCanceled -= ForwardMenuCanceled;
+      NativeEventsForwarder.MenuDeselected -= ForwardMenuDeselected;
+      NativeEventsForwarder.MenuSelected -= ForwardMenuSelected;
+      NativeEventsForwarder.PopupMenuCanceled -= ForwardPopupMenuCanceled;
+      NativeEventsForwarder.PopupMenuWillBecomeInvisible -= ForwardPopupMenuWillBecomeInvisible;
+      NativeEventsForwarder.PopupMenuWillBecomeVisible -= ForwardPopupMenuWillBecomeVisible;
+      NativeEventsForwarder.PropertyNameChange -= ForwardPropertyNameChange;
+      NativeEventsForwarder.PropertyDescriptionChange -= ForwardPropertyDescriptionChange;
+      NativeEventsForwarder.PropertyStateChange -= ForwardPropertyStateChange;
+      NativeEventsForwarder.PropertyValueChange -= ForwardPropertyValueChange;
+      NativeEventsForwarder.PropertySelectionChange -= ForwardPropertySelectionChange;
+      NativeEventsForwarder.PropertyTextChange -= ForwardPropertyTextChange;
+      NativeEventsForwarder.PropertyCaretChange -= ForwardPropertyCaretChange;
+      NativeEventsForwarder.PropertyVisibleDataChange -= ForwardPropertyVisibleDataChange;
+      NativeEventsForwarder.PropertyChildChange -= ForwardPropertyChildChange;
+      NativeEventsForwarder.PropertyActiveDescendentChange -= ForwardPropertyActiveDescendentChange;
+      NativeEventsForwarder.PropertyTableModelChange -= ForwardPropertyTableModelChange;
     }
 
     #region Event forwarders
@@ -1273,7 +1273,7 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Container of WindowAccessBridge DLL entry points
   /// </summary>
-  internal class AccessBridgeLibraryFunctionsLegacy {
+  internal class AccessBridgeEntryPointsLegacy {
     #region Functions
     public Windows_runFP Windows_run { get; set; }
     public IsJavaWindowFP IsJavaWindow { get; set; }
@@ -1623,496 +1623,496 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Native library event handlers implementation
   /// </summary>
-  internal partial class AccessBridgeEventsNativeLegacy {
+  internal partial class AccessBridgeNativeEventsForwarderLegacy {
     #region Event fields
-    private AccessBridgeLibraryFunctionsLegacy.PropertyChangeEventHandler _propertyChange;
-    private AccessBridgeLibraryFunctionsLegacy.JavaShutdownEventHandler _javaShutdown;
-    private AccessBridgeLibraryFunctionsLegacy.FocusGainedEventHandler _focusGained;
-    private AccessBridgeLibraryFunctionsLegacy.FocusLostEventHandler _focusLost;
-    private AccessBridgeLibraryFunctionsLegacy.CaretUpdateEventHandler _caretUpdate;
-    private AccessBridgeLibraryFunctionsLegacy.MouseClickedEventHandler _mouseClicked;
-    private AccessBridgeLibraryFunctionsLegacy.MouseEnteredEventHandler _mouseEntered;
-    private AccessBridgeLibraryFunctionsLegacy.MouseExitedEventHandler _mouseExited;
-    private AccessBridgeLibraryFunctionsLegacy.MousePressedEventHandler _mousePressed;
-    private AccessBridgeLibraryFunctionsLegacy.MouseReleasedEventHandler _mouseReleased;
-    private AccessBridgeLibraryFunctionsLegacy.MenuCanceledEventHandler _menuCanceled;
-    private AccessBridgeLibraryFunctionsLegacy.MenuDeselectedEventHandler _menuDeselected;
-    private AccessBridgeLibraryFunctionsLegacy.MenuSelectedEventHandler _menuSelected;
-    private AccessBridgeLibraryFunctionsLegacy.PopupMenuCanceledEventHandler _popupMenuCanceled;
-    private AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeInvisibleEventHandler _popupMenuWillBecomeInvisible;
-    private AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeVisibleEventHandler _popupMenuWillBecomeVisible;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyNameChangeEventHandler _propertyNameChange;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyDescriptionChangeEventHandler _propertyDescriptionChange;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyStateChangeEventHandler _propertyStateChange;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyValueChangeEventHandler _propertyValueChange;
-    private AccessBridgeLibraryFunctionsLegacy.PropertySelectionChangeEventHandler _propertySelectionChange;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyTextChangeEventHandler _propertyTextChange;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyCaretChangeEventHandler _propertyCaretChange;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyVisibleDataChangeEventHandler _propertyVisibleDataChange;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyChildChangeEventHandler _propertyChildChange;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyActiveDescendentChangeEventHandler _propertyActiveDescendentChange;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyTableModelChangeEventHandler _propertyTableModelChange;
+    private AccessBridgeEntryPointsLegacy.PropertyChangeEventHandler _propertyChange;
+    private AccessBridgeEntryPointsLegacy.JavaShutdownEventHandler _javaShutdown;
+    private AccessBridgeEntryPointsLegacy.FocusGainedEventHandler _focusGained;
+    private AccessBridgeEntryPointsLegacy.FocusLostEventHandler _focusLost;
+    private AccessBridgeEntryPointsLegacy.CaretUpdateEventHandler _caretUpdate;
+    private AccessBridgeEntryPointsLegacy.MouseClickedEventHandler _mouseClicked;
+    private AccessBridgeEntryPointsLegacy.MouseEnteredEventHandler _mouseEntered;
+    private AccessBridgeEntryPointsLegacy.MouseExitedEventHandler _mouseExited;
+    private AccessBridgeEntryPointsLegacy.MousePressedEventHandler _mousePressed;
+    private AccessBridgeEntryPointsLegacy.MouseReleasedEventHandler _mouseReleased;
+    private AccessBridgeEntryPointsLegacy.MenuCanceledEventHandler _menuCanceled;
+    private AccessBridgeEntryPointsLegacy.MenuDeselectedEventHandler _menuDeselected;
+    private AccessBridgeEntryPointsLegacy.MenuSelectedEventHandler _menuSelected;
+    private AccessBridgeEntryPointsLegacy.PopupMenuCanceledEventHandler _popupMenuCanceled;
+    private AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeInvisibleEventHandler _popupMenuWillBecomeInvisible;
+    private AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeVisibleEventHandler _popupMenuWillBecomeVisible;
+    private AccessBridgeEntryPointsLegacy.PropertyNameChangeEventHandler _propertyNameChange;
+    private AccessBridgeEntryPointsLegacy.PropertyDescriptionChangeEventHandler _propertyDescriptionChange;
+    private AccessBridgeEntryPointsLegacy.PropertyStateChangeEventHandler _propertyStateChange;
+    private AccessBridgeEntryPointsLegacy.PropertyValueChangeEventHandler _propertyValueChange;
+    private AccessBridgeEntryPointsLegacy.PropertySelectionChangeEventHandler _propertySelectionChange;
+    private AccessBridgeEntryPointsLegacy.PropertyTextChangeEventHandler _propertyTextChange;
+    private AccessBridgeEntryPointsLegacy.PropertyCaretChangeEventHandler _propertyCaretChange;
+    private AccessBridgeEntryPointsLegacy.PropertyVisibleDataChangeEventHandler _propertyVisibleDataChange;
+    private AccessBridgeEntryPointsLegacy.PropertyChildChangeEventHandler _propertyChildChange;
+    private AccessBridgeEntryPointsLegacy.PropertyActiveDescendentChangeEventHandler _propertyActiveDescendentChange;
+    private AccessBridgeEntryPointsLegacy.PropertyTableModelChangeEventHandler _propertyTableModelChange;
     #endregion
 
     #region Event delegate fields
-    private AccessBridgeLibraryFunctionsLegacy.PropertyChangeEventHandler _onPropertyChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.JavaShutdownEventHandler _onJavaShutdownKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.FocusGainedEventHandler _onFocusGainedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.FocusLostEventHandler _onFocusLostKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.CaretUpdateEventHandler _onCaretUpdateKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.MouseClickedEventHandler _onMouseClickedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.MouseEnteredEventHandler _onMouseEnteredKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.MouseExitedEventHandler _onMouseExitedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.MousePressedEventHandler _onMousePressedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.MouseReleasedEventHandler _onMouseReleasedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.MenuCanceledEventHandler _onMenuCanceledKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.MenuDeselectedEventHandler _onMenuDeselectedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.MenuSelectedEventHandler _onMenuSelectedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PopupMenuCanceledEventHandler _onPopupMenuCanceledKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeInvisibleEventHandler _onPopupMenuWillBecomeInvisibleKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeVisibleEventHandler _onPopupMenuWillBecomeVisibleKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyNameChangeEventHandler _onPropertyNameChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyDescriptionChangeEventHandler _onPropertyDescriptionChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyStateChangeEventHandler _onPropertyStateChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyValueChangeEventHandler _onPropertyValueChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PropertySelectionChangeEventHandler _onPropertySelectionChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyTextChangeEventHandler _onPropertyTextChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyCaretChangeEventHandler _onPropertyCaretChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyVisibleDataChangeEventHandler _onPropertyVisibleDataChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyChildChangeEventHandler _onPropertyChildChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyActiveDescendentChangeEventHandler _onPropertyActiveDescendentChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctionsLegacy.PropertyTableModelChangeEventHandler _onPropertyTableModelChangeKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PropertyChangeEventHandler _onPropertyChangeKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.JavaShutdownEventHandler _onJavaShutdownKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.FocusGainedEventHandler _onFocusGainedKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.FocusLostEventHandler _onFocusLostKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.CaretUpdateEventHandler _onCaretUpdateKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.MouseClickedEventHandler _onMouseClickedKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.MouseEnteredEventHandler _onMouseEnteredKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.MouseExitedEventHandler _onMouseExitedKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.MousePressedEventHandler _onMousePressedKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.MouseReleasedEventHandler _onMouseReleasedKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.MenuCanceledEventHandler _onMenuCanceledKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.MenuDeselectedEventHandler _onMenuDeselectedKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.MenuSelectedEventHandler _onMenuSelectedKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PopupMenuCanceledEventHandler _onPopupMenuCanceledKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeInvisibleEventHandler _onPopupMenuWillBecomeInvisibleKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeVisibleEventHandler _onPopupMenuWillBecomeVisibleKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PropertyNameChangeEventHandler _onPropertyNameChangeKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PropertyDescriptionChangeEventHandler _onPropertyDescriptionChangeKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PropertyStateChangeEventHandler _onPropertyStateChangeKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PropertyValueChangeEventHandler _onPropertyValueChangeKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PropertySelectionChangeEventHandler _onPropertySelectionChangeKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PropertyTextChangeEventHandler _onPropertyTextChangeKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PropertyCaretChangeEventHandler _onPropertyCaretChangeKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PropertyVisibleDataChangeEventHandler _onPropertyVisibleDataChangeKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PropertyChildChangeEventHandler _onPropertyChildChangeKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PropertyActiveDescendentChangeEventHandler _onPropertyActiveDescendentChangeKeepAliveDelegate;
+    private AccessBridgeEntryPointsLegacy.PropertyTableModelChangeEventHandler _onPropertyTableModelChangeKeepAliveDelegate;
     #endregion
 
     #region Event properties
-    public event AccessBridgeLibraryFunctionsLegacy.PropertyChangeEventHandler PropertyChange {
+    public event AccessBridgeEntryPointsLegacy.PropertyChangeEventHandler PropertyChange {
       add {
         if (_propertyChange == null) {
           _onPropertyChangeKeepAliveDelegate = OnPropertyChange;
-          LibraryFunctions.SetPropertyChange(_onPropertyChangeKeepAliveDelegate);
+          EntryPoints.SetPropertyChange(_onPropertyChangeKeepAliveDelegate);
         }
         _propertyChange += value;
       }
       remove{
         _propertyChange -= value;
         if (_propertyChange == null) {
-          LibraryFunctions.SetPropertyChange(null);
+          EntryPoints.SetPropertyChange(null);
           _onPropertyChangeKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.JavaShutdownEventHandler JavaShutdown {
+    public event AccessBridgeEntryPointsLegacy.JavaShutdownEventHandler JavaShutdown {
       add {
         if (_javaShutdown == null) {
           _onJavaShutdownKeepAliveDelegate = OnJavaShutdown;
-          LibraryFunctions.SetJavaShutdown(_onJavaShutdownKeepAliveDelegate);
+          EntryPoints.SetJavaShutdown(_onJavaShutdownKeepAliveDelegate);
         }
         _javaShutdown += value;
       }
       remove{
         _javaShutdown -= value;
         if (_javaShutdown == null) {
-          LibraryFunctions.SetJavaShutdown(null);
+          EntryPoints.SetJavaShutdown(null);
           _onJavaShutdownKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.FocusGainedEventHandler FocusGained {
+    public event AccessBridgeEntryPointsLegacy.FocusGainedEventHandler FocusGained {
       add {
         if (_focusGained == null) {
           _onFocusGainedKeepAliveDelegate = OnFocusGained;
-          LibraryFunctions.SetFocusGained(_onFocusGainedKeepAliveDelegate);
+          EntryPoints.SetFocusGained(_onFocusGainedKeepAliveDelegate);
         }
         _focusGained += value;
       }
       remove{
         _focusGained -= value;
         if (_focusGained == null) {
-          LibraryFunctions.SetFocusGained(null);
+          EntryPoints.SetFocusGained(null);
           _onFocusGainedKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.FocusLostEventHandler FocusLost {
+    public event AccessBridgeEntryPointsLegacy.FocusLostEventHandler FocusLost {
       add {
         if (_focusLost == null) {
           _onFocusLostKeepAliveDelegate = OnFocusLost;
-          LibraryFunctions.SetFocusLost(_onFocusLostKeepAliveDelegate);
+          EntryPoints.SetFocusLost(_onFocusLostKeepAliveDelegate);
         }
         _focusLost += value;
       }
       remove{
         _focusLost -= value;
         if (_focusLost == null) {
-          LibraryFunctions.SetFocusLost(null);
+          EntryPoints.SetFocusLost(null);
           _onFocusLostKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.CaretUpdateEventHandler CaretUpdate {
+    public event AccessBridgeEntryPointsLegacy.CaretUpdateEventHandler CaretUpdate {
       add {
         if (_caretUpdate == null) {
           _onCaretUpdateKeepAliveDelegate = OnCaretUpdate;
-          LibraryFunctions.SetCaretUpdate(_onCaretUpdateKeepAliveDelegate);
+          EntryPoints.SetCaretUpdate(_onCaretUpdateKeepAliveDelegate);
         }
         _caretUpdate += value;
       }
       remove{
         _caretUpdate -= value;
         if (_caretUpdate == null) {
-          LibraryFunctions.SetCaretUpdate(null);
+          EntryPoints.SetCaretUpdate(null);
           _onCaretUpdateKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.MouseClickedEventHandler MouseClicked {
+    public event AccessBridgeEntryPointsLegacy.MouseClickedEventHandler MouseClicked {
       add {
         if (_mouseClicked == null) {
           _onMouseClickedKeepAliveDelegate = OnMouseClicked;
-          LibraryFunctions.SetMouseClicked(_onMouseClickedKeepAliveDelegate);
+          EntryPoints.SetMouseClicked(_onMouseClickedKeepAliveDelegate);
         }
         _mouseClicked += value;
       }
       remove{
         _mouseClicked -= value;
         if (_mouseClicked == null) {
-          LibraryFunctions.SetMouseClicked(null);
+          EntryPoints.SetMouseClicked(null);
           _onMouseClickedKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.MouseEnteredEventHandler MouseEntered {
+    public event AccessBridgeEntryPointsLegacy.MouseEnteredEventHandler MouseEntered {
       add {
         if (_mouseEntered == null) {
           _onMouseEnteredKeepAliveDelegate = OnMouseEntered;
-          LibraryFunctions.SetMouseEntered(_onMouseEnteredKeepAliveDelegate);
+          EntryPoints.SetMouseEntered(_onMouseEnteredKeepAliveDelegate);
         }
         _mouseEntered += value;
       }
       remove{
         _mouseEntered -= value;
         if (_mouseEntered == null) {
-          LibraryFunctions.SetMouseEntered(null);
+          EntryPoints.SetMouseEntered(null);
           _onMouseEnteredKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.MouseExitedEventHandler MouseExited {
+    public event AccessBridgeEntryPointsLegacy.MouseExitedEventHandler MouseExited {
       add {
         if (_mouseExited == null) {
           _onMouseExitedKeepAliveDelegate = OnMouseExited;
-          LibraryFunctions.SetMouseExited(_onMouseExitedKeepAliveDelegate);
+          EntryPoints.SetMouseExited(_onMouseExitedKeepAliveDelegate);
         }
         _mouseExited += value;
       }
       remove{
         _mouseExited -= value;
         if (_mouseExited == null) {
-          LibraryFunctions.SetMouseExited(null);
+          EntryPoints.SetMouseExited(null);
           _onMouseExitedKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.MousePressedEventHandler MousePressed {
+    public event AccessBridgeEntryPointsLegacy.MousePressedEventHandler MousePressed {
       add {
         if (_mousePressed == null) {
           _onMousePressedKeepAliveDelegate = OnMousePressed;
-          LibraryFunctions.SetMousePressed(_onMousePressedKeepAliveDelegate);
+          EntryPoints.SetMousePressed(_onMousePressedKeepAliveDelegate);
         }
         _mousePressed += value;
       }
       remove{
         _mousePressed -= value;
         if (_mousePressed == null) {
-          LibraryFunctions.SetMousePressed(null);
+          EntryPoints.SetMousePressed(null);
           _onMousePressedKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.MouseReleasedEventHandler MouseReleased {
+    public event AccessBridgeEntryPointsLegacy.MouseReleasedEventHandler MouseReleased {
       add {
         if (_mouseReleased == null) {
           _onMouseReleasedKeepAliveDelegate = OnMouseReleased;
-          LibraryFunctions.SetMouseReleased(_onMouseReleasedKeepAliveDelegate);
+          EntryPoints.SetMouseReleased(_onMouseReleasedKeepAliveDelegate);
         }
         _mouseReleased += value;
       }
       remove{
         _mouseReleased -= value;
         if (_mouseReleased == null) {
-          LibraryFunctions.SetMouseReleased(null);
+          EntryPoints.SetMouseReleased(null);
           _onMouseReleasedKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.MenuCanceledEventHandler MenuCanceled {
+    public event AccessBridgeEntryPointsLegacy.MenuCanceledEventHandler MenuCanceled {
       add {
         if (_menuCanceled == null) {
           _onMenuCanceledKeepAliveDelegate = OnMenuCanceled;
-          LibraryFunctions.SetMenuCanceled(_onMenuCanceledKeepAliveDelegate);
+          EntryPoints.SetMenuCanceled(_onMenuCanceledKeepAliveDelegate);
         }
         _menuCanceled += value;
       }
       remove{
         _menuCanceled -= value;
         if (_menuCanceled == null) {
-          LibraryFunctions.SetMenuCanceled(null);
+          EntryPoints.SetMenuCanceled(null);
           _onMenuCanceledKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.MenuDeselectedEventHandler MenuDeselected {
+    public event AccessBridgeEntryPointsLegacy.MenuDeselectedEventHandler MenuDeselected {
       add {
         if (_menuDeselected == null) {
           _onMenuDeselectedKeepAliveDelegate = OnMenuDeselected;
-          LibraryFunctions.SetMenuDeselected(_onMenuDeselectedKeepAliveDelegate);
+          EntryPoints.SetMenuDeselected(_onMenuDeselectedKeepAliveDelegate);
         }
         _menuDeselected += value;
       }
       remove{
         _menuDeselected -= value;
         if (_menuDeselected == null) {
-          LibraryFunctions.SetMenuDeselected(null);
+          EntryPoints.SetMenuDeselected(null);
           _onMenuDeselectedKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.MenuSelectedEventHandler MenuSelected {
+    public event AccessBridgeEntryPointsLegacy.MenuSelectedEventHandler MenuSelected {
       add {
         if (_menuSelected == null) {
           _onMenuSelectedKeepAliveDelegate = OnMenuSelected;
-          LibraryFunctions.SetMenuSelected(_onMenuSelectedKeepAliveDelegate);
+          EntryPoints.SetMenuSelected(_onMenuSelectedKeepAliveDelegate);
         }
         _menuSelected += value;
       }
       remove{
         _menuSelected -= value;
         if (_menuSelected == null) {
-          LibraryFunctions.SetMenuSelected(null);
+          EntryPoints.SetMenuSelected(null);
           _onMenuSelectedKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PopupMenuCanceledEventHandler PopupMenuCanceled {
+    public event AccessBridgeEntryPointsLegacy.PopupMenuCanceledEventHandler PopupMenuCanceled {
       add {
         if (_popupMenuCanceled == null) {
           _onPopupMenuCanceledKeepAliveDelegate = OnPopupMenuCanceled;
-          LibraryFunctions.SetPopupMenuCanceled(_onPopupMenuCanceledKeepAliveDelegate);
+          EntryPoints.SetPopupMenuCanceled(_onPopupMenuCanceledKeepAliveDelegate);
         }
         _popupMenuCanceled += value;
       }
       remove{
         _popupMenuCanceled -= value;
         if (_popupMenuCanceled == null) {
-          LibraryFunctions.SetPopupMenuCanceled(null);
+          EntryPoints.SetPopupMenuCanceled(null);
           _onPopupMenuCanceledKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible {
+    public event AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible {
       add {
         if (_popupMenuWillBecomeInvisible == null) {
           _onPopupMenuWillBecomeInvisibleKeepAliveDelegate = OnPopupMenuWillBecomeInvisible;
-          LibraryFunctions.SetPopupMenuWillBecomeInvisible(_onPopupMenuWillBecomeInvisibleKeepAliveDelegate);
+          EntryPoints.SetPopupMenuWillBecomeInvisible(_onPopupMenuWillBecomeInvisibleKeepAliveDelegate);
         }
         _popupMenuWillBecomeInvisible += value;
       }
       remove{
         _popupMenuWillBecomeInvisible -= value;
         if (_popupMenuWillBecomeInvisible == null) {
-          LibraryFunctions.SetPopupMenuWillBecomeInvisible(null);
+          EntryPoints.SetPopupMenuWillBecomeInvisible(null);
           _onPopupMenuWillBecomeInvisibleKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible {
+    public event AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible {
       add {
         if (_popupMenuWillBecomeVisible == null) {
           _onPopupMenuWillBecomeVisibleKeepAliveDelegate = OnPopupMenuWillBecomeVisible;
-          LibraryFunctions.SetPopupMenuWillBecomeVisible(_onPopupMenuWillBecomeVisibleKeepAliveDelegate);
+          EntryPoints.SetPopupMenuWillBecomeVisible(_onPopupMenuWillBecomeVisibleKeepAliveDelegate);
         }
         _popupMenuWillBecomeVisible += value;
       }
       remove{
         _popupMenuWillBecomeVisible -= value;
         if (_popupMenuWillBecomeVisible == null) {
-          LibraryFunctions.SetPopupMenuWillBecomeVisible(null);
+          EntryPoints.SetPopupMenuWillBecomeVisible(null);
           _onPopupMenuWillBecomeVisibleKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PropertyNameChangeEventHandler PropertyNameChange {
+    public event AccessBridgeEntryPointsLegacy.PropertyNameChangeEventHandler PropertyNameChange {
       add {
         if (_propertyNameChange == null) {
           _onPropertyNameChangeKeepAliveDelegate = OnPropertyNameChange;
-          LibraryFunctions.SetPropertyNameChange(_onPropertyNameChangeKeepAliveDelegate);
+          EntryPoints.SetPropertyNameChange(_onPropertyNameChangeKeepAliveDelegate);
         }
         _propertyNameChange += value;
       }
       remove{
         _propertyNameChange -= value;
         if (_propertyNameChange == null) {
-          LibraryFunctions.SetPropertyNameChange(null);
+          EntryPoints.SetPropertyNameChange(null);
           _onPropertyNameChangeKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PropertyDescriptionChangeEventHandler PropertyDescriptionChange {
+    public event AccessBridgeEntryPointsLegacy.PropertyDescriptionChangeEventHandler PropertyDescriptionChange {
       add {
         if (_propertyDescriptionChange == null) {
           _onPropertyDescriptionChangeKeepAliveDelegate = OnPropertyDescriptionChange;
-          LibraryFunctions.SetPropertyDescriptionChange(_onPropertyDescriptionChangeKeepAliveDelegate);
+          EntryPoints.SetPropertyDescriptionChange(_onPropertyDescriptionChangeKeepAliveDelegate);
         }
         _propertyDescriptionChange += value;
       }
       remove{
         _propertyDescriptionChange -= value;
         if (_propertyDescriptionChange == null) {
-          LibraryFunctions.SetPropertyDescriptionChange(null);
+          EntryPoints.SetPropertyDescriptionChange(null);
           _onPropertyDescriptionChangeKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PropertyStateChangeEventHandler PropertyStateChange {
+    public event AccessBridgeEntryPointsLegacy.PropertyStateChangeEventHandler PropertyStateChange {
       add {
         if (_propertyStateChange == null) {
           _onPropertyStateChangeKeepAliveDelegate = OnPropertyStateChange;
-          LibraryFunctions.SetPropertyStateChange(_onPropertyStateChangeKeepAliveDelegate);
+          EntryPoints.SetPropertyStateChange(_onPropertyStateChangeKeepAliveDelegate);
         }
         _propertyStateChange += value;
       }
       remove{
         _propertyStateChange -= value;
         if (_propertyStateChange == null) {
-          LibraryFunctions.SetPropertyStateChange(null);
+          EntryPoints.SetPropertyStateChange(null);
           _onPropertyStateChangeKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PropertyValueChangeEventHandler PropertyValueChange {
+    public event AccessBridgeEntryPointsLegacy.PropertyValueChangeEventHandler PropertyValueChange {
       add {
         if (_propertyValueChange == null) {
           _onPropertyValueChangeKeepAliveDelegate = OnPropertyValueChange;
-          LibraryFunctions.SetPropertyValueChange(_onPropertyValueChangeKeepAliveDelegate);
+          EntryPoints.SetPropertyValueChange(_onPropertyValueChangeKeepAliveDelegate);
         }
         _propertyValueChange += value;
       }
       remove{
         _propertyValueChange -= value;
         if (_propertyValueChange == null) {
-          LibraryFunctions.SetPropertyValueChange(null);
+          EntryPoints.SetPropertyValueChange(null);
           _onPropertyValueChangeKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PropertySelectionChangeEventHandler PropertySelectionChange {
+    public event AccessBridgeEntryPointsLegacy.PropertySelectionChangeEventHandler PropertySelectionChange {
       add {
         if (_propertySelectionChange == null) {
           _onPropertySelectionChangeKeepAliveDelegate = OnPropertySelectionChange;
-          LibraryFunctions.SetPropertySelectionChange(_onPropertySelectionChangeKeepAliveDelegate);
+          EntryPoints.SetPropertySelectionChange(_onPropertySelectionChangeKeepAliveDelegate);
         }
         _propertySelectionChange += value;
       }
       remove{
         _propertySelectionChange -= value;
         if (_propertySelectionChange == null) {
-          LibraryFunctions.SetPropertySelectionChange(null);
+          EntryPoints.SetPropertySelectionChange(null);
           _onPropertySelectionChangeKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PropertyTextChangeEventHandler PropertyTextChange {
+    public event AccessBridgeEntryPointsLegacy.PropertyTextChangeEventHandler PropertyTextChange {
       add {
         if (_propertyTextChange == null) {
           _onPropertyTextChangeKeepAliveDelegate = OnPropertyTextChange;
-          LibraryFunctions.SetPropertyTextChange(_onPropertyTextChangeKeepAliveDelegate);
+          EntryPoints.SetPropertyTextChange(_onPropertyTextChangeKeepAliveDelegate);
         }
         _propertyTextChange += value;
       }
       remove{
         _propertyTextChange -= value;
         if (_propertyTextChange == null) {
-          LibraryFunctions.SetPropertyTextChange(null);
+          EntryPoints.SetPropertyTextChange(null);
           _onPropertyTextChangeKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PropertyCaretChangeEventHandler PropertyCaretChange {
+    public event AccessBridgeEntryPointsLegacy.PropertyCaretChangeEventHandler PropertyCaretChange {
       add {
         if (_propertyCaretChange == null) {
           _onPropertyCaretChangeKeepAliveDelegate = OnPropertyCaretChange;
-          LibraryFunctions.SetPropertyCaretChange(_onPropertyCaretChangeKeepAliveDelegate);
+          EntryPoints.SetPropertyCaretChange(_onPropertyCaretChangeKeepAliveDelegate);
         }
         _propertyCaretChange += value;
       }
       remove{
         _propertyCaretChange -= value;
         if (_propertyCaretChange == null) {
-          LibraryFunctions.SetPropertyCaretChange(null);
+          EntryPoints.SetPropertyCaretChange(null);
           _onPropertyCaretChangeKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange {
+    public event AccessBridgeEntryPointsLegacy.PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange {
       add {
         if (_propertyVisibleDataChange == null) {
           _onPropertyVisibleDataChangeKeepAliveDelegate = OnPropertyVisibleDataChange;
-          LibraryFunctions.SetPropertyVisibleDataChange(_onPropertyVisibleDataChangeKeepAliveDelegate);
+          EntryPoints.SetPropertyVisibleDataChange(_onPropertyVisibleDataChangeKeepAliveDelegate);
         }
         _propertyVisibleDataChange += value;
       }
       remove{
         _propertyVisibleDataChange -= value;
         if (_propertyVisibleDataChange == null) {
-          LibraryFunctions.SetPropertyVisibleDataChange(null);
+          EntryPoints.SetPropertyVisibleDataChange(null);
           _onPropertyVisibleDataChangeKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PropertyChildChangeEventHandler PropertyChildChange {
+    public event AccessBridgeEntryPointsLegacy.PropertyChildChangeEventHandler PropertyChildChange {
       add {
         if (_propertyChildChange == null) {
           _onPropertyChildChangeKeepAliveDelegate = OnPropertyChildChange;
-          LibraryFunctions.SetPropertyChildChange(_onPropertyChildChangeKeepAliveDelegate);
+          EntryPoints.SetPropertyChildChange(_onPropertyChildChangeKeepAliveDelegate);
         }
         _propertyChildChange += value;
       }
       remove{
         _propertyChildChange -= value;
         if (_propertyChildChange == null) {
-          LibraryFunctions.SetPropertyChildChange(null);
+          EntryPoints.SetPropertyChildChange(null);
           _onPropertyChildChangeKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange {
+    public event AccessBridgeEntryPointsLegacy.PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange {
       add {
         if (_propertyActiveDescendentChange == null) {
           _onPropertyActiveDescendentChangeKeepAliveDelegate = OnPropertyActiveDescendentChange;
-          LibraryFunctions.SetPropertyActiveDescendentChange(_onPropertyActiveDescendentChangeKeepAliveDelegate);
+          EntryPoints.SetPropertyActiveDescendentChange(_onPropertyActiveDescendentChangeKeepAliveDelegate);
         }
         _propertyActiveDescendentChange += value;
       }
       remove{
         _propertyActiveDescendentChange -= value;
         if (_propertyActiveDescendentChange == null) {
-          LibraryFunctions.SetPropertyActiveDescendentChange(null);
+          EntryPoints.SetPropertyActiveDescendentChange(null);
           _onPropertyActiveDescendentChangeKeepAliveDelegate = null;
         }
       }
     }
-    public event AccessBridgeLibraryFunctionsLegacy.PropertyTableModelChangeEventHandler PropertyTableModelChange {
+    public event AccessBridgeEntryPointsLegacy.PropertyTableModelChangeEventHandler PropertyTableModelChange {
       add {
         if (_propertyTableModelChange == null) {
           _onPropertyTableModelChangeKeepAliveDelegate = OnPropertyTableModelChange;
-          LibraryFunctions.SetPropertyTableModelChange(_onPropertyTableModelChangeKeepAliveDelegate);
+          EntryPoints.SetPropertyTableModelChange(_onPropertyTableModelChangeKeepAliveDelegate);
         }
         _propertyTableModelChange += value;
       }
       remove{
         _propertyTableModelChange -= value;
         if (_propertyTableModelChange == null) {
-          LibraryFunctions.SetPropertyTableModelChange(null);
+          EntryPoints.SetPropertyTableModelChange(null);
           _onPropertyTableModelChangeKeepAliveDelegate = null;
         }
       }

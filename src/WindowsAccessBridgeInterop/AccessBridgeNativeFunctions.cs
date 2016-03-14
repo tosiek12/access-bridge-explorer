@@ -1,4 +1,4 @@
-﻿// Copyright 2015 Google Inc. All Rights Reserved.
+// Copyright 2016 Google Inc. All Rights Reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,30 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
 namespace WindowsAccessBridgeInterop {
   /// <summary>
-  /// Single entry point to access all events exposed by the Java Access Bridge
-  /// DLL (<see cref="AccessBridge.Events"/>).
+  /// Single entry point to access all functions exposed by the Java Access Bridge
+  /// DLL (<see cref="AccessBridge.Functions"/>).
   /// </summary>
-  partial class AccessBridgeEvents : IDisposable {
-    private readonly AccessBridgeEventsNative _nativeEvents;
+  partial class AccessBridgeNativeFunctions {
+    private readonly AccessBridgeEntryPoints _nativeEntryPoints;
 
-    public AccessBridgeEvents(AccessBridgeLibraryFunctions libraryFunctions) {
-      _nativeEvents = new AccessBridgeEventsNative(libraryFunctions);
+    public AccessBridgeNativeFunctions(AccessBridgeEntryPoints nativeEntryPoints) {
+      _nativeEntryPoints = nativeEntryPoints;
     }
 
-    public AccessBridgeEventsNative NativeEvents {
-      get { return _nativeEvents; }
+    public AccessBridgeEntryPoints EntryPoints {
+      get { return _nativeEntryPoints; }
     }
 
-    public void Dispose() {
-      DetachForwarders();
+    private bool ToBool(int value) {
+      return value != 0;
+    }
+
+    private bool Succeeded(int value) {
+      return ToBool(value);
     }
 
     private JavaObjectHandle Wrap(int vmid, JOBJECT64 handle) {
       return new JavaObjectHandle(vmid, handle);
+    }
+
+    private JOBJECT64 Unwrap(int vmid, JavaObjectHandle objectHandle) {
+      return objectHandle.Handle;
     }
   }
 }

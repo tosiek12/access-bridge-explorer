@@ -17,15 +17,15 @@ namespace WindowsAccessBridgeInterop {
   /// Single entry point to access all functions exposed by the Java Access Bridge
   /// DLL (<see cref="AccessBridge.Functions"/>).
   /// </summary>
-  partial class AccessBridgeFunctionsLegacy {
-    private readonly AccessBridgeLibraryFunctionsLegacy _libraryFunctions;
+  partial class AccessBridgeNativeFunctionsLegacy {
+    private readonly AccessBridgeEntryPointsLegacy _nativeEntryPoints;
 
-    public AccessBridgeFunctionsLegacy(AccessBridgeLibraryFunctionsLegacy libraryFunctions) {
-      _libraryFunctions = libraryFunctions;
+    public AccessBridgeNativeFunctionsLegacy(AccessBridgeEntryPointsLegacy nativeEntryPoints) {
+      _nativeEntryPoints = nativeEntryPoints;
     }
 
-    public AccessBridgeLibraryFunctionsLegacy LibraryFunctions {
-      get { return _libraryFunctions; }
+    public AccessBridgeEntryPointsLegacy EntryPoints {
+      get { return _nativeEntryPoints; }
     }
 
     private bool ToBool(int value) {

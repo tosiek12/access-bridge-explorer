@@ -90,18 +90,18 @@ namespace WindowsAccessBridgeInterop {
 
       var library = LoadLibrary();
       if (library.IsLegacy) {
-        var libraryFunctions = LoadFunctionsLegacy(library);
-        var functions = new AccessBridgeFunctionsLegacy(libraryFunctions);
-        var events = new AccessBridgeEventsLegacy(libraryFunctions);
+        var libraryFunctions = LoadEntryPointsLegacy(library);
+        var functions = new AccessBridgeNativeFunctionsLegacy(libraryFunctions);
+        var events = new AccessBridgeNativeEventsLegacy(libraryFunctions);
 
         // Everything is initialized correctly, save to member variables.
         _library = library;
         _functions = functions;
         _events = events;
       } else {
-        var libraryFunctions = LoadFunctions(library);
-        var functions = new AccessBridgeFunctions(libraryFunctions);
-        var events = new AccessBridgeEvents(libraryFunctions);
+        var libraryFunctions = LoadEntryPoints(library);
+        var functions = new AccessBridgeNativeFunctions(libraryFunctions);
+        var events = new AccessBridgeNativeEvents(libraryFunctions);
 
         // Everything is initialized correctly, save to member variables.
         _library = library;
@@ -216,19 +216,19 @@ namespace WindowsAccessBridgeInterop {
       }
     }
 
-    private static AccessBridgeLibraryFunctions LoadFunctions(UnmanagedLibrary library) {
-      var functions = new AccessBridgeLibraryFunctions();
-      LoadFunctionsEntryPoints(library, functions);
+    private static AccessBridgeEntryPoints LoadEntryPoints(UnmanagedLibrary library) {
+      var functions = new AccessBridgeEntryPoints();
+      LoadEntryPointsImpl(library, functions);
       return functions;
     }
 
-    private static AccessBridgeLibraryFunctionsLegacy LoadFunctionsLegacy(UnmanagedLibrary library) {
-      var functions = new AccessBridgeLibraryFunctionsLegacy();
-      LoadFunctionsEntryPoints(library, functions);
+    private static AccessBridgeEntryPointsLegacy LoadEntryPointsLegacy(UnmanagedLibrary library) {
+      var functions = new AccessBridgeEntryPointsLegacy();
+      LoadEntryPointsImpl(library, functions);
       return functions;
     }
 
-    private static void LoadFunctionsEntryPoints(UnmanagedLibrary library, object functions) {
+    private static void LoadEntryPointsImpl(UnmanagedLibrary library, object functions) {
       var publicMembers = BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance;
       foreach (var property in functions.GetType().GetProperties(publicMembers)) {
         var name = property.Name;
