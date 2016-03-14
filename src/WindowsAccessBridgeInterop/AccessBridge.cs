@@ -20,9 +20,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using AccessBridgeExplorer.Win32;
+using WindowsAccessBridgeInterop.Win32;
 
-namespace AccessBridgeExplorer.WindowsAccessBridge {
+namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Class used to dynamically load and access the Java Access Bridge DLL.
   /// </summary>

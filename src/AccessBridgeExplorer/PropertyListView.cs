@@ -14,7 +14,7 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using AccessBridgeExplorer.Model;
+using WindowsAccessBridgeInterop;
 
 namespace AccessBridgeExplorer {
   /// <summary>

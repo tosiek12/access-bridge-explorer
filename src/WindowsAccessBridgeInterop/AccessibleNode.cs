@@ -16,9 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using AccessBridgeExplorer.Model;
 
-namespace AccessBridgeExplorer.WindowsAccessBridge {
+namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Base class of all accessible nodes exposed by the <see cref="AccessBridge"/>.
   /// </summary>

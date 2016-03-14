@@ -16,9 +16,8 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
-using AccessBridgeExplorer.Model;
 
-namespace AccessBridgeExplorer.WindowsAccessBridge {
+namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Root node of a tree of <see cref="AccessibleContextNode"/> instances of a
   /// specific Java Window.

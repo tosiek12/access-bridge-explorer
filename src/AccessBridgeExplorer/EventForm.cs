@@ -14,7 +14,7 @@
 
 using System;
 using System.Windows.Forms;
-using AccessBridgeExplorer.Model;
+using WindowsAccessBridgeInterop;
 
 namespace AccessBridgeExplorer {
   public partial class EventForm : Form {

@@ -14,7 +14,7 @@
 
 using System.Collections.Generic;
 
-namespace AccessBridgeExplorer.Model {
+namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// A list of <see cref="PropertyNode"/>.
   /// </summary>

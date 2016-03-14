@@ -14,7 +14,7 @@
 
 using System;
 
-namespace AccessBridgeExplorer.WindowsAccessBridge {
+namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Flags specifiying what properties to include in <see cref="AccessibleNode.GetProperties"/>.
   /// </summary>

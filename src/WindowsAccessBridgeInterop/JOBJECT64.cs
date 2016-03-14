@@ -16,7 +16,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace AccessBridgeExplorer.WindowsAccessBridge {
+namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Wrapper around a 64-bit integer. This makes code slightly more typesafe
   /// than using Int64 values directly.

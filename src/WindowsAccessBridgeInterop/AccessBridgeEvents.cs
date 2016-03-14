@@ -14,7 +14,7 @@
 
 using System;
 
-namespace AccessBridgeExplorer.WindowsAccessBridge {
+namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Single entry point to access all events exposed by the Java Access Bridge
   /// DLL (<see cref="AccessBridge.Events"/>).

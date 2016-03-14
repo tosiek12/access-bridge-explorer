@@ -15,7 +15,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AccessBridgeExplorer.WindowsAccessBridge {
+namespace WindowsAccessBridgeInterop {
   public class NodePath {
     private readonly Stack<AccessibleNode> _nodes = new Stack<AccessibleNode>();
 

@@ -15,7 +15,7 @@
 using System;
 using System.IO;
 
-namespace AccessBridgeExplorer.WindowsAccessBridge {
+namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Expose a <see cref="TextReader"/> interface over an accessible
   /// text component.

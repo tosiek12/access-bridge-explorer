@@ -24,7 +24,7 @@ using System.Text;
 using WindowHandle = System.IntPtr;
 using BOOL = System.Int32;
 
-namespace AccessBridgeExplorer.WindowsAccessBridge {
+namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Platform agnostic abstraction over WindowAccessBridge DLL functions
   /// </summary>

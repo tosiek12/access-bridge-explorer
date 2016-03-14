@@ -14,7 +14,7 @@
 
 using System;
 
-namespace AccessBridgeExplorer.Model {
+namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// A property node that can have children (as a <see cref="PropertyList"/>).
   /// </summary>

@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace AccessBridgeExplorer.WindowsAccessBridge {
+namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Extension methods over a <see cref="TextReader"/> implementation.
   /// </summary>

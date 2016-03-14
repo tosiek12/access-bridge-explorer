@@ -15,7 +15,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace AccessBridgeExplorer.WindowsAccessBridge {
+namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Handle for objects returned from the WindowAccessBridge-XX dll.
   /// This ensures that all java objects references are released when not used

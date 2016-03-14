@@ -20,7 +20,7 @@ using System.Security.Permissions;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
 
-namespace AccessBridgeExplorer.Win32 {
+namespace WindowsAccessBridgeInterop.Win32 {
   /// <summary>
   /// Utility class to wrap an unmanaged DLL and be responsible for freeing it.
   /// </summary>

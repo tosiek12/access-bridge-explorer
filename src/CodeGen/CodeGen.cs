@@ -68,7 +68,7 @@ namespace CodeGen {
           sourceWriter.AddUsing("BOOL = System.Int32");
           sourceWriter.WriteLine();
 
-          sourceWriter.StartNamespace("AccessBridgeExplorer.WindowsAccessBridge");
+          sourceWriter.StartNamespace("WindowsAccessBridgeInterop");
           sourceWriter.IsNativeTypes = false;
           WriteApplicationFunctionsInterface(model, sourceWriter);
           WriteApplicationEventsInterface(model, sourceWriter);

@@ -15,7 +15,7 @@
 using System;
 using System.Reflection;
 using System.Windows.Forms;
-using AccessBridgeExplorer.WindowsAccessBridge;
+using WindowsAccessBridgeInterop;
 
 namespace AccessBridgeExplorer {
   public partial class AboutForm : Form {
