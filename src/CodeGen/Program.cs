@@ -23,12 +23,19 @@ using System.Threading.Tasks;
 namespace CodeGen {
   class Program {
     static void Main(string[] args) {
-      var path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"..\..\..\WindowsAccessBridgeInterop\Generated.cs");
+      var path1 = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"..\..\..\WindowsAccessBridgeInterop\Generated.cs");
       if (args.Length >= 1) {
-        path = Path.Combine(Environment.CurrentDirectory, args[0]);
+        path1 = Path.Combine(Environment.CurrentDirectory, args[0]);
+      }
+      var path2 = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"..\..\..\WindowsAccessBridgeInterop\Generated.Internal.cs");
+      if (args.Length >= 2) {
+        path2 = Path.Combine(Environment.CurrentDirectory, args[1]);
       }
 
-      var codeGen = new CodeGen(path);
+      var codeGen = new CodeGen(new CodeGenOptions {
+        PublicClassesOutputFileName = path1,
+        InternalClassesOutputFileName = path2,
+      });
       codeGen.Generate();
     }
   }

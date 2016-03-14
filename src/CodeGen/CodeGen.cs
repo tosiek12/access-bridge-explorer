@@ -18,11 +18,16 @@ using CodeGen.Definitions;
 using CodeGen.Interop;
 
 namespace CodeGen {
-  public class CodeGen {
-    private readonly string _outputFilename;
+  public class CodeGenOptions {
+    public string PublicClassesOutputFileName { get; set; }
+    public string InternalClassesOutputFileName { get; set; }
+  }
 
-    public CodeGen(string outputFilename) {
-      _outputFilename = outputFilename;
+  public class CodeGen {
+    private readonly CodeGenOptions _options;
+
+    public CodeGen(CodeGenOptions options) {
+      _options = options;
     }
 
     public void Generate() {
@@ -31,54 +36,34 @@ namespace CodeGen {
     }
 
     private void WriteFile(WindowsAccessBridgeModel model) {
-      using (var writer = File.CreateText(_outputFilename)) {
+      using (var writer = File.CreateText(_options.PublicClassesOutputFileName)) {
         using (var sourceWriter = new SourceCodeWriter(writer, model)) {
-          sourceWriter.WriteLine("// Copyright 2016 Google Inc. All Rights Reserved.");
-          sourceWriter.WriteLine("// ");
-          sourceWriter.WriteLine("// Licensed under the Apache License, Version 2.0 (the \"License\");");
-          sourceWriter.WriteLine("// you may not use this file except in compliance with the License.");
-          sourceWriter.WriteLine("// You may obtain a copy of the License at");
-          sourceWriter.WriteLine("// ");
-          sourceWriter.WriteLine("//     http://www.apache.org/licenses/LICENSE-2.0");
-          sourceWriter.WriteLine("// ");
-          sourceWriter.WriteLine("// Unless required by applicable law or agreed to in writing, software");
-          sourceWriter.WriteLine("// distributed under the License is distributed on an \"AS IS\" BASIS,");
-          sourceWriter.WriteLine("// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
-          sourceWriter.WriteLine("// See the License for the specific language governing permissions and");
-          sourceWriter.WriteLine("// limitations under the License.");
-          sourceWriter.WriteLine();
-
-          sourceWriter.WriteLine("// ReSharper disable InconsistentNaming");
-          sourceWriter.WriteLine("// ReSharper disable DelegateSubtraction");
-          sourceWriter.WriteLine("// ReSharper disable UseObjectOrCollectionInitializer");
-          sourceWriter.WriteLine("// ReSharper disable UnusedParameter.Local");
-          sourceWriter.WriteLine("// ReSharper disable UnusedMember.Local");
-          sourceWriter.WriteLine("// ReSharper disable ConvertIfStatementToConditionalTernaryExpression");
-
-          sourceWriter.AddUsing("System");
-          sourceWriter.AddUsing("System.Runtime.InteropServices");
-          sourceWriter.AddUsing("System.Text");
-          sourceWriter.AddUsing("WindowHandle = System.IntPtr");
-          sourceWriter.AddUsing("BOOL = System.Int32");
-          sourceWriter.WriteLine();
+          WriteSourceFileHeader(sourceWriter);
 
           sourceWriter.StartNamespace("WindowsAccessBridgeInterop");
-          sourceWriter.IsNativeTypes = false;
           WriteApplicationFunctionsInterface(model, sourceWriter);
           WriteApplicationEventsInterface(model, sourceWriter);
           WriteApplicationEventHandlerTypes(model, sourceWriter);
           WriteApplicationEnums(model, writer, sourceWriter);
           WriteApplicationStructs(model, sourceWriter, writer);
           WriteApplicationClasses(model, writer, sourceWriter);
+          sourceWriter.EndNamespace();
+        }
+      }
 
-          foreach (var legacy in new[] {false, true}) {
+      using (var writer = File.CreateText(_options.InternalClassesOutputFileName)) {
+        using (var sourceWriter = new SourceCodeWriter(writer, model)) {
+          WriteSourceFileHeader(sourceWriter);
+
+          sourceWriter.StartNamespace("WindowsAccessBridgeInterop");
+          foreach (var legacy in new[] { false, true }) {
             sourceWriter.IsLegacy = legacy;
             WriteApplicationFunctionsClass(model, sourceWriter);
             WriteApplicationEventsClass(model, sourceWriter);
           }
 
           sourceWriter.IsNativeTypes = true;
-          foreach (var legacy in new[] {false, true}) {
+          foreach (var legacy in new[] { false, true }) {
             sourceWriter.IsLegacy = legacy;
             WriteLibraryFunctionsClass(model, sourceWriter);
           }
@@ -94,6 +79,37 @@ namespace CodeGen {
           sourceWriter.EndNamespace();
         }
       }
+    }
+
+    private static void WriteSourceFileHeader(SourceCodeWriter sourceWriter) {
+      sourceWriter.WriteLine("// Copyright 2016 Google Inc. All Rights Reserved.");
+      sourceWriter.WriteLine("// ");
+      sourceWriter.WriteLine("// Licensed under the Apache License, Version 2.0 (the \"License\");");
+      sourceWriter.WriteLine("// you may not use this file except in compliance with the License.");
+      sourceWriter.WriteLine("// You may obtain a copy of the License at");
+      sourceWriter.WriteLine("// ");
+      sourceWriter.WriteLine("//     http://www.apache.org/licenses/LICENSE-2.0");
+      sourceWriter.WriteLine("// ");
+      sourceWriter.WriteLine("// Unless required by applicable law or agreed to in writing, software");
+      sourceWriter.WriteLine("// distributed under the License is distributed on an \"AS IS\" BASIS,");
+      sourceWriter.WriteLine("// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
+      sourceWriter.WriteLine("// See the License for the specific language governing permissions and");
+      sourceWriter.WriteLine("// limitations under the License.");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("// ReSharper disable InconsistentNaming");
+      sourceWriter.WriteLine("// ReSharper disable DelegateSubtraction");
+      sourceWriter.WriteLine("// ReSharper disable UseObjectOrCollectionInitializer");
+      sourceWriter.WriteLine("// ReSharper disable UnusedParameter.Local");
+      sourceWriter.WriteLine("// ReSharper disable UnusedMember.Local");
+      sourceWriter.WriteLine("// ReSharper disable ConvertIfStatementToConditionalTernaryExpression");
+
+      sourceWriter.AddUsing("System");
+      sourceWriter.AddUsing("System.Runtime.InteropServices");
+      sourceWriter.AddUsing("System.Text");
+      sourceWriter.AddUsing("WindowHandle = System.IntPtr");
+      sourceWriter.AddUsing("BOOL = System.Int32");
+      sourceWriter.WriteLine();
     }
 
     private void WriteApplicationEnums(WindowsAccessBridgeModel model, StreamWriter writer, SourceCodeWriter sourceWriter) {
