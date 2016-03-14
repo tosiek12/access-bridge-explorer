@@ -50,7 +50,7 @@
     <Compile Include="Definitions\FieldDefinition.cs" />
     <Compile Include="Definitions\FunctionDefinition.cs" />
     <Compile Include="Definitions\NameTypeReference.cs" />
-    <Compile Include="Definitions\StrucDefinition.cs" />
+    <Compile Include="Definitions\StructDefinition.cs" />
     <Compile Include="Definitions\TypeReference.cs" />
     <Compile Include="Interop\NativeStructures\AccessBridgeVersionInfo.cs" />
     <Compile Include="Interop\NativeStructures\AccessibleActionInfo.cs" />
@@ -78,7 +78,7 @@
     <Compile Include="Interop\Constants.cs" />
     <Compile Include="Interop\NativeStructures\VisibleChildrenInfo.cs" />
     <Compile Include="Definitions\ParameterDefinition.cs" />
-    <Compile Include="Definitions\StrucDefintion.cs" />
+    <Compile Include="Definitions\BaseTypeDefinition.cs" />
     <Compile Include="Definitions\EventDefinition.cs" />
     <Compile Include="Definitions\WindowsAccessBridgeModel.cs" />
     <Compile Include="Interop\StatusResult.cs" />

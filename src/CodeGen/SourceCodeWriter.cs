@@ -98,8 +98,6 @@ namespace CodeGen {
     public void WriteMashalAs(MarshalAsAttribute attribute) {
       if (attribute == null)
         return;
-      if (!IsNativeTypes)
-        return;
 
       Write("[{0}(", "MarshalAs");
       Write("{0}.{1}", typeof(UnmanagedType).Name, Enum.GetName(typeof(UnmanagedType), attribute.Value));
@@ -145,21 +143,15 @@ namespace CodeGen {
           return "BOOL";
       } else if (_model.IsStructName(typeName) || _model.IsClassName(typeName)) {
         if (IsNativeTypes) {
-          typeName += "Native";
-          if (IsLegacy)
-            typeName += "Legacy";
+          if (_model.StructNeedsWrapper(typeName) || _model.ClassNeedsWrapper(typeName)) {
+            typeName += "Native";
+            if (IsLegacy)
+              typeName += "Legacy";
+          }
         }
       }
 
       return typeName;
-    }
-
-    public void WriteMarshalAsLine(MarshalAsAttribute marshalAs) {
-      if (IsNativeTypes && marshalAs != null) {
-        WriteIndent();
-        WriteMashalAs(marshalAs);
-        WriteLine();
-      }
     }
   }
 }

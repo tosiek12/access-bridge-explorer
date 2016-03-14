@@ -29,7 +29,6 @@ namespace WindowsAccessBridgeInterop {
   /// Platform agnostic abstraction over WindowAccessBridge DLL functions
   /// </summary>
   public interface IAccessBridgeFunctions {
-    bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info);
     void Windows_run();
     bool IsJavaWindow(WindowHandle window);
     bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2);
@@ -94,6 +93,7 @@ namespace WindowsAccessBridgeInterop {
     bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
     int GetVisibleChildrenCount(int vmid, JavaObjectHandle accessibleContext);
     bool GetVisibleChildren(int vmid, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children);
+    bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info);
   }
 
   /// <summary>
@@ -202,19 +202,28 @@ namespace WindowsAccessBridgeInterop {
     ACCESSIBLE_CONTROLCODE_KEYSTROKE = 512,
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessBridgeVersionInfo {
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string VMversion;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string bridgeJavaClassVersion;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string bridgeJavaDLLVersion;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string bridgeWinDLLVersion;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleActionInfo {
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string name;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleActionsToDo {
     public int actionsCount;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
     public AccessibleActionInfo[] actions;
   }
 
@@ -231,24 +240,31 @@ namespace WindowsAccessBridgeInterop {
     public JavaObjectHandle accessibleHypertext;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleIconInfo {
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string description;
     public int height;
     public int width;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleIcons {
     public int iconsCount;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
     public AccessibleIconInfo[] iconInfo;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleKeyBindingInfo {
     public AccessibleKeyCode character;
     public AccessibleModifiers modifiers;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleKeyBindings {
     public int keyBindingsCount;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     public AccessibleKeyBindingInfo[] keyBindingInfo;
   }
 
@@ -263,18 +279,23 @@ namespace WindowsAccessBridgeInterop {
     public AccessibleRelationInfo[] relations;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleTextInfo {
     public int charCount;
     public int caretIndex;
     public int indexAtPoint;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleTextItemsInfo {
     public char letter;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string word;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
     public string sentence;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleTextRectInfo {
     public int x;
     public int y;
@@ -282,9 +303,11 @@ namespace WindowsAccessBridgeInterop {
     public int height;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleTextSelectionInfo {
     public int selectionStartIndex;
     public int selectionEndIndex;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
     public string selectedText;
   }
 
@@ -293,17 +316,26 @@ namespace WindowsAccessBridgeInterop {
     public JavaObjectHandle[] children;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public class AccessibleActions {
     public int actionsCount;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
     public AccessibleActionInfo[] actionInfo;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public class AccessibleContextInfo {
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
     public string name;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
     public string description;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string role;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string role_en_US;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string states;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string states_en_US;
     public int indexInParent;
     public int childrenCount;
@@ -337,6 +369,7 @@ namespace WindowsAccessBridgeInterop {
     public JavaObjectHandle accessibleTable;
   }
 
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public class AccessibleTextAttributesInfo {
     public int bold;
     public int italic;
@@ -344,8 +377,11 @@ namespace WindowsAccessBridgeInterop {
     public int strikethrough;
     public int superscript;
     public int subscript;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string backgroundColor;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string foregroundColor;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string fontFamily;
     public int fontSize;
     public int alignment;
@@ -356,6 +392,7 @@ namespace WindowsAccessBridgeInterop {
     public float lineSpacing;
     public float spaceAbove;
     public float spaceBelow;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
     public string fullAttributesString;
   }
 
@@ -365,16 +402,6 @@ namespace WindowsAccessBridgeInterop {
   public partial class AccessBridgeFunctions : IAccessBridgeFunctions {
 
     #region Function implementations
-
-    public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
-      AccessBridgeVersionInfoNative infoTemp;
-      var result = LibraryFunctions.GetVersionInfo(vmid, out infoTemp);
-      if (Succeeded(result))
-        info = Wrap(vmid, infoTemp);
-      else
-        info = default(AccessBridgeVersionInfo);
-      return Succeeded(result);
-    }
 
     public void Windows_run() {
       LibraryFunctions.Windows_run();
@@ -436,12 +463,9 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info) {
-      AccessibleContextInfoNative infoTemp = new AccessibleContextInfoNative();
-      var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), infoTemp);
-      GC.KeepAlive(ac);
       info = new AccessibleContextInfo();
-      if (Succeeded(result))
-        CopyWrap(vmid, infoTemp, info);
+      var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), info);
+      GC.KeepAlive(ac);
       return Succeeded(result);
     }
 
@@ -521,97 +545,58 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings) {
-      AccessibleKeyBindingsNative keyBindingsTemp;
-      var result = LibraryFunctions.GetAccessibleKeyBindings(vmid, Unwrap(vmid, accessibleContext), out keyBindingsTemp);
+      var result = LibraryFunctions.GetAccessibleKeyBindings(vmid, Unwrap(vmid, accessibleContext), out keyBindings);
       GC.KeepAlive(accessibleContext);
-      if (Succeeded(result))
-        keyBindings = Wrap(vmid, keyBindingsTemp);
-      else
-        keyBindings = default(AccessibleKeyBindings);
       return Succeeded(result);
     }
 
     public bool GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons) {
-      AccessibleIconsNative iconsTemp;
-      var result = LibraryFunctions.GetAccessibleIcons(vmid, Unwrap(vmid, accessibleContext), out iconsTemp);
+      var result = LibraryFunctions.GetAccessibleIcons(vmid, Unwrap(vmid, accessibleContext), out icons);
       GC.KeepAlive(accessibleContext);
-      if (Succeeded(result))
-        icons = Wrap(vmid, iconsTemp);
-      else
-        icons = default(AccessibleIcons);
       return Succeeded(result);
     }
 
     public bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, out AccessibleActions actions) {
-      AccessibleActionsNative actionsTemp = new AccessibleActionsNative();
-      var result = LibraryFunctions.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actionsTemp);
-      GC.KeepAlive(accessibleContext);
       actions = new AccessibleActions();
-      if (Succeeded(result))
-        CopyWrap(vmid, actionsTemp, actions);
+      var result = LibraryFunctions.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actions);
+      GC.KeepAlive(accessibleContext);
       return Succeeded(result);
     }
 
     public bool DoAccessibleActions(int vmid, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure) {
-      AccessibleActionsToDoNative actionsToDoTemp = Unwrap(vmid, actionsToDo);
-      var result = LibraryFunctions.DoAccessibleActions(vmid, Unwrap(vmid, accessibleContext), ref actionsToDoTemp, out failure);
+      var result = LibraryFunctions.DoAccessibleActions(vmid, Unwrap(vmid, accessibleContext), ref actionsToDo, out failure);
       GC.KeepAlive(accessibleContext);
-      if (Succeeded(result))
-        actionsToDo = Wrap(vmid, actionsToDoTemp);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y) {
-      AccessibleTextInfoNative textInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTextInfo(vmid, Unwrap(vmid, at), out textInfoTemp, x, y);
+      var result = LibraryFunctions.GetAccessibleTextInfo(vmid, Unwrap(vmid, at), out textInfo, x, y);
       GC.KeepAlive(at);
-      if (Succeeded(result))
-        textInfo = Wrap(vmid, textInfoTemp);
-      else
-        textInfo = default(AccessibleTextInfo);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index) {
-      AccessibleTextItemsInfoNative textItemsTemp;
-      var result = LibraryFunctions.GetAccessibleTextItems(vmid, Unwrap(vmid, at), out textItemsTemp, index);
+      var result = LibraryFunctions.GetAccessibleTextItems(vmid, Unwrap(vmid, at), out textItems, index);
       GC.KeepAlive(at);
-      if (Succeeded(result))
-        textItems = Wrap(vmid, textItemsTemp);
-      else
-        textItems = default(AccessibleTextItemsInfo);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextSelectionInfo(int vmid, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection) {
-      AccessibleTextSelectionInfoNative textSelectionTemp;
-      var result = LibraryFunctions.GetAccessibleTextSelectionInfo(vmid, Unwrap(vmid, at), out textSelectionTemp);
+      var result = LibraryFunctions.GetAccessibleTextSelectionInfo(vmid, Unwrap(vmid, at), out textSelection);
       GC.KeepAlive(at);
-      if (Succeeded(result))
-        textSelection = Wrap(vmid, textSelectionTemp);
-      else
-        textSelection = default(AccessibleTextSelectionInfo);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes) {
-      AccessibleTextAttributesInfoNative attributesTemp = new AccessibleTextAttributesInfoNative();
-      var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, attributesTemp);
-      GC.KeepAlive(at);
       attributes = new AccessibleTextAttributesInfo();
-      if (Succeeded(result))
-        CopyWrap(vmid, attributesTemp, attributes);
+      var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, attributes);
+      GC.KeepAlive(at);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index) {
-      AccessibleTextRectInfoNative rectInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTextRect(vmid, Unwrap(vmid, at), out rectInfoTemp, index);
+      var result = LibraryFunctions.GetAccessibleTextRect(vmid, Unwrap(vmid, at), out rectInfo, index);
       GC.KeepAlive(at);
-      if (Succeeded(result))
-        rectInfo = Wrap(vmid, rectInfoTemp);
-      else
-        rectInfo = default(AccessibleTextRectInfo);
       return Succeeded(result);
     }
 
@@ -832,23 +817,15 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len) {
-      AccessibleTextAttributesInfoNative attributesTemp = new AccessibleTextAttributesInfoNative();
-      var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, attributesTemp, out len);
-      GC.KeepAlive(accessibleContext);
       attributes = new AccessibleTextAttributesInfo();
-      if (Succeeded(result))
-        CopyWrap(vmid, attributesTemp, attributes);
+      var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, attributes, out len);
+      GC.KeepAlive(accessibleContext);
       return Succeeded(result);
     }
 
     public bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index) {
-      AccessibleTextRectInfoNative rectInfoTemp;
-      var result = LibraryFunctions.GetCaretLocation(vmid, Unwrap(vmid, ac), out rectInfoTemp, index);
+      var result = LibraryFunctions.GetCaretLocation(vmid, Unwrap(vmid, ac), out rectInfo, index);
       GC.KeepAlive(ac);
-      if (Succeeded(result))
-        rectInfo = Wrap(vmid, rectInfoTemp);
-      else
-        rectInfo = default(AccessibleTextRectInfo);
       return Succeeded(result);
     }
 
@@ -869,65 +846,14 @@ namespace WindowsAccessBridgeInterop {
       return Succeeded(result);
     }
 
+    public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
+      var result = LibraryFunctions.GetVersionInfo(vmid, out info);
+      return Succeeded(result);
+    }
+
     #endregion
 
     #region Wrap/Unwrap structs
-
-    private AccessBridgeVersionInfo Wrap(int vmid, AccessBridgeVersionInfoNative info) {
-      var result = new AccessBridgeVersionInfo();
-      result.VMversion = info.VMversion;
-      result.bridgeJavaClassVersion = info.bridgeJavaClassVersion;
-      result.bridgeJavaDLLVersion = info.bridgeJavaDLLVersion;
-      result.bridgeWinDLLVersion = info.bridgeWinDLLVersion;
-      return result;
-    }
-
-    private AccessBridgeVersionInfoNative Unwrap(int vmid, AccessBridgeVersionInfo info) {
-      var result = new AccessBridgeVersionInfoNative();
-      result.VMversion = info.VMversion;
-      result.bridgeJavaClassVersion = info.bridgeJavaClassVersion;
-      result.bridgeJavaDLLVersion = info.bridgeJavaDLLVersion;
-      result.bridgeWinDLLVersion = info.bridgeWinDLLVersion;
-      return result;
-    }
-
-    private AccessibleActionInfo Wrap(int vmid, AccessibleActionInfoNative info) {
-      var result = new AccessibleActionInfo();
-      result.name = info.name;
-      return result;
-    }
-
-    private AccessibleActionInfoNative Unwrap(int vmid, AccessibleActionInfo info) {
-      var result = new AccessibleActionInfoNative();
-      result.name = info.name;
-      return result;
-    }
-
-    private AccessibleActionsToDo Wrap(int vmid, AccessibleActionsToDoNative info) {
-      var result = new AccessibleActionsToDo();
-      result.actionsCount = info.actionsCount;
-      if (info.actions != null) {
-        var count = info.actionsCount;
-        result.actions = new AccessibleActionInfo[count];
-        for(var i = 0; i < count; i++) {
-          result.actions[i] = Wrap(vmid, info.actions[i]);
-        }
-      }
-      return result;
-    }
-
-    private AccessibleActionsToDoNative Unwrap(int vmid, AccessibleActionsToDo info) {
-      var result = new AccessibleActionsToDoNative();
-      result.actionsCount = info.actionsCount;
-      if (info.actions != null) {
-        var count = info.actionsCount;
-        result.actions = new AccessibleActionInfoNative[count];
-        for(var i = 0; i < count; i++) {
-          result.actions[i] = Unwrap(vmid, info.actions[i]);
-        }
-      }
-      return result;
-    }
 
     private AccessibleHyperlinkInfo Wrap(int vmid, AccessibleHyperlinkInfoNative info) {
       var result = new AccessibleHyperlinkInfo();
@@ -972,88 +898,6 @@ namespace WindowsAccessBridgeInterop {
         }
       }
       result.accessibleHypertext = Unwrap(vmid, info.accessibleHypertext);
-      return result;
-    }
-
-    private AccessibleIconInfo Wrap(int vmid, AccessibleIconInfoNative info) {
-      var result = new AccessibleIconInfo();
-      result.description = info.description;
-      result.height = info.height;
-      result.width = info.width;
-      return result;
-    }
-
-    private AccessibleIconInfoNative Unwrap(int vmid, AccessibleIconInfo info) {
-      var result = new AccessibleIconInfoNative();
-      result.description = info.description;
-      result.height = info.height;
-      result.width = info.width;
-      return result;
-    }
-
-    private AccessibleIcons Wrap(int vmid, AccessibleIconsNative info) {
-      var result = new AccessibleIcons();
-      result.iconsCount = info.iconsCount;
-      if (info.iconInfo != null) {
-        var count = info.iconsCount;
-        result.iconInfo = new AccessibleIconInfo[count];
-        for(var i = 0; i < count; i++) {
-          result.iconInfo[i] = Wrap(vmid, info.iconInfo[i]);
-        }
-      }
-      return result;
-    }
-
-    private AccessibleIconsNative Unwrap(int vmid, AccessibleIcons info) {
-      var result = new AccessibleIconsNative();
-      result.iconsCount = info.iconsCount;
-      if (info.iconInfo != null) {
-        var count = info.iconsCount;
-        result.iconInfo = new AccessibleIconInfoNative[count];
-        for(var i = 0; i < count; i++) {
-          result.iconInfo[i] = Unwrap(vmid, info.iconInfo[i]);
-        }
-      }
-      return result;
-    }
-
-    private AccessibleKeyBindingInfo Wrap(int vmid, AccessibleKeyBindingInfoNative info) {
-      var result = new AccessibleKeyBindingInfo();
-      result.character = info.character;
-      result.modifiers = info.modifiers;
-      return result;
-    }
-
-    private AccessibleKeyBindingInfoNative Unwrap(int vmid, AccessibleKeyBindingInfo info) {
-      var result = new AccessibleKeyBindingInfoNative();
-      result.character = info.character;
-      result.modifiers = info.modifiers;
-      return result;
-    }
-
-    private AccessibleKeyBindings Wrap(int vmid, AccessibleKeyBindingsNative info) {
-      var result = new AccessibleKeyBindings();
-      result.keyBindingsCount = info.keyBindingsCount;
-      if (info.keyBindingInfo != null) {
-        var count = info.keyBindingsCount;
-        result.keyBindingInfo = new AccessibleKeyBindingInfo[count];
-        for(var i = 0; i < count; i++) {
-          result.keyBindingInfo[i] = Wrap(vmid, info.keyBindingInfo[i]);
-        }
-      }
-      return result;
-    }
-
-    private AccessibleKeyBindingsNative Unwrap(int vmid, AccessibleKeyBindings info) {
-      var result = new AccessibleKeyBindingsNative();
-      result.keyBindingsCount = info.keyBindingsCount;
-      if (info.keyBindingInfo != null) {
-        var count = info.keyBindingsCount;
-        result.keyBindingInfo = new AccessibleKeyBindingInfoNative[count];
-        for(var i = 0; i < count; i++) {
-          result.keyBindingInfo[i] = Unwrap(vmid, info.keyBindingInfo[i]);
-        }
-      }
       return result;
     }
 
@@ -1111,72 +955,6 @@ namespace WindowsAccessBridgeInterop {
       return result;
     }
 
-    private AccessibleTextInfo Wrap(int vmid, AccessibleTextInfoNative info) {
-      var result = new AccessibleTextInfo();
-      result.charCount = info.charCount;
-      result.caretIndex = info.caretIndex;
-      result.indexAtPoint = info.indexAtPoint;
-      return result;
-    }
-
-    private AccessibleTextInfoNative Unwrap(int vmid, AccessibleTextInfo info) {
-      var result = new AccessibleTextInfoNative();
-      result.charCount = info.charCount;
-      result.caretIndex = info.caretIndex;
-      result.indexAtPoint = info.indexAtPoint;
-      return result;
-    }
-
-    private AccessibleTextItemsInfo Wrap(int vmid, AccessibleTextItemsInfoNative info) {
-      var result = new AccessibleTextItemsInfo();
-      result.letter = info.letter;
-      result.word = info.word;
-      result.sentence = info.sentence;
-      return result;
-    }
-
-    private AccessibleTextItemsInfoNative Unwrap(int vmid, AccessibleTextItemsInfo info) {
-      var result = new AccessibleTextItemsInfoNative();
-      result.letter = info.letter;
-      result.word = info.word;
-      result.sentence = info.sentence;
-      return result;
-    }
-
-    private AccessibleTextRectInfo Wrap(int vmid, AccessibleTextRectInfoNative info) {
-      var result = new AccessibleTextRectInfo();
-      result.x = info.x;
-      result.y = info.y;
-      result.width = info.width;
-      result.height = info.height;
-      return result;
-    }
-
-    private AccessibleTextRectInfoNative Unwrap(int vmid, AccessibleTextRectInfo info) {
-      var result = new AccessibleTextRectInfoNative();
-      result.x = info.x;
-      result.y = info.y;
-      result.width = info.width;
-      result.height = info.height;
-      return result;
-    }
-
-    private AccessibleTextSelectionInfo Wrap(int vmid, AccessibleTextSelectionInfoNative info) {
-      var result = new AccessibleTextSelectionInfo();
-      result.selectionStartIndex = info.selectionStartIndex;
-      result.selectionEndIndex = info.selectionEndIndex;
-      result.selectedText = info.selectedText;
-      return result;
-    }
-
-    private AccessibleTextSelectionInfoNative Unwrap(int vmid, AccessibleTextSelectionInfo info) {
-      var result = new AccessibleTextSelectionInfoNative();
-      result.selectionStartIndex = info.selectionStartIndex;
-      result.selectionEndIndex = info.selectionEndIndex;
-      result.selectedText = info.selectedText;
-      return result;
-    }
-
     private VisibleChildrenInfo Wrap(int vmid, VisibleChildrenInfoNative info) {
       var result = new VisibleChildrenInfo();
       result.returnedChildrenCount = info.returnedChildrenCount;
@@ -1206,68 +984,6 @@ namespace WindowsAccessBridgeInterop {
     #endregion
 
     #region CopyWrap/CopyUnwrap classes
-
-    private void CopyWrap(int vmid, AccessibleActionsNative infoSrc, AccessibleActions infoDest) {
-      infoDest.actionsCount = infoSrc.actionsCount;
-      if (infoSrc.actionInfo != null) {
-        var count = infoSrc.actionsCount;
-        infoDest.actionInfo = new AccessibleActionInfo[count];
-        for(var i = 0; i < count; i++) {
-          infoDest.actionInfo[i] = Wrap(vmid, infoSrc.actionInfo[i]);
-        }
-      }
-    }
-
-    private void CopyUnwrap(int vmid, AccessibleActions infoSrc, AccessibleActionsNative infoDest) {
-      infoDest.actionsCount = infoSrc.actionsCount;
-      if (infoSrc.actionInfo != null) {
-        var count = infoSrc.actionsCount;
-        infoDest.actionInfo = new AccessibleActionInfoNative[count];
-        for(var i = 0; i < count; i++) {
-          infoDest.actionInfo[i] = Unwrap(vmid, infoSrc.actionInfo[i]);
-        }
-      }
-    }
-
-    private void CopyWrap(int vmid, AccessibleContextInfoNative infoSrc, AccessibleContextInfo infoDest) {
-      infoDest.name = infoSrc.name;
-      infoDest.description = infoSrc.description;
-      infoDest.role = infoSrc.role;
-      infoDest.role_en_US = infoSrc.role_en_US;
-      infoDest.states = infoSrc.states;
-      infoDest.states_en_US = infoSrc.states_en_US;
-      infoDest.indexInParent = infoSrc.indexInParent;
-      infoDest.childrenCount = infoSrc.childrenCount;
-      infoDest.x = infoSrc.x;
-      infoDest.y = infoSrc.y;
-      infoDest.width = infoSrc.width;
-      infoDest.height = infoSrc.height;
-      infoDest.accessibleComponent = infoSrc.accessibleComponent;
-      infoDest.accessibleAction = infoSrc.accessibleAction;
-      infoDest.accessibleSelection = infoSrc.accessibleSelection;
-      infoDest.accessibleText = infoSrc.accessibleText;
-      infoDest.accessibleInterfaces = infoSrc.accessibleInterfaces;
-    }
-
-    private void CopyUnwrap(int vmid, AccessibleContextInfo infoSrc, AccessibleContextInfoNative infoDest) {
-      infoDest.name = infoSrc.name;
-      infoDest.description = infoSrc.description;
-      infoDest.role = infoSrc.role;
-      infoDest.role_en_US = infoSrc.role_en_US;
-      infoDest.states = infoSrc.states;
-      infoDest.states_en_US = infoSrc.states_en_US;
-      infoDest.indexInParent = infoSrc.indexInParent;
-      infoDest.childrenCount = infoSrc.childrenCount;
-      infoDest.x = infoSrc.x;
-      infoDest.y = infoSrc.y;
-      infoDest.width = infoSrc.width;
-      infoDest.height = infoSrc.height;
-      infoDest.accessibleComponent = infoSrc.accessibleComponent;
-      infoDest.accessibleAction = infoSrc.accessibleAction;
-      infoDest.accessibleSelection = infoSrc.accessibleSelection;
-      infoDest.accessibleText = infoSrc.accessibleText;
-      infoDest.accessibleInterfaces = infoSrc.accessibleInterfaces;
-    }
 
     private void CopyWrap(int vmid, AccessibleTableCellInfoNative infoSrc, AccessibleTableCellInfo infoDest) {
       infoDest.accessibleContext = Wrap(vmid, infoSrc.accessibleContext);
@@ -1305,50 +1021,6 @@ namespace WindowsAccessBridgeInterop {
       infoDest.columnCount = infoSrc.columnCount;
       infoDest.accessibleContext = Unwrap(vmid, infoSrc.accessibleContext);
       infoDest.accessibleTable = Unwrap(vmid, infoSrc.accessibleTable);
-    }
-
-    private void CopyWrap(int vmid, AccessibleTextAttributesInfoNative infoSrc, AccessibleTextAttributesInfo infoDest) {
-      infoDest.bold = infoSrc.bold;
-      infoDest.italic = infoSrc.italic;
-      infoDest.underline = infoSrc.underline;
-      infoDest.strikethrough = infoSrc.strikethrough;
-      infoDest.superscript = infoSrc.superscript;
-      infoDest.subscript = infoSrc.subscript;
-      infoDest.backgroundColor = infoSrc.backgroundColor;
-      infoDest.foregroundColor = infoSrc.foregroundColor;
-      infoDest.fontFamily = infoSrc.fontFamily;
-      infoDest.fontSize = infoSrc.fontSize;
-      infoDest.alignment = infoSrc.alignment;
-      infoDest.bidiLevel = infoSrc.bidiLevel;
-      infoDest.firstLineIndent = infoSrc.firstLineIndent;
-      infoDest.leftIndent = infoSrc.leftIndent;
-      infoDest.rightIndent = infoSrc.rightIndent;
-      infoDest.lineSpacing = infoSrc.lineSpacing;
-      infoDest.spaceAbove = infoSrc.spaceAbove;
-      infoDest.spaceBelow = infoSrc.spaceBelow;
-      infoDest.fullAttributesString = infoSrc.fullAttributesString;
-    }
-
-    private void CopyUnwrap(int vmid, AccessibleTextAttributesInfo infoSrc, AccessibleTextAttributesInfoNative infoDest) {
-      infoDest.bold = infoSrc.bold;
-      infoDest.italic = infoSrc.italic;
-      infoDest.underline = infoSrc.underline;
-      infoDest.strikethrough = infoSrc.strikethrough;
-      infoDest.superscript = infoSrc.superscript;
-      infoDest.subscript = infoSrc.subscript;
-      infoDest.backgroundColor = infoSrc.backgroundColor;
-      infoDest.foregroundColor = infoSrc.foregroundColor;
-      infoDest.fontFamily = infoSrc.fontFamily;
-      infoDest.fontSize = infoSrc.fontSize;
-      infoDest.alignment = infoSrc.alignment;
-      infoDest.bidiLevel = infoSrc.bidiLevel;
-      infoDest.firstLineIndent = infoSrc.firstLineIndent;
-      infoDest.leftIndent = infoSrc.leftIndent;
-      infoDest.rightIndent = infoSrc.rightIndent;
-      infoDest.lineSpacing = infoSrc.lineSpacing;
-      infoDest.spaceAbove = infoSrc.spaceAbove;
-      infoDest.spaceBelow = infoSrc.spaceBelow;
-      infoDest.fullAttributesString = infoSrc.fullAttributesString;
     }
 
     #endregion
@@ -1976,16 +1648,6 @@ namespace WindowsAccessBridgeInterop {
 
     #region Function implementations
 
-    public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
-      AccessBridgeVersionInfoNativeLegacy infoTemp;
-      var result = LibraryFunctions.GetVersionInfo(vmid, out infoTemp);
-      if (Succeeded(result))
-        info = Wrap(vmid, infoTemp);
-      else
-        info = default(AccessBridgeVersionInfo);
-      return Succeeded(result);
-    }
-
     public void Windows_run() {
       LibraryFunctions.Windows_run();
     }
@@ -2046,12 +1708,9 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info) {
-      AccessibleContextInfoNativeLegacy infoTemp = new AccessibleContextInfoNativeLegacy();
-      var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), infoTemp);
-      GC.KeepAlive(ac);
       info = new AccessibleContextInfo();
-      if (Succeeded(result))
-        CopyWrap(vmid, infoTemp, info);
+      var result = LibraryFunctions.GetAccessibleContextInfo(vmid, Unwrap(vmid, ac), info);
+      GC.KeepAlive(ac);
       return Succeeded(result);
     }
 
@@ -2131,97 +1790,58 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings) {
-      AccessibleKeyBindingsNativeLegacy keyBindingsTemp;
-      var result = LibraryFunctions.GetAccessibleKeyBindings(vmid, Unwrap(vmid, accessibleContext), out keyBindingsTemp);
+      var result = LibraryFunctions.GetAccessibleKeyBindings(vmid, Unwrap(vmid, accessibleContext), out keyBindings);
       GC.KeepAlive(accessibleContext);
-      if (Succeeded(result))
-        keyBindings = Wrap(vmid, keyBindingsTemp);
-      else
-        keyBindings = default(AccessibleKeyBindings);
       return Succeeded(result);
     }
 
     public bool GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons) {
-      AccessibleIconsNativeLegacy iconsTemp;
-      var result = LibraryFunctions.GetAccessibleIcons(vmid, Unwrap(vmid, accessibleContext), out iconsTemp);
+      var result = LibraryFunctions.GetAccessibleIcons(vmid, Unwrap(vmid, accessibleContext), out icons);
       GC.KeepAlive(accessibleContext);
-      if (Succeeded(result))
-        icons = Wrap(vmid, iconsTemp);
-      else
-        icons = default(AccessibleIcons);
       return Succeeded(result);
     }
 
     public bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, out AccessibleActions actions) {
-      AccessibleActionsNativeLegacy actionsTemp = new AccessibleActionsNativeLegacy();
-      var result = LibraryFunctions.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actionsTemp);
-      GC.KeepAlive(accessibleContext);
       actions = new AccessibleActions();
-      if (Succeeded(result))
-        CopyWrap(vmid, actionsTemp, actions);
+      var result = LibraryFunctions.GetAccessibleActions(vmid, Unwrap(vmid, accessibleContext), actions);
+      GC.KeepAlive(accessibleContext);
       return Succeeded(result);
     }
 
     public bool DoAccessibleActions(int vmid, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure) {
-      AccessibleActionsToDoNativeLegacy actionsToDoTemp = Unwrap(vmid, actionsToDo);
-      var result = LibraryFunctions.DoAccessibleActions(vmid, Unwrap(vmid, accessibleContext), ref actionsToDoTemp, out failure);
+      var result = LibraryFunctions.DoAccessibleActions(vmid, Unwrap(vmid, accessibleContext), ref actionsToDo, out failure);
       GC.KeepAlive(accessibleContext);
-      if (Succeeded(result))
-        actionsToDo = Wrap(vmid, actionsToDoTemp);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y) {
-      AccessibleTextInfoNativeLegacy textInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTextInfo(vmid, Unwrap(vmid, at), out textInfoTemp, x, y);
+      var result = LibraryFunctions.GetAccessibleTextInfo(vmid, Unwrap(vmid, at), out textInfo, x, y);
       GC.KeepAlive(at);
-      if (Succeeded(result))
-        textInfo = Wrap(vmid, textInfoTemp);
-      else
-        textInfo = default(AccessibleTextInfo);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index) {
-      AccessibleTextItemsInfoNativeLegacy textItemsTemp;
-      var result = LibraryFunctions.GetAccessibleTextItems(vmid, Unwrap(vmid, at), out textItemsTemp, index);
+      var result = LibraryFunctions.GetAccessibleTextItems(vmid, Unwrap(vmid, at), out textItems, index);
       GC.KeepAlive(at);
-      if (Succeeded(result))
-        textItems = Wrap(vmid, textItemsTemp);
-      else
-        textItems = default(AccessibleTextItemsInfo);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextSelectionInfo(int vmid, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection) {
-      AccessibleTextSelectionInfoNativeLegacy textSelectionTemp;
-      var result = LibraryFunctions.GetAccessibleTextSelectionInfo(vmid, Unwrap(vmid, at), out textSelectionTemp);
+      var result = LibraryFunctions.GetAccessibleTextSelectionInfo(vmid, Unwrap(vmid, at), out textSelection);
       GC.KeepAlive(at);
-      if (Succeeded(result))
-        textSelection = Wrap(vmid, textSelectionTemp);
-      else
-        textSelection = default(AccessibleTextSelectionInfo);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes) {
-      AccessibleTextAttributesInfoNativeLegacy attributesTemp = new AccessibleTextAttributesInfoNativeLegacy();
-      var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, attributesTemp);
-      GC.KeepAlive(at);
       attributes = new AccessibleTextAttributesInfo();
-      if (Succeeded(result))
-        CopyWrap(vmid, attributesTemp, attributes);
+      var result = LibraryFunctions.GetAccessibleTextAttributes(vmid, Unwrap(vmid, at), index, attributes);
+      GC.KeepAlive(at);
       return Succeeded(result);
     }
 
     public bool GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index) {
-      AccessibleTextRectInfoNativeLegacy rectInfoTemp;
-      var result = LibraryFunctions.GetAccessibleTextRect(vmid, Unwrap(vmid, at), out rectInfoTemp, index);
+      var result = LibraryFunctions.GetAccessibleTextRect(vmid, Unwrap(vmid, at), out rectInfo, index);
       GC.KeepAlive(at);
-      if (Succeeded(result))
-        rectInfo = Wrap(vmid, rectInfoTemp);
-      else
-        rectInfo = default(AccessibleTextRectInfo);
       return Succeeded(result);
     }
 
@@ -2442,23 +2062,15 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len) {
-      AccessibleTextAttributesInfoNativeLegacy attributesTemp = new AccessibleTextAttributesInfoNativeLegacy();
-      var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, attributesTemp, out len);
-      GC.KeepAlive(accessibleContext);
       attributes = new AccessibleTextAttributesInfo();
-      if (Succeeded(result))
-        CopyWrap(vmid, attributesTemp, attributes);
+      var result = LibraryFunctions.GetTextAttributesInRange(vmid, Unwrap(vmid, accessibleContext), startIndex, endIndex, attributes, out len);
+      GC.KeepAlive(accessibleContext);
       return Succeeded(result);
     }
 
     public bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index) {
-      AccessibleTextRectInfoNativeLegacy rectInfoTemp;
-      var result = LibraryFunctions.GetCaretLocation(vmid, Unwrap(vmid, ac), out rectInfoTemp, index);
+      var result = LibraryFunctions.GetCaretLocation(vmid, Unwrap(vmid, ac), out rectInfo, index);
       GC.KeepAlive(ac);
-      if (Succeeded(result))
-        rectInfo = Wrap(vmid, rectInfoTemp);
-      else
-        rectInfo = default(AccessibleTextRectInfo);
       return Succeeded(result);
     }
 
@@ -2479,65 +2091,14 @@ namespace WindowsAccessBridgeInterop {
       return Succeeded(result);
     }
 
+    public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
+      var result = LibraryFunctions.GetVersionInfo(vmid, out info);
+      return Succeeded(result);
+    }
+
     #endregion
 
     #region Wrap/Unwrap structs
-
-    private AccessBridgeVersionInfo Wrap(int vmid, AccessBridgeVersionInfoNativeLegacy info) {
-      var result = new AccessBridgeVersionInfo();
-      result.VMversion = info.VMversion;
-      result.bridgeJavaClassVersion = info.bridgeJavaClassVersion;
-      result.bridgeJavaDLLVersion = info.bridgeJavaDLLVersion;
-      result.bridgeWinDLLVersion = info.bridgeWinDLLVersion;
-      return result;
-    }
-
-    private AccessBridgeVersionInfoNativeLegacy Unwrap(int vmid, AccessBridgeVersionInfo info) {
-      var result = new AccessBridgeVersionInfoNativeLegacy();
-      result.VMversion = info.VMversion;
-      result.bridgeJavaClassVersion = info.bridgeJavaClassVersion;
-      result.bridgeJavaDLLVersion = info.bridgeJavaDLLVersion;
-      result.bridgeWinDLLVersion = info.bridgeWinDLLVersion;
-      return result;
-    }
-
-    private AccessibleActionInfo Wrap(int vmid, AccessibleActionInfoNativeLegacy info) {
-      var result = new AccessibleActionInfo();
-      result.name = info.name;
-      return result;
-    }
-
-    private AccessibleActionInfoNativeLegacy Unwrap(int vmid, AccessibleActionInfo info) {
-      var result = new AccessibleActionInfoNativeLegacy();
-      result.name = info.name;
-      return result;
-    }
-
-    private AccessibleActionsToDo Wrap(int vmid, AccessibleActionsToDoNativeLegacy info) {
-      var result = new AccessibleActionsToDo();
-      result.actionsCount = info.actionsCount;
-      if (info.actions != null) {
-        var count = info.actionsCount;
-        result.actions = new AccessibleActionInfo[count];
-        for(var i = 0; i < count; i++) {
-          result.actions[i] = Wrap(vmid, info.actions[i]);
-        }
-      }
-      return result;
-    }
-
-    private AccessibleActionsToDoNativeLegacy Unwrap(int vmid, AccessibleActionsToDo info) {
-      var result = new AccessibleActionsToDoNativeLegacy();
-      result.actionsCount = info.actionsCount;
-      if (info.actions != null) {
-        var count = info.actionsCount;
-        result.actions = new AccessibleActionInfoNativeLegacy[count];
-        for(var i = 0; i < count; i++) {
-          result.actions[i] = Unwrap(vmid, info.actions[i]);
-        }
-      }
-      return result;
-    }
 
     private AccessibleHyperlinkInfo Wrap(int vmid, AccessibleHyperlinkInfoNativeLegacy info) {
       var result = new AccessibleHyperlinkInfo();
@@ -2582,88 +2143,6 @@ namespace WindowsAccessBridgeInterop {
         }
       }
       result.accessibleHypertext = Unwrap(vmid, info.accessibleHypertext);
-      return result;
-    }
-
-    private AccessibleIconInfo Wrap(int vmid, AccessibleIconInfoNativeLegacy info) {
-      var result = new AccessibleIconInfo();
-      result.description = info.description;
-      result.height = info.height;
-      result.width = info.width;
-      return result;
-    }
-
-    private AccessibleIconInfoNativeLegacy Unwrap(int vmid, AccessibleIconInfo info) {
-      var result = new AccessibleIconInfoNativeLegacy();
-      result.description = info.description;
-      result.height = info.height;
-      result.width = info.width;
-      return result;
-    }
-
-    private AccessibleIcons Wrap(int vmid, AccessibleIconsNativeLegacy info) {
-      var result = new AccessibleIcons();
-      result.iconsCount = info.iconsCount;
-      if (info.iconInfo != null) {
-        var count = info.iconsCount;
-        result.iconInfo = new AccessibleIconInfo[count];
-        for(var i = 0; i < count; i++) {
-          result.iconInfo[i] = Wrap(vmid, info.iconInfo[i]);
-        }
-      }
-      return result;
-    }
-
-    private AccessibleIconsNativeLegacy Unwrap(int vmid, AccessibleIcons info) {
-      var result = new AccessibleIconsNativeLegacy();
-      result.iconsCount = info.iconsCount;
-      if (info.iconInfo != null) {
-        var count = info.iconsCount;
-        result.iconInfo = new AccessibleIconInfoNativeLegacy[count];
-        for(var i = 0; i < count; i++) {
-          result.iconInfo[i] = Unwrap(vmid, info.iconInfo[i]);
-        }
-      }
-      return result;
-    }
-
-    private AccessibleKeyBindingInfo Wrap(int vmid, AccessibleKeyBindingInfoNativeLegacy info) {
-      var result = new AccessibleKeyBindingInfo();
-      result.character = info.character;
-      result.modifiers = info.modifiers;
-      return result;
-    }
-
-    private AccessibleKeyBindingInfoNativeLegacy Unwrap(int vmid, AccessibleKeyBindingInfo info) {
-      var result = new AccessibleKeyBindingInfoNativeLegacy();
-      result.character = info.character;
-      result.modifiers = info.modifiers;
-      return result;
-    }
-
-    private AccessibleKeyBindings Wrap(int vmid, AccessibleKeyBindingsNativeLegacy info) {
-      var result = new AccessibleKeyBindings();
-      result.keyBindingsCount = info.keyBindingsCount;
-      if (info.keyBindingInfo != null) {
-        var count = info.keyBindingsCount;
-        result.keyBindingInfo = new AccessibleKeyBindingInfo[count];
-        for(var i = 0; i < count; i++) {
-          result.keyBindingInfo[i] = Wrap(vmid, info.keyBindingInfo[i]);
-        }
-      }
-      return result;
-    }
-
-    private AccessibleKeyBindingsNativeLegacy Unwrap(int vmid, AccessibleKeyBindings info) {
-      var result = new AccessibleKeyBindingsNativeLegacy();
-      result.keyBindingsCount = info.keyBindingsCount;
-      if (info.keyBindingInfo != null) {
-        var count = info.keyBindingsCount;
-        result.keyBindingInfo = new AccessibleKeyBindingInfoNativeLegacy[count];
-        for(var i = 0; i < count; i++) {
-          result.keyBindingInfo[i] = Unwrap(vmid, info.keyBindingInfo[i]);
-        }
-      }
       return result;
     }
 
@@ -2721,72 +2200,6 @@ namespace WindowsAccessBridgeInterop {
       return result;
     }
 
-    private AccessibleTextInfo Wrap(int vmid, AccessibleTextInfoNativeLegacy info) {
-      var result = new AccessibleTextInfo();
-      result.charCount = info.charCount;
-      result.caretIndex = info.caretIndex;
-      result.indexAtPoint = info.indexAtPoint;
-      return result;
-    }
-
-    private AccessibleTextInfoNativeLegacy Unwrap(int vmid, AccessibleTextInfo info) {
-      var result = new AccessibleTextInfoNativeLegacy();
-      result.charCount = info.charCount;
-      result.caretIndex = info.caretIndex;
-      result.indexAtPoint = info.indexAtPoint;
-      return result;
-    }
-
-    private AccessibleTextItemsInfo Wrap(int vmid, AccessibleTextItemsInfoNativeLegacy info) {
-      var result = new AccessibleTextItemsInfo();
-      result.letter = info.letter;
-      result.word = info.word;
-      result.sentence = info.sentence;
-      return result;
-    }
-
-    private AccessibleTextItemsInfoNativeLegacy Unwrap(int vmid, AccessibleTextItemsInfo info) {
-      var result = new AccessibleTextItemsInfoNativeLegacy();
-      result.letter = info.letter;
-      result.word = info.word;
-      result.sentence = info.sentence;
-      return result;
-    }
-
-    private AccessibleTextRectInfo Wrap(int vmid, AccessibleTextRectInfoNativeLegacy info) {
-      var result = new AccessibleTextRectInfo();
-      result.x = info.x;
-      result.y = info.y;
-      result.width = info.width;
-      result.height = info.height;
-      return result;
-    }
-
-    private AccessibleTextRectInfoNativeLegacy Unwrap(int vmid, AccessibleTextRectInfo info) {
-      var result = new AccessibleTextRectInfoNativeLegacy();
-      result.x = info.x;
-      result.y = info.y;
-      result.width = info.width;
-      result.height = info.height;
-      return result;
-    }
-
-    private AccessibleTextSelectionInfo Wrap(int vmid, AccessibleTextSelectionInfoNativeLegacy info) {
-      var result = new AccessibleTextSelectionInfo();
-      result.selectionStartIndex = info.selectionStartIndex;
-      result.selectionEndIndex = info.selectionEndIndex;
-      result.selectedText = info.selectedText;
-      return result;
-    }
-
-    private AccessibleTextSelectionInfoNativeLegacy Unwrap(int vmid, AccessibleTextSelectionInfo info) {
-      var result = new AccessibleTextSelectionInfoNativeLegacy();
-      result.selectionStartIndex = info.selectionStartIndex;
-      result.selectionEndIndex = info.selectionEndIndex;
-      result.selectedText = info.selectedText;
-      return result;
-    }
-
     private VisibleChildrenInfo Wrap(int vmid, VisibleChildrenInfoNativeLegacy info) {
       var result = new VisibleChildrenInfo();
       result.returnedChildrenCount = info.returnedChildrenCount;
@@ -2816,68 +2229,6 @@ namespace WindowsAccessBridgeInterop {
     #endregion
 
     #region CopyWrap/CopyUnwrap classes
-
-    private void CopyWrap(int vmid, AccessibleActionsNativeLegacy infoSrc, AccessibleActions infoDest) {
-      infoDest.actionsCount = infoSrc.actionsCount;
-      if (infoSrc.actionInfo != null) {
-        var count = infoSrc.actionsCount;
-        infoDest.actionInfo = new AccessibleActionInfo[count];
-        for(var i = 0; i < count; i++) {
-          infoDest.actionInfo[i] = Wrap(vmid, infoSrc.actionInfo[i]);
-        }
-      }
-    }
-
-    private void CopyUnwrap(int vmid, AccessibleActions infoSrc, AccessibleActionsNativeLegacy infoDest) {
-      infoDest.actionsCount = infoSrc.actionsCount;
-      if (infoSrc.actionInfo != null) {
-        var count = infoSrc.actionsCount;
-        infoDest.actionInfo = new AccessibleActionInfoNativeLegacy[count];
-        for(var i = 0; i < count; i++) {
-          infoDest.actionInfo[i] = Unwrap(vmid, infoSrc.actionInfo[i]);
-        }
-      }
-    }
-
-    private void CopyWrap(int vmid, AccessibleContextInfoNativeLegacy infoSrc, AccessibleContextInfo infoDest) {
-      infoDest.name = infoSrc.name;
-      infoDest.description = infoSrc.description;
-      infoDest.role = infoSrc.role;
-      infoDest.role_en_US = infoSrc.role_en_US;
-      infoDest.states = infoSrc.states;
-      infoDest.states_en_US = infoSrc.states_en_US;
-      infoDest.indexInParent = infoSrc.indexInParent;
-      infoDest.childrenCount = infoSrc.childrenCount;
-      infoDest.x = infoSrc.x;
-      infoDest.y = infoSrc.y;
-      infoDest.width = infoSrc.width;
-      infoDest.height = infoSrc.height;
-      infoDest.accessibleComponent = infoSrc.accessibleComponent;
-      infoDest.accessibleAction = infoSrc.accessibleAction;
-      infoDest.accessibleSelection = infoSrc.accessibleSelection;
-      infoDest.accessibleText = infoSrc.accessibleText;
-      infoDest.accessibleInterfaces = infoSrc.accessibleInterfaces;
-    }
-
-    private void CopyUnwrap(int vmid, AccessibleContextInfo infoSrc, AccessibleContextInfoNativeLegacy infoDest) {
-      infoDest.name = infoSrc.name;
-      infoDest.description = infoSrc.description;
-      infoDest.role = infoSrc.role;
-      infoDest.role_en_US = infoSrc.role_en_US;
-      infoDest.states = infoSrc.states;
-      infoDest.states_en_US = infoSrc.states_en_US;
-      infoDest.indexInParent = infoSrc.indexInParent;
-      infoDest.childrenCount = infoSrc.childrenCount;
-      infoDest.x = infoSrc.x;
-      infoDest.y = infoSrc.y;
-      infoDest.width = infoSrc.width;
-      infoDest.height = infoSrc.height;
-      infoDest.accessibleComponent = infoSrc.accessibleComponent;
-      infoDest.accessibleAction = infoSrc.accessibleAction;
-      infoDest.accessibleSelection = infoSrc.accessibleSelection;
-      infoDest.accessibleText = infoSrc.accessibleText;
-      infoDest.accessibleInterfaces = infoSrc.accessibleInterfaces;
-    }
 
     private void CopyWrap(int vmid, AccessibleTableCellInfoNativeLegacy infoSrc, AccessibleTableCellInfo infoDest) {
       infoDest.accessibleContext = Wrap(vmid, infoSrc.accessibleContext);
@@ -2915,50 +2266,6 @@ namespace WindowsAccessBridgeInterop {
       infoDest.columnCount = infoSrc.columnCount;
       infoDest.accessibleContext = Unwrap(vmid, infoSrc.accessibleContext);
       infoDest.accessibleTable = Unwrap(vmid, infoSrc.accessibleTable);
-    }
-
-    private void CopyWrap(int vmid, AccessibleTextAttributesInfoNativeLegacy infoSrc, AccessibleTextAttributesInfo infoDest) {
-      infoDest.bold = infoSrc.bold;
-      infoDest.italic = infoSrc.italic;
-      infoDest.underline = infoSrc.underline;
-      infoDest.strikethrough = infoSrc.strikethrough;
-      infoDest.superscript = infoSrc.superscript;
-      infoDest.subscript = infoSrc.subscript;
-      infoDest.backgroundColor = infoSrc.backgroundColor;
-      infoDest.foregroundColor = infoSrc.foregroundColor;
-      infoDest.fontFamily = infoSrc.fontFamily;
-      infoDest.fontSize = infoSrc.fontSize;
-      infoDest.alignment = infoSrc.alignment;
-      infoDest.bidiLevel = infoSrc.bidiLevel;
-      infoDest.firstLineIndent = infoSrc.firstLineIndent;
-      infoDest.leftIndent = infoSrc.leftIndent;
-      infoDest.rightIndent = infoSrc.rightIndent;
-      infoDest.lineSpacing = infoSrc.lineSpacing;
-      infoDest.spaceAbove = infoSrc.spaceAbove;
-      infoDest.spaceBelow = infoSrc.spaceBelow;
-      infoDest.fullAttributesString = infoSrc.fullAttributesString;
-    }
-
-    private void CopyUnwrap(int vmid, AccessibleTextAttributesInfo infoSrc, AccessibleTextAttributesInfoNativeLegacy infoDest) {
-      infoDest.bold = infoSrc.bold;
-      infoDest.italic = infoSrc.italic;
-      infoDest.underline = infoSrc.underline;
-      infoDest.strikethrough = infoSrc.strikethrough;
-      infoDest.superscript = infoSrc.superscript;
-      infoDest.subscript = infoSrc.subscript;
-      infoDest.backgroundColor = infoSrc.backgroundColor;
-      infoDest.foregroundColor = infoSrc.foregroundColor;
-      infoDest.fontFamily = infoSrc.fontFamily;
-      infoDest.fontSize = infoSrc.fontSize;
-      infoDest.alignment = infoSrc.alignment;
-      infoDest.bidiLevel = infoSrc.bidiLevel;
-      infoDest.firstLineIndent = infoSrc.firstLineIndent;
-      infoDest.leftIndent = infoSrc.leftIndent;
-      infoDest.rightIndent = infoSrc.rightIndent;
-      infoDest.lineSpacing = infoSrc.lineSpacing;
-      infoDest.spaceAbove = infoSrc.spaceAbove;
-      infoDest.spaceBelow = infoSrc.spaceBelow;
-      infoDest.fullAttributesString = infoSrc.fullAttributesString;
     }
 
     #endregion
@@ -3584,7 +2891,6 @@ namespace WindowsAccessBridgeInterop {
   /// </summary>
   public class AccessBridgeLibraryFunctions {
     #region Functions
-    public GetVersionInfoFP GetVersionInfo { get; set; }
     public Windows_runFP Windows_run { get; set; }
     public IsJavaWindowFP IsJavaWindow { get; set; }
     public IsSameObjectFP IsSameObject { get; set; }
@@ -3649,6 +2955,7 @@ namespace WindowsAccessBridgeInterop {
     public GetCaretLocationFP GetCaretLocation { get; set; }
     public GetVisibleChildrenCountFP GetVisibleChildrenCount { get; set; }
     public GetVisibleChildrenFP GetVisibleChildren { get; set; }
+    public GetVersionInfoFP GetVersionInfo { get; set; }
     #endregion
 
     #region Event functions
@@ -3683,8 +2990,6 @@ namespace WindowsAccessBridgeInterop {
 
     #region Function delegate types
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfoNative info);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate void Windows_runFP();
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL IsJavaWindowFP(WindowHandle window);
@@ -3699,7 +3004,7 @@ namespace WindowsAccessBridgeInterop {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleContextWithFocusFP(WindowHandle window, out int vmid, out JOBJECT64 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextInfoFP(int vmid, JOBJECT64 ac, [Out]AccessibleContextInfoNative info);
+    public delegate BOOL GetAccessibleContextInfoFP(int vmid, JOBJECT64 ac, [Out]AccessibleContextInfo info);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate JOBJECT64 GetAccessibleChildFromContextFP(int vmid, JOBJECT64 ac, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -3719,23 +3024,23 @@ namespace WindowsAccessBridgeInterop {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleHyperlinkFP(int vmid, JOBJECT64 hypertext, int nIndex, out AccessibleHyperlinkInfoNative hyperlinkInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleKeyBindingsFP(int vmid, JOBJECT64 accessibleContext, out AccessibleKeyBindingsNative keyBindings);
+    public delegate BOOL GetAccessibleKeyBindingsFP(int vmid, JOBJECT64 accessibleContext, out AccessibleKeyBindings keyBindings);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleIconsFP(int vmid, JOBJECT64 accessibleContext, out AccessibleIconsNative icons);
+    public delegate BOOL GetAccessibleIconsFP(int vmid, JOBJECT64 accessibleContext, out AccessibleIcons icons);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleActionsFP(int vmid, JOBJECT64 accessibleContext, [Out]AccessibleActionsNative actions);
+    public delegate BOOL GetAccessibleActionsFP(int vmid, JOBJECT64 accessibleContext, [Out]AccessibleActions actions);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL DoAccessibleActionsFP(int vmid, JOBJECT64 accessibleContext, ref AccessibleActionsToDoNative actionsToDo, out int failure);
+    public delegate BOOL DoAccessibleActionsFP(int vmid, JOBJECT64 accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextInfoFP(int vmid, JOBJECT64 at, out AccessibleTextInfoNative textInfo, int x, int y);
+    public delegate BOOL GetAccessibleTextInfoFP(int vmid, JOBJECT64 at, out AccessibleTextInfo textInfo, int x, int y);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextItemsFP(int vmid, JOBJECT64 at, out AccessibleTextItemsInfoNative textItems, int index);
+    public delegate BOOL GetAccessibleTextItemsFP(int vmid, JOBJECT64 at, out AccessibleTextItemsInfo textItems, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmid, JOBJECT64 at, out AccessibleTextSelectionInfoNative textSelection);
+    public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmid, JOBJECT64 at, out AccessibleTextSelectionInfo textSelection);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextAttributesFP(int vmid, JOBJECT64 at, int index, [Out]AccessibleTextAttributesInfoNative attributes);
+    public delegate BOOL GetAccessibleTextAttributesFP(int vmid, JOBJECT64 at, int index, [Out]AccessibleTextAttributesInfo attributes);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextRectFP(int vmid, JOBJECT64 at, out AccessibleTextRectInfoNative rectInfo, int index);
+    public delegate BOOL GetAccessibleTextRectFP(int vmid, JOBJECT64 at, out AccessibleTextRectInfo rectInfo, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleTextLineBoundsFP(int vmid, JOBJECT64 at, int index, out int startIndex, out int endIndex);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -3805,13 +3110,15 @@ namespace WindowsAccessBridgeInterop {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetVirtualAccessibleNameFP(int vmid, JOBJECT64 ac, StringBuilder name, int len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetTextAttributesInRangeFP(int vmid, JOBJECT64 accessibleContext, int startIndex, int endIndex, [Out]AccessibleTextAttributesInfoNative attributes, out short len);
+    public delegate BOOL GetTextAttributesInRangeFP(int vmid, JOBJECT64 accessibleContext, int startIndex, int endIndex, [Out]AccessibleTextAttributesInfo attributes, out short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetCaretLocationFP(int vmid, JOBJECT64 ac, out AccessibleTextRectInfoNative rectInfo, int index);
+    public delegate BOOL GetCaretLocationFP(int vmid, JOBJECT64 ac, out AccessibleTextRectInfo rectInfo, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate int GetVisibleChildrenCountFP(int vmid, JOBJECT64 accessibleContext);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetVisibleChildrenFP(int vmid, JOBJECT64 accessibleContext, int startIndex, out VisibleChildrenInfoNative children);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfo info);
     #endregion
 
     #region Event delegate types
@@ -3934,7 +3241,6 @@ namespace WindowsAccessBridgeInterop {
   /// </summary>
   public class AccessBridgeLibraryFunctionsLegacy {
     #region Functions
-    public GetVersionInfoFP GetVersionInfo { get; set; }
     public Windows_runFP Windows_run { get; set; }
     public IsJavaWindowFP IsJavaWindow { get; set; }
     public IsSameObjectFP IsSameObject { get; set; }
@@ -3999,6 +3305,7 @@ namespace WindowsAccessBridgeInterop {
     public GetCaretLocationFP GetCaretLocation { get; set; }
     public GetVisibleChildrenCountFP GetVisibleChildrenCount { get; set; }
     public GetVisibleChildrenFP GetVisibleChildren { get; set; }
+    public GetVersionInfoFP GetVersionInfo { get; set; }
     #endregion
 
     #region Event functions
@@ -4033,8 +3340,6 @@ namespace WindowsAccessBridgeInterop {
 
     #region Function delegate types
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfoNativeLegacy info);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate void Windows_runFP();
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL IsJavaWindowFP(WindowHandle window);
@@ -4049,7 +3354,7 @@ namespace WindowsAccessBridgeInterop {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleContextWithFocusFP(WindowHandle window, out int vmid, out JOBJECT32 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextInfoFP(int vmid, JOBJECT32 ac, [Out]AccessibleContextInfoNativeLegacy info);
+    public delegate BOOL GetAccessibleContextInfoFP(int vmid, JOBJECT32 ac, [Out]AccessibleContextInfo info);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate JOBJECT32 GetAccessibleChildFromContextFP(int vmid, JOBJECT32 ac, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -4069,23 +3374,23 @@ namespace WindowsAccessBridgeInterop {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleHyperlinkFP(int vmid, JOBJECT32 hypertext, int nIndex, out AccessibleHyperlinkInfoNativeLegacy hyperlinkInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleKeyBindingsFP(int vmid, JOBJECT32 accessibleContext, out AccessibleKeyBindingsNativeLegacy keyBindings);
+    public delegate BOOL GetAccessibleKeyBindingsFP(int vmid, JOBJECT32 accessibleContext, out AccessibleKeyBindings keyBindings);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleIconsFP(int vmid, JOBJECT32 accessibleContext, out AccessibleIconsNativeLegacy icons);
+    public delegate BOOL GetAccessibleIconsFP(int vmid, JOBJECT32 accessibleContext, out AccessibleIcons icons);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleActionsFP(int vmid, JOBJECT32 accessibleContext, [Out]AccessibleActionsNativeLegacy actions);
+    public delegate BOOL GetAccessibleActionsFP(int vmid, JOBJECT32 accessibleContext, [Out]AccessibleActions actions);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL DoAccessibleActionsFP(int vmid, JOBJECT32 accessibleContext, ref AccessibleActionsToDoNativeLegacy actionsToDo, out int failure);
+    public delegate BOOL DoAccessibleActionsFP(int vmid, JOBJECT32 accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextInfoFP(int vmid, JOBJECT32 at, out AccessibleTextInfoNativeLegacy textInfo, int x, int y);
+    public delegate BOOL GetAccessibleTextInfoFP(int vmid, JOBJECT32 at, out AccessibleTextInfo textInfo, int x, int y);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextItemsFP(int vmid, JOBJECT32 at, out AccessibleTextItemsInfoNativeLegacy textItems, int index);
+    public delegate BOOL GetAccessibleTextItemsFP(int vmid, JOBJECT32 at, out AccessibleTextItemsInfo textItems, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmid, JOBJECT32 at, out AccessibleTextSelectionInfoNativeLegacy textSelection);
+    public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmid, JOBJECT32 at, out AccessibleTextSelectionInfo textSelection);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextAttributesFP(int vmid, JOBJECT32 at, int index, [Out]AccessibleTextAttributesInfoNativeLegacy attributes);
+    public delegate BOOL GetAccessibleTextAttributesFP(int vmid, JOBJECT32 at, int index, [Out]AccessibleTextAttributesInfo attributes);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextRectFP(int vmid, JOBJECT32 at, out AccessibleTextRectInfoNativeLegacy rectInfo, int index);
+    public delegate BOOL GetAccessibleTextRectFP(int vmid, JOBJECT32 at, out AccessibleTextRectInfo rectInfo, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleTextLineBoundsFP(int vmid, JOBJECT32 at, int index, out int startIndex, out int endIndex);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -4155,13 +3460,15 @@ namespace WindowsAccessBridgeInterop {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetVirtualAccessibleNameFP(int vmid, JOBJECT32 ac, StringBuilder name, int len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetTextAttributesInRangeFP(int vmid, JOBJECT32 accessibleContext, int startIndex, int endIndex, [Out]AccessibleTextAttributesInfoNativeLegacy attributes, out short len);
+    public delegate BOOL GetTextAttributesInRangeFP(int vmid, JOBJECT32 accessibleContext, int startIndex, int endIndex, [Out]AccessibleTextAttributesInfo attributes, out short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetCaretLocationFP(int vmid, JOBJECT32 ac, out AccessibleTextRectInfoNativeLegacy rectInfo, int index);
+    public delegate BOOL GetCaretLocationFP(int vmid, JOBJECT32 ac, out AccessibleTextRectInfo rectInfo, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate int GetVisibleChildrenCountFP(int vmid, JOBJECT32 accessibleContext);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetVisibleChildrenFP(int vmid, JOBJECT32 accessibleContext, int startIndex, out VisibleChildrenInfoNativeLegacy children);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfo info);
     #endregion
 
     #region Event delegate types
@@ -5556,31 +4863,6 @@ namespace WindowsAccessBridgeInterop {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessBridgeVersionInfoNative {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string VMversion;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string bridgeJavaClassVersion;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string bridgeJavaDLLVersion;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string bridgeWinDLLVersion;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleActionInfoNative {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string name;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleActionsToDoNative {
-    public int actionsCount;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-    public AccessibleActionInfoNative[] actions;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleHyperlinkInfoNative {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string text;
@@ -5595,34 +4877,6 @@ namespace WindowsAccessBridgeInterop {
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
     public AccessibleHyperlinkInfoNative[] links;
     public JOBJECT64 accessibleHypertext;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleIconInfoNative {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string description;
-    public int height;
-    public int width;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleIconsNative {
-    public int iconsCount;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-    public AccessibleIconInfoNative[] iconInfo;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleKeyBindingInfoNative {
-    public AccessibleKeyCode character;
-    public AccessibleModifiers modifiers;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleKeyBindingsNative {
-    public int keyBindingsCount;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public AccessibleKeyBindingInfoNative[] keyBindingInfo;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -5642,76 +4896,10 @@ namespace WindowsAccessBridgeInterop {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextInfoNative {
-    public int charCount;
-    public int caretIndex;
-    public int indexAtPoint;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextItemsInfoNative {
-    public char letter;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string word;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string sentence;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextRectInfoNative {
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextSelectionInfoNative {
-    public int selectionStartIndex;
-    public int selectionEndIndex;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string selectedText;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct VisibleChildrenInfoNative {
     public int returnedChildrenCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
     public JOBJECT64[] children;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public class AccessibleActionsNative {
-    public int actionsCount;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-    public AccessibleActionInfoNative[] actionInfo;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public class AccessibleContextInfoNative {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string name;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string description;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string role;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string role_en_US;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string states;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string states_en_US;
-    public int indexInParent;
-    public int childrenCount;
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-    public int accessibleComponent;
-    public int accessibleAction;
-    public int accessibleSelection;
-    public int accessibleText;
-    public AccessibleInterfaces accessibleInterfaces;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -5736,58 +4924,6 @@ namespace WindowsAccessBridgeInterop {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public class AccessibleTextAttributesInfoNative {
-    public int bold;
-    public int italic;
-    public int underline;
-    public int strikethrough;
-    public int superscript;
-    public int subscript;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string backgroundColor;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string foregroundColor;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string fontFamily;
-    public int fontSize;
-    public int alignment;
-    public int bidiLevel;
-    public float firstLineIndent;
-    public float leftIndent;
-    public float rightIndent;
-    public float lineSpacing;
-    public float spaceAbove;
-    public float spaceBelow;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string fullAttributesString;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessBridgeVersionInfoNativeLegacy {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string VMversion;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string bridgeJavaClassVersion;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string bridgeJavaDLLVersion;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string bridgeWinDLLVersion;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleActionInfoNativeLegacy {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string name;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleActionsToDoNativeLegacy {
-    public int actionsCount;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-    public AccessibleActionInfoNativeLegacy[] actions;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct AccessibleHyperlinkInfoNativeLegacy {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string text;
@@ -5802,34 +4938,6 @@ namespace WindowsAccessBridgeInterop {
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
     public AccessibleHyperlinkInfoNativeLegacy[] links;
     public JOBJECT32 accessibleHypertext;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleIconInfoNativeLegacy {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string description;
-    public int height;
-    public int width;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleIconsNativeLegacy {
-    public int iconsCount;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-    public AccessibleIconInfoNativeLegacy[] iconInfo;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleKeyBindingInfoNativeLegacy {
-    public AccessibleKeyCode character;
-    public AccessibleModifiers modifiers;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleKeyBindingsNativeLegacy {
-    public int keyBindingsCount;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public AccessibleKeyBindingInfoNativeLegacy[] keyBindingInfo;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -5849,76 +4957,10 @@ namespace WindowsAccessBridgeInterop {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextInfoNativeLegacy {
-    public int charCount;
-    public int caretIndex;
-    public int indexAtPoint;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextItemsInfoNativeLegacy {
-    public char letter;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string word;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string sentence;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextRectInfoNativeLegacy {
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public struct AccessibleTextSelectionInfoNativeLegacy {
-    public int selectionStartIndex;
-    public int selectionEndIndex;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string selectedText;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct VisibleChildrenInfoNativeLegacy {
     public int returnedChildrenCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
     public JOBJECT32[] children;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public class AccessibleActionsNativeLegacy {
-    public int actionsCount;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-    public AccessibleActionInfoNativeLegacy[] actionInfo;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public class AccessibleContextInfoNativeLegacy {
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string name;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string description;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string role;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string role_en_US;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string states;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string states_en_US;
-    public int indexInParent;
-    public int childrenCount;
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-    public int accessibleComponent;
-    public int accessibleAction;
-    public int accessibleSelection;
-    public int accessibleText;
-    public AccessibleInterfaces accessibleInterfaces;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -5940,33 +4982,6 @@ namespace WindowsAccessBridgeInterop {
     public int columnCount;
     public JOBJECT32 accessibleContext;
     public JOBJECT32 accessibleTable;
-  }
-
-  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  public class AccessibleTextAttributesInfoNativeLegacy {
-    public int bold;
-    public int italic;
-    public int underline;
-    public int strikethrough;
-    public int superscript;
-    public int subscript;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string backgroundColor;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string foregroundColor;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-    public string fontFamily;
-    public int fontSize;
-    public int alignment;
-    public int bidiLevel;
-    public float firstLineIndent;
-    public float leftIndent;
-    public float rightIndent;
-    public float lineSpacing;
-    public float spaceAbove;
-    public float spaceBelow;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-    public string fullAttributesString;
   }
 
 }

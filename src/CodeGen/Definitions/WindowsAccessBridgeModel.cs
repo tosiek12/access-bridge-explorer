@@ -12,15 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using CodeGen.Interop;
 
 namespace CodeGen.Definitions {
   public class WindowsAccessBridgeModel {
     private readonly List<FunctionDefinition> _functions = new List<FunctionDefinition>();
     private readonly List<EventDefinition> _events = new List<EventDefinition>();
     private readonly List<EnumDefinition> _enums = new List<EnumDefinition>();
-    private readonly List<StrucDefinition> _structs = new List<StrucDefinition>();
+    private readonly List<StructDefinition> _structs = new List<StructDefinition>();
     private readonly List<ClassDefinition> _classes = new List<ClassDefinition>();
 
     public List<FunctionDefinition> Functions {
@@ -35,7 +37,7 @@ namespace CodeGen.Definitions {
       get { return _enums; }
     }
 
-    public List<StrucDefinition> Structs {
+    public List<StructDefinition> Structs {
       get { return _structs; }
     }
 
@@ -63,6 +65,52 @@ namespace CodeGen.Definitions {
       if (name == null)
         return false;
       return IsClassName(name.Name);
+    }
+
+    public bool StructNeedsWrapper(StructDefinition definition) {
+      return BaseTypeNeedsWrapper(definition);
+    }
+
+    public bool StructNeedsWrapper(string name) {
+      var definition = Structs.FirstOrDefault(x => x.Name == name);
+      return definition == null ? false : StructNeedsWrapper(definition);
+    }
+
+    public bool ClassNeedsWrapper(ClassDefinition definition) {
+      return BaseTypeNeedsWrapper(definition);
+    }
+
+    public bool ClassNeedsWrapper(string name) {
+      var definition = Classes.FirstOrDefault(x => x.Name == name);
+      return definition == null ? false : ClassNeedsWrapper(definition);
+    }
+
+    public bool TypeNameNeedsWrapper(NameTypeReference reference) {
+      var name = reference.Name;
+      if (name == typeof (JavaObjectHandle).Name)
+        return true;
+
+      if (Classes.Any(c => c.Name == reference.Name && ClassNeedsWrapper(c)))
+        return true;
+
+      if (Structs.Any(c => c.Name == reference.Name && StructNeedsWrapper(c)))
+        return true;
+
+      return false;
+    }
+
+    public bool BaseTypeNeedsWrapper(BaseTypeDefinition definiton) {
+      return definiton.Fields.Any(field => TypeReferenceNeedsWrapper(field.Type));
+    }
+
+    public bool TypeReferenceNeedsWrapper(TypeReference reference) {
+      if (reference is NameTypeReference) {
+        return TypeNameNeedsWrapper(reference as NameTypeReference);
+      } else if (reference is ArrayTypeReference) {
+        return TypeReferenceNeedsWrapper((reference as ArrayTypeReference).ElementType);
+      } else {
+        throw new InvalidOperationException("Unknown type reference type");
+      }
     }
   }
 }

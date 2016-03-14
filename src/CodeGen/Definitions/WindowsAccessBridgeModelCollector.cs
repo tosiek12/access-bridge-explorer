@@ -70,8 +70,8 @@ namespace CodeGen.Definitions {
       model.Classes.AddRange(types.Select(t => CollectClass(t)));
     }
 
-    private StrucDefinition CollectStruct(Type type) {
-      return new StrucDefinition {
+    private StructDefinition CollectStruct(Type type) {
+      return new StructDefinition {
         Name = type.Name,
         Fields = CollectFields(type).ToList(),
       };
