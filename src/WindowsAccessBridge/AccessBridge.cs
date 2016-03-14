@@ -34,6 +34,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     public AccessBridge() {
       CollectionSizeLimit = 100;
+      TextLineCountLimit = 200;
+      TextLineLengthLimit = 1024;
     }
 
     public IAccessBridgeFunctions Functions {
@@ -75,6 +77,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
 
     public int CollectionSizeLimit { get; set; }
+    public int TextLineCountLimit { get; set; }
+    public int TextLineLengthLimit { get; set; }
 
     public event EventHandler Initilized;
     public event EventHandler Disposed;

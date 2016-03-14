@@ -29,6 +29,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// Platform agnostic abstraction over WindowAccessBridge DLL functions
   /// </summary>
   public interface IAccessBridgeFunctions {
+    bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info);
     void Windows_run();
     bool IsJavaWindow(WindowHandle window);
     bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2);
@@ -56,7 +57,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     bool GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes);
     bool GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index);
     bool GetAccessibleTextLineBounds(int vmid, JavaObjectHandle at, int index, out int startIndex, out int endIndex);
-    bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, StringBuilder text, short len);
+    bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, [Out]char[] text, short len);
     bool GetCurrentAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
     bool GetMaximumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
     bool GetMinimumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
@@ -93,7 +94,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
     int GetVisibleChildrenCount(int vmid, JavaObjectHandle accessibleContext);
     bool GetVisibleChildren(int vmid, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children);
-    bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info);
   }
 
   /// <summary>
@@ -366,6 +366,16 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     #region Function implementations
 
+    public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
+      AccessBridgeVersionInfoNative infoTemp;
+      var result = LibraryFunctions.GetVersionInfo(vmid, out infoTemp);
+      if (Succeeded(result))
+        info = Wrap(vmid, infoTemp);
+      else
+        info = default(AccessBridgeVersionInfo);
+      return Succeeded(result);
+    }
+
     public void Windows_run() {
       LibraryFunctions.Windows_run();
     }
@@ -611,7 +621,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return Succeeded(result);
     }
 
-    public bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, StringBuilder text, short len) {
+    public bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, [Out]char[] text, short len) {
       var result = LibraryFunctions.GetAccessibleTextRange(vmid, Unwrap(vmid, at), start, end, text, len);
       GC.KeepAlive(at);
       return Succeeded(result);
@@ -856,16 +866,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         children = Wrap(vmid, childrenTemp);
       else
         children = default(VisibleChildrenInfo);
-      return Succeeded(result);
-    }
-
-    public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
-      AccessBridgeVersionInfoNative infoTemp;
-      var result = LibraryFunctions.GetVersionInfo(vmid, out infoTemp);
-      if (Succeeded(result))
-        info = Wrap(vmid, infoTemp);
-      else
-        info = default(AccessBridgeVersionInfo);
       return Succeeded(result);
     }
 
@@ -1976,6 +1976,16 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
 
     #region Function implementations
 
+    public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
+      AccessBridgeVersionInfoNativeLegacy infoTemp;
+      var result = LibraryFunctions.GetVersionInfo(vmid, out infoTemp);
+      if (Succeeded(result))
+        info = Wrap(vmid, infoTemp);
+      else
+        info = default(AccessBridgeVersionInfo);
+      return Succeeded(result);
+    }
+
     public void Windows_run() {
       LibraryFunctions.Windows_run();
     }
@@ -2221,7 +2231,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       return Succeeded(result);
     }
 
-    public bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, StringBuilder text, short len) {
+    public bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, [Out]char[] text, short len) {
       var result = LibraryFunctions.GetAccessibleTextRange(vmid, Unwrap(vmid, at), start, end, text, len);
       GC.KeepAlive(at);
       return Succeeded(result);
@@ -2466,16 +2476,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
         children = Wrap(vmid, childrenTemp);
       else
         children = default(VisibleChildrenInfo);
-      return Succeeded(result);
-    }
-
-    public bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
-      AccessBridgeVersionInfoNativeLegacy infoTemp;
-      var result = LibraryFunctions.GetVersionInfo(vmid, out infoTemp);
-      if (Succeeded(result))
-        info = Wrap(vmid, infoTemp);
-      else
-        info = default(AccessBridgeVersionInfo);
       return Succeeded(result);
     }
 
@@ -3584,6 +3584,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// </summary>
   public class AccessBridgeLibraryFunctions {
     #region Functions
+    public GetVersionInfoFP GetVersionInfo { get; set; }
     public Windows_runFP Windows_run { get; set; }
     public IsJavaWindowFP IsJavaWindow { get; set; }
     public IsSameObjectFP IsSameObject { get; set; }
@@ -3648,7 +3649,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public GetCaretLocationFP GetCaretLocation { get; set; }
     public GetVisibleChildrenCountFP GetVisibleChildrenCount { get; set; }
     public GetVisibleChildrenFP GetVisibleChildren { get; set; }
-    public GetVersionInfoFP GetVersionInfo { get; set; }
     #endregion
 
     #region Event functions
@@ -3682,6 +3682,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     #endregion
 
     #region Function delegate types
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfoNative info);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate void Windows_runFP();
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -3737,7 +3739,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleTextLineBoundsFP(int vmid, JOBJECT64 at, int index, out int startIndex, out int endIndex);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextRangeFP(int vmid, JOBJECT64 at, int start, int end, StringBuilder text, short len);
+    public delegate BOOL GetAccessibleTextRangeFP(int vmid, JOBJECT64 at, int start, int end, [Out]char[] text, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetCurrentAccessibleValueFromContextFP(int vmid, JOBJECT64 av, StringBuilder value, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -3810,8 +3812,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public delegate int GetVisibleChildrenCountFP(int vmid, JOBJECT64 accessibleContext);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetVisibleChildrenFP(int vmid, JOBJECT64 accessibleContext, int startIndex, out VisibleChildrenInfoNative children);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfoNative info);
     #endregion
 
     #region Event delegate types
@@ -3934,6 +3934,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
   /// </summary>
   public class AccessBridgeLibraryFunctionsLegacy {
     #region Functions
+    public GetVersionInfoFP GetVersionInfo { get; set; }
     public Windows_runFP Windows_run { get; set; }
     public IsJavaWindowFP IsJavaWindow { get; set; }
     public IsSameObjectFP IsSameObject { get; set; }
@@ -3998,7 +3999,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public GetCaretLocationFP GetCaretLocation { get; set; }
     public GetVisibleChildrenCountFP GetVisibleChildrenCount { get; set; }
     public GetVisibleChildrenFP GetVisibleChildren { get; set; }
-    public GetVersionInfoFP GetVersionInfo { get; set; }
     #endregion
 
     #region Event functions
@@ -4032,6 +4032,8 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     #endregion
 
     #region Function delegate types
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfoNativeLegacy info);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate void Windows_runFP();
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -4087,7 +4089,7 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetAccessibleTextLineBoundsFP(int vmid, JOBJECT32 at, int index, out int startIndex, out int endIndex);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextRangeFP(int vmid, JOBJECT32 at, int start, int end, StringBuilder text, short len);
+    public delegate BOOL GetAccessibleTextRangeFP(int vmid, JOBJECT32 at, int start, int end, [Out]char[] text, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetCurrentAccessibleValueFromContextFP(int vmid, JOBJECT32 av, StringBuilder value, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -4160,8 +4162,6 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     public delegate int GetVisibleChildrenCountFP(int vmid, JOBJECT32 accessibleContext);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetVisibleChildrenFP(int vmid, JOBJECT32 accessibleContext, int startIndex, out VisibleChildrenInfoNativeLegacy children);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfoNativeLegacy info);
     #endregion
 
     #region Event delegate types

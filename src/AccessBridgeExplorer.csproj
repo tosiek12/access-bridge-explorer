@@ -150,6 +150,7 @@
     <Compile Include="WindowsAccessBridge\AccessBridgeEventsNativeLegacy.cs" />
     <Compile Include="WindowsAccessBridge\AccessBridgeFunctionsLegacy.cs" />
     <Compile Include="WindowsAccessBridge\AccessBridgeFunctions.cs" />
+    <Compile Include="WindowsAccessBridge\AccessibleTextReader.cs" />
     <Compile Include="WindowsAccessBridge\Generated.cs" />
     <Compile Include="WindowsAccessBridge\JOBJECT32.cs" />
     <Compile Include="WindowsAccessBridge\JOBJECT64.cs" />
@@ -166,6 +167,7 @@
     <Compile Include="WindowsAccessBridge\PropertyOptions.cs" />
     <Compile Include="Win32\UnmanagedLibrary.cs" />
     <Compile Include="WindowsAccessBridge\AccessBridge.cs" />
+    <Compile Include="WindowsAccessBridge\TextReaderExtensions.cs" />
     <Compile Include="WindowsHotKeyHandler.cs" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>

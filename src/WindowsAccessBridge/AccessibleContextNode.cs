@@ -40,6 +40,10 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       get { return _ac.JvmId; }
     }
 
+    public JavaObjectHandle AccessibleContextHandle {
+      get { return _ac; }
+    }
+
     public override bool IsManagedDescendant {
       get { return _isManagedDescendant; }
     }
@@ -528,13 +532,13 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           group.Expanded = false;
           group.LoadChildren = () => {
             var sb = new StringBuilder(TextBufferSize);
-            if (Succeeded(AccessBridge.Functions.GetCurrentAccessibleValueFromContext(JvmId, _ac, sb, (short) sb.Capacity))) {
+            if (Succeeded(AccessBridge.Functions.GetCurrentAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
               group.AddProperty("Current", sb);
             }
-            if (Succeeded(AccessBridge.Functions.GetMaximumAccessibleValueFromContext(JvmId, _ac, sb, (short) sb.Capacity))) {
+            if (Succeeded(AccessBridge.Functions.GetMaximumAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
               group.AddProperty("Maximum", sb);
             }
-            if (Succeeded(AccessBridge.Functions.GetMinimumAccessibleValueFromContext(JvmId, _ac, sb, (short) sb.Capacity))) {
+            if (Succeeded(AccessBridge.Functions.GetMinimumAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
               group.AddProperty("Minimum", sb);
             }
           };
@@ -680,27 +684,41 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
           group.LoadChildren = () => {
             AccessibleTextInfo textInfo;
             if (Succeeded(AccessBridge.Functions.GetAccessibleTextInfo(JvmId, _ac, out textInfo, x, y))) {
-              group.AddProperty("Mouse point at text index", textInfo.indexAtPoint);
-              group.AddProperty("Caret at text index", textInfo.caretIndex);
-              group.AddProperty("Char count", textInfo.charCount);
+              group.AddProperty("Character count", textInfo.charCount);
+              group.AddProperty("Character index of caret", textInfo.caretIndex);
+              group.AddProperty(string.Format("Character index of point ({0}, {1})", x, y), textInfo.indexAtPoint);
+
+              AccessibleTextSelectionInfo textSelection;
+              if (Succeeded(AccessBridge.Functions.GetAccessibleTextSelectionInfo(JvmId, _ac, out textSelection))) {
+                group.AddProperty("Selection start index", textSelection.selectionStartIndex);
+                group.AddProperty("Selection end index", textSelection.selectionEndIndex);
+                group.AddProperty("Selected text", textSelection.selectedText);
+              }
+
+              var caretGroup = group.AddGroup("Text attributes at caret");
+              caretGroup.Expanded = false;
+              caretGroup.LoadChildren = () => {
+                AddTextAttributeAtIndex(caretGroup.Children, textInfo.caretIndex);
+              };
+
+              var pointGroup = group.AddGroup(string.Format("Text attributes at point ({0}, {1})", x, y));
+              pointGroup.Expanded = false;
+              pointGroup.LoadChildren = () => {
+                AddTextAttributeAtIndex(pointGroup.Children, textInfo.indexAtPoint);
+              };
+
+              var textGroup = group.AddGroup("Contents");
+              textGroup.Expanded = false;
+              textGroup.LoadChildren = () => {
+                var reader = new AccessibleTextReader(this, textInfo.charCount);
+                foreach (var lineData in reader.ReadFullLines(AccessBridge.TextLineLengthLimit).Take(AccessBridge.TextLineCountLimit)) {
+                  var lineEndOffset = lineData.Offset + lineData.Text.Length - 1;
+                  textGroup.AddProperty(
+                    string.Format("Line {0} [{1}, {2}]", lineData.Number + 1, lineData.Offset, lineEndOffset),
+                    MakePrintable(lineData.Text));
+                }
+              };
             }
-
-            AccessibleTextSelectionInfo textSelection;
-            if (Succeeded(AccessBridge.Functions.GetAccessibleTextSelectionInfo(JvmId, _ac, out textSelection))) {
-              group.AddProperty("Selection start index", textSelection.selectionStartIndex);
-              group.AddProperty("Selection end index", textSelection.selectionEndIndex);
-              group.AddProperty("Selected text", textSelection.selectedText);
-            }
-
-            /* ===== AccessibleText information at the mouse point ===== */
-
-            var mouseGroup = group.AddGroup(string.Format("Mouse point at index {0} attributes", textInfo.indexAtPoint));
-            AddTextAttributeAtIndex(mouseGroup.Children, textInfo.indexAtPoint);
-
-            /* ===== AccessibleText information at the caret index ===== */
-
-            var caretGroup = group.AddGroup(string.Format("Caret at index {0} attributes", textInfo.caretIndex));
-            AddTextAttributeAtIndex(caretGroup.Children, textInfo.caretIndex);
           };
         }
       }
@@ -750,9 +768,12 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
       int end;
       if (Succeeded(AccessBridge.Functions.GetAccessibleTextLineBounds(JvmId, _ac, index, out start, out end))) {
         list.AddProperty("Line bounds", string.Format("[{0},{1}]", start, end));
-        var sb = new StringBuilder(TextBufferSize);
-        if (Succeeded(AccessBridge.Functions.GetAccessibleTextRange(JvmId, _ac, start, end, sb, (short)sb.Capacity))) {
-          list.AddProperty("Line text", sb);
+        if (start >= 0 && end > start) {
+          var buffer = new char[TextBufferSize];
+          end = Math.Min(start + buffer.Length, end);
+          if (Succeeded(AccessBridge.Functions.GetAccessibleTextRange(JvmId, _ac, start, end, buffer, (short)buffer.Length))) {
+            list.AddProperty("Line text", new string(buffer, 0, end - start));
+          }
         }
       }
 
@@ -891,6 +912,18 @@ namespace AccessBridgeExplorer.WindowsAccessBridge {
     }
     public override int GetIndexInParent() {
       return GetInfo().indexInParent;
+    }
+
+    private static string MakePrintable(string text) {
+      var sb = new StringBuilder();
+      foreach (var ch in text) {
+        if (ch == '\n') sb.Append("\\n");
+        else if (ch == '\r') sb.Append("\\r");
+        else if (ch == '\t') sb.Append("\\t");
+        else if (char.IsControl(ch)) sb.Append("#");
+        else sb.Append(ch);
+      }
+      return sb.ToString();
     }
   }
 }

@@ -98,7 +98,7 @@ namespace CodeGen.Interop {
 
     StatusResult GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index);
     StatusResult GetAccessibleTextLineBounds(int vmid, JavaObjectHandle at, int index, out int startIndex, out int endIndex);
-    StatusResult GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, StringBuilder text, short len);
+    StatusResult GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, [Out] char[] text, short len);
 
     #endregion
 
