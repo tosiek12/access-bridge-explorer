@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 namespace CodeGen {
   class Program {
     static void Main(string[] args) {
-      var path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"..\..\..\AccessBridgeExplorer\WindowsAccessBridge\Generated.cs");
+      var path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"..\..\..\WindowsAccessBridgeInterop\Generated.cs");
       if (args.Length >= 1) {
         path = Path.Combine(Environment.CurrentDirectory, args[0]);
       }

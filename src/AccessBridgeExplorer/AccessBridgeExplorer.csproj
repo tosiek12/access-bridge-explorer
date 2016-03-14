@@ -143,31 +143,7 @@
       <DependentUpon>UpdateChecker.cs</DependentUpon>
     </Compile>
     <Compile Include="UpdateInfoArgs.cs" />
-    <Compile Include="Win32\NativeMethods.cs" />
     <Compile Include="Model\AccessibleNodeModel.cs" />
-    <Compile Include="WindowsAccessBridge\AccessBridgeEventsLegacy.cs" />
-    <Compile Include="WindowsAccessBridge\AccessBridgeEvents.cs" />
-    <Compile Include="WindowsAccessBridge\AccessBridgeEventsNativeLegacy.cs" />
-    <Compile Include="WindowsAccessBridge\AccessBridgeFunctionsLegacy.cs" />
-    <Compile Include="WindowsAccessBridge\AccessBridgeFunctions.cs" />
-    <Compile Include="WindowsAccessBridge\AccessibleTextReader.cs" />
-    <Compile Include="WindowsAccessBridge\Generated.cs" />
-    <Compile Include="WindowsAccessBridge\JOBJECT32.cs" />
-    <Compile Include="WindowsAccessBridge\JOBJECT64.cs" />
-    <Compile Include="WindowsAccessBridge\AccessibleContextNode.cs" />
-    <Compile Include="WindowsAccessBridge\AccessibleJvm.cs" />
-    <Compile Include="WindowsAccessBridge\AccessibleNode.cs" />
-    <Compile Include="WindowsAccessBridge\AccessibleWindow.cs" />
-    <Compile Include="WindowsAccessBridge\JavaObjectHandle.cs" />
-    <Compile Include="WindowsAccessBridge\AccessBridgeEventsNative.cs" />
-    <Compile Include="Model\PropertyGroup.cs" />
-    <Compile Include="Model\PropertyList.cs" />
-    <Compile Include="Model\PropertyNode.cs" />
-    <Compile Include="WindowsAccessBridge\NodePath.cs" />
-    <Compile Include="WindowsAccessBridge\PropertyOptions.cs" />
-    <Compile Include="Win32\UnmanagedLibrary.cs" />
-    <Compile Include="WindowsAccessBridge\AccessBridge.cs" />
-    <Compile Include="WindowsAccessBridge\TextReaderExtensions.cs" />
     <Compile Include="WindowsHotKeyHandler.cs" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
@@ -260,6 +236,7 @@
       <Name>WindowsAccessBridgeInterop</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
