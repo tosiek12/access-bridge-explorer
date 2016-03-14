@@ -12,24 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CodeGen {
-  class Program {
-    static void Main(string[] args) {
-      var path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"..\..\..\src\WindowsAccessBridge\Generated.cs");
-      if (args.Length >= 1) {
-        path = Path.Combine(Environment.CurrentDirectory, args[0]);
-      }
-
-      var codeGen = new CodeGen(path);
-      codeGen.Generate();
-    }
-  }
+public static class VersionNunber {
+  public const string Product = "0.9.2";
+  public const string File = Product + ".0";
 }
