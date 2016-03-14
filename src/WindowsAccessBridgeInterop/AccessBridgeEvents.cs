@@ -19,7 +19,7 @@ namespace WindowsAccessBridgeInterop {
   /// Single entry point to access all events exposed by the Java Access Bridge
   /// DLL (<see cref="AccessBridge.Events"/>).
   /// </summary>
-  public partial class AccessBridgeEvents : IDisposable {
+  partial class AccessBridgeEvents : IDisposable {
     private readonly AccessBridgeEventsNative _nativeEvents;
 
     public AccessBridgeEvents(AccessBridgeLibraryFunctions libraryFunctions) {

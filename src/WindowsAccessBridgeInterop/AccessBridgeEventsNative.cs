@@ -13,7 +13,7 @@
 // limitations under the License.
 
 namespace WindowsAccessBridgeInterop {
-  public partial class AccessBridgeEventsNative {
+  partial class AccessBridgeEventsNative {
     private readonly AccessBridgeLibraryFunctions _libraryFunctions;
 
     public AccessBridgeEventsNative(AccessBridgeLibraryFunctions libraryFunctions) {

@@ -51,6 +51,7 @@
     <Compile Include="AccessibleWindow.cs" />
     <Compile Include="Generated.cs" />
     <Compile Include="Generated.Internal.cs" />
+    <Compile Include="Generated.Internal.Legacy.cs" />
     <Compile Include="JavaObjectHandle.cs" />
     <Compile Include="JOBJECT32.cs" />
     <Compile Include="JOBJECT64.cs" />

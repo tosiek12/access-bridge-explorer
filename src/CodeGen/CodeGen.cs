@@ -21,6 +21,7 @@ namespace CodeGen {
   public class CodeGenOptions {
     public string PublicClassesOutputFileName { get; set; }
     public string InternalClassesOutputFileName { get; set; }
+    public string InternalLegacyClassesOutputFileName { get; set; }
   }
 
   public class CodeGen {
@@ -51,32 +52,23 @@ namespace CodeGen {
         }
       }
 
-      using (var writer = File.CreateText(_options.InternalClassesOutputFileName)) {
-        using (var sourceWriter = new SourceCodeWriter(writer, model)) {
-          WriteSourceFileHeader(sourceWriter);
-
-          sourceWriter.StartNamespace("WindowsAccessBridgeInterop");
-          foreach (var legacy in new[] { false, true }) {
+      foreach (var legacy in new[] {false, true}) {
+        using (var writer = File.CreateText(legacy ? _options.InternalLegacyClassesOutputFileName : _options.InternalClassesOutputFileName)) {
+          using (var sourceWriter = new SourceCodeWriter(writer, model)) {
             sourceWriter.IsLegacy = legacy;
+            WriteSourceFileHeader(sourceWriter);
+
+            sourceWriter.StartNamespace("WindowsAccessBridgeInterop");
             WriteApplicationFunctionsClass(model, sourceWriter);
             WriteApplicationEventsClass(model, sourceWriter);
-          }
 
-          sourceWriter.IsNativeTypes = true;
-          foreach (var legacy in new[] { false, true }) {
-            sourceWriter.IsLegacy = legacy;
+            sourceWriter.IsNativeTypes = true;
             WriteLibraryFunctionsClass(model, sourceWriter);
-          }
-          foreach (var legacy in new[] { false, true }) {
-            sourceWriter.IsLegacy = legacy;
             WriteLibraryEventsClass(model, sourceWriter);
-          }
-          foreach (var legacy in new[] { false, true }) {
-            sourceWriter.IsLegacy = legacy;
             WriteLibraryStructs(model, sourceWriter, writer);
             WriteLibraryClasses(model, writer, sourceWriter);
+            sourceWriter.EndNamespace();
           }
-          sourceWriter.EndNamespace();
         }
       }
     }
@@ -200,7 +192,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Implementation of platform agnostic functions");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public partial class AccessBridgeFunctions{0} : IAccessBridgeFunctions {{", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("internal partial class AccessBridgeFunctions{0} : IAccessBridgeFunctions {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine();
@@ -242,7 +234,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Implementation of platform agnostic events");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public partial class AccessBridgeEvents{0} : IAccessBridgeEvents {{", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("internal partial class AccessBridgeEvents{0} : IAccessBridgeEvents {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine("#region Event fields");
@@ -291,7 +283,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Container of WindowAccessBridge DLL entry points");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public class AccessBridgeLibraryFunctions{0} {{", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("internal class AccessBridgeLibraryFunctions{0} {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine("#region Functions");
@@ -344,7 +336,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Native library event handlers implementation");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public partial class AccessBridgeEventsNative{0} {{", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("internal partial class AccessBridgeEventsNative{0} {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine("#region Event fields");
@@ -969,22 +961,22 @@ namespace CodeGen {
     }
 
     private void WriteLibraryStruct(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, StructDefinition definition) {
-      sourceWriter.WriteLine("[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]");
-      sourceWriter.WriteLine("public struct {0}Native{1} {{", definition.Name, GetLegacySuffix(sourceWriter));
+      WriteStructLayoutAttributeLine(sourceWriter);
+      sourceWriter.WriteLine("internal struct {0}Native{1} {{", definition.Name, GetLegacySuffix(sourceWriter));
       WriteFields(model, sourceWriter, definition);
       sourceWriter.WriteLine("}}");
     }
 
     private void WriteLibraryClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, ClassDefinition definition) {
-      sourceWriter.WriteLine("[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]");
-      sourceWriter.WriteLine("public class {0}Native{1} {{", definition.Name, GetLegacySuffix(sourceWriter));
+      WriteStructLayoutAttributeLine(sourceWriter);
+      sourceWriter.WriteLine("internal class {0}Native{1} {{", definition.Name, GetLegacySuffix(sourceWriter));
       WriteFields(model, sourceWriter, definition);
       sourceWriter.WriteLine("}}");
     }
 
     private void WriteApplicationStruct(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, StructDefinition definition) {
       if (!model.StructNeedsWrapper(definition)) {
-        sourceWriter.WriteLine("[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]");
+        WriteStructLayoutAttributeLine(sourceWriter);
       }
       sourceWriter.WriteLine("public struct {0} {{", definition.Name);
       WriteFields(model, sourceWriter, definition);
@@ -993,11 +985,15 @@ namespace CodeGen {
 
     private void WriteApplicationClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, ClassDefinition definition) {
       if (!model.ClassNeedsWrapper(definition)) {
-        sourceWriter.WriteLine("[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]");
+        WriteStructLayoutAttributeLine(sourceWriter);
       }
       sourceWriter.WriteLine("public class {0} {{", definition.Name);
       WriteFields(model, sourceWriter, definition);
       sourceWriter.WriteLine("}}");
+    }
+
+    private static void WriteStructLayoutAttributeLine(SourceCodeWriter sourceWriter) {
+      sourceWriter.WriteLine("[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]");
     }
 
     private void WriteEnum(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, EnumDefinition definition) {

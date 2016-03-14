@@ -28,7 +28,7 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Implementation of platform agnostic functions
   /// </summary>
-  internal partial class AccessBridgeFunctions : IAccessBridgeFunctions {
+  internal partial class AccessBridgeFunctionsLegacy : IAccessBridgeFunctions {
 
     #region Function implementations
 
@@ -49,12 +49,12 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac) {
-      JOBJECT64 acTemp;
+      JOBJECT32 acTemp;
       var result = LibraryFunctions.GetAccessibleContextFromHWND(window, out vmid, out acTemp);
       if (Succeeded(result)) {
         ac = Wrap(vmid, acTemp);
       } else {
-        acTemp = default(JOBJECT64);
+        acTemp = default(JOBJECT32);
         ac = Wrap(vmid, acTemp);
       }
       return Succeeded(result);
@@ -67,25 +67,25 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac) {
-      JOBJECT64 acTemp;
+      JOBJECT32 acTemp;
       var result = LibraryFunctions.GetAccessibleContextAt(vmid, Unwrap(vmid, acParent), x, y, out acTemp);
       GC.KeepAlive(acParent);
       if (Succeeded(result)) {
         ac = Wrap(vmid, acTemp);
       } else {
-        acTemp = default(JOBJECT64);
+        acTemp = default(JOBJECT32);
         ac = Wrap(vmid, acTemp);
       }
       return Succeeded(result);
     }
 
     public bool GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac) {
-      JOBJECT64 acTemp;
+      JOBJECT32 acTemp;
       var result = LibraryFunctions.GetAccessibleContextWithFocus(window, out vmid, out acTemp);
       if (Succeeded(result)) {
         ac = Wrap(vmid, acTemp);
       } else {
-        acTemp = default(JOBJECT64);
+        acTemp = default(JOBJECT32);
         ac = Wrap(vmid, acTemp);
       }
       return Succeeded(result);
@@ -111,7 +111,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleRelationSet(int vmid, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo) {
-      AccessibleRelationSetInfoNative relationSetInfoTemp;
+      AccessibleRelationSetInfoNativeLegacy relationSetInfoTemp;
       var result = LibraryFunctions.GetAccessibleRelationSet(vmid, Unwrap(vmid, accessibleContext), out relationSetInfoTemp);
       GC.KeepAlive(accessibleContext);
       if (Succeeded(result))
@@ -122,7 +122,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleHypertext(int vmid, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo) {
-      AccessibleHypertextInfoNative hypertextInfoTemp;
+      AccessibleHypertextInfoNativeLegacy hypertextInfoTemp;
       var result = LibraryFunctions.GetAccessibleHypertext(vmid, Unwrap(vmid, accessibleContext), out hypertextInfoTemp);
       GC.KeepAlive(accessibleContext);
       if (Succeeded(result))
@@ -146,7 +146,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleHypertextExt(int vmid, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo) {
-      AccessibleHypertextInfoNative hypertextInfoTemp;
+      AccessibleHypertextInfoNativeLegacy hypertextInfoTemp;
       var result = LibraryFunctions.GetAccessibleHypertextExt(vmid, Unwrap(vmid, accessibleContext), nStartIndex, out hypertextInfoTemp);
       GC.KeepAlive(accessibleContext);
       if (Succeeded(result))
@@ -163,7 +163,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleHyperlink(int vmid, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo) {
-      AccessibleHyperlinkInfoNative hyperlinkInfoTemp;
+      AccessibleHyperlinkInfoNativeLegacy hyperlinkInfoTemp;
       var result = LibraryFunctions.GetAccessibleHyperlink(vmid, Unwrap(vmid, hypertext), nIndex, out hyperlinkInfoTemp);
       GC.KeepAlive(hypertext);
       if (Succeeded(result))
@@ -298,7 +298,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo) {
-      AccessibleTableInfoNative tableInfoTemp = new AccessibleTableInfoNative();
+      AccessibleTableInfoNativeLegacy tableInfoTemp = new AccessibleTableInfoNativeLegacy();
       var result = LibraryFunctions.GetAccessibleTableInfo(vmid, Unwrap(vmid, ac), tableInfoTemp);
       GC.KeepAlive(ac);
       tableInfo = new AccessibleTableInfo();
@@ -308,7 +308,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle at, int row, int column, out AccessibleTableCellInfo tableCellInfo) {
-      AccessibleTableCellInfoNative tableCellInfoTemp = new AccessibleTableCellInfoNative();
+      AccessibleTableCellInfoNativeLegacy tableCellInfoTemp = new AccessibleTableCellInfoNativeLegacy();
       var result = LibraryFunctions.GetAccessibleTableCellInfo(vmid, Unwrap(vmid, at), row, column, tableCellInfoTemp);
       GC.KeepAlive(at);
       tableCellInfo = new AccessibleTableCellInfo();
@@ -318,7 +318,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
-      AccessibleTableInfoNative tableInfoTemp = new AccessibleTableInfoNative();
+      AccessibleTableInfoNativeLegacy tableInfoTemp = new AccessibleTableInfoNativeLegacy();
       var result = LibraryFunctions.GetAccessibleTableRowHeader(vmid, Unwrap(vmid, acParent), tableInfoTemp);
       GC.KeepAlive(acParent);
       tableInfo = new AccessibleTableInfo();
@@ -328,7 +328,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo) {
-      AccessibleTableInfoNative tableInfoTemp = new AccessibleTableInfoNative();
+      AccessibleTableInfoNativeLegacy tableInfoTemp = new AccessibleTableInfoNativeLegacy();
       var result = LibraryFunctions.GetAccessibleTableColumnHeader(vmid, Unwrap(vmid, acParent), tableInfoTemp);
       GC.KeepAlive(acParent);
       tableInfo = new AccessibleTableInfo();
@@ -465,7 +465,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public bool GetVisibleChildren(int vmid, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children) {
-      VisibleChildrenInfoNative childrenTemp;
+      VisibleChildrenInfoNativeLegacy childrenTemp;
       var result = LibraryFunctions.GetVisibleChildren(vmid, Unwrap(vmid, accessibleContext), startIndex, out childrenTemp);
       GC.KeepAlive(accessibleContext);
       if (Succeeded(result))
@@ -484,7 +484,7 @@ namespace WindowsAccessBridgeInterop {
 
     #region Wrap/Unwrap structs
 
-    private AccessibleHyperlinkInfo Wrap(int vmid, AccessibleHyperlinkInfoNative info) {
+    private AccessibleHyperlinkInfo Wrap(int vmid, AccessibleHyperlinkInfoNativeLegacy info) {
       var result = new AccessibleHyperlinkInfo();
       result.text = info.text;
       result.startIndex = info.startIndex;
@@ -493,8 +493,8 @@ namespace WindowsAccessBridgeInterop {
       return result;
     }
 
-    private AccessibleHyperlinkInfoNative Unwrap(int vmid, AccessibleHyperlinkInfo info) {
-      var result = new AccessibleHyperlinkInfoNative();
+    private AccessibleHyperlinkInfoNativeLegacy Unwrap(int vmid, AccessibleHyperlinkInfo info) {
+      var result = new AccessibleHyperlinkInfoNativeLegacy();
       result.text = info.text;
       result.startIndex = info.startIndex;
       result.endIndex = info.endIndex;
@@ -502,7 +502,7 @@ namespace WindowsAccessBridgeInterop {
       return result;
     }
 
-    private AccessibleHypertextInfo Wrap(int vmid, AccessibleHypertextInfoNative info) {
+    private AccessibleHypertextInfo Wrap(int vmid, AccessibleHypertextInfoNativeLegacy info) {
       var result = new AccessibleHypertextInfo();
       result.linkCount = info.linkCount;
       if (info.links != null) {
@@ -516,12 +516,12 @@ namespace WindowsAccessBridgeInterop {
       return result;
     }
 
-    private AccessibleHypertextInfoNative Unwrap(int vmid, AccessibleHypertextInfo info) {
-      var result = new AccessibleHypertextInfoNative();
+    private AccessibleHypertextInfoNativeLegacy Unwrap(int vmid, AccessibleHypertextInfo info) {
+      var result = new AccessibleHypertextInfoNativeLegacy();
       result.linkCount = info.linkCount;
       if (info.links != null) {
         var count = info.linkCount;
-        result.links = new AccessibleHyperlinkInfoNative[count];
+        result.links = new AccessibleHyperlinkInfoNativeLegacy[count];
         for(var i = 0; i < count; i++) {
           result.links[i] = Unwrap(vmid, info.links[i]);
         }
@@ -530,7 +530,7 @@ namespace WindowsAccessBridgeInterop {
       return result;
     }
 
-    private AccessibleRelationInfo Wrap(int vmid, AccessibleRelationInfoNative info) {
+    private AccessibleRelationInfo Wrap(int vmid, AccessibleRelationInfoNativeLegacy info) {
       var result = new AccessibleRelationInfo();
       result.key = info.key;
       result.targetCount = info.targetCount;
@@ -544,13 +544,13 @@ namespace WindowsAccessBridgeInterop {
       return result;
     }
 
-    private AccessibleRelationInfoNative Unwrap(int vmid, AccessibleRelationInfo info) {
-      var result = new AccessibleRelationInfoNative();
+    private AccessibleRelationInfoNativeLegacy Unwrap(int vmid, AccessibleRelationInfo info) {
+      var result = new AccessibleRelationInfoNativeLegacy();
       result.key = info.key;
       result.targetCount = info.targetCount;
       if (info.targets != null) {
         var count = info.targetCount;
-        result.targets = new JOBJECT64[count];
+        result.targets = new JOBJECT32[count];
         for(var i = 0; i < count; i++) {
           result.targets[i] = Unwrap(vmid, info.targets[i]);
         }
@@ -558,7 +558,7 @@ namespace WindowsAccessBridgeInterop {
       return result;
     }
 
-    private AccessibleRelationSetInfo Wrap(int vmid, AccessibleRelationSetInfoNative info) {
+    private AccessibleRelationSetInfo Wrap(int vmid, AccessibleRelationSetInfoNativeLegacy info) {
       var result = new AccessibleRelationSetInfo();
       result.relationCount = info.relationCount;
       if (info.relations != null) {
@@ -571,12 +571,12 @@ namespace WindowsAccessBridgeInterop {
       return result;
     }
 
-    private AccessibleRelationSetInfoNative Unwrap(int vmid, AccessibleRelationSetInfo info) {
-      var result = new AccessibleRelationSetInfoNative();
+    private AccessibleRelationSetInfoNativeLegacy Unwrap(int vmid, AccessibleRelationSetInfo info) {
+      var result = new AccessibleRelationSetInfoNativeLegacy();
       result.relationCount = info.relationCount;
       if (info.relations != null) {
         var count = info.relationCount;
-        result.relations = new AccessibleRelationInfoNative[count];
+        result.relations = new AccessibleRelationInfoNativeLegacy[count];
         for(var i = 0; i < count; i++) {
           result.relations[i] = Unwrap(vmid, info.relations[i]);
         }
@@ -584,7 +584,7 @@ namespace WindowsAccessBridgeInterop {
       return result;
     }
 
-    private VisibleChildrenInfo Wrap(int vmid, VisibleChildrenInfoNative info) {
+    private VisibleChildrenInfo Wrap(int vmid, VisibleChildrenInfoNativeLegacy info) {
       var result = new VisibleChildrenInfo();
       result.returnedChildrenCount = info.returnedChildrenCount;
       if (info.children != null) {
@@ -597,12 +597,12 @@ namespace WindowsAccessBridgeInterop {
       return result;
     }
 
-    private VisibleChildrenInfoNative Unwrap(int vmid, VisibleChildrenInfo info) {
-      var result = new VisibleChildrenInfoNative();
+    private VisibleChildrenInfoNativeLegacy Unwrap(int vmid, VisibleChildrenInfo info) {
+      var result = new VisibleChildrenInfoNativeLegacy();
       result.returnedChildrenCount = info.returnedChildrenCount;
       if (info.children != null) {
         var count = info.returnedChildrenCount;
-        result.children = new JOBJECT64[count];
+        result.children = new JOBJECT32[count];
         for(var i = 0; i < count; i++) {
           result.children[i] = Unwrap(vmid, info.children[i]);
         }
@@ -614,7 +614,7 @@ namespace WindowsAccessBridgeInterop {
 
     #region CopyWrap/CopyUnwrap classes
 
-    private void CopyWrap(int vmid, AccessibleTableCellInfoNative infoSrc, AccessibleTableCellInfo infoDest) {
+    private void CopyWrap(int vmid, AccessibleTableCellInfoNativeLegacy infoSrc, AccessibleTableCellInfo infoDest) {
       infoDest.accessibleContext = Wrap(vmid, infoSrc.accessibleContext);
       infoDest.index = infoSrc.index;
       infoDest.row = infoSrc.row;
@@ -624,7 +624,7 @@ namespace WindowsAccessBridgeInterop {
       infoDest.isSelected = infoSrc.isSelected;
     }
 
-    private void CopyUnwrap(int vmid, AccessibleTableCellInfo infoSrc, AccessibleTableCellInfoNative infoDest) {
+    private void CopyUnwrap(int vmid, AccessibleTableCellInfo infoSrc, AccessibleTableCellInfoNativeLegacy infoDest) {
       infoDest.accessibleContext = Unwrap(vmid, infoSrc.accessibleContext);
       infoDest.index = infoSrc.index;
       infoDest.row = infoSrc.row;
@@ -634,7 +634,7 @@ namespace WindowsAccessBridgeInterop {
       infoDest.isSelected = infoSrc.isSelected;
     }
 
-    private void CopyWrap(int vmid, AccessibleTableInfoNative infoSrc, AccessibleTableInfo infoDest) {
+    private void CopyWrap(int vmid, AccessibleTableInfoNativeLegacy infoSrc, AccessibleTableInfo infoDest) {
       infoDest.caption = Wrap(vmid, infoSrc.caption);
       infoDest.summary = Wrap(vmid, infoSrc.summary);
       infoDest.rowCount = infoSrc.rowCount;
@@ -643,7 +643,7 @@ namespace WindowsAccessBridgeInterop {
       infoDest.accessibleTable = Wrap(vmid, infoSrc.accessibleTable);
     }
 
-    private void CopyUnwrap(int vmid, AccessibleTableInfo infoSrc, AccessibleTableInfoNative infoDest) {
+    private void CopyUnwrap(int vmid, AccessibleTableInfo infoSrc, AccessibleTableInfoNativeLegacy infoDest) {
       infoDest.caption = Unwrap(vmid, infoSrc.caption);
       infoDest.summary = Unwrap(vmid, infoSrc.summary);
       infoDest.rowCount = infoSrc.rowCount;
@@ -659,7 +659,7 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Implementation of platform agnostic events
   /// </summary>
-  internal partial class AccessBridgeEvents : IAccessBridgeEvents {
+  internal partial class AccessBridgeEventsLegacy : IAccessBridgeEvents {
     #region Event fields
     private PropertyChangeEventHandler _propertyChange;
     private JavaShutdownEventHandler _javaShutdown;
@@ -1186,85 +1186,85 @@ namespace WindowsAccessBridgeInterop {
     }
 
     #region Event forwarders
-    private void ForwardPropertyChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+    private void ForwardPropertyChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
       OnPropertyChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), property, oldValue, newValue);
     }
     private void ForwardJavaShutdown(int vmid) {
       OnJavaShutdown(vmid);
     }
-    private void ForwardFocusGained(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardFocusGained(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnFocusGained(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardFocusLost(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardFocusLost(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnFocusLost(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardCaretUpdate(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardCaretUpdate(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnCaretUpdate(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardMouseClicked(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardMouseClicked(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnMouseClicked(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardMouseEntered(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardMouseEntered(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnMouseEntered(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardMouseExited(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardMouseExited(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnMouseExited(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardMousePressed(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardMousePressed(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnMousePressed(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardMouseReleased(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardMouseReleased(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnMouseReleased(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardMenuCanceled(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardMenuCanceled(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnMenuCanceled(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardMenuDeselected(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardMenuDeselected(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnMenuDeselected(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardMenuSelected(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardMenuSelected(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnMenuSelected(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardPopupMenuCanceled(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardPopupMenuCanceled(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnPopupMenuCanceled(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardPopupMenuWillBecomeInvisible(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardPopupMenuWillBecomeInvisible(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnPopupMenuWillBecomeInvisible(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardPopupMenuWillBecomeVisible(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardPopupMenuWillBecomeVisible(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnPopupMenuWillBecomeVisible(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardPropertyNameChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName) {
+    private void ForwardPropertyNameChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName) {
       OnPropertyNameChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldName, newName);
     }
-    private void ForwardPropertyDescriptionChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription) {
+    private void ForwardPropertyDescriptionChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription) {
       OnPropertyDescriptionChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldDescription, newDescription);
     }
-    private void ForwardPropertyStateChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState) {
+    private void ForwardPropertyStateChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState) {
       OnPropertyStateChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldState, newState);
     }
-    private void ForwardPropertyValueChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+    private void ForwardPropertyValueChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
       OnPropertyValueChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldValue, newValue);
     }
-    private void ForwardPropertySelectionChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardPropertySelectionChange(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnPropertySelectionChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardPropertyTextChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardPropertyTextChange(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnPropertyTextChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardPropertyCaretChange(int vmid, JOBJECT64 evt, JOBJECT64 source, int oldPosition, int newPosition) {
+    private void ForwardPropertyCaretChange(int vmid, JOBJECT32 evt, JOBJECT32 source, int oldPosition, int newPosition) {
       OnPropertyCaretChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), oldPosition, newPosition);
     }
-    private void ForwardPropertyVisibleDataChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    private void ForwardPropertyVisibleDataChange(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       OnPropertyVisibleDataChange(vmid, Wrap(vmid, evt), Wrap(vmid, source));
     }
-    private void ForwardPropertyChildChange(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldChild, JOBJECT64 newChild) {
+    private void ForwardPropertyChildChange(int vmid, JOBJECT32 evt, JOBJECT32 source, JOBJECT32 oldChild, JOBJECT32 newChild) {
       OnPropertyChildChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), Wrap(vmid, oldChild), Wrap(vmid, newChild));
     }
-    private void ForwardPropertyActiveDescendentChange(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldActiveDescendent, JOBJECT64 newActiveDescendent) {
+    private void ForwardPropertyActiveDescendentChange(int vmid, JOBJECT32 evt, JOBJECT32 source, JOBJECT32 oldActiveDescendent, JOBJECT32 newActiveDescendent) {
       OnPropertyActiveDescendentChange(vmid, Wrap(vmid, evt), Wrap(vmid, source), Wrap(vmid, oldActiveDescendent), Wrap(vmid, newActiveDescendent));
     }
-    private void ForwardPropertyTableModelChange(int vmid, JOBJECT64 evt, JOBJECT64 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+    private void ForwardPropertyTableModelChange(int vmid, JOBJECT32 evt, JOBJECT32 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
       OnPropertyTableModelChange(vmid, Wrap(vmid, evt), Wrap(vmid, src), oldValue, newValue);
     }
     #endregion
@@ -1273,7 +1273,7 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Container of WindowAccessBridge DLL entry points
   /// </summary>
-  internal class AccessBridgeLibraryFunctions {
+  internal class AccessBridgeLibraryFunctionsLegacy {
     #region Functions
     public Windows_runFP Windows_run { get; set; }
     public IsJavaWindowFP IsJavaWindow { get; set; }
@@ -1378,188 +1378,188 @@ namespace WindowsAccessBridgeInterop {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL IsJavaWindowFP(WindowHandle window);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL IsSameObjectFP(int vmid, JOBJECT64 obj1, JOBJECT64 obj2);
+    public delegate BOOL IsSameObjectFP(int vmid, JOBJECT32 obj1, JOBJECT32 obj2);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextFromHWNDFP(WindowHandle window, out int vmid, out JOBJECT64 ac);
+    public delegate BOOL GetAccessibleContextFromHWNDFP(WindowHandle window, out int vmid, out JOBJECT32 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate WindowHandle GetHWNDFromAccessibleContextFP(int vmid, JOBJECT64 ac);
+    public delegate WindowHandle GetHWNDFromAccessibleContextFP(int vmid, JOBJECT32 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextAtFP(int vmid, JOBJECT64 acParent, int x, int y, out JOBJECT64 ac);
+    public delegate BOOL GetAccessibleContextAtFP(int vmid, JOBJECT32 acParent, int x, int y, out JOBJECT32 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextWithFocusFP(WindowHandle window, out int vmid, out JOBJECT64 ac);
+    public delegate BOOL GetAccessibleContextWithFocusFP(WindowHandle window, out int vmid, out JOBJECT32 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleContextInfoFP(int vmid, JOBJECT64 ac, [Out]AccessibleContextInfo info);
+    public delegate BOOL GetAccessibleContextInfoFP(int vmid, JOBJECT32 ac, [Out]AccessibleContextInfo info);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetAccessibleChildFromContextFP(int vmid, JOBJECT64 ac, int i);
+    public delegate JOBJECT32 GetAccessibleChildFromContextFP(int vmid, JOBJECT32 ac, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetAccessibleParentFromContextFP(int vmid, JOBJECT64 ac);
+    public delegate JOBJECT32 GetAccessibleParentFromContextFP(int vmid, JOBJECT32 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleRelationSetFP(int vmid, JOBJECT64 accessibleContext, out AccessibleRelationSetInfoNative relationSetInfo);
+    public delegate BOOL GetAccessibleRelationSetFP(int vmid, JOBJECT32 accessibleContext, out AccessibleRelationSetInfoNativeLegacy relationSetInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleHypertextFP(int vmid, JOBJECT64 accessibleContext, out AccessibleHypertextInfoNative hypertextInfo);
+    public delegate BOOL GetAccessibleHypertextFP(int vmid, JOBJECT32 accessibleContext, out AccessibleHypertextInfoNativeLegacy hypertextInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL ActivateAccessibleHyperlinkFP(int vmid, JOBJECT64 accessibleContext, JOBJECT64 accessibleHyperlink);
+    public delegate BOOL ActivateAccessibleHyperlinkFP(int vmid, JOBJECT32 accessibleContext, JOBJECT32 accessibleHyperlink);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleHyperlinkCountFP(int vmid, JOBJECT64 accessibleContext);
+    public delegate int GetAccessibleHyperlinkCountFP(int vmid, JOBJECT32 accessibleContext);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleHypertextExtFP(int vmid, JOBJECT64 accessibleContext, int nStartIndex, out AccessibleHypertextInfoNative hypertextInfo);
+    public delegate BOOL GetAccessibleHypertextExtFP(int vmid, JOBJECT32 accessibleContext, int nStartIndex, out AccessibleHypertextInfoNativeLegacy hypertextInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleHypertextLinkIndexFP(int vmid, JOBJECT64 hypertext, int nIndex);
+    public delegate int GetAccessibleHypertextLinkIndexFP(int vmid, JOBJECT32 hypertext, int nIndex);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleHyperlinkFP(int vmid, JOBJECT64 hypertext, int nIndex, out AccessibleHyperlinkInfoNative hyperlinkInfo);
+    public delegate BOOL GetAccessibleHyperlinkFP(int vmid, JOBJECT32 hypertext, int nIndex, out AccessibleHyperlinkInfoNativeLegacy hyperlinkInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleKeyBindingsFP(int vmid, JOBJECT64 accessibleContext, out AccessibleKeyBindings keyBindings);
+    public delegate BOOL GetAccessibleKeyBindingsFP(int vmid, JOBJECT32 accessibleContext, out AccessibleKeyBindings keyBindings);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleIconsFP(int vmid, JOBJECT64 accessibleContext, out AccessibleIcons icons);
+    public delegate BOOL GetAccessibleIconsFP(int vmid, JOBJECT32 accessibleContext, out AccessibleIcons icons);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleActionsFP(int vmid, JOBJECT64 accessibleContext, [Out]AccessibleActions actions);
+    public delegate BOOL GetAccessibleActionsFP(int vmid, JOBJECT32 accessibleContext, [Out]AccessibleActions actions);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL DoAccessibleActionsFP(int vmid, JOBJECT64 accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
+    public delegate BOOL DoAccessibleActionsFP(int vmid, JOBJECT32 accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextInfoFP(int vmid, JOBJECT64 at, out AccessibleTextInfo textInfo, int x, int y);
+    public delegate BOOL GetAccessibleTextInfoFP(int vmid, JOBJECT32 at, out AccessibleTextInfo textInfo, int x, int y);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextItemsFP(int vmid, JOBJECT64 at, out AccessibleTextItemsInfo textItems, int index);
+    public delegate BOOL GetAccessibleTextItemsFP(int vmid, JOBJECT32 at, out AccessibleTextItemsInfo textItems, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmid, JOBJECT64 at, out AccessibleTextSelectionInfo textSelection);
+    public delegate BOOL GetAccessibleTextSelectionInfoFP(int vmid, JOBJECT32 at, out AccessibleTextSelectionInfo textSelection);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextAttributesFP(int vmid, JOBJECT64 at, int index, [Out]AccessibleTextAttributesInfo attributes);
+    public delegate BOOL GetAccessibleTextAttributesFP(int vmid, JOBJECT32 at, int index, [Out]AccessibleTextAttributesInfo attributes);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextRectFP(int vmid, JOBJECT64 at, out AccessibleTextRectInfo rectInfo, int index);
+    public delegate BOOL GetAccessibleTextRectFP(int vmid, JOBJECT32 at, out AccessibleTextRectInfo rectInfo, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextLineBoundsFP(int vmid, JOBJECT64 at, int index, out int startIndex, out int endIndex);
+    public delegate BOOL GetAccessibleTextLineBoundsFP(int vmid, JOBJECT32 at, int index, out int startIndex, out int endIndex);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTextRangeFP(int vmid, JOBJECT64 at, int start, int end, [Out]char[] text, short len);
+    public delegate BOOL GetAccessibleTextRangeFP(int vmid, JOBJECT32 at, int start, int end, [Out]char[] text, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetCurrentAccessibleValueFromContextFP(int vmid, JOBJECT64 av, StringBuilder value, short len);
+    public delegate BOOL GetCurrentAccessibleValueFromContextFP(int vmid, JOBJECT32 av, StringBuilder value, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetMaximumAccessibleValueFromContextFP(int vmid, JOBJECT64 av, StringBuilder value, short len);
+    public delegate BOOL GetMaximumAccessibleValueFromContextFP(int vmid, JOBJECT32 av, StringBuilder value, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetMinimumAccessibleValueFromContextFP(int vmid, JOBJECT64 av, StringBuilder value, short len);
+    public delegate BOOL GetMinimumAccessibleValueFromContextFP(int vmid, JOBJECT32 av, StringBuilder value, short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void AddAccessibleSelectionFromContextFP(int vmid, JOBJECT64 asel, int i);
+    public delegate void AddAccessibleSelectionFromContextFP(int vmid, JOBJECT32 asel, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void ClearAccessibleSelectionFromContextFP(int vmid, JOBJECT64 asel);
+    public delegate void ClearAccessibleSelectionFromContextFP(int vmid, JOBJECT32 asel);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetAccessibleSelectionFromContextFP(int vmid, JOBJECT64 asel, int i);
+    public delegate JOBJECT32 GetAccessibleSelectionFromContextFP(int vmid, JOBJECT32 asel, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleSelectionCountFromContextFP(int vmid, JOBJECT64 asel);
+    public delegate int GetAccessibleSelectionCountFromContextFP(int vmid, JOBJECT32 asel);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL IsAccessibleChildSelectedFromContextFP(int vmid, JOBJECT64 asel, int i);
+    public delegate BOOL IsAccessibleChildSelectedFromContextFP(int vmid, JOBJECT32 asel, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void RemoveAccessibleSelectionFromContextFP(int vmid, JOBJECT64 asel, int i);
+    public delegate void RemoveAccessibleSelectionFromContextFP(int vmid, JOBJECT32 asel, int i);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void SelectAllAccessibleSelectionFromContextFP(int vmid, JOBJECT64 asel);
+    public delegate void SelectAllAccessibleSelectionFromContextFP(int vmid, JOBJECT32 asel);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableInfoFP(int vmid, JOBJECT64 ac, [Out]AccessibleTableInfoNative tableInfo);
+    public delegate BOOL GetAccessibleTableInfoFP(int vmid, JOBJECT32 ac, [Out]AccessibleTableInfoNativeLegacy tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableCellInfoFP(int vmid, JOBJECT64 at, int row, int column, [Out]AccessibleTableCellInfoNative tableCellInfo);
+    public delegate BOOL GetAccessibleTableCellInfoFP(int vmid, JOBJECT32 at, int row, int column, [Out]AccessibleTableCellInfoNativeLegacy tableCellInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableRowHeaderFP(int vmid, JOBJECT64 acParent, [Out]AccessibleTableInfoNative tableInfo);
+    public delegate BOOL GetAccessibleTableRowHeaderFP(int vmid, JOBJECT32 acParent, [Out]AccessibleTableInfoNativeLegacy tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableColumnHeaderFP(int vmid, JOBJECT64 acParent, [Out]AccessibleTableInfoNative tableInfo);
+    public delegate BOOL GetAccessibleTableColumnHeaderFP(int vmid, JOBJECT32 acParent, [Out]AccessibleTableInfoNativeLegacy tableInfo);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetAccessibleTableRowDescriptionFP(int vmid, JOBJECT64 acParent, int row);
+    public delegate JOBJECT32 GetAccessibleTableRowDescriptionFP(int vmid, JOBJECT32 acParent, int row);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetAccessibleTableColumnDescriptionFP(int vmid, JOBJECT64 acParent, int column);
+    public delegate JOBJECT32 GetAccessibleTableColumnDescriptionFP(int vmid, JOBJECT32 acParent, int column);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleTableRowSelectionCountFP(int vmid, JOBJECT64 table);
+    public delegate int GetAccessibleTableRowSelectionCountFP(int vmid, JOBJECT32 table);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL IsAccessibleTableRowSelectedFP(int vmid, JOBJECT64 table, int row);
+    public delegate BOOL IsAccessibleTableRowSelectedFP(int vmid, JOBJECT32 table, int row);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableRowSelectionsFP(int vmid, JOBJECT64 table, int count, [Out][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]int[] selections);
+    public delegate BOOL GetAccessibleTableRowSelectionsFP(int vmid, JOBJECT32 table, int count, [Out][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]int[] selections);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleTableColumnSelectionCountFP(int vmid, JOBJECT64 table);
+    public delegate int GetAccessibleTableColumnSelectionCountFP(int vmid, JOBJECT32 table);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL IsAccessibleTableColumnSelectedFP(int vmid, JOBJECT64 table, int column);
+    public delegate BOOL IsAccessibleTableColumnSelectedFP(int vmid, JOBJECT32 table, int column);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetAccessibleTableColumnSelectionsFP(int vmid, JOBJECT64 table, int count, [Out][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]int[] selections);
+    public delegate BOOL GetAccessibleTableColumnSelectionsFP(int vmid, JOBJECT32 table, int count, [Out][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]int[] selections);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleTableRowFP(int vmid, JOBJECT64 table, int index);
+    public delegate int GetAccessibleTableRowFP(int vmid, JOBJECT32 table, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleTableColumnFP(int vmid, JOBJECT64 table, int index);
+    public delegate int GetAccessibleTableColumnFP(int vmid, JOBJECT32 table, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetAccessibleTableIndexFP(int vmid, JOBJECT64 table, int row, int column);
+    public delegate int GetAccessibleTableIndexFP(int vmid, JOBJECT32 table, int row, int column);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL SetTextContentsFP(int vmid, JOBJECT64 ac, string text);
+    public delegate BOOL SetTextContentsFP(int vmid, JOBJECT32 ac, string text);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetParentWithRoleFP(int vmid, JOBJECT64 ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
+    public delegate JOBJECT32 GetParentWithRoleFP(int vmid, JOBJECT32 ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetParentWithRoleElseRootFP(int vmid, JOBJECT64 ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
+    public delegate JOBJECT32 GetParentWithRoleElseRootFP(int vmid, JOBJECT32 ac, [MarshalAs(UnmanagedType.LPWStr)]string role);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetTopLevelObjectFP(int vmid, JOBJECT64 ac);
+    public delegate JOBJECT32 GetTopLevelObjectFP(int vmid, JOBJECT32 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetObjectDepthFP(int vmid, JOBJECT64 ac);
+    public delegate int GetObjectDepthFP(int vmid, JOBJECT32 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate JOBJECT64 GetActiveDescendentFP(int vmid, JOBJECT64 ac);
+    public delegate JOBJECT32 GetActiveDescendentFP(int vmid, JOBJECT32 ac);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetVirtualAccessibleNameFP(int vmid, JOBJECT64 ac, StringBuilder name, int len);
+    public delegate BOOL GetVirtualAccessibleNameFP(int vmid, JOBJECT32 ac, StringBuilder name, int len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetTextAttributesInRangeFP(int vmid, JOBJECT64 accessibleContext, int startIndex, int endIndex, [Out]AccessibleTextAttributesInfo attributes, out short len);
+    public delegate BOOL GetTextAttributesInRangeFP(int vmid, JOBJECT32 accessibleContext, int startIndex, int endIndex, [Out]AccessibleTextAttributesInfo attributes, out short len);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetCaretLocationFP(int vmid, JOBJECT64 ac, out AccessibleTextRectInfo rectInfo, int index);
+    public delegate BOOL GetCaretLocationFP(int vmid, JOBJECT32 ac, out AccessibleTextRectInfo rectInfo, int index);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate int GetVisibleChildrenCountFP(int vmid, JOBJECT64 accessibleContext);
+    public delegate int GetVisibleChildrenCountFP(int vmid, JOBJECT32 accessibleContext);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetVisibleChildrenFP(int vmid, JOBJECT64 accessibleContext, int startIndex, out VisibleChildrenInfoNative children);
+    public delegate BOOL GetVisibleChildrenFP(int vmid, JOBJECT32 accessibleContext, int startIndex, out VisibleChildrenInfoNativeLegacy children);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfo info);
     #endregion
 
     #region Event delegate types
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PropertyChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
+    public delegate void PropertyChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate void JavaShutdownEventHandler(int vmid);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void FocusGainedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void FocusGainedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void FocusLostEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void FocusLostEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void CaretUpdateEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void CaretUpdateEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void MouseClickedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void MouseClickedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void MouseEnteredEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void MouseEnteredEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void MouseExitedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void MouseExitedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void MousePressedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void MousePressedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void MouseReleasedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void MouseReleasedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void MenuCanceledEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void MenuCanceledEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void MenuDeselectedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void MenuDeselectedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void MenuSelectedEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void MenuSelectedEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PopupMenuCanceledEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void PopupMenuCanceledEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PopupMenuWillBecomeInvisibleEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void PopupMenuWillBecomeInvisibleEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PopupMenuWillBecomeVisibleEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void PopupMenuWillBecomeVisibleEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PropertyNameChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName);
+    public delegate void PropertyNameChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PropertyDescriptionChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription);
+    public delegate void PropertyDescriptionChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PropertyStateChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState);
+    public delegate void PropertyStateChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PropertyValueChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
+    public delegate void PropertyValueChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PropertySelectionChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void PropertySelectionChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PropertyTextChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void PropertyTextChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PropertyCaretChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, int oldPosition, int newPosition);
+    public delegate void PropertyCaretChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, int oldPosition, int newPosition);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PropertyVisibleDataChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source);
+    public delegate void PropertyVisibleDataChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PropertyChildChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldChild, JOBJECT64 newChild);
+    public delegate void PropertyChildChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, JOBJECT32 oldChild, JOBJECT32 newChild);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PropertyActiveDescendentChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldActiveDescendent, JOBJECT64 newActiveDescendent);
+    public delegate void PropertyActiveDescendentChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 source, JOBJECT32 oldActiveDescendent, JOBJECT32 newActiveDescendent);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate void PropertyTableModelChangeEventHandler(int vmid, JOBJECT64 evt, JOBJECT64 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
+    public delegate void PropertyTableModelChangeEventHandler(int vmid, JOBJECT32 evt, JOBJECT32 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue);
     #endregion
 
     #region Event function delegate types
@@ -1623,69 +1623,69 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Native library event handlers implementation
   /// </summary>
-  internal partial class AccessBridgeEventsNative {
+  internal partial class AccessBridgeEventsNativeLegacy {
     #region Event fields
-    private AccessBridgeLibraryFunctions.PropertyChangeEventHandler _propertyChange;
-    private AccessBridgeLibraryFunctions.JavaShutdownEventHandler _javaShutdown;
-    private AccessBridgeLibraryFunctions.FocusGainedEventHandler _focusGained;
-    private AccessBridgeLibraryFunctions.FocusLostEventHandler _focusLost;
-    private AccessBridgeLibraryFunctions.CaretUpdateEventHandler _caretUpdate;
-    private AccessBridgeLibraryFunctions.MouseClickedEventHandler _mouseClicked;
-    private AccessBridgeLibraryFunctions.MouseEnteredEventHandler _mouseEntered;
-    private AccessBridgeLibraryFunctions.MouseExitedEventHandler _mouseExited;
-    private AccessBridgeLibraryFunctions.MousePressedEventHandler _mousePressed;
-    private AccessBridgeLibraryFunctions.MouseReleasedEventHandler _mouseReleased;
-    private AccessBridgeLibraryFunctions.MenuCanceledEventHandler _menuCanceled;
-    private AccessBridgeLibraryFunctions.MenuDeselectedEventHandler _menuDeselected;
-    private AccessBridgeLibraryFunctions.MenuSelectedEventHandler _menuSelected;
-    private AccessBridgeLibraryFunctions.PopupMenuCanceledEventHandler _popupMenuCanceled;
-    private AccessBridgeLibraryFunctions.PopupMenuWillBecomeInvisibleEventHandler _popupMenuWillBecomeInvisible;
-    private AccessBridgeLibraryFunctions.PopupMenuWillBecomeVisibleEventHandler _popupMenuWillBecomeVisible;
-    private AccessBridgeLibraryFunctions.PropertyNameChangeEventHandler _propertyNameChange;
-    private AccessBridgeLibraryFunctions.PropertyDescriptionChangeEventHandler _propertyDescriptionChange;
-    private AccessBridgeLibraryFunctions.PropertyStateChangeEventHandler _propertyStateChange;
-    private AccessBridgeLibraryFunctions.PropertyValueChangeEventHandler _propertyValueChange;
-    private AccessBridgeLibraryFunctions.PropertySelectionChangeEventHandler _propertySelectionChange;
-    private AccessBridgeLibraryFunctions.PropertyTextChangeEventHandler _propertyTextChange;
-    private AccessBridgeLibraryFunctions.PropertyCaretChangeEventHandler _propertyCaretChange;
-    private AccessBridgeLibraryFunctions.PropertyVisibleDataChangeEventHandler _propertyVisibleDataChange;
-    private AccessBridgeLibraryFunctions.PropertyChildChangeEventHandler _propertyChildChange;
-    private AccessBridgeLibraryFunctions.PropertyActiveDescendentChangeEventHandler _propertyActiveDescendentChange;
-    private AccessBridgeLibraryFunctions.PropertyTableModelChangeEventHandler _propertyTableModelChange;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyChangeEventHandler _propertyChange;
+    private AccessBridgeLibraryFunctionsLegacy.JavaShutdownEventHandler _javaShutdown;
+    private AccessBridgeLibraryFunctionsLegacy.FocusGainedEventHandler _focusGained;
+    private AccessBridgeLibraryFunctionsLegacy.FocusLostEventHandler _focusLost;
+    private AccessBridgeLibraryFunctionsLegacy.CaretUpdateEventHandler _caretUpdate;
+    private AccessBridgeLibraryFunctionsLegacy.MouseClickedEventHandler _mouseClicked;
+    private AccessBridgeLibraryFunctionsLegacy.MouseEnteredEventHandler _mouseEntered;
+    private AccessBridgeLibraryFunctionsLegacy.MouseExitedEventHandler _mouseExited;
+    private AccessBridgeLibraryFunctionsLegacy.MousePressedEventHandler _mousePressed;
+    private AccessBridgeLibraryFunctionsLegacy.MouseReleasedEventHandler _mouseReleased;
+    private AccessBridgeLibraryFunctionsLegacy.MenuCanceledEventHandler _menuCanceled;
+    private AccessBridgeLibraryFunctionsLegacy.MenuDeselectedEventHandler _menuDeselected;
+    private AccessBridgeLibraryFunctionsLegacy.MenuSelectedEventHandler _menuSelected;
+    private AccessBridgeLibraryFunctionsLegacy.PopupMenuCanceledEventHandler _popupMenuCanceled;
+    private AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeInvisibleEventHandler _popupMenuWillBecomeInvisible;
+    private AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeVisibleEventHandler _popupMenuWillBecomeVisible;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyNameChangeEventHandler _propertyNameChange;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyDescriptionChangeEventHandler _propertyDescriptionChange;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyStateChangeEventHandler _propertyStateChange;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyValueChangeEventHandler _propertyValueChange;
+    private AccessBridgeLibraryFunctionsLegacy.PropertySelectionChangeEventHandler _propertySelectionChange;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyTextChangeEventHandler _propertyTextChange;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyCaretChangeEventHandler _propertyCaretChange;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyVisibleDataChangeEventHandler _propertyVisibleDataChange;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyChildChangeEventHandler _propertyChildChange;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyActiveDescendentChangeEventHandler _propertyActiveDescendentChange;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyTableModelChangeEventHandler _propertyTableModelChange;
     #endregion
 
     #region Event delegate fields
-    private AccessBridgeLibraryFunctions.PropertyChangeEventHandler _onPropertyChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.JavaShutdownEventHandler _onJavaShutdownKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.FocusGainedEventHandler _onFocusGainedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.FocusLostEventHandler _onFocusLostKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.CaretUpdateEventHandler _onCaretUpdateKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.MouseClickedEventHandler _onMouseClickedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.MouseEnteredEventHandler _onMouseEnteredKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.MouseExitedEventHandler _onMouseExitedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.MousePressedEventHandler _onMousePressedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.MouseReleasedEventHandler _onMouseReleasedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.MenuCanceledEventHandler _onMenuCanceledKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.MenuDeselectedEventHandler _onMenuDeselectedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.MenuSelectedEventHandler _onMenuSelectedKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PopupMenuCanceledEventHandler _onPopupMenuCanceledKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PopupMenuWillBecomeInvisibleEventHandler _onPopupMenuWillBecomeInvisibleKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PopupMenuWillBecomeVisibleEventHandler _onPopupMenuWillBecomeVisibleKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PropertyNameChangeEventHandler _onPropertyNameChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PropertyDescriptionChangeEventHandler _onPropertyDescriptionChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PropertyStateChangeEventHandler _onPropertyStateChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PropertyValueChangeEventHandler _onPropertyValueChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PropertySelectionChangeEventHandler _onPropertySelectionChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PropertyTextChangeEventHandler _onPropertyTextChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PropertyCaretChangeEventHandler _onPropertyCaretChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PropertyVisibleDataChangeEventHandler _onPropertyVisibleDataChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PropertyChildChangeEventHandler _onPropertyChildChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PropertyActiveDescendentChangeEventHandler _onPropertyActiveDescendentChangeKeepAliveDelegate;
-    private AccessBridgeLibraryFunctions.PropertyTableModelChangeEventHandler _onPropertyTableModelChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyChangeEventHandler _onPropertyChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.JavaShutdownEventHandler _onJavaShutdownKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.FocusGainedEventHandler _onFocusGainedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.FocusLostEventHandler _onFocusLostKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.CaretUpdateEventHandler _onCaretUpdateKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MouseClickedEventHandler _onMouseClickedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MouseEnteredEventHandler _onMouseEnteredKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MouseExitedEventHandler _onMouseExitedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MousePressedEventHandler _onMousePressedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MouseReleasedEventHandler _onMouseReleasedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MenuCanceledEventHandler _onMenuCanceledKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MenuDeselectedEventHandler _onMenuDeselectedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.MenuSelectedEventHandler _onMenuSelectedKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PopupMenuCanceledEventHandler _onPopupMenuCanceledKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeInvisibleEventHandler _onPopupMenuWillBecomeInvisibleKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeVisibleEventHandler _onPopupMenuWillBecomeVisibleKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyNameChangeEventHandler _onPropertyNameChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyDescriptionChangeEventHandler _onPropertyDescriptionChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyStateChangeEventHandler _onPropertyStateChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyValueChangeEventHandler _onPropertyValueChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertySelectionChangeEventHandler _onPropertySelectionChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyTextChangeEventHandler _onPropertyTextChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyCaretChangeEventHandler _onPropertyCaretChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyVisibleDataChangeEventHandler _onPropertyVisibleDataChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyChildChangeEventHandler _onPropertyChildChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyActiveDescendentChangeEventHandler _onPropertyActiveDescendentChangeKeepAliveDelegate;
+    private AccessBridgeLibraryFunctionsLegacy.PropertyTableModelChangeEventHandler _onPropertyTableModelChangeKeepAliveDelegate;
     #endregion
 
     #region Event properties
-    public event AccessBridgeLibraryFunctions.PropertyChangeEventHandler PropertyChange {
+    public event AccessBridgeLibraryFunctionsLegacy.PropertyChangeEventHandler PropertyChange {
       add {
         if (_propertyChange == null) {
           _onPropertyChangeKeepAliveDelegate = OnPropertyChange;
@@ -1701,7 +1701,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.JavaShutdownEventHandler JavaShutdown {
+    public event AccessBridgeLibraryFunctionsLegacy.JavaShutdownEventHandler JavaShutdown {
       add {
         if (_javaShutdown == null) {
           _onJavaShutdownKeepAliveDelegate = OnJavaShutdown;
@@ -1717,7 +1717,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.FocusGainedEventHandler FocusGained {
+    public event AccessBridgeLibraryFunctionsLegacy.FocusGainedEventHandler FocusGained {
       add {
         if (_focusGained == null) {
           _onFocusGainedKeepAliveDelegate = OnFocusGained;
@@ -1733,7 +1733,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.FocusLostEventHandler FocusLost {
+    public event AccessBridgeLibraryFunctionsLegacy.FocusLostEventHandler FocusLost {
       add {
         if (_focusLost == null) {
           _onFocusLostKeepAliveDelegate = OnFocusLost;
@@ -1749,7 +1749,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.CaretUpdateEventHandler CaretUpdate {
+    public event AccessBridgeLibraryFunctionsLegacy.CaretUpdateEventHandler CaretUpdate {
       add {
         if (_caretUpdate == null) {
           _onCaretUpdateKeepAliveDelegate = OnCaretUpdate;
@@ -1765,7 +1765,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.MouseClickedEventHandler MouseClicked {
+    public event AccessBridgeLibraryFunctionsLegacy.MouseClickedEventHandler MouseClicked {
       add {
         if (_mouseClicked == null) {
           _onMouseClickedKeepAliveDelegate = OnMouseClicked;
@@ -1781,7 +1781,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.MouseEnteredEventHandler MouseEntered {
+    public event AccessBridgeLibraryFunctionsLegacy.MouseEnteredEventHandler MouseEntered {
       add {
         if (_mouseEntered == null) {
           _onMouseEnteredKeepAliveDelegate = OnMouseEntered;
@@ -1797,7 +1797,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.MouseExitedEventHandler MouseExited {
+    public event AccessBridgeLibraryFunctionsLegacy.MouseExitedEventHandler MouseExited {
       add {
         if (_mouseExited == null) {
           _onMouseExitedKeepAliveDelegate = OnMouseExited;
@@ -1813,7 +1813,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.MousePressedEventHandler MousePressed {
+    public event AccessBridgeLibraryFunctionsLegacy.MousePressedEventHandler MousePressed {
       add {
         if (_mousePressed == null) {
           _onMousePressedKeepAliveDelegate = OnMousePressed;
@@ -1829,7 +1829,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.MouseReleasedEventHandler MouseReleased {
+    public event AccessBridgeLibraryFunctionsLegacy.MouseReleasedEventHandler MouseReleased {
       add {
         if (_mouseReleased == null) {
           _onMouseReleasedKeepAliveDelegate = OnMouseReleased;
@@ -1845,7 +1845,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.MenuCanceledEventHandler MenuCanceled {
+    public event AccessBridgeLibraryFunctionsLegacy.MenuCanceledEventHandler MenuCanceled {
       add {
         if (_menuCanceled == null) {
           _onMenuCanceledKeepAliveDelegate = OnMenuCanceled;
@@ -1861,7 +1861,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.MenuDeselectedEventHandler MenuDeselected {
+    public event AccessBridgeLibraryFunctionsLegacy.MenuDeselectedEventHandler MenuDeselected {
       add {
         if (_menuDeselected == null) {
           _onMenuDeselectedKeepAliveDelegate = OnMenuDeselected;
@@ -1877,7 +1877,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.MenuSelectedEventHandler MenuSelected {
+    public event AccessBridgeLibraryFunctionsLegacy.MenuSelectedEventHandler MenuSelected {
       add {
         if (_menuSelected == null) {
           _onMenuSelectedKeepAliveDelegate = OnMenuSelected;
@@ -1893,7 +1893,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PopupMenuCanceledEventHandler PopupMenuCanceled {
+    public event AccessBridgeLibraryFunctionsLegacy.PopupMenuCanceledEventHandler PopupMenuCanceled {
       add {
         if (_popupMenuCanceled == null) {
           _onPopupMenuCanceledKeepAliveDelegate = OnPopupMenuCanceled;
@@ -1909,7 +1909,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible {
+    public event AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible {
       add {
         if (_popupMenuWillBecomeInvisible == null) {
           _onPopupMenuWillBecomeInvisibleKeepAliveDelegate = OnPopupMenuWillBecomeInvisible;
@@ -1925,7 +1925,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible {
+    public event AccessBridgeLibraryFunctionsLegacy.PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible {
       add {
         if (_popupMenuWillBecomeVisible == null) {
           _onPopupMenuWillBecomeVisibleKeepAliveDelegate = OnPopupMenuWillBecomeVisible;
@@ -1941,7 +1941,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PropertyNameChangeEventHandler PropertyNameChange {
+    public event AccessBridgeLibraryFunctionsLegacy.PropertyNameChangeEventHandler PropertyNameChange {
       add {
         if (_propertyNameChange == null) {
           _onPropertyNameChangeKeepAliveDelegate = OnPropertyNameChange;
@@ -1957,7 +1957,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PropertyDescriptionChangeEventHandler PropertyDescriptionChange {
+    public event AccessBridgeLibraryFunctionsLegacy.PropertyDescriptionChangeEventHandler PropertyDescriptionChange {
       add {
         if (_propertyDescriptionChange == null) {
           _onPropertyDescriptionChangeKeepAliveDelegate = OnPropertyDescriptionChange;
@@ -1973,7 +1973,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PropertyStateChangeEventHandler PropertyStateChange {
+    public event AccessBridgeLibraryFunctionsLegacy.PropertyStateChangeEventHandler PropertyStateChange {
       add {
         if (_propertyStateChange == null) {
           _onPropertyStateChangeKeepAliveDelegate = OnPropertyStateChange;
@@ -1989,7 +1989,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PropertyValueChangeEventHandler PropertyValueChange {
+    public event AccessBridgeLibraryFunctionsLegacy.PropertyValueChangeEventHandler PropertyValueChange {
       add {
         if (_propertyValueChange == null) {
           _onPropertyValueChangeKeepAliveDelegate = OnPropertyValueChange;
@@ -2005,7 +2005,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PropertySelectionChangeEventHandler PropertySelectionChange {
+    public event AccessBridgeLibraryFunctionsLegacy.PropertySelectionChangeEventHandler PropertySelectionChange {
       add {
         if (_propertySelectionChange == null) {
           _onPropertySelectionChangeKeepAliveDelegate = OnPropertySelectionChange;
@@ -2021,7 +2021,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PropertyTextChangeEventHandler PropertyTextChange {
+    public event AccessBridgeLibraryFunctionsLegacy.PropertyTextChangeEventHandler PropertyTextChange {
       add {
         if (_propertyTextChange == null) {
           _onPropertyTextChangeKeepAliveDelegate = OnPropertyTextChange;
@@ -2037,7 +2037,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PropertyCaretChangeEventHandler PropertyCaretChange {
+    public event AccessBridgeLibraryFunctionsLegacy.PropertyCaretChangeEventHandler PropertyCaretChange {
       add {
         if (_propertyCaretChange == null) {
           _onPropertyCaretChangeKeepAliveDelegate = OnPropertyCaretChange;
@@ -2053,7 +2053,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange {
+    public event AccessBridgeLibraryFunctionsLegacy.PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange {
       add {
         if (_propertyVisibleDataChange == null) {
           _onPropertyVisibleDataChangeKeepAliveDelegate = OnPropertyVisibleDataChange;
@@ -2069,7 +2069,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PropertyChildChangeEventHandler PropertyChildChange {
+    public event AccessBridgeLibraryFunctionsLegacy.PropertyChildChangeEventHandler PropertyChildChange {
       add {
         if (_propertyChildChange == null) {
           _onPropertyChildChangeKeepAliveDelegate = OnPropertyChildChange;
@@ -2085,7 +2085,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange {
+    public event AccessBridgeLibraryFunctionsLegacy.PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange {
       add {
         if (_propertyActiveDescendentChange == null) {
           _onPropertyActiveDescendentChangeKeepAliveDelegate = OnPropertyActiveDescendentChange;
@@ -2101,7 +2101,7 @@ namespace WindowsAccessBridgeInterop {
         }
       }
     }
-    public event AccessBridgeLibraryFunctions.PropertyTableModelChangeEventHandler PropertyTableModelChange {
+    public event AccessBridgeLibraryFunctionsLegacy.PropertyTableModelChangeEventHandler PropertyTableModelChange {
       add {
         if (_propertyTableModelChange == null) {
           _onPropertyTableModelChangeKeepAliveDelegate = OnPropertyTableModelChange;
@@ -2120,7 +2120,7 @@ namespace WindowsAccessBridgeInterop {
     #endregion
 
     #region Event handlers
-    protected virtual void OnPropertyChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+    protected virtual void OnPropertyChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
       var handler = _propertyChange;
       if (handler != null)
         handler(vmid, evt, source, property, oldValue, newValue);
@@ -2130,127 +2130,127 @@ namespace WindowsAccessBridgeInterop {
       if (handler != null)
         handler(vmid);
     }
-    protected virtual void OnFocusGained(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnFocusGained(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _focusGained;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnFocusLost(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnFocusLost(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _focusLost;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnCaretUpdate(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnCaretUpdate(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _caretUpdate;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnMouseClicked(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnMouseClicked(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _mouseClicked;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnMouseEntered(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnMouseEntered(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _mouseEntered;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnMouseExited(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnMouseExited(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _mouseExited;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnMousePressed(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnMousePressed(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _mousePressed;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnMouseReleased(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnMouseReleased(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _mouseReleased;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnMenuCanceled(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnMenuCanceled(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _menuCanceled;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnMenuDeselected(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnMenuDeselected(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _menuDeselected;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnMenuSelected(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnMenuSelected(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _menuSelected;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnPopupMenuCanceled(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnPopupMenuCanceled(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _popupMenuCanceled;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnPopupMenuWillBecomeInvisible(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnPopupMenuWillBecomeInvisible(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _popupMenuWillBecomeInvisible;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnPopupMenuWillBecomeVisible(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnPopupMenuWillBecomeVisible(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _popupMenuWillBecomeVisible;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnPropertyNameChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName) {
+    protected virtual void OnPropertyNameChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName) {
       var handler = _propertyNameChange;
       if (handler != null)
         handler(vmid, evt, source, oldName, newName);
     }
-    protected virtual void OnPropertyDescriptionChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription) {
+    protected virtual void OnPropertyDescriptionChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription) {
       var handler = _propertyDescriptionChange;
       if (handler != null)
         handler(vmid, evt, source, oldDescription, newDescription);
     }
-    protected virtual void OnPropertyStateChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState) {
+    protected virtual void OnPropertyStateChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState) {
       var handler = _propertyStateChange;
       if (handler != null)
         handler(vmid, evt, source, oldState, newState);
     }
-    protected virtual void OnPropertyValueChange(int vmid, JOBJECT64 evt, JOBJECT64 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+    protected virtual void OnPropertyValueChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
       var handler = _propertyValueChange;
       if (handler != null)
         handler(vmid, evt, source, oldValue, newValue);
     }
-    protected virtual void OnPropertySelectionChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnPropertySelectionChange(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _propertySelectionChange;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnPropertyTextChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnPropertyTextChange(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _propertyTextChange;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnPropertyCaretChange(int vmid, JOBJECT64 evt, JOBJECT64 source, int oldPosition, int newPosition) {
+    protected virtual void OnPropertyCaretChange(int vmid, JOBJECT32 evt, JOBJECT32 source, int oldPosition, int newPosition) {
       var handler = _propertyCaretChange;
       if (handler != null)
         handler(vmid, evt, source, oldPosition, newPosition);
     }
-    protected virtual void OnPropertyVisibleDataChange(int vmid, JOBJECT64 evt, JOBJECT64 source) {
+    protected virtual void OnPropertyVisibleDataChange(int vmid, JOBJECT32 evt, JOBJECT32 source) {
       var handler = _propertyVisibleDataChange;
       if (handler != null)
         handler(vmid, evt, source);
     }
-    protected virtual void OnPropertyChildChange(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldChild, JOBJECT64 newChild) {
+    protected virtual void OnPropertyChildChange(int vmid, JOBJECT32 evt, JOBJECT32 source, JOBJECT32 oldChild, JOBJECT32 newChild) {
       var handler = _propertyChildChange;
       if (handler != null)
         handler(vmid, evt, source, oldChild, newChild);
     }
-    protected virtual void OnPropertyActiveDescendentChange(int vmid, JOBJECT64 evt, JOBJECT64 source, JOBJECT64 oldActiveDescendent, JOBJECT64 newActiveDescendent) {
+    protected virtual void OnPropertyActiveDescendentChange(int vmid, JOBJECT32 evt, JOBJECT32 source, JOBJECT32 oldActiveDescendent, JOBJECT32 newActiveDescendent) {
       var handler = _propertyActiveDescendentChange;
       if (handler != null)
         handler(vmid, evt, source, oldActiveDescendent, newActiveDescendent);
     }
-    protected virtual void OnPropertyTableModelChange(int vmid, JOBJECT64 evt, JOBJECT64 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
+    protected virtual void OnPropertyTableModelChange(int vmid, JOBJECT32 evt, JOBJECT32 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
       var handler = _propertyTableModelChange;
       if (handler != null)
         handler(vmid, evt, src, oldValue, newValue);
@@ -2259,48 +2259,48 @@ namespace WindowsAccessBridgeInterop {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  internal struct AccessibleHyperlinkInfoNative {
+  internal struct AccessibleHyperlinkInfoNativeLegacy {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string text;
     public int startIndex;
     public int endIndex;
-    public JOBJECT64 accessibleHyperlink;
+    public JOBJECT32 accessibleHyperlink;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  internal struct AccessibleHypertextInfoNative {
+  internal struct AccessibleHypertextInfoNativeLegacy {
     public int linkCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-    public AccessibleHyperlinkInfoNative[] links;
-    public JOBJECT64 accessibleHypertext;
+    public AccessibleHyperlinkInfoNativeLegacy[] links;
+    public JOBJECT32 accessibleHypertext;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  internal struct AccessibleRelationInfoNative {
+  internal struct AccessibleRelationInfoNativeLegacy {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
     public string key;
     public int targetCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 25)]
-    public JOBJECT64[] targets;
+    public JOBJECT32[] targets;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  internal struct AccessibleRelationSetInfoNative {
+  internal struct AccessibleRelationSetInfoNativeLegacy {
     public int relationCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-    public AccessibleRelationInfoNative[] relations;
+    public AccessibleRelationInfoNativeLegacy[] relations;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  internal struct VisibleChildrenInfoNative {
+  internal struct VisibleChildrenInfoNativeLegacy {
     public int returnedChildrenCount;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-    public JOBJECT64[] children;
+    public JOBJECT32[] children;
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  internal class AccessibleTableCellInfoNative {
-    public JOBJECT64 accessibleContext;
+  internal class AccessibleTableCellInfoNativeLegacy {
+    public JOBJECT32 accessibleContext;
     public int index;
     public int row;
     public int column;
@@ -2310,13 +2310,13 @@ namespace WindowsAccessBridgeInterop {
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-  internal class AccessibleTableInfoNative {
-    public JOBJECT64 caption;
-    public JOBJECT64 summary;
+  internal class AccessibleTableInfoNativeLegacy {
+    public JOBJECT32 caption;
+    public JOBJECT32 summary;
     public int rowCount;
     public int columnCount;
-    public JOBJECT64 accessibleContext;
-    public JOBJECT64 accessibleTable;
+    public JOBJECT32 accessibleContext;
+    public JOBJECT32 accessibleTable;
   }
 
 }

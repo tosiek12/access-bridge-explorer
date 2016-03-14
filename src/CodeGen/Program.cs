@@ -31,10 +31,15 @@ namespace CodeGen {
       if (args.Length >= 2) {
         path2 = Path.Combine(Environment.CurrentDirectory, args[1]);
       }
+      var path3 = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"..\..\..\WindowsAccessBridgeInterop\Generated.Internal.Legacy.cs");
+      if (args.Length >= 3) {
+        path3 = Path.Combine(Environment.CurrentDirectory, args[2]);
+      }
 
       var codeGen = new CodeGen(new CodeGenOptions {
         PublicClassesOutputFileName = path1,
         InternalClassesOutputFileName = path2,
+        InternalLegacyClassesOutputFileName = path3,
       });
       codeGen.Generate();
     }

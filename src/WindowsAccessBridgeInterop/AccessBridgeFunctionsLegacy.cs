@@ -17,7 +17,7 @@ namespace WindowsAccessBridgeInterop {
   /// Single entry point to access all functions exposed by the Java Access Bridge
   /// DLL (<see cref="AccessBridge.Functions"/>).
   /// </summary>
-  public partial class AccessBridgeFunctionsLegacy {
+  partial class AccessBridgeFunctionsLegacy {
     private readonly AccessBridgeLibraryFunctionsLegacy _libraryFunctions;
 
     public AccessBridgeFunctionsLegacy(AccessBridgeLibraryFunctionsLegacy libraryFunctions) {
