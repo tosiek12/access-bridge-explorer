@@ -38,7 +38,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\VersionNumber.cs">
+    <Compile Include="..\WindowsAccessBridgeInterop\VersionNumber.cs">
       <Link>VersionNumber.cs</Link>
     </Compile>
     <Compile Include="Definitions\WindowsAccessBridgeModelCollector.cs" />

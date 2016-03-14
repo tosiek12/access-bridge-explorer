@@ -83,9 +83,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\VersionNumber.cs">
-      <Link>VersionNumber.cs</Link>
-    </Compile>
     <Compile Include="AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -256,6 +253,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\WarningIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WindowsAccessBridgeInterop\WindowsAccessBridgeInterop.csproj">
+      <Project>{4b5de0e1-2f0a-426d-bb12-becb0f6f8b51}</Project>
+      <Name>WindowsAccessBridgeInterop</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

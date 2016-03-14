@@ -1,4 +1,4 @@
-﻿// Copyright 2015 Google Inc. All Rights Reserved.
+﻿// Copyright 2016 Google Inc. All Rights Reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,17 +13,18 @@
 // limitations under the License.
 
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using WindowsAccessBridgeInterop;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Access Bridge Explorer")]
+[assembly: AssemblyTitle("WindowsAccessBridgeInterop")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Access Bridge Explorer")]
+[assembly: AssemblyProduct("WindowsAccessBridgeInterop")]
 [assembly: AssemblyCopyright("Copyright 2016 Google Inc. All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -34,7 +35,7 @@ using WindowsAccessBridgeInterop;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("902e9f38-ef1a-4ed5-86bc-25881dbdabed")]
+[assembly: Guid("4b5de0e1-2f0a-426d-bb12-becb0f6f8b51")]
 
 // Version information for an assembly consists of the following four values:
 //

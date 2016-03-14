@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-public static class VersionNunber {
-  public const string Product = "0.9.2";
-  public const string File = Product + ".0";
+namespace WindowsAccessBridgeInterop {
+  public static class VersionNumber {
+    public const string Product = "0.9.2";
+    public const string File = Product + ".0";
+  }
 }
