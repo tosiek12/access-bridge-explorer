@@ -181,7 +181,9 @@ namespace CodeGen {
       sourceWriter.IsNativeTypes = false;
       sourceWriter.WriteLine("#region Platform agnostic event handler delegate types");
       foreach (var eventDefinition in model.Events) {
+        sourceWriter.WriteLine("/// <summary>Platform agnostic delegate type for <code>{0}</code> event</summary>", eventDefinition.Name);
         WriteEventHandlerType(model, sourceWriter, eventDefinition);
+        sourceWriter.WriteLine();
       }
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();

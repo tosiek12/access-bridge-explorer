@@ -130,33 +130,87 @@ namespace WindowsAccessBridgeInterop {
   }
 
   #region Platform agnostic event handler delegate types
+  /// <summary>Platform agnostic delegate type for <code>PropertyChange</code> event</summary>
   public delegate void PropertyChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string property, string oldValue, string newValue);
+
+  /// <summary>Platform agnostic delegate type for <code>JavaShutdown</code> event</summary>
   public delegate void JavaShutdownEventHandler(int vmid);
+
+  /// <summary>Platform agnostic delegate type for <code>FocusGained</code> event</summary>
   public delegate void FocusGainedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>FocusLost</code> event</summary>
   public delegate void FocusLostEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>CaretUpdate</code> event</summary>
   public delegate void CaretUpdateEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>MouseClicked</code> event</summary>
   public delegate void MouseClickedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>MouseEntered</code> event</summary>
   public delegate void MouseEnteredEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>MouseExited</code> event</summary>
   public delegate void MouseExitedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>MousePressed</code> event</summary>
   public delegate void MousePressedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>MouseReleased</code> event</summary>
   public delegate void MouseReleasedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>MenuCanceled</code> event</summary>
   public delegate void MenuCanceledEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>MenuDeselected</code> event</summary>
   public delegate void MenuDeselectedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>MenuSelected</code> event</summary>
   public delegate void MenuSelectedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>PopupMenuCanceled</code> event</summary>
   public delegate void PopupMenuCanceledEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>PopupMenuWillBecomeInvisible</code> event</summary>
   public delegate void PopupMenuWillBecomeInvisibleEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>PopupMenuWillBecomeVisible</code> event</summary>
   public delegate void PopupMenuWillBecomeVisibleEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>PropertyNameChange</code> event</summary>
   public delegate void PropertyNameChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldName, string newName);
+
+  /// <summary>Platform agnostic delegate type for <code>PropertyDescriptionChange</code> event</summary>
   public delegate void PropertyDescriptionChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldDescription, string newDescription);
+
+  /// <summary>Platform agnostic delegate type for <code>PropertyStateChange</code> event</summary>
   public delegate void PropertyStateChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldState, string newState);
+
+  /// <summary>Platform agnostic delegate type for <code>PropertyValueChange</code> event</summary>
   public delegate void PropertyValueChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldValue, string newValue);
+
+  /// <summary>Platform agnostic delegate type for <code>PropertySelectionChange</code> event</summary>
   public delegate void PropertySelectionChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>PropertyTextChange</code> event</summary>
   public delegate void PropertyTextChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>PropertyCaretChange</code> event</summary>
   public delegate void PropertyCaretChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, int oldPosition, int newPosition);
+
+  /// <summary>Platform agnostic delegate type for <code>PropertyVisibleDataChange</code> event</summary>
   public delegate void PropertyVisibleDataChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Platform agnostic delegate type for <code>PropertyChildChange</code> event</summary>
   public delegate void PropertyChildChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldChild, JavaObjectHandle newChild);
+
+  /// <summary>Platform agnostic delegate type for <code>PropertyActiveDescendentChange</code> event</summary>
   public delegate void PropertyActiveDescendentChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldActiveDescendent, JavaObjectHandle newActiveDescendent);
+
+  /// <summary>Platform agnostic delegate type for <code>PropertyTableModelChange</code> event</summary>
   public delegate void PropertyTableModelChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle src, string oldValue, string newValue);
+
   #endregion
 
   [Flags]
