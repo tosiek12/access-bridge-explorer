@@ -2,7 +2,7 @@ When making a new release
 
 Master branch
 =============
-1. Update version # in src\Properties\AssemblyInfo.cs
+1. Update version # in WindowsAccessBridgeInterop\VersionNumber.cs
 
 2. Run "Build | Batch Build..." in Visual Studio, selecting all 
    configuration entries checkboxes, then click "Rebuild".
