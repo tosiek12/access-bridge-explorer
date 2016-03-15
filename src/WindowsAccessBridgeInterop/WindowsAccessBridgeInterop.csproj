@@ -38,12 +38,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessBridge.cs" />
-    <Compile Include="AccessBridgeNativeEvents.cs" />
-    <Compile Include="AccessBridgeNativeEventsLegacy.cs" />
-    <Compile Include="AccessBridgeNativeEventsForwarder.cs" />
-    <Compile Include="AccessBridgeNativeEventsForwarderLegacy.cs" />
-    <Compile Include="AccessBridgeNativeFunctions.cs" />
-    <Compile Include="AccessBridgeNativeFunctionsLegacy.cs" />
+    <Compile Include="AccessBridgeEntryPointsLegacy.cs" />
+    <Compile Include="AccessBridgeEvents.cs" />
+    <Compile Include="AccessBridgeEventsLegacy.cs" />
+    <Compile Include="AccessBridgeEntryPoints.cs" />
+    <Compile Include="AccessBridgeFunctions.cs" />
+    <Compile Include="AccessBridgeFunctionsLegacy.cs" />
     <Compile Include="AccessibleContextNode.cs" />
     <Compile Include="AccessibleJvm.cs" />
     <Compile Include="AccessibleNode.cs" />

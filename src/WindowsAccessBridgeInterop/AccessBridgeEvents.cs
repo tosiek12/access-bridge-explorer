@@ -1,4 +1,4 @@
-// Copyright 2016 Google Inc. All Rights Reserved.
+﻿// Copyright 2015 Google Inc. All Rights Reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace WindowsAccessBridgeInterop {
-  partial class AccessBridgeNativeEventsForwarderLegacy {
-    private readonly AccessBridgeEntryPointsLegacy _entryPoints;
+using System;
 
-    public AccessBridgeNativeEventsForwarderLegacy(AccessBridgeEntryPointsLegacy entryPoints) {
+namespace WindowsAccessBridgeInterop {
+  partial class AccessBridgeEvents {
+    private readonly AccessBridgeEntryPoints _entryPoints;
+
+    public AccessBridgeEvents(AccessBridgeEntryPoints entryPoints) {
       _entryPoints = entryPoints;
     }
 
-    public AccessBridgeEntryPointsLegacy EntryPoints {
+    public AccessBridgeEntryPoints EntryPoints {
       get { return _entryPoints; }
+    }
+
+    public void Dispose() {
+      DetachForwarders();
+    }
+
+    private JavaObjectHandle Wrap(int vmid, JOBJECT64 handle) {
+      return new JavaObjectHandle(vmid, handle);
     }
   }
 }

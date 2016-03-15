@@ -13,18 +13,14 @@
 // limitations under the License.
 
 namespace WindowsAccessBridgeInterop {
-  /// <summary>
-  /// Single entry point to access all functions exposed by the Java Access Bridge
-  /// DLL (<see cref="AccessBridge.Functions"/>).
-  /// </summary>
-  partial class AccessBridgeNativeFunctionsLegacy {
-    private readonly AccessBridgeEntryPointsLegacy _nativeEntryPoints;
+  partial class AccessBridgeFunctions {
+    private readonly AccessBridgeEntryPoints _nativeEntryPoints;
 
-    public AccessBridgeNativeFunctionsLegacy(AccessBridgeEntryPointsLegacy nativeEntryPoints) {
+    public AccessBridgeFunctions(AccessBridgeEntryPoints nativeEntryPoints) {
       _nativeEntryPoints = nativeEntryPoints;
     }
 
-    public AccessBridgeEntryPointsLegacy EntryPoints {
+    public AccessBridgeEntryPoints EntryPoints {
       get { return _nativeEntryPoints; }
     }
 
@@ -36,12 +32,12 @@ namespace WindowsAccessBridgeInterop {
       return ToBool(value);
     }
 
-    private JavaObjectHandle Wrap(int vmid, JOBJECT32 handle) {
+    private JavaObjectHandle Wrap(int vmid, JOBJECT64 handle) {
       return new JavaObjectHandle(vmid, handle);
     }
 
-    private JOBJECT32 Unwrap(int vmid, JavaObjectHandle objectHandle) {
-      return objectHandle.HandleLegacy;
+    private JOBJECT64 Unwrap(int vmid, JavaObjectHandle objectHandle) {
+      return objectHandle.Handle;
     }
   }
 }

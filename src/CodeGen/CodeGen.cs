@@ -64,7 +64,6 @@ namespace CodeGen {
 
             sourceWriter.IsNativeTypes = true;
             WriteEntryPointsClass(model, sourceWriter);
-            WriteNativeEventsForwarderClass(model, sourceWriter);
             WriteLibraryStructs(model, sourceWriter, writer);
             WriteLibraryClasses(model, writer, sourceWriter);
             sourceWriter.EndNamespace();
@@ -150,7 +149,7 @@ namespace CodeGen {
     private void WriteApplicationFunctionsInterface(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
       sourceWriter.WriteLine("/// <summary>");
-      sourceWriter.WriteLine("/// Platform agnostic abstraction over WindowAccessBridge DLL functions");
+      sourceWriter.WriteLine("/// Common (i.e. legacy and non-legacy) abstraction over <code>WindowsAccessBridge DLL</code> functions");
       sourceWriter.WriteLine("/// </summary>");
       sourceWriter.WriteLine("public interface IAccessBridgeFunctions {{");
       sourceWriter.IncIndent();
@@ -165,7 +164,7 @@ namespace CodeGen {
     private void WriteApplicationEventsInterface(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
       sourceWriter.WriteLine("/// <summary>");
-      sourceWriter.WriteLine("/// Platform agnostic abstraction over WindowAccessBridge DLL events");
+      sourceWriter.WriteLine("/// Common (i.e. legacy and non-legacy)  abstraction over <code>WindowsAccessBridge DLL</code> events");
       sourceWriter.WriteLine("/// </summary>");
       sourceWriter.WriteLine("public interface IAccessBridgeEvents : IDisposable {{");
       sourceWriter.IncIndent();
@@ -179,9 +178,9 @@ namespace CodeGen {
 
     private void WriteApplicationEventHandlerTypes(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
-      sourceWriter.WriteLine("#region Platform agnostic event handler delegate types");
+      sourceWriter.WriteLine("#region Delegate types for events defined in IAccessBridgeEvents");
       foreach (var eventDefinition in model.Events) {
-        sourceWriter.WriteLine("/// <summary>Platform agnostic delegate type for <code>{0}</code> event</summary>", eventDefinition.Name);
+        sourceWriter.WriteLine("/// <summary>Delegate type for <code>{0}</code> event</summary>", eventDefinition.Name);
         WriteEventHandlerType(model, sourceWriter, eventDefinition);
         sourceWriter.WriteLine();
       }
@@ -192,9 +191,10 @@ namespace CodeGen {
     private void WriteApplicationFunctionsClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
       sourceWriter.WriteLine("/// <summary>");
-      sourceWriter.WriteLine("/// Implementation of platform agnostic functions");
+      sourceWriter.WriteLine("/// Implementation of <see cref=\"IAccessBridgeFunctions\"/> using <code>WindowsAccessBridge DLL</code>", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("/// entry points implemented in <see cref=\"AccessBridgeEntryPoints{0}\"/>", GetLegacySuffix(sourceWriter));
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("internal partial class AccessBridgeNativeFunctions{0} : IAccessBridgeFunctions {{", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("internal partial class AccessBridgeFunctions{0} : IAccessBridgeFunctions {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine();
@@ -234,36 +234,46 @@ namespace CodeGen {
     private void WriteApplicationEventsClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
       sourceWriter.WriteLine("/// <summary>");
-      sourceWriter.WriteLine("/// Implementation of platform agnostic events");
+      sourceWriter.WriteLine("/// Implementation of <see cref=\"IAccessBridgeEvents\"/> over {0} WindowsAccessBridge entry points", GetLegacySuffix(sourceWriter));
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("internal partial class AccessBridgeNativeEvents{0} : IAccessBridgeEvents {{", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("internal partial class AccessBridgeEvents{0} : IAccessBridgeEvents {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine("#region Event fields");
       foreach (var eventDefinition in model.Events) {
-        WriteApplicationLevelEventField(sourceWriter, eventDefinition);
+        WriteApplicationEventField(sourceWriter, eventDefinition);
+      }
+      sourceWriter.WriteLine("#endregion");
+      sourceWriter.WriteLine();
+
+      sourceWriter.WriteLine("#region Native callback keep-alive fields");
+      foreach (var eventDefinition in model.Events) {
+        WriteApplicationEventKeepAliveField(sourceWriter, eventDefinition);
       }
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
 
       sourceWriter.WriteLine("#region Event properties");
       foreach (var eventDefinition in model.Events) {
-        WriteApplicationLevelEventProperty(sourceWriter, eventDefinition);
+        WriteApplicationEventProperty(sourceWriter, eventDefinition);
       }
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
 
       sourceWriter.WriteLine("#region Event handlers");
       foreach (var eventDefinition in model.Events) {
-        WriteApplicationLevelEventHandler(model, sourceWriter, eventDefinition);
+        WriteApplicationEventHandler(model, sourceWriter, eventDefinition);
       }
       sourceWriter.WriteLine("#endregion");
       sourceWriter.WriteLine();
 
       sourceWriter.WriteLine("private void DetachForwarders() {{");
       sourceWriter.IncIndent();
-      foreach (var eventDefinition in model.Events) {
-        sourceWriter.WriteLine("NativeEventsForwarder.{0} -= Forward{0};", eventDefinition.Name);
+      foreach (var definition in model.Events) {
+        sourceWriter.WriteLine("EntryPoints.Set{0}(null);", definition.Name);
+        sourceWriter.WriteLine("_{0} = null;", ToPascalCase(definition));
+        sourceWriter.WriteLine("_forward{0}KeepAlive = null;", definition.Name);
+        sourceWriter.WriteLine();
       }
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
@@ -271,7 +281,7 @@ namespace CodeGen {
 
       sourceWriter.WriteLine("#region Event forwarders");
       foreach (var eventDefinition in model.Events) {
-        WriteApplicationLevelEventForwarder(model, sourceWriter, eventDefinition);
+        WriteApplicationEventForwarder(model, sourceWriter, eventDefinition);
       }
       sourceWriter.WriteLine("#endregion");
 
@@ -283,9 +293,9 @@ namespace CodeGen {
     private void WriteEntryPointsClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = true;
       sourceWriter.WriteLine("/// <summary>");
-      sourceWriter.WriteLine("/// Container of WindowAccessBridge DLL entry points");
+      sourceWriter.WriteLine("/// Container of {0} WindowAccessBridge DLL entry points", GetLegacySuffix(sourceWriter));
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("internal class AccessBridgeEntryPoints{0} {{", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("internal partial class AccessBridgeEntryPoints{0} {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine("#region Functions");
@@ -331,44 +341,6 @@ namespace CodeGen {
 
     public string GetLegacySuffix(SourceCodeWriter sourceWriter) {
         return sourceWriter.IsLegacy ? "Legacy" : ""; 
-    }
-
-    private void WriteNativeEventsForwarderClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
-      sourceWriter.IsNativeTypes = true;
-      sourceWriter.WriteLine("/// <summary>");
-      sourceWriter.WriteLine("/// Native library event handlers implementation");
-      sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("internal partial class AccessBridgeNativeEventsForwarder{0} {{", GetLegacySuffix(sourceWriter));
-      sourceWriter.IncIndent();
-
-      sourceWriter.WriteLine("#region Event fields");
-      foreach (var eventDefinition in model.Events) {
-        WriteNativeEventField(sourceWriter, eventDefinition);
-      }
-      sourceWriter.WriteLine("#endregion");
-      sourceWriter.WriteLine();
-
-      sourceWriter.WriteLine("#region Event delegate fields");
-      foreach (var eventDefinition in model.Events) {
-        WriteNativeEventDelegateField(sourceWriter, eventDefinition);
-      }
-      sourceWriter.WriteLine("#endregion");
-      sourceWriter.WriteLine();
-
-      sourceWriter.WriteLine("#region Event properties");
-      foreach (var eventDefinition in model.Events) {
-        WriteNativeEventProperty(sourceWriter, eventDefinition);
-      }
-      sourceWriter.WriteLine("#endregion");
-      sourceWriter.WriteLine();
-      sourceWriter.WriteLine("#region Event handlers");
-      foreach (var eventDefinition in model.Events) {
-        WriteNativeEventHandler(model, sourceWriter, eventDefinition);
-      }
-      sourceWriter.WriteLine("#endregion");
-      sourceWriter.DecIndent();
-      sourceWriter.WriteLine("}}");
-      sourceWriter.WriteLine();
     }
 
     private void WriteFunction(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition definition) {
@@ -734,31 +706,27 @@ namespace CodeGen {
       sourceWriter.WriteLine("public Set{0}FP Set{0} {{ get; set; }}", definition.Name);
     }
 
-    private void WriteNativeEventField(SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteLine("private AccessBridgeEntryPoints{0}.{1}EventHandler _{2};",
-        GetLegacySuffix(sourceWriter), definition.Name, ToPascalCase(definition));
-    }
-
-    private void WriteNativeEventDelegateField(SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteLine("private AccessBridgeEntryPoints{0}.{1}EventHandler _on{1}KeepAliveDelegate;",
+    private void WriteApplicationEventKeepAliveField(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.WriteLine("private AccessBridgeEntryPoints{0}.{1}EventHandler _forward{1}KeepAlive;",
         GetLegacySuffix(sourceWriter), definition.Name);
     }
 
-    private void WriteNativeEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteLine("public event AccessBridgeEntryPoints{0}.{1}EventHandler {1} {{",
-        GetLegacySuffix(sourceWriter), definition.Name);
+    private void WriteApplicationEventField(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.WriteLine("private {0}EventHandler _{1};", definition.Name, ToPascalCase(definition));
+    }
+
+    private void WriteApplicationEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
+      sourceWriter.WriteLine("public event {0}EventHandler {0} {{", definition.Name);
       sourceWriter.IncIndent();
       sourceWriter.WriteLine("add {{");
       sourceWriter.IncIndent();
       sourceWriter.WriteLine("if (_{0} == null) {{", ToPascalCase(definition));
       sourceWriter.IncIndent();
-      sourceWriter.WriteLine("_on{0}KeepAliveDelegate = On{0};", definition.Name);
-      sourceWriter.WriteLine("EntryPoints.Set{0}(_on{0}KeepAliveDelegate);", definition.Name);
+      sourceWriter.WriteLine("_forward{0}KeepAlive = Forward{0};", definition.Name);
+      sourceWriter.WriteLine("EntryPoints.Set{0}(_forward{0}KeepAlive);", definition.Name);
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
-      sourceWriter.DecIndent();
-
-      sourceWriter.IncIndent();
+      //sourceWriter.DecIndent();
       sourceWriter.WriteLine("_{0} += value;", ToPascalCase(definition));
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
@@ -768,7 +736,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("if (_{0} == null) {{", ToPascalCase(definition));
       sourceWriter.IncIndent();
       sourceWriter.WriteLine("EntryPoints.Set{0}(null);", definition.Name);
-      sourceWriter.WriteLine("_on{0}KeepAliveDelegate = null;", definition.Name);
+      sourceWriter.WriteLine("_forward{0}KeepAlive = null;", definition.Name);
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
       sourceWriter.DecIndent();
@@ -777,39 +745,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("}}");
     }
 
-    private void WriteApplicationLevelEventField(SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteLine("private {0}EventHandler _{1};", definition.Name, ToPascalCase(definition));
-    }
-
-    private void WriteApplicationLevelEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteLine("public event {0}EventHandler {0} {{", definition.Name);
-      sourceWriter.IncIndent();
-      sourceWriter.WriteLine("add {{");
-      sourceWriter.IncIndent();
-      sourceWriter.WriteLine("if (_{0} == null)", ToPascalCase(definition));
-      sourceWriter.IncIndent();
-      sourceWriter.WriteLine("NativeEventsForwarder.{0} += Forward{0};", definition.Name);
-      sourceWriter.DecIndent();
-      sourceWriter.DecIndent();
-
-      sourceWriter.IncIndent();
-      sourceWriter.WriteLine("_{0} += value;", ToPascalCase(definition));
-      sourceWriter.DecIndent();
-      sourceWriter.WriteLine("}}");
-      sourceWriter.WriteLine("remove{{");
-      sourceWriter.IncIndent();
-      sourceWriter.WriteLine("_{0} -= value;", ToPascalCase(definition));
-      sourceWriter.WriteLine("if (_{0} == null)", ToPascalCase(definition));
-      sourceWriter.IncIndent();
-      sourceWriter.WriteLine("NativeEventsForwarder.{0} -= Forward{0};", definition.Name);
-      sourceWriter.DecIndent();
-      sourceWriter.DecIndent();
-      sourceWriter.WriteLine("}}");
-      sourceWriter.DecIndent();
-      sourceWriter.WriteLine("}}");
-    }
-
-    private void WriteNativeEventHandler(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, EventDefinition definition) {
+    private void WriteApplicationEventHandler(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, EventDefinition definition) {
       sourceWriter.WriteIndent();
       sourceWriter.Write("protected virtual ");
       WriteFunctionSignature(model, sourceWriter, definition.DelegateFunction, "On" + definition.Name);
@@ -836,34 +772,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("}}");
     }
 
-    private void WriteApplicationLevelEventHandler(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteIndent();
-      sourceWriter.Write("protected virtual ");
-      WriteFunctionSignature(model, sourceWriter, definition.DelegateFunction, "On" + definition.Name);
-      sourceWriter.Write(" {{");
-      sourceWriter.WriteLine();
-      sourceWriter.IncIndent();
-      sourceWriter.WriteLine("var handler = _{0};", ToPascalCase(definition));
-      sourceWriter.WriteLine("if (handler != null)");
-      sourceWriter.IncIndent();
-      sourceWriter.WriteIndent();
-      sourceWriter.Write("handler(");
-      var first = true;
-      foreach (var p in definition.DelegateFunction.Parameters) {
-        if (first)
-          first = false;
-        else
-          sourceWriter.Write(", ");
-        sourceWriter.Write("{0}", p.Name);
-      }
-      sourceWriter.Write(");");
-      sourceWriter.WriteLine();
-      sourceWriter.DecIndent();
-      sourceWriter.DecIndent();
-      sourceWriter.WriteLine("}}");
-    }
-
-    private void WriteApplicationLevelEventForwarder(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, EventDefinition definition) {
+    private void WriteApplicationEventForwarder(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, EventDefinition definition) {
       sourceWriter.IsNativeTypes = true;
       sourceWriter.WriteIndent();
       sourceWriter.Write("private ");

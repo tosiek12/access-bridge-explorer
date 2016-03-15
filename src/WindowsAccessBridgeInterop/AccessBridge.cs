@@ -91,8 +91,8 @@ namespace WindowsAccessBridgeInterop {
       var library = LoadLibrary();
       if (library.IsLegacy) {
         var libraryFunctions = LoadEntryPointsLegacy(library);
-        var functions = new AccessBridgeNativeFunctionsLegacy(libraryFunctions);
-        var events = new AccessBridgeNativeEventsLegacy(libraryFunctions);
+        var functions = new AccessBridgeFunctionsLegacy(libraryFunctions);
+        var events = new AccessBridgeEventsLegacy(libraryFunctions);
 
         // Everything is initialized correctly, save to member variables.
         _library = library;
@@ -100,8 +100,8 @@ namespace WindowsAccessBridgeInterop {
         _events = events;
       } else {
         var libraryFunctions = LoadEntryPoints(library);
-        var functions = new AccessBridgeNativeFunctions(libraryFunctions);
-        var events = new AccessBridgeNativeEvents(libraryFunctions);
+        var functions = new AccessBridgeFunctions(libraryFunctions);
+        var events = new AccessBridgeEvents(libraryFunctions);
 
         // Everything is initialized correctly, save to member variables.
         _library = library;

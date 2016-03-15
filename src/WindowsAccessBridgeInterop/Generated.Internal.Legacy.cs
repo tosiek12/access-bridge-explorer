@@ -26,9 +26,10 @@ using BOOL = System.Int32;
 
 namespace WindowsAccessBridgeInterop {
   /// <summary>
-  /// Implementation of platform agnostic functions
+  /// Implementation of <see cref="IAccessBridgeFunctions"/> using <code>WindowsAccessBridge DLL</code>
+  /// entry points implemented in <see cref="AccessBridgeEntryPointsLegacy"/>
   /// </summary>
-  internal partial class AccessBridgeNativeFunctionsLegacy : IAccessBridgeFunctions {
+  internal partial class AccessBridgeFunctionsLegacy : IAccessBridgeFunctions {
 
     #region Function implementations
 
@@ -657,9 +658,9 @@ namespace WindowsAccessBridgeInterop {
   }
 
   /// <summary>
-  /// Implementation of platform agnostic events
+  /// Implementation of <see cref="IAccessBridgeEvents"/> over Legacy WindowsAccessBridge entry points
   /// </summary>
-  internal partial class AccessBridgeNativeEventsLegacy : IAccessBridgeEvents {
+  internal partial class AccessBridgeEventsLegacy : IAccessBridgeEvents {
     #region Event fields
     private PropertyChangeEventHandler _propertyChange;
     private JavaShutdownEventHandler _javaShutdown;
@@ -690,329 +691,467 @@ namespace WindowsAccessBridgeInterop {
     private PropertyTableModelChangeEventHandler _propertyTableModelChange;
     #endregion
 
+    #region Native callback keep-alive fields
+    private AccessBridgeEntryPointsLegacy.PropertyChangeEventHandler _forwardPropertyChangeKeepAlive;
+    private AccessBridgeEntryPointsLegacy.JavaShutdownEventHandler _forwardJavaShutdownKeepAlive;
+    private AccessBridgeEntryPointsLegacy.FocusGainedEventHandler _forwardFocusGainedKeepAlive;
+    private AccessBridgeEntryPointsLegacy.FocusLostEventHandler _forwardFocusLostKeepAlive;
+    private AccessBridgeEntryPointsLegacy.CaretUpdateEventHandler _forwardCaretUpdateKeepAlive;
+    private AccessBridgeEntryPointsLegacy.MouseClickedEventHandler _forwardMouseClickedKeepAlive;
+    private AccessBridgeEntryPointsLegacy.MouseEnteredEventHandler _forwardMouseEnteredKeepAlive;
+    private AccessBridgeEntryPointsLegacy.MouseExitedEventHandler _forwardMouseExitedKeepAlive;
+    private AccessBridgeEntryPointsLegacy.MousePressedEventHandler _forwardMousePressedKeepAlive;
+    private AccessBridgeEntryPointsLegacy.MouseReleasedEventHandler _forwardMouseReleasedKeepAlive;
+    private AccessBridgeEntryPointsLegacy.MenuCanceledEventHandler _forwardMenuCanceledKeepAlive;
+    private AccessBridgeEntryPointsLegacy.MenuDeselectedEventHandler _forwardMenuDeselectedKeepAlive;
+    private AccessBridgeEntryPointsLegacy.MenuSelectedEventHandler _forwardMenuSelectedKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PopupMenuCanceledEventHandler _forwardPopupMenuCanceledKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeInvisibleEventHandler _forwardPopupMenuWillBecomeInvisibleKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeVisibleEventHandler _forwardPopupMenuWillBecomeVisibleKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PropertyNameChangeEventHandler _forwardPropertyNameChangeKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PropertyDescriptionChangeEventHandler _forwardPropertyDescriptionChangeKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PropertyStateChangeEventHandler _forwardPropertyStateChangeKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PropertyValueChangeEventHandler _forwardPropertyValueChangeKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PropertySelectionChangeEventHandler _forwardPropertySelectionChangeKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PropertyTextChangeEventHandler _forwardPropertyTextChangeKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PropertyCaretChangeEventHandler _forwardPropertyCaretChangeKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PropertyVisibleDataChangeEventHandler _forwardPropertyVisibleDataChangeKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PropertyChildChangeEventHandler _forwardPropertyChildChangeKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PropertyActiveDescendentChangeEventHandler _forwardPropertyActiveDescendentChangeKeepAlive;
+    private AccessBridgeEntryPointsLegacy.PropertyTableModelChangeEventHandler _forwardPropertyTableModelChangeKeepAlive;
+    #endregion
+
     #region Event properties
     public event PropertyChangeEventHandler PropertyChange {
       add {
-        if (_propertyChange == null)
-          NativeEventsForwarder.PropertyChange += ForwardPropertyChange;
+        if (_propertyChange == null) {
+          _forwardPropertyChangeKeepAlive = ForwardPropertyChange;
+          EntryPoints.SetPropertyChange(_forwardPropertyChangeKeepAlive);
+        }
         _propertyChange += value;
       }
       remove{
         _propertyChange -= value;
-        if (_propertyChange == null)
-          NativeEventsForwarder.PropertyChange -= ForwardPropertyChange;
+        if (_propertyChange == null) {
+          EntryPoints.SetPropertyChange(null);
+          _forwardPropertyChangeKeepAlive = null;
+        }
       }
     }
     public event JavaShutdownEventHandler JavaShutdown {
       add {
-        if (_javaShutdown == null)
-          NativeEventsForwarder.JavaShutdown += ForwardJavaShutdown;
+        if (_javaShutdown == null) {
+          _forwardJavaShutdownKeepAlive = ForwardJavaShutdown;
+          EntryPoints.SetJavaShutdown(_forwardJavaShutdownKeepAlive);
+        }
         _javaShutdown += value;
       }
       remove{
         _javaShutdown -= value;
-        if (_javaShutdown == null)
-          NativeEventsForwarder.JavaShutdown -= ForwardJavaShutdown;
+        if (_javaShutdown == null) {
+          EntryPoints.SetJavaShutdown(null);
+          _forwardJavaShutdownKeepAlive = null;
+        }
       }
     }
     public event FocusGainedEventHandler FocusGained {
       add {
-        if (_focusGained == null)
-          NativeEventsForwarder.FocusGained += ForwardFocusGained;
+        if (_focusGained == null) {
+          _forwardFocusGainedKeepAlive = ForwardFocusGained;
+          EntryPoints.SetFocusGained(_forwardFocusGainedKeepAlive);
+        }
         _focusGained += value;
       }
       remove{
         _focusGained -= value;
-        if (_focusGained == null)
-          NativeEventsForwarder.FocusGained -= ForwardFocusGained;
+        if (_focusGained == null) {
+          EntryPoints.SetFocusGained(null);
+          _forwardFocusGainedKeepAlive = null;
+        }
       }
     }
     public event FocusLostEventHandler FocusLost {
       add {
-        if (_focusLost == null)
-          NativeEventsForwarder.FocusLost += ForwardFocusLost;
+        if (_focusLost == null) {
+          _forwardFocusLostKeepAlive = ForwardFocusLost;
+          EntryPoints.SetFocusLost(_forwardFocusLostKeepAlive);
+        }
         _focusLost += value;
       }
       remove{
         _focusLost -= value;
-        if (_focusLost == null)
-          NativeEventsForwarder.FocusLost -= ForwardFocusLost;
+        if (_focusLost == null) {
+          EntryPoints.SetFocusLost(null);
+          _forwardFocusLostKeepAlive = null;
+        }
       }
     }
     public event CaretUpdateEventHandler CaretUpdate {
       add {
-        if (_caretUpdate == null)
-          NativeEventsForwarder.CaretUpdate += ForwardCaretUpdate;
+        if (_caretUpdate == null) {
+          _forwardCaretUpdateKeepAlive = ForwardCaretUpdate;
+          EntryPoints.SetCaretUpdate(_forwardCaretUpdateKeepAlive);
+        }
         _caretUpdate += value;
       }
       remove{
         _caretUpdate -= value;
-        if (_caretUpdate == null)
-          NativeEventsForwarder.CaretUpdate -= ForwardCaretUpdate;
+        if (_caretUpdate == null) {
+          EntryPoints.SetCaretUpdate(null);
+          _forwardCaretUpdateKeepAlive = null;
+        }
       }
     }
     public event MouseClickedEventHandler MouseClicked {
       add {
-        if (_mouseClicked == null)
-          NativeEventsForwarder.MouseClicked += ForwardMouseClicked;
+        if (_mouseClicked == null) {
+          _forwardMouseClickedKeepAlive = ForwardMouseClicked;
+          EntryPoints.SetMouseClicked(_forwardMouseClickedKeepAlive);
+        }
         _mouseClicked += value;
       }
       remove{
         _mouseClicked -= value;
-        if (_mouseClicked == null)
-          NativeEventsForwarder.MouseClicked -= ForwardMouseClicked;
+        if (_mouseClicked == null) {
+          EntryPoints.SetMouseClicked(null);
+          _forwardMouseClickedKeepAlive = null;
+        }
       }
     }
     public event MouseEnteredEventHandler MouseEntered {
       add {
-        if (_mouseEntered == null)
-          NativeEventsForwarder.MouseEntered += ForwardMouseEntered;
+        if (_mouseEntered == null) {
+          _forwardMouseEnteredKeepAlive = ForwardMouseEntered;
+          EntryPoints.SetMouseEntered(_forwardMouseEnteredKeepAlive);
+        }
         _mouseEntered += value;
       }
       remove{
         _mouseEntered -= value;
-        if (_mouseEntered == null)
-          NativeEventsForwarder.MouseEntered -= ForwardMouseEntered;
+        if (_mouseEntered == null) {
+          EntryPoints.SetMouseEntered(null);
+          _forwardMouseEnteredKeepAlive = null;
+        }
       }
     }
     public event MouseExitedEventHandler MouseExited {
       add {
-        if (_mouseExited == null)
-          NativeEventsForwarder.MouseExited += ForwardMouseExited;
+        if (_mouseExited == null) {
+          _forwardMouseExitedKeepAlive = ForwardMouseExited;
+          EntryPoints.SetMouseExited(_forwardMouseExitedKeepAlive);
+        }
         _mouseExited += value;
       }
       remove{
         _mouseExited -= value;
-        if (_mouseExited == null)
-          NativeEventsForwarder.MouseExited -= ForwardMouseExited;
+        if (_mouseExited == null) {
+          EntryPoints.SetMouseExited(null);
+          _forwardMouseExitedKeepAlive = null;
+        }
       }
     }
     public event MousePressedEventHandler MousePressed {
       add {
-        if (_mousePressed == null)
-          NativeEventsForwarder.MousePressed += ForwardMousePressed;
+        if (_mousePressed == null) {
+          _forwardMousePressedKeepAlive = ForwardMousePressed;
+          EntryPoints.SetMousePressed(_forwardMousePressedKeepAlive);
+        }
         _mousePressed += value;
       }
       remove{
         _mousePressed -= value;
-        if (_mousePressed == null)
-          NativeEventsForwarder.MousePressed -= ForwardMousePressed;
+        if (_mousePressed == null) {
+          EntryPoints.SetMousePressed(null);
+          _forwardMousePressedKeepAlive = null;
+        }
       }
     }
     public event MouseReleasedEventHandler MouseReleased {
       add {
-        if (_mouseReleased == null)
-          NativeEventsForwarder.MouseReleased += ForwardMouseReleased;
+        if (_mouseReleased == null) {
+          _forwardMouseReleasedKeepAlive = ForwardMouseReleased;
+          EntryPoints.SetMouseReleased(_forwardMouseReleasedKeepAlive);
+        }
         _mouseReleased += value;
       }
       remove{
         _mouseReleased -= value;
-        if (_mouseReleased == null)
-          NativeEventsForwarder.MouseReleased -= ForwardMouseReleased;
+        if (_mouseReleased == null) {
+          EntryPoints.SetMouseReleased(null);
+          _forwardMouseReleasedKeepAlive = null;
+        }
       }
     }
     public event MenuCanceledEventHandler MenuCanceled {
       add {
-        if (_menuCanceled == null)
-          NativeEventsForwarder.MenuCanceled += ForwardMenuCanceled;
+        if (_menuCanceled == null) {
+          _forwardMenuCanceledKeepAlive = ForwardMenuCanceled;
+          EntryPoints.SetMenuCanceled(_forwardMenuCanceledKeepAlive);
+        }
         _menuCanceled += value;
       }
       remove{
         _menuCanceled -= value;
-        if (_menuCanceled == null)
-          NativeEventsForwarder.MenuCanceled -= ForwardMenuCanceled;
+        if (_menuCanceled == null) {
+          EntryPoints.SetMenuCanceled(null);
+          _forwardMenuCanceledKeepAlive = null;
+        }
       }
     }
     public event MenuDeselectedEventHandler MenuDeselected {
       add {
-        if (_menuDeselected == null)
-          NativeEventsForwarder.MenuDeselected += ForwardMenuDeselected;
+        if (_menuDeselected == null) {
+          _forwardMenuDeselectedKeepAlive = ForwardMenuDeselected;
+          EntryPoints.SetMenuDeselected(_forwardMenuDeselectedKeepAlive);
+        }
         _menuDeselected += value;
       }
       remove{
         _menuDeselected -= value;
-        if (_menuDeselected == null)
-          NativeEventsForwarder.MenuDeselected -= ForwardMenuDeselected;
+        if (_menuDeselected == null) {
+          EntryPoints.SetMenuDeselected(null);
+          _forwardMenuDeselectedKeepAlive = null;
+        }
       }
     }
     public event MenuSelectedEventHandler MenuSelected {
       add {
-        if (_menuSelected == null)
-          NativeEventsForwarder.MenuSelected += ForwardMenuSelected;
+        if (_menuSelected == null) {
+          _forwardMenuSelectedKeepAlive = ForwardMenuSelected;
+          EntryPoints.SetMenuSelected(_forwardMenuSelectedKeepAlive);
+        }
         _menuSelected += value;
       }
       remove{
         _menuSelected -= value;
-        if (_menuSelected == null)
-          NativeEventsForwarder.MenuSelected -= ForwardMenuSelected;
+        if (_menuSelected == null) {
+          EntryPoints.SetMenuSelected(null);
+          _forwardMenuSelectedKeepAlive = null;
+        }
       }
     }
     public event PopupMenuCanceledEventHandler PopupMenuCanceled {
       add {
-        if (_popupMenuCanceled == null)
-          NativeEventsForwarder.PopupMenuCanceled += ForwardPopupMenuCanceled;
+        if (_popupMenuCanceled == null) {
+          _forwardPopupMenuCanceledKeepAlive = ForwardPopupMenuCanceled;
+          EntryPoints.SetPopupMenuCanceled(_forwardPopupMenuCanceledKeepAlive);
+        }
         _popupMenuCanceled += value;
       }
       remove{
         _popupMenuCanceled -= value;
-        if (_popupMenuCanceled == null)
-          NativeEventsForwarder.PopupMenuCanceled -= ForwardPopupMenuCanceled;
+        if (_popupMenuCanceled == null) {
+          EntryPoints.SetPopupMenuCanceled(null);
+          _forwardPopupMenuCanceledKeepAlive = null;
+        }
       }
     }
     public event PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible {
       add {
-        if (_popupMenuWillBecomeInvisible == null)
-          NativeEventsForwarder.PopupMenuWillBecomeInvisible += ForwardPopupMenuWillBecomeInvisible;
+        if (_popupMenuWillBecomeInvisible == null) {
+          _forwardPopupMenuWillBecomeInvisibleKeepAlive = ForwardPopupMenuWillBecomeInvisible;
+          EntryPoints.SetPopupMenuWillBecomeInvisible(_forwardPopupMenuWillBecomeInvisibleKeepAlive);
+        }
         _popupMenuWillBecomeInvisible += value;
       }
       remove{
         _popupMenuWillBecomeInvisible -= value;
-        if (_popupMenuWillBecomeInvisible == null)
-          NativeEventsForwarder.PopupMenuWillBecomeInvisible -= ForwardPopupMenuWillBecomeInvisible;
+        if (_popupMenuWillBecomeInvisible == null) {
+          EntryPoints.SetPopupMenuWillBecomeInvisible(null);
+          _forwardPopupMenuWillBecomeInvisibleKeepAlive = null;
+        }
       }
     }
     public event PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible {
       add {
-        if (_popupMenuWillBecomeVisible == null)
-          NativeEventsForwarder.PopupMenuWillBecomeVisible += ForwardPopupMenuWillBecomeVisible;
+        if (_popupMenuWillBecomeVisible == null) {
+          _forwardPopupMenuWillBecomeVisibleKeepAlive = ForwardPopupMenuWillBecomeVisible;
+          EntryPoints.SetPopupMenuWillBecomeVisible(_forwardPopupMenuWillBecomeVisibleKeepAlive);
+        }
         _popupMenuWillBecomeVisible += value;
       }
       remove{
         _popupMenuWillBecomeVisible -= value;
-        if (_popupMenuWillBecomeVisible == null)
-          NativeEventsForwarder.PopupMenuWillBecomeVisible -= ForwardPopupMenuWillBecomeVisible;
+        if (_popupMenuWillBecomeVisible == null) {
+          EntryPoints.SetPopupMenuWillBecomeVisible(null);
+          _forwardPopupMenuWillBecomeVisibleKeepAlive = null;
+        }
       }
     }
     public event PropertyNameChangeEventHandler PropertyNameChange {
       add {
-        if (_propertyNameChange == null)
-          NativeEventsForwarder.PropertyNameChange += ForwardPropertyNameChange;
+        if (_propertyNameChange == null) {
+          _forwardPropertyNameChangeKeepAlive = ForwardPropertyNameChange;
+          EntryPoints.SetPropertyNameChange(_forwardPropertyNameChangeKeepAlive);
+        }
         _propertyNameChange += value;
       }
       remove{
         _propertyNameChange -= value;
-        if (_propertyNameChange == null)
-          NativeEventsForwarder.PropertyNameChange -= ForwardPropertyNameChange;
+        if (_propertyNameChange == null) {
+          EntryPoints.SetPropertyNameChange(null);
+          _forwardPropertyNameChangeKeepAlive = null;
+        }
       }
     }
     public event PropertyDescriptionChangeEventHandler PropertyDescriptionChange {
       add {
-        if (_propertyDescriptionChange == null)
-          NativeEventsForwarder.PropertyDescriptionChange += ForwardPropertyDescriptionChange;
+        if (_propertyDescriptionChange == null) {
+          _forwardPropertyDescriptionChangeKeepAlive = ForwardPropertyDescriptionChange;
+          EntryPoints.SetPropertyDescriptionChange(_forwardPropertyDescriptionChangeKeepAlive);
+        }
         _propertyDescriptionChange += value;
       }
       remove{
         _propertyDescriptionChange -= value;
-        if (_propertyDescriptionChange == null)
-          NativeEventsForwarder.PropertyDescriptionChange -= ForwardPropertyDescriptionChange;
+        if (_propertyDescriptionChange == null) {
+          EntryPoints.SetPropertyDescriptionChange(null);
+          _forwardPropertyDescriptionChangeKeepAlive = null;
+        }
       }
     }
     public event PropertyStateChangeEventHandler PropertyStateChange {
       add {
-        if (_propertyStateChange == null)
-          NativeEventsForwarder.PropertyStateChange += ForwardPropertyStateChange;
+        if (_propertyStateChange == null) {
+          _forwardPropertyStateChangeKeepAlive = ForwardPropertyStateChange;
+          EntryPoints.SetPropertyStateChange(_forwardPropertyStateChangeKeepAlive);
+        }
         _propertyStateChange += value;
       }
       remove{
         _propertyStateChange -= value;
-        if (_propertyStateChange == null)
-          NativeEventsForwarder.PropertyStateChange -= ForwardPropertyStateChange;
+        if (_propertyStateChange == null) {
+          EntryPoints.SetPropertyStateChange(null);
+          _forwardPropertyStateChangeKeepAlive = null;
+        }
       }
     }
     public event PropertyValueChangeEventHandler PropertyValueChange {
       add {
-        if (_propertyValueChange == null)
-          NativeEventsForwarder.PropertyValueChange += ForwardPropertyValueChange;
+        if (_propertyValueChange == null) {
+          _forwardPropertyValueChangeKeepAlive = ForwardPropertyValueChange;
+          EntryPoints.SetPropertyValueChange(_forwardPropertyValueChangeKeepAlive);
+        }
         _propertyValueChange += value;
       }
       remove{
         _propertyValueChange -= value;
-        if (_propertyValueChange == null)
-          NativeEventsForwarder.PropertyValueChange -= ForwardPropertyValueChange;
+        if (_propertyValueChange == null) {
+          EntryPoints.SetPropertyValueChange(null);
+          _forwardPropertyValueChangeKeepAlive = null;
+        }
       }
     }
     public event PropertySelectionChangeEventHandler PropertySelectionChange {
       add {
-        if (_propertySelectionChange == null)
-          NativeEventsForwarder.PropertySelectionChange += ForwardPropertySelectionChange;
+        if (_propertySelectionChange == null) {
+          _forwardPropertySelectionChangeKeepAlive = ForwardPropertySelectionChange;
+          EntryPoints.SetPropertySelectionChange(_forwardPropertySelectionChangeKeepAlive);
+        }
         _propertySelectionChange += value;
       }
       remove{
         _propertySelectionChange -= value;
-        if (_propertySelectionChange == null)
-          NativeEventsForwarder.PropertySelectionChange -= ForwardPropertySelectionChange;
+        if (_propertySelectionChange == null) {
+          EntryPoints.SetPropertySelectionChange(null);
+          _forwardPropertySelectionChangeKeepAlive = null;
+        }
       }
     }
     public event PropertyTextChangeEventHandler PropertyTextChange {
       add {
-        if (_propertyTextChange == null)
-          NativeEventsForwarder.PropertyTextChange += ForwardPropertyTextChange;
+        if (_propertyTextChange == null) {
+          _forwardPropertyTextChangeKeepAlive = ForwardPropertyTextChange;
+          EntryPoints.SetPropertyTextChange(_forwardPropertyTextChangeKeepAlive);
+        }
         _propertyTextChange += value;
       }
       remove{
         _propertyTextChange -= value;
-        if (_propertyTextChange == null)
-          NativeEventsForwarder.PropertyTextChange -= ForwardPropertyTextChange;
+        if (_propertyTextChange == null) {
+          EntryPoints.SetPropertyTextChange(null);
+          _forwardPropertyTextChangeKeepAlive = null;
+        }
       }
     }
     public event PropertyCaretChangeEventHandler PropertyCaretChange {
       add {
-        if (_propertyCaretChange == null)
-          NativeEventsForwarder.PropertyCaretChange += ForwardPropertyCaretChange;
+        if (_propertyCaretChange == null) {
+          _forwardPropertyCaretChangeKeepAlive = ForwardPropertyCaretChange;
+          EntryPoints.SetPropertyCaretChange(_forwardPropertyCaretChangeKeepAlive);
+        }
         _propertyCaretChange += value;
       }
       remove{
         _propertyCaretChange -= value;
-        if (_propertyCaretChange == null)
-          NativeEventsForwarder.PropertyCaretChange -= ForwardPropertyCaretChange;
+        if (_propertyCaretChange == null) {
+          EntryPoints.SetPropertyCaretChange(null);
+          _forwardPropertyCaretChangeKeepAlive = null;
+        }
       }
     }
     public event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange {
       add {
-        if (_propertyVisibleDataChange == null)
-          NativeEventsForwarder.PropertyVisibleDataChange += ForwardPropertyVisibleDataChange;
+        if (_propertyVisibleDataChange == null) {
+          _forwardPropertyVisibleDataChangeKeepAlive = ForwardPropertyVisibleDataChange;
+          EntryPoints.SetPropertyVisibleDataChange(_forwardPropertyVisibleDataChangeKeepAlive);
+        }
         _propertyVisibleDataChange += value;
       }
       remove{
         _propertyVisibleDataChange -= value;
-        if (_propertyVisibleDataChange == null)
-          NativeEventsForwarder.PropertyVisibleDataChange -= ForwardPropertyVisibleDataChange;
+        if (_propertyVisibleDataChange == null) {
+          EntryPoints.SetPropertyVisibleDataChange(null);
+          _forwardPropertyVisibleDataChangeKeepAlive = null;
+        }
       }
     }
     public event PropertyChildChangeEventHandler PropertyChildChange {
       add {
-        if (_propertyChildChange == null)
-          NativeEventsForwarder.PropertyChildChange += ForwardPropertyChildChange;
+        if (_propertyChildChange == null) {
+          _forwardPropertyChildChangeKeepAlive = ForwardPropertyChildChange;
+          EntryPoints.SetPropertyChildChange(_forwardPropertyChildChangeKeepAlive);
+        }
         _propertyChildChange += value;
       }
       remove{
         _propertyChildChange -= value;
-        if (_propertyChildChange == null)
-          NativeEventsForwarder.PropertyChildChange -= ForwardPropertyChildChange;
+        if (_propertyChildChange == null) {
+          EntryPoints.SetPropertyChildChange(null);
+          _forwardPropertyChildChangeKeepAlive = null;
+        }
       }
     }
     public event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange {
       add {
-        if (_propertyActiveDescendentChange == null)
-          NativeEventsForwarder.PropertyActiveDescendentChange += ForwardPropertyActiveDescendentChange;
+        if (_propertyActiveDescendentChange == null) {
+          _forwardPropertyActiveDescendentChangeKeepAlive = ForwardPropertyActiveDescendentChange;
+          EntryPoints.SetPropertyActiveDescendentChange(_forwardPropertyActiveDescendentChangeKeepAlive);
+        }
         _propertyActiveDescendentChange += value;
       }
       remove{
         _propertyActiveDescendentChange -= value;
-        if (_propertyActiveDescendentChange == null)
-          NativeEventsForwarder.PropertyActiveDescendentChange -= ForwardPropertyActiveDescendentChange;
+        if (_propertyActiveDescendentChange == null) {
+          EntryPoints.SetPropertyActiveDescendentChange(null);
+          _forwardPropertyActiveDescendentChangeKeepAlive = null;
+        }
       }
     }
     public event PropertyTableModelChangeEventHandler PropertyTableModelChange {
       add {
-        if (_propertyTableModelChange == null)
-          NativeEventsForwarder.PropertyTableModelChange += ForwardPropertyTableModelChange;
+        if (_propertyTableModelChange == null) {
+          _forwardPropertyTableModelChangeKeepAlive = ForwardPropertyTableModelChange;
+          EntryPoints.SetPropertyTableModelChange(_forwardPropertyTableModelChangeKeepAlive);
+        }
         _propertyTableModelChange += value;
       }
       remove{
         _propertyTableModelChange -= value;
-        if (_propertyTableModelChange == null)
-          NativeEventsForwarder.PropertyTableModelChange -= ForwardPropertyTableModelChange;
+        if (_propertyTableModelChange == null) {
+          EntryPoints.SetPropertyTableModelChange(null);
+          _forwardPropertyTableModelChangeKeepAlive = null;
+        }
       }
     }
     #endregion
@@ -1156,33 +1295,114 @@ namespace WindowsAccessBridgeInterop {
     #endregion
 
     private void DetachForwarders() {
-      NativeEventsForwarder.PropertyChange -= ForwardPropertyChange;
-      NativeEventsForwarder.JavaShutdown -= ForwardJavaShutdown;
-      NativeEventsForwarder.FocusGained -= ForwardFocusGained;
-      NativeEventsForwarder.FocusLost -= ForwardFocusLost;
-      NativeEventsForwarder.CaretUpdate -= ForwardCaretUpdate;
-      NativeEventsForwarder.MouseClicked -= ForwardMouseClicked;
-      NativeEventsForwarder.MouseEntered -= ForwardMouseEntered;
-      NativeEventsForwarder.MouseExited -= ForwardMouseExited;
-      NativeEventsForwarder.MousePressed -= ForwardMousePressed;
-      NativeEventsForwarder.MouseReleased -= ForwardMouseReleased;
-      NativeEventsForwarder.MenuCanceled -= ForwardMenuCanceled;
-      NativeEventsForwarder.MenuDeselected -= ForwardMenuDeselected;
-      NativeEventsForwarder.MenuSelected -= ForwardMenuSelected;
-      NativeEventsForwarder.PopupMenuCanceled -= ForwardPopupMenuCanceled;
-      NativeEventsForwarder.PopupMenuWillBecomeInvisible -= ForwardPopupMenuWillBecomeInvisible;
-      NativeEventsForwarder.PopupMenuWillBecomeVisible -= ForwardPopupMenuWillBecomeVisible;
-      NativeEventsForwarder.PropertyNameChange -= ForwardPropertyNameChange;
-      NativeEventsForwarder.PropertyDescriptionChange -= ForwardPropertyDescriptionChange;
-      NativeEventsForwarder.PropertyStateChange -= ForwardPropertyStateChange;
-      NativeEventsForwarder.PropertyValueChange -= ForwardPropertyValueChange;
-      NativeEventsForwarder.PropertySelectionChange -= ForwardPropertySelectionChange;
-      NativeEventsForwarder.PropertyTextChange -= ForwardPropertyTextChange;
-      NativeEventsForwarder.PropertyCaretChange -= ForwardPropertyCaretChange;
-      NativeEventsForwarder.PropertyVisibleDataChange -= ForwardPropertyVisibleDataChange;
-      NativeEventsForwarder.PropertyChildChange -= ForwardPropertyChildChange;
-      NativeEventsForwarder.PropertyActiveDescendentChange -= ForwardPropertyActiveDescendentChange;
-      NativeEventsForwarder.PropertyTableModelChange -= ForwardPropertyTableModelChange;
+      EntryPoints.SetPropertyChange(null);
+      _propertyChange = null;
+      _forwardPropertyChangeKeepAlive = null;
+
+      EntryPoints.SetJavaShutdown(null);
+      _javaShutdown = null;
+      _forwardJavaShutdownKeepAlive = null;
+
+      EntryPoints.SetFocusGained(null);
+      _focusGained = null;
+      _forwardFocusGainedKeepAlive = null;
+
+      EntryPoints.SetFocusLost(null);
+      _focusLost = null;
+      _forwardFocusLostKeepAlive = null;
+
+      EntryPoints.SetCaretUpdate(null);
+      _caretUpdate = null;
+      _forwardCaretUpdateKeepAlive = null;
+
+      EntryPoints.SetMouseClicked(null);
+      _mouseClicked = null;
+      _forwardMouseClickedKeepAlive = null;
+
+      EntryPoints.SetMouseEntered(null);
+      _mouseEntered = null;
+      _forwardMouseEnteredKeepAlive = null;
+
+      EntryPoints.SetMouseExited(null);
+      _mouseExited = null;
+      _forwardMouseExitedKeepAlive = null;
+
+      EntryPoints.SetMousePressed(null);
+      _mousePressed = null;
+      _forwardMousePressedKeepAlive = null;
+
+      EntryPoints.SetMouseReleased(null);
+      _mouseReleased = null;
+      _forwardMouseReleasedKeepAlive = null;
+
+      EntryPoints.SetMenuCanceled(null);
+      _menuCanceled = null;
+      _forwardMenuCanceledKeepAlive = null;
+
+      EntryPoints.SetMenuDeselected(null);
+      _menuDeselected = null;
+      _forwardMenuDeselectedKeepAlive = null;
+
+      EntryPoints.SetMenuSelected(null);
+      _menuSelected = null;
+      _forwardMenuSelectedKeepAlive = null;
+
+      EntryPoints.SetPopupMenuCanceled(null);
+      _popupMenuCanceled = null;
+      _forwardPopupMenuCanceledKeepAlive = null;
+
+      EntryPoints.SetPopupMenuWillBecomeInvisible(null);
+      _popupMenuWillBecomeInvisible = null;
+      _forwardPopupMenuWillBecomeInvisibleKeepAlive = null;
+
+      EntryPoints.SetPopupMenuWillBecomeVisible(null);
+      _popupMenuWillBecomeVisible = null;
+      _forwardPopupMenuWillBecomeVisibleKeepAlive = null;
+
+      EntryPoints.SetPropertyNameChange(null);
+      _propertyNameChange = null;
+      _forwardPropertyNameChangeKeepAlive = null;
+
+      EntryPoints.SetPropertyDescriptionChange(null);
+      _propertyDescriptionChange = null;
+      _forwardPropertyDescriptionChangeKeepAlive = null;
+
+      EntryPoints.SetPropertyStateChange(null);
+      _propertyStateChange = null;
+      _forwardPropertyStateChangeKeepAlive = null;
+
+      EntryPoints.SetPropertyValueChange(null);
+      _propertyValueChange = null;
+      _forwardPropertyValueChangeKeepAlive = null;
+
+      EntryPoints.SetPropertySelectionChange(null);
+      _propertySelectionChange = null;
+      _forwardPropertySelectionChangeKeepAlive = null;
+
+      EntryPoints.SetPropertyTextChange(null);
+      _propertyTextChange = null;
+      _forwardPropertyTextChangeKeepAlive = null;
+
+      EntryPoints.SetPropertyCaretChange(null);
+      _propertyCaretChange = null;
+      _forwardPropertyCaretChangeKeepAlive = null;
+
+      EntryPoints.SetPropertyVisibleDataChange(null);
+      _propertyVisibleDataChange = null;
+      _forwardPropertyVisibleDataChangeKeepAlive = null;
+
+      EntryPoints.SetPropertyChildChange(null);
+      _propertyChildChange = null;
+      _forwardPropertyChildChangeKeepAlive = null;
+
+      EntryPoints.SetPropertyActiveDescendentChange(null);
+      _propertyActiveDescendentChange = null;
+      _forwardPropertyActiveDescendentChangeKeepAlive = null;
+
+      EntryPoints.SetPropertyTableModelChange(null);
+      _propertyTableModelChange = null;
+      _forwardPropertyTableModelChangeKeepAlive = null;
+
     }
 
     #region Event forwarders
@@ -1271,9 +1491,9 @@ namespace WindowsAccessBridgeInterop {
   }
 
   /// <summary>
-  /// Container of WindowAccessBridge DLL entry points
+  /// Container of Legacy WindowAccessBridge DLL entry points
   /// </summary>
-  internal class AccessBridgeEntryPointsLegacy {
+  internal partial class AccessBridgeEntryPointsLegacy {
     #region Functions
     public Windows_runFP Windows_run { get; set; }
     public IsJavaWindowFP IsJavaWindow { get; set; }
@@ -1617,644 +1837,6 @@ namespace WindowsAccessBridgeInterop {
     public delegate BOOL SetPropertyActiveDescendentChangeFP(PropertyActiveDescendentChangeEventHandler handler);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL SetPropertyTableModelChangeFP(PropertyTableModelChangeEventHandler handler);
-    #endregion
-  }
-
-  /// <summary>
-  /// Native library event handlers implementation
-  /// </summary>
-  internal partial class AccessBridgeNativeEventsForwarderLegacy {
-    #region Event fields
-    private AccessBridgeEntryPointsLegacy.PropertyChangeEventHandler _propertyChange;
-    private AccessBridgeEntryPointsLegacy.JavaShutdownEventHandler _javaShutdown;
-    private AccessBridgeEntryPointsLegacy.FocusGainedEventHandler _focusGained;
-    private AccessBridgeEntryPointsLegacy.FocusLostEventHandler _focusLost;
-    private AccessBridgeEntryPointsLegacy.CaretUpdateEventHandler _caretUpdate;
-    private AccessBridgeEntryPointsLegacy.MouseClickedEventHandler _mouseClicked;
-    private AccessBridgeEntryPointsLegacy.MouseEnteredEventHandler _mouseEntered;
-    private AccessBridgeEntryPointsLegacy.MouseExitedEventHandler _mouseExited;
-    private AccessBridgeEntryPointsLegacy.MousePressedEventHandler _mousePressed;
-    private AccessBridgeEntryPointsLegacy.MouseReleasedEventHandler _mouseReleased;
-    private AccessBridgeEntryPointsLegacy.MenuCanceledEventHandler _menuCanceled;
-    private AccessBridgeEntryPointsLegacy.MenuDeselectedEventHandler _menuDeselected;
-    private AccessBridgeEntryPointsLegacy.MenuSelectedEventHandler _menuSelected;
-    private AccessBridgeEntryPointsLegacy.PopupMenuCanceledEventHandler _popupMenuCanceled;
-    private AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeInvisibleEventHandler _popupMenuWillBecomeInvisible;
-    private AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeVisibleEventHandler _popupMenuWillBecomeVisible;
-    private AccessBridgeEntryPointsLegacy.PropertyNameChangeEventHandler _propertyNameChange;
-    private AccessBridgeEntryPointsLegacy.PropertyDescriptionChangeEventHandler _propertyDescriptionChange;
-    private AccessBridgeEntryPointsLegacy.PropertyStateChangeEventHandler _propertyStateChange;
-    private AccessBridgeEntryPointsLegacy.PropertyValueChangeEventHandler _propertyValueChange;
-    private AccessBridgeEntryPointsLegacy.PropertySelectionChangeEventHandler _propertySelectionChange;
-    private AccessBridgeEntryPointsLegacy.PropertyTextChangeEventHandler _propertyTextChange;
-    private AccessBridgeEntryPointsLegacy.PropertyCaretChangeEventHandler _propertyCaretChange;
-    private AccessBridgeEntryPointsLegacy.PropertyVisibleDataChangeEventHandler _propertyVisibleDataChange;
-    private AccessBridgeEntryPointsLegacy.PropertyChildChangeEventHandler _propertyChildChange;
-    private AccessBridgeEntryPointsLegacy.PropertyActiveDescendentChangeEventHandler _propertyActiveDescendentChange;
-    private AccessBridgeEntryPointsLegacy.PropertyTableModelChangeEventHandler _propertyTableModelChange;
-    #endregion
-
-    #region Event delegate fields
-    private AccessBridgeEntryPointsLegacy.PropertyChangeEventHandler _onPropertyChangeKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.JavaShutdownEventHandler _onJavaShutdownKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.FocusGainedEventHandler _onFocusGainedKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.FocusLostEventHandler _onFocusLostKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.CaretUpdateEventHandler _onCaretUpdateKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.MouseClickedEventHandler _onMouseClickedKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.MouseEnteredEventHandler _onMouseEnteredKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.MouseExitedEventHandler _onMouseExitedKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.MousePressedEventHandler _onMousePressedKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.MouseReleasedEventHandler _onMouseReleasedKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.MenuCanceledEventHandler _onMenuCanceledKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.MenuDeselectedEventHandler _onMenuDeselectedKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.MenuSelectedEventHandler _onMenuSelectedKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PopupMenuCanceledEventHandler _onPopupMenuCanceledKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeInvisibleEventHandler _onPopupMenuWillBecomeInvisibleKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeVisibleEventHandler _onPopupMenuWillBecomeVisibleKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PropertyNameChangeEventHandler _onPropertyNameChangeKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PropertyDescriptionChangeEventHandler _onPropertyDescriptionChangeKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PropertyStateChangeEventHandler _onPropertyStateChangeKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PropertyValueChangeEventHandler _onPropertyValueChangeKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PropertySelectionChangeEventHandler _onPropertySelectionChangeKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PropertyTextChangeEventHandler _onPropertyTextChangeKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PropertyCaretChangeEventHandler _onPropertyCaretChangeKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PropertyVisibleDataChangeEventHandler _onPropertyVisibleDataChangeKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PropertyChildChangeEventHandler _onPropertyChildChangeKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PropertyActiveDescendentChangeEventHandler _onPropertyActiveDescendentChangeKeepAliveDelegate;
-    private AccessBridgeEntryPointsLegacy.PropertyTableModelChangeEventHandler _onPropertyTableModelChangeKeepAliveDelegate;
-    #endregion
-
-    #region Event properties
-    public event AccessBridgeEntryPointsLegacy.PropertyChangeEventHandler PropertyChange {
-      add {
-        if (_propertyChange == null) {
-          _onPropertyChangeKeepAliveDelegate = OnPropertyChange;
-          EntryPoints.SetPropertyChange(_onPropertyChangeKeepAliveDelegate);
-        }
-        _propertyChange += value;
-      }
-      remove{
-        _propertyChange -= value;
-        if (_propertyChange == null) {
-          EntryPoints.SetPropertyChange(null);
-          _onPropertyChangeKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.JavaShutdownEventHandler JavaShutdown {
-      add {
-        if (_javaShutdown == null) {
-          _onJavaShutdownKeepAliveDelegate = OnJavaShutdown;
-          EntryPoints.SetJavaShutdown(_onJavaShutdownKeepAliveDelegate);
-        }
-        _javaShutdown += value;
-      }
-      remove{
-        _javaShutdown -= value;
-        if (_javaShutdown == null) {
-          EntryPoints.SetJavaShutdown(null);
-          _onJavaShutdownKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.FocusGainedEventHandler FocusGained {
-      add {
-        if (_focusGained == null) {
-          _onFocusGainedKeepAliveDelegate = OnFocusGained;
-          EntryPoints.SetFocusGained(_onFocusGainedKeepAliveDelegate);
-        }
-        _focusGained += value;
-      }
-      remove{
-        _focusGained -= value;
-        if (_focusGained == null) {
-          EntryPoints.SetFocusGained(null);
-          _onFocusGainedKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.FocusLostEventHandler FocusLost {
-      add {
-        if (_focusLost == null) {
-          _onFocusLostKeepAliveDelegate = OnFocusLost;
-          EntryPoints.SetFocusLost(_onFocusLostKeepAliveDelegate);
-        }
-        _focusLost += value;
-      }
-      remove{
-        _focusLost -= value;
-        if (_focusLost == null) {
-          EntryPoints.SetFocusLost(null);
-          _onFocusLostKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.CaretUpdateEventHandler CaretUpdate {
-      add {
-        if (_caretUpdate == null) {
-          _onCaretUpdateKeepAliveDelegate = OnCaretUpdate;
-          EntryPoints.SetCaretUpdate(_onCaretUpdateKeepAliveDelegate);
-        }
-        _caretUpdate += value;
-      }
-      remove{
-        _caretUpdate -= value;
-        if (_caretUpdate == null) {
-          EntryPoints.SetCaretUpdate(null);
-          _onCaretUpdateKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.MouseClickedEventHandler MouseClicked {
-      add {
-        if (_mouseClicked == null) {
-          _onMouseClickedKeepAliveDelegate = OnMouseClicked;
-          EntryPoints.SetMouseClicked(_onMouseClickedKeepAliveDelegate);
-        }
-        _mouseClicked += value;
-      }
-      remove{
-        _mouseClicked -= value;
-        if (_mouseClicked == null) {
-          EntryPoints.SetMouseClicked(null);
-          _onMouseClickedKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.MouseEnteredEventHandler MouseEntered {
-      add {
-        if (_mouseEntered == null) {
-          _onMouseEnteredKeepAliveDelegate = OnMouseEntered;
-          EntryPoints.SetMouseEntered(_onMouseEnteredKeepAliveDelegate);
-        }
-        _mouseEntered += value;
-      }
-      remove{
-        _mouseEntered -= value;
-        if (_mouseEntered == null) {
-          EntryPoints.SetMouseEntered(null);
-          _onMouseEnteredKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.MouseExitedEventHandler MouseExited {
-      add {
-        if (_mouseExited == null) {
-          _onMouseExitedKeepAliveDelegate = OnMouseExited;
-          EntryPoints.SetMouseExited(_onMouseExitedKeepAliveDelegate);
-        }
-        _mouseExited += value;
-      }
-      remove{
-        _mouseExited -= value;
-        if (_mouseExited == null) {
-          EntryPoints.SetMouseExited(null);
-          _onMouseExitedKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.MousePressedEventHandler MousePressed {
-      add {
-        if (_mousePressed == null) {
-          _onMousePressedKeepAliveDelegate = OnMousePressed;
-          EntryPoints.SetMousePressed(_onMousePressedKeepAliveDelegate);
-        }
-        _mousePressed += value;
-      }
-      remove{
-        _mousePressed -= value;
-        if (_mousePressed == null) {
-          EntryPoints.SetMousePressed(null);
-          _onMousePressedKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.MouseReleasedEventHandler MouseReleased {
-      add {
-        if (_mouseReleased == null) {
-          _onMouseReleasedKeepAliveDelegate = OnMouseReleased;
-          EntryPoints.SetMouseReleased(_onMouseReleasedKeepAliveDelegate);
-        }
-        _mouseReleased += value;
-      }
-      remove{
-        _mouseReleased -= value;
-        if (_mouseReleased == null) {
-          EntryPoints.SetMouseReleased(null);
-          _onMouseReleasedKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.MenuCanceledEventHandler MenuCanceled {
-      add {
-        if (_menuCanceled == null) {
-          _onMenuCanceledKeepAliveDelegate = OnMenuCanceled;
-          EntryPoints.SetMenuCanceled(_onMenuCanceledKeepAliveDelegate);
-        }
-        _menuCanceled += value;
-      }
-      remove{
-        _menuCanceled -= value;
-        if (_menuCanceled == null) {
-          EntryPoints.SetMenuCanceled(null);
-          _onMenuCanceledKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.MenuDeselectedEventHandler MenuDeselected {
-      add {
-        if (_menuDeselected == null) {
-          _onMenuDeselectedKeepAliveDelegate = OnMenuDeselected;
-          EntryPoints.SetMenuDeselected(_onMenuDeselectedKeepAliveDelegate);
-        }
-        _menuDeselected += value;
-      }
-      remove{
-        _menuDeselected -= value;
-        if (_menuDeselected == null) {
-          EntryPoints.SetMenuDeselected(null);
-          _onMenuDeselectedKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.MenuSelectedEventHandler MenuSelected {
-      add {
-        if (_menuSelected == null) {
-          _onMenuSelectedKeepAliveDelegate = OnMenuSelected;
-          EntryPoints.SetMenuSelected(_onMenuSelectedKeepAliveDelegate);
-        }
-        _menuSelected += value;
-      }
-      remove{
-        _menuSelected -= value;
-        if (_menuSelected == null) {
-          EntryPoints.SetMenuSelected(null);
-          _onMenuSelectedKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PopupMenuCanceledEventHandler PopupMenuCanceled {
-      add {
-        if (_popupMenuCanceled == null) {
-          _onPopupMenuCanceledKeepAliveDelegate = OnPopupMenuCanceled;
-          EntryPoints.SetPopupMenuCanceled(_onPopupMenuCanceledKeepAliveDelegate);
-        }
-        _popupMenuCanceled += value;
-      }
-      remove{
-        _popupMenuCanceled -= value;
-        if (_popupMenuCanceled == null) {
-          EntryPoints.SetPopupMenuCanceled(null);
-          _onPopupMenuCanceledKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible {
-      add {
-        if (_popupMenuWillBecomeInvisible == null) {
-          _onPopupMenuWillBecomeInvisibleKeepAliveDelegate = OnPopupMenuWillBecomeInvisible;
-          EntryPoints.SetPopupMenuWillBecomeInvisible(_onPopupMenuWillBecomeInvisibleKeepAliveDelegate);
-        }
-        _popupMenuWillBecomeInvisible += value;
-      }
-      remove{
-        _popupMenuWillBecomeInvisible -= value;
-        if (_popupMenuWillBecomeInvisible == null) {
-          EntryPoints.SetPopupMenuWillBecomeInvisible(null);
-          _onPopupMenuWillBecomeInvisibleKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible {
-      add {
-        if (_popupMenuWillBecomeVisible == null) {
-          _onPopupMenuWillBecomeVisibleKeepAliveDelegate = OnPopupMenuWillBecomeVisible;
-          EntryPoints.SetPopupMenuWillBecomeVisible(_onPopupMenuWillBecomeVisibleKeepAliveDelegate);
-        }
-        _popupMenuWillBecomeVisible += value;
-      }
-      remove{
-        _popupMenuWillBecomeVisible -= value;
-        if (_popupMenuWillBecomeVisible == null) {
-          EntryPoints.SetPopupMenuWillBecomeVisible(null);
-          _onPopupMenuWillBecomeVisibleKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PropertyNameChangeEventHandler PropertyNameChange {
-      add {
-        if (_propertyNameChange == null) {
-          _onPropertyNameChangeKeepAliveDelegate = OnPropertyNameChange;
-          EntryPoints.SetPropertyNameChange(_onPropertyNameChangeKeepAliveDelegate);
-        }
-        _propertyNameChange += value;
-      }
-      remove{
-        _propertyNameChange -= value;
-        if (_propertyNameChange == null) {
-          EntryPoints.SetPropertyNameChange(null);
-          _onPropertyNameChangeKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PropertyDescriptionChangeEventHandler PropertyDescriptionChange {
-      add {
-        if (_propertyDescriptionChange == null) {
-          _onPropertyDescriptionChangeKeepAliveDelegate = OnPropertyDescriptionChange;
-          EntryPoints.SetPropertyDescriptionChange(_onPropertyDescriptionChangeKeepAliveDelegate);
-        }
-        _propertyDescriptionChange += value;
-      }
-      remove{
-        _propertyDescriptionChange -= value;
-        if (_propertyDescriptionChange == null) {
-          EntryPoints.SetPropertyDescriptionChange(null);
-          _onPropertyDescriptionChangeKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PropertyStateChangeEventHandler PropertyStateChange {
-      add {
-        if (_propertyStateChange == null) {
-          _onPropertyStateChangeKeepAliveDelegate = OnPropertyStateChange;
-          EntryPoints.SetPropertyStateChange(_onPropertyStateChangeKeepAliveDelegate);
-        }
-        _propertyStateChange += value;
-      }
-      remove{
-        _propertyStateChange -= value;
-        if (_propertyStateChange == null) {
-          EntryPoints.SetPropertyStateChange(null);
-          _onPropertyStateChangeKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PropertyValueChangeEventHandler PropertyValueChange {
-      add {
-        if (_propertyValueChange == null) {
-          _onPropertyValueChangeKeepAliveDelegate = OnPropertyValueChange;
-          EntryPoints.SetPropertyValueChange(_onPropertyValueChangeKeepAliveDelegate);
-        }
-        _propertyValueChange += value;
-      }
-      remove{
-        _propertyValueChange -= value;
-        if (_propertyValueChange == null) {
-          EntryPoints.SetPropertyValueChange(null);
-          _onPropertyValueChangeKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PropertySelectionChangeEventHandler PropertySelectionChange {
-      add {
-        if (_propertySelectionChange == null) {
-          _onPropertySelectionChangeKeepAliveDelegate = OnPropertySelectionChange;
-          EntryPoints.SetPropertySelectionChange(_onPropertySelectionChangeKeepAliveDelegate);
-        }
-        _propertySelectionChange += value;
-      }
-      remove{
-        _propertySelectionChange -= value;
-        if (_propertySelectionChange == null) {
-          EntryPoints.SetPropertySelectionChange(null);
-          _onPropertySelectionChangeKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PropertyTextChangeEventHandler PropertyTextChange {
-      add {
-        if (_propertyTextChange == null) {
-          _onPropertyTextChangeKeepAliveDelegate = OnPropertyTextChange;
-          EntryPoints.SetPropertyTextChange(_onPropertyTextChangeKeepAliveDelegate);
-        }
-        _propertyTextChange += value;
-      }
-      remove{
-        _propertyTextChange -= value;
-        if (_propertyTextChange == null) {
-          EntryPoints.SetPropertyTextChange(null);
-          _onPropertyTextChangeKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PropertyCaretChangeEventHandler PropertyCaretChange {
-      add {
-        if (_propertyCaretChange == null) {
-          _onPropertyCaretChangeKeepAliveDelegate = OnPropertyCaretChange;
-          EntryPoints.SetPropertyCaretChange(_onPropertyCaretChangeKeepAliveDelegate);
-        }
-        _propertyCaretChange += value;
-      }
-      remove{
-        _propertyCaretChange -= value;
-        if (_propertyCaretChange == null) {
-          EntryPoints.SetPropertyCaretChange(null);
-          _onPropertyCaretChangeKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange {
-      add {
-        if (_propertyVisibleDataChange == null) {
-          _onPropertyVisibleDataChangeKeepAliveDelegate = OnPropertyVisibleDataChange;
-          EntryPoints.SetPropertyVisibleDataChange(_onPropertyVisibleDataChangeKeepAliveDelegate);
-        }
-        _propertyVisibleDataChange += value;
-      }
-      remove{
-        _propertyVisibleDataChange -= value;
-        if (_propertyVisibleDataChange == null) {
-          EntryPoints.SetPropertyVisibleDataChange(null);
-          _onPropertyVisibleDataChangeKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PropertyChildChangeEventHandler PropertyChildChange {
-      add {
-        if (_propertyChildChange == null) {
-          _onPropertyChildChangeKeepAliveDelegate = OnPropertyChildChange;
-          EntryPoints.SetPropertyChildChange(_onPropertyChildChangeKeepAliveDelegate);
-        }
-        _propertyChildChange += value;
-      }
-      remove{
-        _propertyChildChange -= value;
-        if (_propertyChildChange == null) {
-          EntryPoints.SetPropertyChildChange(null);
-          _onPropertyChildChangeKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange {
-      add {
-        if (_propertyActiveDescendentChange == null) {
-          _onPropertyActiveDescendentChangeKeepAliveDelegate = OnPropertyActiveDescendentChange;
-          EntryPoints.SetPropertyActiveDescendentChange(_onPropertyActiveDescendentChangeKeepAliveDelegate);
-        }
-        _propertyActiveDescendentChange += value;
-      }
-      remove{
-        _propertyActiveDescendentChange -= value;
-        if (_propertyActiveDescendentChange == null) {
-          EntryPoints.SetPropertyActiveDescendentChange(null);
-          _onPropertyActiveDescendentChangeKeepAliveDelegate = null;
-        }
-      }
-    }
-    public event AccessBridgeEntryPointsLegacy.PropertyTableModelChangeEventHandler PropertyTableModelChange {
-      add {
-        if (_propertyTableModelChange == null) {
-          _onPropertyTableModelChangeKeepAliveDelegate = OnPropertyTableModelChange;
-          EntryPoints.SetPropertyTableModelChange(_onPropertyTableModelChangeKeepAliveDelegate);
-        }
-        _propertyTableModelChange += value;
-      }
-      remove{
-        _propertyTableModelChange -= value;
-        if (_propertyTableModelChange == null) {
-          EntryPoints.SetPropertyTableModelChange(null);
-          _onPropertyTableModelChangeKeepAliveDelegate = null;
-        }
-      }
-    }
-    #endregion
-
-    #region Event handlers
-    protected virtual void OnPropertyChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string property, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
-      var handler = _propertyChange;
-      if (handler != null)
-        handler(vmid, evt, source, property, oldValue, newValue);
-    }
-    protected virtual void OnJavaShutdown(int vmid) {
-      var handler = _javaShutdown;
-      if (handler != null)
-        handler(vmid);
-    }
-    protected virtual void OnFocusGained(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _focusGained;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnFocusLost(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _focusLost;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnCaretUpdate(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _caretUpdate;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnMouseClicked(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _mouseClicked;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnMouseEntered(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _mouseEntered;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnMouseExited(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _mouseExited;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnMousePressed(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _mousePressed;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnMouseReleased(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _mouseReleased;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnMenuCanceled(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _menuCanceled;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnMenuDeselected(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _menuDeselected;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnMenuSelected(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _menuSelected;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnPopupMenuCanceled(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _popupMenuCanceled;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnPopupMenuWillBecomeInvisible(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _popupMenuWillBecomeInvisible;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnPopupMenuWillBecomeVisible(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _popupMenuWillBecomeVisible;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnPropertyNameChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldName, [MarshalAs(UnmanagedType.LPWStr)]string newName) {
-      var handler = _propertyNameChange;
-      if (handler != null)
-        handler(vmid, evt, source, oldName, newName);
-    }
-    protected virtual void OnPropertyDescriptionChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldDescription, [MarshalAs(UnmanagedType.LPWStr)]string newDescription) {
-      var handler = _propertyDescriptionChange;
-      if (handler != null)
-        handler(vmid, evt, source, oldDescription, newDescription);
-    }
-    protected virtual void OnPropertyStateChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldState, [MarshalAs(UnmanagedType.LPWStr)]string newState) {
-      var handler = _propertyStateChange;
-      if (handler != null)
-        handler(vmid, evt, source, oldState, newState);
-    }
-    protected virtual void OnPropertyValueChange(int vmid, JOBJECT32 evt, JOBJECT32 source, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
-      var handler = _propertyValueChange;
-      if (handler != null)
-        handler(vmid, evt, source, oldValue, newValue);
-    }
-    protected virtual void OnPropertySelectionChange(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _propertySelectionChange;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnPropertyTextChange(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _propertyTextChange;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnPropertyCaretChange(int vmid, JOBJECT32 evt, JOBJECT32 source, int oldPosition, int newPosition) {
-      var handler = _propertyCaretChange;
-      if (handler != null)
-        handler(vmid, evt, source, oldPosition, newPosition);
-    }
-    protected virtual void OnPropertyVisibleDataChange(int vmid, JOBJECT32 evt, JOBJECT32 source) {
-      var handler = _propertyVisibleDataChange;
-      if (handler != null)
-        handler(vmid, evt, source);
-    }
-    protected virtual void OnPropertyChildChange(int vmid, JOBJECT32 evt, JOBJECT32 source, JOBJECT32 oldChild, JOBJECT32 newChild) {
-      var handler = _propertyChildChange;
-      if (handler != null)
-        handler(vmid, evt, source, oldChild, newChild);
-    }
-    protected virtual void OnPropertyActiveDescendentChange(int vmid, JOBJECT32 evt, JOBJECT32 source, JOBJECT32 oldActiveDescendent, JOBJECT32 newActiveDescendent) {
-      var handler = _propertyActiveDescendentChange;
-      if (handler != null)
-        handler(vmid, evt, source, oldActiveDescendent, newActiveDescendent);
-    }
-    protected virtual void OnPropertyTableModelChange(int vmid, JOBJECT32 evt, JOBJECT32 src, [MarshalAs(UnmanagedType.LPWStr)]string oldValue, [MarshalAs(UnmanagedType.LPWStr)]string newValue) {
-      var handler = _propertyTableModelChange;
-      if (handler != null)
-        handler(vmid, evt, src, oldValue, newValue);
-    }
     #endregion
   }
 
