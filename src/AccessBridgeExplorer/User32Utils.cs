@@ -58,7 +58,7 @@ namespace AccessBridgeExplorer {
         }
       }
 
-      wl = (WindowStylesEx)GetWindowLong(handleRef.Handle, GWL.ExStyle);
+      //wl = (WindowStylesEx)GetWindowLong(handleRef.Handle, GWL.ExStyle);
     }
 
     public enum GWL {
