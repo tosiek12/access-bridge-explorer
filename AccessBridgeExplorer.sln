@@ -1,9 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccessBridgeExplorer", "src\AccessBridgeExplorer\AccessBridgeExplorer.csproj", "{902E9F38-EF1A-4ED5-86BC-25881DBDABED}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4B5DE0E1-2F0A-426D-BB12-BECB0F6F8B51} = {4B5DE0E1-2F0A-426D-BB12-BECB0F6F8B51}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{739A6BD0-482B-48A0-97C1-F80A266661B4}"
 	ProjectSection(SolutionItems) = preProject

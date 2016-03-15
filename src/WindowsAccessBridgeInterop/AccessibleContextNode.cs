@@ -853,9 +853,11 @@ namespace WindowsAccessBridgeInterop {
     protected override void AddToolTipProperties(PropertyList list, PropertyOptions options) {
       try {
         var info = GetInfo();
-        list.AddProperty("Name", info.name);
-        list.AddProperty("Description", info.description);
-        list.AddProperty("Name (JAWS algorithm)", GetVirtualAccessibleName());
+        // Limit string sizes to avoid making the tooltip too big
+        const int stringMaxLength = 60;
+        list.AddProperty("Name", LimitStringSize(info.name, stringMaxLength));
+        list.AddProperty("Description", LimitStringSize(info.description, stringMaxLength));
+        list.AddProperty("Name (JAWS algorithm)", LimitStringSize(GetVirtualAccessibleName(), stringMaxLength));
         if ((options & PropertyOptions.ObjectDepth) != 0) {
           var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
           list.AddProperty("Object Depth", depth);
@@ -867,6 +869,15 @@ namespace WindowsAccessBridgeInterop {
       } catch (Exception e) {
         list.AddProperty("Error", e.Message);
       }
+    }
+
+    private static string LimitStringSize(string value, int maxLength) {
+      if (string.IsNullOrEmpty(value))
+        return value;
+      if (value.Length < maxLength)
+        return value;
+
+      return value.Substring(0, maxLength).Trim() + "(...)";
     }
 
     public override bool Equals(AccessibleNode other) {

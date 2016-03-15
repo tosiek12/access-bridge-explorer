@@ -144,6 +144,7 @@
     </Compile>
     <Compile Include="UpdateInfoArgs.cs" />
     <Compile Include="Model\AccessibleNodeModel.cs" />
+    <Compile Include="User32Utils.cs" />
     <Compile Include="WindowsHotKeyHandler.cs" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>

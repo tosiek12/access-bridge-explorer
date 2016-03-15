@@ -63,16 +63,7 @@ namespace AccessBridgeExplorer {
 
     protected override void OnShown(EventArgs e) {
       base.OnShown(e);
-      int wl = GetWindowLong(this.Handle, GWL.ExStyle);
-
-      // See https://msdn.microsoft.com/en-us/library/windows/desktop/ms632599(v=vs.85).aspx#layered
-      // However, if the layered window has the WS_EX_TRANSPARENT extended
-      // window style, the shape of the layered window will be ignored and the
-      // mouse events will be passed to other windows underneath the layered
-      // window.
-      wl = wl | (int)WS_EX.Layered | (int)WS_EX.Transparent | (int)WS_EX.ToolWindow;
-      SetWindowLong(this.Handle, GWL.ExStyle, wl);
-      SetLayeredWindowAttributes(this.Handle, 0, 230, LWA.Alpha);
+      User32Utils.SetTransparentLayeredWindowStyle(new HandleRef(this, this.Handle), 230);
     }
 
     protected override bool ShowWithoutActivation {
