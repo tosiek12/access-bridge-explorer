@@ -18,8 +18,8 @@ using System.Runtime.InteropServices;
 
 namespace WindowsAccessBridgeInterop {
   /// <summary>
-  /// Wrapper around a 64-bit integer. This makes code slightly more typesafe
-  /// than using Int64 values directly.
+  /// Wrapper around a 32-bit integer. This makes code slightly more typesafe
+  /// than using Int32 values directly.
   /// </summary>
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

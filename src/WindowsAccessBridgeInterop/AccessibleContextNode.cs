@@ -252,7 +252,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     /// <summary>
-    /// Experimental implementation using <see cref="IAccessBridgeFunctions.GetAccessibleContextAt"/>
+    /// Experimental implementation using <see cref="AccessBridgeFunctions.GetAccessibleContextAt"/>
     /// </summary>
     private NodePath GetNodePathAtUsingAccessBridge(Point screenPoint) {
       JavaObjectHandle childHandle;
@@ -881,7 +881,7 @@ namespace WindowsAccessBridgeInterop {
 
     /// <summary>
     /// Call the custom function <see
-    /// cref="IAccessBridgeFunctions.GetVirtualAccessibleName"/> to retrieve the
+    /// cref="AccessBridgeFunctions.GetVirtualAccessibleName"/> to retrieve the
     /// spoken name of an accessible component supposedly according to the
     /// algorithm used by the Jaws screen reader.
     /// </summary>

@@ -13,10 +13,10 @@
 // limitations under the License.
 
 namespace WindowsAccessBridgeInterop {
-  partial class AccessBridgeFunctionsLegacy {
+  partial class AccessBridgeNativeFunctionsLegacy {
     private readonly AccessBridgeEntryPointsLegacy _nativeEntryPoints;
 
-    public AccessBridgeFunctionsLegacy(AccessBridgeEntryPointsLegacy nativeEntryPoints) {
+    public AccessBridgeNativeFunctionsLegacy(AccessBridgeEntryPointsLegacy nativeEntryPoints) {
       _nativeEntryPoints = nativeEntryPoints;
     }
 

@@ -15,10 +15,10 @@
 using System;
 
 namespace WindowsAccessBridgeInterop {
-  partial class AccessBridgeEventsLegacy {
+  partial class AccessBridgeNativeEventsLegacy {
     private readonly AccessBridgeEntryPointsLegacy _entryPoints;
 
-    public AccessBridgeEventsLegacy(AccessBridgeEntryPointsLegacy entryPoints) {
+    public AccessBridgeNativeEventsLegacy(AccessBridgeEntryPointsLegacy entryPoints) {
       _entryPoints = entryPoints;
     }
 
@@ -26,7 +26,7 @@ namespace WindowsAccessBridgeInterop {
       get { return _entryPoints; }
     }
 
-    public void Dispose() {
+    public override void Dispose() {
       DetachForwarders();
     }
 

@@ -28,8 +28,8 @@ namespace WindowsAccessBridgeInterop {
   /// </summary>
   public class AccessBridge : IDisposable {
     private AccessBridgeLibrary _library;
-    private IAccessBridgeFunctions _functions;
-    private IAccessBridgeEvents _events;
+    private AccessBridgeFunctions _functions;
+    private AccessBridgeEvents _events;
     private bool _disposed;
 
     public AccessBridge() {
@@ -38,7 +38,7 @@ namespace WindowsAccessBridgeInterop {
       TextLineLengthLimit = 1024;
     }
 
-    public IAccessBridgeFunctions Functions {
+    public AccessBridgeFunctions Functions {
       get {
         ThrowIfDisposed();
         Initialize();
@@ -46,7 +46,7 @@ namespace WindowsAccessBridgeInterop {
       }
     }
 
-    public IAccessBridgeEvents Events {
+    public AccessBridgeEvents Events {
       get {
         ThrowIfDisposed();
         Initialize();
@@ -91,8 +91,8 @@ namespace WindowsAccessBridgeInterop {
       var library = LoadLibrary();
       if (library.IsLegacy) {
         var libraryFunctions = LoadEntryPointsLegacy(library);
-        var functions = new AccessBridgeFunctionsLegacy(libraryFunctions);
-        var events = new AccessBridgeEventsLegacy(libraryFunctions);
+        var functions = new AccessBridgeNativeFunctionsLegacy(libraryFunctions);
+        var events = new AccessBridgeNativeEventsLegacy(libraryFunctions);
 
         // Everything is initialized correctly, save to member variables.
         _library = library;
@@ -100,8 +100,8 @@ namespace WindowsAccessBridgeInterop {
         _events = events;
       } else {
         var libraryFunctions = LoadEntryPoints(library);
-        var functions = new AccessBridgeFunctions(libraryFunctions);
-        var events = new AccessBridgeEvents(libraryFunctions);
+        var functions = new AccessBridgeNativeFunctions(libraryFunctions);
+        var events = new AccessBridgeNativeEvents(libraryFunctions);
 
         // Everything is initialized correctly, save to member variables.
         _library = library;

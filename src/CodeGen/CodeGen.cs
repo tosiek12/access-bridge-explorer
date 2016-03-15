@@ -151,10 +151,10 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Common (i.e. legacy and non-legacy) abstraction over <code>WindowsAccessBridge DLL</code> functions");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public interface IAccessBridgeFunctions {{");
+      sourceWriter.WriteLine("public abstract partial class AccessBridgeFunctions {{");
       sourceWriter.IncIndent();
       foreach (var function in model.Functions) {
-        WriteFunction(model, sourceWriter, function);
+        WriteApplicationFunction(model, sourceWriter, function);
       }
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
@@ -166,11 +166,13 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Common (i.e. legacy and non-legacy)  abstraction over <code>WindowsAccessBridge DLL</code> events");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public interface IAccessBridgeEvents : IDisposable {{");
+      sourceWriter.WriteLine("public abstract partial class AccessBridgeEvents : IDisposable {{");
       sourceWriter.IncIndent();
       foreach (var eventDefinition in model.Events) {
-        WriteEvent(sourceWriter, eventDefinition);
+        WriteApplicationEvent(sourceWriter, eventDefinition);
       }
+      sourceWriter.WriteLine();
+      sourceWriter.WriteLine("public abstract void Dispose();");
       sourceWriter.DecIndent();
       sourceWriter.WriteLine("}}");
       sourceWriter.WriteLine();
@@ -178,7 +180,7 @@ namespace CodeGen {
 
     private void WriteApplicationEventHandlerTypes(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
-      sourceWriter.WriteLine("#region Delegate types for events defined in IAccessBridgeEvents");
+      sourceWriter.WriteLine("#region Delegate types for events defined in AccessBridgeEvents");
       foreach (var eventDefinition in model.Events) {
         sourceWriter.WriteLine("/// <summary>Delegate type for <code>{0}</code> event</summary>", eventDefinition.Name);
         WriteEventHandlerType(model, sourceWriter, eventDefinition);
@@ -191,10 +193,10 @@ namespace CodeGen {
     private void WriteApplicationFunctionsClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
       sourceWriter.WriteLine("/// <summary>");
-      sourceWriter.WriteLine("/// Implementation of <see cref=\"IAccessBridgeFunctions\"/> using <code>WindowsAccessBridge DLL</code>", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("/// Implementation of <see cref=\"AccessBridgeFunctions\"/> using <code>WindowsAccessBridge DLL</code>", GetLegacySuffix(sourceWriter));
       sourceWriter.WriteLine("/// entry points implemented in <see cref=\"AccessBridgeEntryPoints{0}\"/>", GetLegacySuffix(sourceWriter));
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("internal partial class AccessBridgeFunctions{0} : IAccessBridgeFunctions {{", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("internal partial class AccessBridgeNativeFunctions{0} : AccessBridgeFunctions {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine();
@@ -234,9 +236,9 @@ namespace CodeGen {
     private void WriteApplicationEventsClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = false;
       sourceWriter.WriteLine("/// <summary>");
-      sourceWriter.WriteLine("/// Implementation of <see cref=\"IAccessBridgeEvents\"/> over {0} WindowsAccessBridge entry points", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("/// Implementation of <see cref=\"AccessBridgeEvents\"/> over {0} WindowsAccessBridge entry points", GetLegacySuffix(sourceWriter));
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("internal partial class AccessBridgeEvents{0} : IAccessBridgeEvents {{", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("internal partial class AccessBridgeNativeEvents{0} : AccessBridgeEvents {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine("#region Event fields");
@@ -343,16 +345,21 @@ namespace CodeGen {
         return sourceWriter.IsLegacy ? "Legacy" : ""; 
     }
 
-    private void WriteFunction(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition definition) {
+    private void WriteApplicationFunction(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition definition) {
       sourceWriter.WriteIndent();
+      sourceWriter.Write("public abstract ");
       WriteFunctionSignature(model, sourceWriter, definition);
       sourceWriter.Write(";");
       sourceWriter.WriteLine();
     }
 
+    private void WriteApplicationEvent(SourceCodeWriter sourceWriter, EventDefinition eventDefinition) {
+      sourceWriter.WriteLine("public abstract event {0}EventHandler {0};", eventDefinition.Name);
+    }
+
     private void WriteApplicationFunctionImplementation(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition definition) {
       sourceWriter.WriteIndent();
-      sourceWriter.Write("public ");
+      sourceWriter.Write("public override ");
       WriteFunctionSignature(model, sourceWriter, definition);
       sourceWriter.Write(" {{");
       sourceWriter.WriteLine();
@@ -716,7 +723,7 @@ namespace CodeGen {
     }
 
     private void WriteApplicationEventProperty(SourceCodeWriter sourceWriter, EventDefinition definition) {
-      sourceWriter.WriteLine("public event {0}EventHandler {0} {{", definition.Name);
+      sourceWriter.WriteLine("public override event {0}EventHandler {0} {{", definition.Name);
       sourceWriter.IncIndent();
       sourceWriter.WriteLine("add {{");
       sourceWriter.IncIndent();
@@ -849,10 +856,6 @@ namespace CodeGen {
       sourceWriter.WriteType(parameterDefinition.Type);
       sourceWriter.Write(" ");
       sourceWriter.Write(parameterDefinition.Name);
-    }
-
-    private void WriteEvent(SourceCodeWriter sourceWriter, EventDefinition eventDefinition) {
-      sourceWriter.WriteLine("event {0}EventHandler {0};", eventDefinition.Name);
     }
 
     private void WriteEventHandlerType(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, EventDefinition definition) {

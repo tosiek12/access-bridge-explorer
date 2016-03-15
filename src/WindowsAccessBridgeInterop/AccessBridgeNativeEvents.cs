@@ -15,6 +15,23 @@
 using System;
 
 namespace WindowsAccessBridgeInterop {
-  partial class AccessBridgeEvents {
+  partial class AccessBridgeNativeEvents {
+    private readonly AccessBridgeEntryPoints _entryPoints;
+
+    public AccessBridgeNativeEvents(AccessBridgeEntryPoints entryPoints) {
+      _entryPoints = entryPoints;
+    }
+
+    public AccessBridgeEntryPoints EntryPoints {
+      get { return _entryPoints; }
+    }
+
+    public override void Dispose() {
+      DetachForwarders();
+    }
+
+    private JavaObjectHandle Wrap(int vmid, JOBJECT64 handle) {
+      return new JavaObjectHandle(vmid, handle);
+    }
   }
 }
