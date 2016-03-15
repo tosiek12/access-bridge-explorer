@@ -14,8 +14,8 @@
 
 using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Text;
+using WindowsAccessBridgeInterop.Win32;
 
 namespace WindowsAccessBridgeInterop {
   /// <summary>
@@ -78,7 +78,7 @@ namespace WindowsAccessBridgeInterop {
       // See http://blogs.msdn.com/b/oldnewthing/archive/2010/12/30/10110077.aspx
       // Multi monitor notes:
       // https://msdn.microsoft.com/en-us/library/windows/desktop/dd162827(v=vs.85).aspx
-      var hwnd = WindowFromPoint(screenPoint);
+      var hwnd = NativeMethods.WindowFromPoint(screenPoint);
       if (hwnd != _hWnd)
         return null;
 
@@ -98,9 +98,5 @@ namespace WindowsAccessBridgeInterop {
     public override string ToString() {
       return string.Format("AccessibleWindowNode(hwnd={0})", _hWnd);
     }
-
-    [DllImport("user32.dll")]
-    static extern IntPtr WindowFromPoint(Point p);
   }
-
 }

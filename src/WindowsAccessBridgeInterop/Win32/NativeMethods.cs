@@ -13,10 +13,14 @@
 // limitations under the License.
 
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace WindowsAccessBridgeInterop.Win32 {
   public static class NativeMethods {
+    [DllImport("user32.dll")]
+    public static extern IntPtr WindowFromPoint(Point p);
+
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
