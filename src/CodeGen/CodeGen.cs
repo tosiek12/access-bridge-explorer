@@ -63,8 +63,8 @@ namespace CodeGen {
             WriteApplicationEventsClass(model, sourceWriter);
 
             sourceWriter.IsNativeTypes = true;
-            WriteLibraryFunctionsClass(model, sourceWriter);
-            WriteLibraryEventsClass(model, sourceWriter);
+            WriteEntryPointsClass(model, sourceWriter);
+            WriteNativeEventsForwarderClass(model, sourceWriter);
             WriteLibraryStructs(model, sourceWriter, writer);
             WriteLibraryClasses(model, writer, sourceWriter);
             sourceWriter.EndNamespace();
@@ -280,7 +280,7 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteLibraryFunctionsClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
+    private void WriteEntryPointsClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = true;
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Container of WindowAccessBridge DLL entry points");
@@ -333,7 +333,7 @@ namespace CodeGen {
         return sourceWriter.IsLegacy ? "Legacy" : ""; 
     }
 
-    private void WriteLibraryEventsClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
+    private void WriteNativeEventsForwarderClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter) {
       sourceWriter.IsNativeTypes = true;
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Native library event handlers implementation");
@@ -714,20 +714,8 @@ namespace CodeGen {
       sourceWriter.WriteLine("[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]");
       sourceWriter.WriteIndent();
       sourceWriter.Write("public delegate ");
-      sourceWriter.WriteType(function.ReturnType);
-      sourceWriter.Write(" ");
-      sourceWriter.Write("{0}FP", function.Name);
-      sourceWriter.Write("(");
-      bool first = true;
-      foreach (var p in function.Parameters) {
-        if (first)
-          first = false;
-        else {
-          sourceWriter.Write(", ");
-        }
-        WriteParameter(model, sourceWriter, p);
-      }
-      sourceWriter.Write(");");
+      WriteFunctionSignature(model, sourceWriter, function, string.Format("{0}FP", function.Name));
+      sourceWriter.Write(";");
       sourceWriter.WriteLine();
     }
 
@@ -964,14 +952,14 @@ namespace CodeGen {
 
     private void WriteLibraryStruct(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, StructDefinition definition) {
       WriteStructLayoutAttributeLine(sourceWriter);
-      sourceWriter.WriteLine("internal struct {0}Native{1} {{", definition.Name, GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("internal struct {0} {{", sourceWriter.GetTypeName(definition.Name));
       WriteFields(model, sourceWriter, definition);
       sourceWriter.WriteLine("}}");
     }
 
     private void WriteLibraryClass(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, ClassDefinition definition) {
       WriteStructLayoutAttributeLine(sourceWriter);
-      sourceWriter.WriteLine("internal class {0}Native{1} {{", definition.Name, GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("internal class {0} {{", sourceWriter.GetTypeName(definition.Name));
       WriteFields(model, sourceWriter, definition);
       sourceWriter.WriteLine("}}");
     }
@@ -980,7 +968,7 @@ namespace CodeGen {
       if (!model.StructNeedsWrapper(definition)) {
         WriteStructLayoutAttributeLine(sourceWriter);
       }
-      sourceWriter.WriteLine("public struct {0} {{", definition.Name);
+      sourceWriter.WriteLine("public struct {0} {{", sourceWriter.GetTypeName(definition.Name));
       WriteFields(model, sourceWriter, definition);
       sourceWriter.WriteLine("}}");
     }
@@ -989,7 +977,7 @@ namespace CodeGen {
       if (!model.ClassNeedsWrapper(definition)) {
         WriteStructLayoutAttributeLine(sourceWriter);
       }
-      sourceWriter.WriteLine("public class {0} {{", definition.Name);
+      sourceWriter.WriteLine("public class {0} {{", sourceWriter.GetTypeName(definition.Name));
       WriteFields(model, sourceWriter, definition);
       sourceWriter.WriteLine("}}");
     }
