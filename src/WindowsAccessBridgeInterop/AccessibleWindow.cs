@@ -34,8 +34,8 @@ namespace WindowsAccessBridgeInterop {
     }
 
     protected override void AddToolTipProperties(PropertyList list, PropertyOptions options) {
-      list.AddProperty("WindowHandle", _hWnd);
       base.AddToolTipProperties(list, options);
+      list.AddProperty("WindowHandle", _hWnd);
     }
 
     protected override void AddProperties(PropertyList list, PropertyOptions options) {

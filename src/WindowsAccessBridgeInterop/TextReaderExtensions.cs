@@ -21,21 +21,36 @@ namespace WindowsAccessBridgeInterop {
   /// Extension methods over a <see cref="TextReader"/> implementation.
   /// </summary>
   public static class TextReaderExtensions {
-    public struct LineData {
+    public class LineData {
       /// <summary>
       /// The line offset relative to the beginning of the stream.
       /// </summary>
       public int Offset { get; set; }
+
       /// <summary>
       /// The line number, 0-based.
       /// </summary>
       public int Number { get; set; }
+
       /// <summary>
       /// The text contents of the line, including the <code>new line</code>
       /// terminator, except if the line is longer than the specified maximum
       /// length.
       /// </summary>
       public string Text { get; set; }
+
+      /// <summary>
+      /// Specifies if this line is a continuation information from a previous
+      /// line that was too long too fit into a single instance.
+      /// </summary>
+      public bool Continuation { get; set; }
+
+      /// <summary>
+      /// Specifies if this line is too long to fit in a single instance.
+      /// The next entry will have the <see cref="Continuation"/> property set
+      /// to <code>true</code>.
+      /// </summary>
+      public bool Incomplete { get; set; }
     }
 
     /// <summary>
@@ -55,19 +70,28 @@ namespace WindowsAccessBridgeInterop {
     public static IEnumerable<LineData> ReadFullLines(this TextReader reader, int maxLineLength) {
       var index = 0;
       var lineNumber = 0;
+      var continuation = false;
       while (true) {
         var lineOffset = index;
-        var line = reader.ReadFullLine(maxLineLength);
-        if (line == null)
+        var lineText = reader.ReadFullLine(maxLineLength);
+        if (lineText == null)
           yield break;
+
+        var complete = lineText[lineText.Length - 1] == '\n';
         yield return new LineData {
           Offset = lineOffset,
           Number = lineNumber,
-          Text = line
+          Text = lineText,
+          Continuation = continuation,
+          Incomplete = !complete
         };
-        index += line.Length;
-        if (line[line.Length - 1] == '\n')
+        index += lineText.Length;
+        if (complete) {
+          continuation = false;
           lineNumber++;
+        } else {
+          continuation = true;
+        }
       }
     }
 

@@ -35,7 +35,7 @@ namespace WindowsAccessBridgeInterop {
     public AccessBridge() {
       CollectionSizeLimit = 100;
       TextLineCountLimit = 200;
-      TextLineLengthLimit = 1024;
+      TextLineLengthLimit = 200;
     }
 
     public AccessBridgeFunctions Functions {

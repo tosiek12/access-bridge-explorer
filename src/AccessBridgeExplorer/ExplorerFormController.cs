@@ -44,7 +44,7 @@ namespace AccessBridgeExplorer {
 
       _view.EventsMenu.Enabled = false;
       _view.PropertiesMenu.Enabled = false;
-      _view.EnumerationSizesMenu.Enabled = false;
+      _view.LimitCollectionSizesMenu.Enabled = false;
 
       _view.AccessibilityTree.AfterSelect += AccessibilityTreeAfterSelect;
       _view.AccessibilityTree.BeforeExpand += AccessibilityTreeBeforeExpand;
@@ -92,10 +92,12 @@ namespace AccessBridgeExplorer {
       _accessBridge.Initilized += (sender, args) => {
         CreateEventMenuItems();
         CreatePropertyOptionsMenuItems();
-        CreateEnumerationSizesMenuItems();
+        CreateLimitCollectionSizesMenuItems();
+        CreateLimitTextLineCountMenuItems();
+        CreateLimitTextLineLengthsMenuItems();
         _view.EventsMenu.Enabled = true;
         _view.PropertiesMenu.Enabled = true;
-        _view.EnumerationSizesMenu.Enabled = true;
+        _view.LimitCollectionSizesMenu.Enabled = true;
         LogMessage("Ready!");
       };
 
@@ -242,35 +244,67 @@ namespace AccessBridgeExplorer {
       };
     }
 
-    private void CreateEnumerationSizesMenuItems() {
+    private void CreateLimitCollectionSizesMenuItems() {
       int index = 0;
-      foreach (var size in new int[] {10, 20, 50, 100, 250, 500, 1000, 2000}) {
-        CreateEnumerationSizesMenuItem(size, index);
+      foreach (var size in new int[] { 10, 20, 50, 100, 250, 500, 1000, 2000 }) {
+        char mnemonicCharacter = (char)('A' + index);
+        var text = string.Format("&{0} - {1} elements", mnemonicCharacter, size);
+        CreateLimitSizeItem(_view.LimitCollectionSizesMenu, text, index, size,
+          _accessBridge.CollectionSizeLimit,
+          x => {
+            _accessBridge.CollectionSizeLimit = x;
+          });
         index++;
       }
     }
 
-    private void CreateEnumerationSizesMenuItem(int size, int index) {
-      // Create menu item (fixed font for alignment)
+    private void CreateLimitTextLineCountMenuItems() {
+      int index = 0;
+      foreach (var size in new int[] {100, 200, 300, 500, 1000, 2000, 5000}) {
+        char mnemonicCharacter = (char)('A' + index);
+        var text = string.Format("&{0} - {1} lines", mnemonicCharacter, size);
+        CreateLimitSizeItem(_view.LimitTextLineCountMenu, text, index, size,
+          _accessBridge.TextLineCountLimit,
+          x => {
+            _accessBridge.TextLineCountLimit = x;
+          });
+        index++;
+      }
+    }
+
+    private void CreateLimitTextLineLengthsMenuItems() {
+      int index = 0;
+      foreach (var size in new int[] { 40, 80, 120, 160, 200, 300, 400, 500, 1000 }) {
+        char mnemonicCharacter = (char)('A' + index);
+        var text = string.Format("&{0} - {1} characters", mnemonicCharacter, size);
+        CreateLimitSizeItem(_view.LimitTextLineLengthsMenu, text, index, size,
+          _accessBridge.TextLineLengthLimit,
+          x => {
+            _accessBridge.TextLineLengthLimit = x;
+          });
+        index++;
+      }
+    }
+
+    private static void CreateLimitSizeItem(ToolStripMenuItem menu, string text, int index, int size, int defaultSize, Action<int> setter) {
       var item = new ToolStripMenuItem();
-      char mnemonicCharacter = (char)(index < 10 ? '0' + index : 'A' + index - 10);
-      item.Text = string.Format("&{0} - {1}", mnemonicCharacter, size);
+      item.Text = text;
       item.CheckOnClick = false;
-      item.CheckState = size == 100  ? CheckState.Checked : CheckState.Unchecked;
-      _view.EnumerationSizesMenu.DropDownItems.Add(item);
+      item.CheckState = size == defaultSize ? CheckState.Checked : CheckState.Unchecked;
+      menu.DropDownItems.Add(item);
 
       // Create click handler
       item.Click += (sender, args) => {
         if (item.Checked)
           return;
 
-        for(var i = 0; i < _view.EnumerationSizesMenu.DropDownItems.Count; i++) {
-          var subItem = (ToolStripMenuItem)_view.EnumerationSizesMenu.DropDownItems[i];
+        for (var i = 0; i < menu.DropDownItems.Count; i++) {
+          var subItem = (ToolStripMenuItem)menu.DropDownItems[i];
           if (subItem.Checked)
             subItem.Checked = false;
         }
         item.Checked = true;
-        _accessBridge.CollectionSizeLimit = size;
+        setter(size);
       };
     }
 

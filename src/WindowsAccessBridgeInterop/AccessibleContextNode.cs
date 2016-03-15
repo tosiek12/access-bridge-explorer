@@ -675,17 +675,16 @@ namespace WindowsAccessBridgeInterop {
       if ((options & PropertyOptions.AccessibleText) != 0) {
         var info = GetInfo();
         if (info.accessibleText != 0) {
-          int x = 0;
-          int y = 0;
-
           var group = list.AddGroup("Accessible Text");
           group.Expanded = false;
           group.LoadChildren = () => {
+            var point = new Point(0, 0);
+
             AccessibleTextInfo textInfo;
-            if (Succeeded(AccessBridge.Functions.GetAccessibleTextInfo(JvmId, _ac, out textInfo, x, y))) {
+            if (Succeeded(AccessBridge.Functions.GetAccessibleTextInfo(JvmId, _ac, out textInfo, point.X, point.Y))) {
               group.AddProperty("Character count", textInfo.charCount);
               group.AddProperty("Character index of caret", textInfo.caretIndex);
-              group.AddProperty(string.Format("Character index of point ({0}, {1})", x, y), textInfo.indexAtPoint);
+              group.AddProperty(string.Format("Character index of point ({0}, {1})", point.X, point.Y), textInfo.indexAtPoint);
 
               AccessibleTextSelectionInfo textSelection;
               if (Succeeded(AccessBridge.Functions.GetAccessibleTextSelectionInfo(JvmId, _ac, out textSelection))) {
@@ -700,7 +699,7 @@ namespace WindowsAccessBridgeInterop {
                 AddTextAttributeAtIndex(caretGroup.Children, textInfo.caretIndex);
               };
 
-              var pointGroup = group.AddGroup(string.Format("Text attributes at point ({0}, {1})", x, y));
+              var pointGroup = group.AddGroup(string.Format("Text attributes at point ({0}, {1})", point.X, point.Y));
               pointGroup.Expanded = false;
               pointGroup.LoadChildren = () => {
                 AddTextAttributeAtIndex(pointGroup.Children, textInfo.indexAtPoint);
@@ -710,11 +709,15 @@ namespace WindowsAccessBridgeInterop {
               textGroup.Expanded = false;
               textGroup.LoadChildren = () => {
                 var reader = new AccessibleTextReader(this, textInfo.charCount);
-                foreach (var lineData in reader.ReadFullLines(AccessBridge.TextLineLengthLimit).Take(AccessBridge.TextLineCountLimit)) {
+                var lines = reader
+                  .ReadFullLines(AccessBridge.TextLineLengthLimit)
+                  .Where(x => !x.Continuation)
+                  .Take(AccessBridge.TextLineCountLimit);
+                foreach (var lineData in lines) {
                   var lineEndOffset = lineData.Offset + lineData.Text.Length - 1;
-                  textGroup.AddProperty(
-                    string.Format("Line {0} [{1}, {2}]", lineData.Number + 1, lineData.Offset, lineEndOffset),
-                    MakePrintable(lineData.Text));
+                  var name = string.Format("Line {0} [{1}, {2}]", lineData.Number + 1, lineData.Offset, lineEndOffset);
+                  var value = MakePrintable(lineData.Text) + (lineData.Incomplete ? "..." : "");
+                  textGroup.AddProperty(name, value);
                 }
               };
             }
@@ -877,7 +880,7 @@ namespace WindowsAccessBridgeInterop {
       if (value.Length < maxLength)
         return value;
 
-      return value.Substring(0, maxLength).Trim() + "(...)";
+      return value.Substring(0, maxLength).Trim() + "...";
     }
 
     public override bool Equals(AccessibleNode other) {
