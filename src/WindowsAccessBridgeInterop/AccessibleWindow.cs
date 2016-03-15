@@ -34,13 +34,24 @@ namespace WindowsAccessBridgeInterop {
     }
 
     protected override void AddToolTipProperties(PropertyList list, PropertyOptions options) {
-      list.AddProperty("Window", _hWnd);
+      list.AddProperty("WindowHandle", _hWnd);
       base.AddToolTipProperties(list, options);
     }
 
     protected override void AddProperties(PropertyList list, PropertyOptions options) {
       list.AddProperty("WindowHandle", _hWnd);
       base.AddProperties(list, options);
+      var group = list.AddGroup("Focused element");
+      group.Expanded = false;
+      group.LoadChildren = () => {
+        int vmid;
+        JavaObjectHandle ac;
+        if (Failed(AccessBridge.Functions.GetAccessibleContextWithFocus(_hWnd, out vmid, out ac))) {
+          group.AddProperty("<Error>", "Error retrieving focused element");
+        } else {
+          AddSubContextProperties(group.Children, options, ac);
+        }
+      };
     }
 
     public string GetDisplaySortString() {

@@ -821,12 +821,12 @@ namespace WindowsAccessBridgeInterop {
       group.AddProperty("Column count", tableInfo.columnCount);
     }
 
-    private void AddSubContextProperties(PropertyList list, PropertyOptions options, JavaObjectHandle contextHandle) {
+    protected void AddSubContextProperties(PropertyList list, PropertyOptions options, JavaObjectHandle contextHandle) {
       var contextNode = new AccessibleContextNode(AccessBridge, contextHandle);
       AddSubContextProperties(list, options, contextNode);
     }
 
-    private void AddSubContextProperties(PropertyList list, PropertyOptions options, AccessibleContextNode contextNode) {
+    protected void AddSubContextProperties(PropertyList list, PropertyOptions options, AccessibleContextNode contextNode) {
       contextNode.AddSubContextProperties(list, options);
     }
 
@@ -893,11 +893,11 @@ namespace WindowsAccessBridgeInterop {
       return sb.ToString();
     }
 
-    private static bool Failed(bool accessBridgeReturnValue) {
+    protected static bool Failed(bool accessBridgeReturnValue) {
       return accessBridgeReturnValue == false;
     }
 
-    private static bool Succeeded(bool accessBridgeReturnValue) {
+    protected static bool Succeeded(bool accessBridgeReturnValue) {
       return !Failed(accessBridgeReturnValue);
     }
 
