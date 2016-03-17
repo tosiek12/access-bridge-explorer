@@ -51,6 +51,7 @@
     <Compile Include="AccessibleNode.cs" />
     <Compile Include="AccessibleTextReader.cs" />
     <Compile Include="AccessibleWindow.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Generated.cs" />
     <Compile Include="Generated.Internal.cs" />
     <Compile Include="Generated.Internal.Legacy.cs" />

@@ -66,6 +66,8 @@ namespace AccessBridgeExplorer {
         PropertyOptions.AccessibleValue |
         PropertyOptions.AccessibleSelection |
         PropertyOptions.AccessibleTable |
+        PropertyOptions.AccessibleTableCells |
+        PropertyOptions.AccessibleTableCellsSelect |
         PropertyOptions.AccessibleActions;
     }
 

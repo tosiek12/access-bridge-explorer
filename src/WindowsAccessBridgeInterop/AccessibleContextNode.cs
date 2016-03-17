@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -124,19 +123,6 @@ namespace WindowsAccessBridgeInterop {
 
     public AccessibleNode FetchChildNode(int i) {
       ThrowIfDisposed();
-#if false
-      var nodeInfo = _info.Value;
-      if ((nodeInfo.accessibleInterfaces & AccessibleInterfaces.cAccessibleTableInterface) != 0) {
-        // Note: The default implementation for table is incorrect due to an
-        // defect in JavaAccessBridge: instead of returning the
-        // AccessbleJTableCell, the AccessBridge implemenentation, for some
-        // reason, has a hard-coded reference to JTable and calls
-        // "getCellRendered" directly instead of calling
-        // AccessibleContext.GetAccessibleChild(). So we need to call a custom
-        // method for tables.
-        return FetchTableChildNode(i);
-      }
-#endif
 
       var childhandle = AccessBridge.Functions.GetAccessibleChildFromContext(JvmId, _ac, i);
       if (childhandle.IsNull) {
@@ -148,32 +134,6 @@ namespace WindowsAccessBridgeInterop {
         result.SetManagedDescendant(true);
       }
       return result;
-    }
-
-    /// <summary>
-    /// The only way we found to get the right info for a cell in a table is to
-    /// set the selection to a single cell, then to get the accessible context
-    /// for the selection. A side effect of this, of course, is that the table
-    /// selection will change in the Java Application.
-    /// </summary>
-    private AccessibleNode FetchTableChildNode(int childIndex) {
-      // Get the current selection, just in case it contains "childIndex".
-      var childNode = FindNodeInSelection(childIndex);
-      if (childNode != null)
-        return childNode;
-
-      // Note that if the table only supports entire row selection, this call
-      // may end up selecting an entire row.
-      AccessBridge.Functions.ClearAccessibleSelectionFromContext(JvmId, _ac);
-      AccessBridge.Functions.AddAccessibleSelectionFromContext(JvmId, _ac, childIndex);
-      childNode = FindNodeInSelection(childIndex);
-      if (childNode != null)
-        return childNode;
-
-      var row = AccessBridge.Functions.GetAccessibleTableRow(JvmId, _ac, childIndex);
-      var col = AccessBridge.Functions.GetAccessibleTableColumn(JvmId, _ac, childIndex);
-
-      throw new ApplicationException(string.Format("Error retrieving accessible context for cell [{0},{1}]", row, col));
     }
 
     /// <summary>
@@ -251,6 +211,7 @@ namespace WindowsAccessBridgeInterop {
       return base.GetNodePathAt(screenPoint);
     }
 
+#if false
     /// <summary>
     /// Experimental implementation using <see cref="AccessBridgeFunctions.GetAccessibleContextAt"/>
     /// </summary>
@@ -280,6 +241,7 @@ namespace WindowsAccessBridgeInterop {
       }
       return path;
     }
+#endif
 
     public override string GetTitle() {
       var info = GetInfo();
@@ -556,119 +518,191 @@ namespace WindowsAccessBridgeInterop {
             if (Failed(AccessBridge.Functions.GetAccessibleTableInfo(JvmId, _ac, out tableInfo))) {
               group.AddProperty("Error", "Error retrieving table info");
             } else {
-              AddTableInfo(group, tableInfo);
+              AddTableInfo(group, options, tableInfo);
 
-#if false
-            int trow = AccessBridge.Functions.GetAccessibleTableRow(JvmId, tableInfo.AccessibleTable, 3);
-            appendToBuffer(buffer, bufsize, "\r\n    getAccessibleTableRow:  %d", trow);
-
-            int tcol = getAccessibleTableColumn(vmID, tableInfo.AccessibleTable, 2);
-            appendToBuffer(buffer, bufsize, "\r\n    getAccessibleTableColumn:  %d", tcol);
-
-            int tindex = getAccessibleTableIndex(vmID, tableInfo.AccessibleTable, 2, 3);
-            appendToBuffer(buffer, bufsize, "\r\n    getAccessibleTableIndex:  %d", tindex);
-#endif
-
-              // Get the column headers
-              {
-                var columnHeaderGroup = group.AddGroup("Column Header");
-                columnHeaderGroup.Expanded = false;
-                AccessibleTableInfo columnInfo;
-                if (Failed(AccessBridge.Functions.GetAccessibleTableColumnHeader(JvmId, _ac, out columnInfo))) {
-                  columnHeaderGroup.AddProperty("Error", "Error retrieving column header info");
-                } else {
-                  AddTableInfo(columnHeaderGroup, columnInfo);
-                  var limits = LimitSize(columnInfo.rowCount, columnInfo.columnCount);
-                  for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
-                    for (var colunmnIndex = 0; colunmnIndex < limits.Value; colunmnIndex++) {
-                      var chGroup = columnHeaderGroup.AddGroup(string.Format("Column Header[Row={0},Column={1}]", rowIndex, colunmnIndex));
-                      // TODO
-                    }
-                  }
-                }
-              }
-
-              // Get the row headers
-              {
-                var rowHeaderGroup = group.AddGroup("Row Header");
-                rowHeaderGroup.Expanded = false;
-                AccessibleTableInfo rowInfo;
-                if (Failed(AccessBridge.Functions.GetAccessibleTableRowHeader(JvmId, _ac, out rowInfo))) {
-                  rowHeaderGroup.AddProperty("Error", "Error retrieving column header info");
-                } else {
-                  AddTableInfo(rowHeaderGroup, rowInfo);
-                  var limits = LimitSize(rowInfo.rowCount, rowInfo.columnCount);
-                  for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
-                    for (var colunmnIndex = 0; colunmnIndex < limits.Value; colunmnIndex++) {
-                      var rhGroup = rowHeaderGroup.AddGroup(string.Format("Row Header[Row={0},Column={1}]", rowIndex, colunmnIndex));
-                      // TODO
-                    }
-                  }
-                }
-              }
-
-              // Get the selected columns
-              {
-                var numColSelections = AccessBridge.Functions.GetAccessibleTableColumnSelectionCount(JvmId, tableInfo.accessibleTable);
-                var selColGroup = group.AddGroup("Column selections", numColSelections);
-                selColGroup.Expanded = false;
-                if (numColSelections > 0) {
-                  var selections = new int[numColSelections];
-                  if (Failed(AccessBridge.Functions.GetAccessibleTableColumnSelections(JvmId, tableInfo.accessibleTable, numColSelections, selections))) {
-                    selColGroup.AddProperty("Error", "Error getting column selections");
-                  } else {
-                    for (var j = 0; j < LimitSize(numColSelections); j++) {
-                      selColGroup.AddProperty(string.Format("Column index {0} of {1}", j + 1, numColSelections), selections[j]);
-                    }
-                  }
-                }
-              }
-
-              // Get the selected rows
-              {
-                var numRowSelections = AccessBridge.Functions.GetAccessibleTableRowSelectionCount(JvmId, tableInfo.accessibleTable);
-                var selRowGroup = group.AddGroup("Row selections", numRowSelections);
-                selRowGroup.Expanded = false;
-                if (numRowSelections > 0) {
-                  var selections = new int[numRowSelections];
-                  if (Failed(AccessBridge.Functions.GetAccessibleTableRowSelections(JvmId, tableInfo.accessibleTable, numRowSelections, selections))) {
-                    selRowGroup.AddProperty("Error", "Error getting row selections");
-                  } else {
-                    for (var j = 0; j < LimitSize(numRowSelections); j++) {
-                      selRowGroup.AddProperty(string.Format("Row index {0} of {1}", j + 1, numRowSelections), selections[j]);
-                    }
-                  }
-                }
-              }
-
-              // Get info of all cells
-              if ((options & PropertyOptions.AccessibleTableCells) != 0) {
-                var cellsGroup = group.AddGroup("Cells");
-                cellsGroup.Expanded = false;
-                var limits = LimitSize(tableInfo.rowCount, tableInfo.columnCount);
-                for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
-                  for (var colunmnIndex = 0; colunmnIndex < limits.Value; colunmnIndex++) {
-                    var cellGroup = cellsGroup.AddGroup(string.Format("Cell[Row={0},Column={1}]", rowIndex, colunmnIndex));
-
-                    AccessibleTableCellInfo tableCellInfo;
-                    if (Failed(AccessBridge.Functions.GetAccessibleTableCellInfo(tableInfo.accessibleTable.JvmId, tableInfo.accessibleTable, rowIndex, colunmnIndex, out tableCellInfo))) {
-                      cellGroup.AddProperty("Error", "Error retrieving cell info");
-                    } else {
-                      var cellHandle = tableCellInfo.accessibleContext;
-                      cellGroup.AddProperty("Index", tableCellInfo.index);
-                      cellGroup.AddProperty("Row extent", tableCellInfo.rowExtent);
-                      cellGroup.AddProperty("Column extent", tableCellInfo.columnExtent);
-                      cellGroup.AddProperty("Is selected", tableCellInfo.isSelected);
-
-                      AddSubContextProperties(cellGroup.Children, options, cellHandle);
-                    }
-                  }
-                }
-              }
+              AddTableColumnHeaderProperties(group, options);
+              AddTableRowHeaderProperties(group, options);
+              AddTableSelectedColumnsProperties(tableInfo, group);
+              AddTableSelectedRowsProperties(tableInfo, group);
+              AddTableCellsProperties(tableInfo, group, options);
+              AddTableSelectCellsProperties(tableInfo, group, options);
             }
           };
         }
       }
+    }
+
+    private void AddTableColumnHeaderProperties(PropertyGroup group, PropertyOptions options) {
+      var columnHeaderGroup = group.AddGroup("Column Header");
+      columnHeaderGroup.Expanded = false;
+      columnHeaderGroup.LoadChildren = () => {
+        AccessibleTableInfo columnInfo;
+        if (Failed(AccessBridge.Functions.GetAccessibleTableColumnHeader(JvmId, _ac, out columnInfo))) {
+          columnHeaderGroup.AddProperty("Error", "Error retrieving column header info");
+        } else {
+          AddTableInfo(columnHeaderGroup, options, columnInfo);
+          var limits = LimitSize(columnInfo.rowCount, columnInfo.columnCount);
+          for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
+            for (var colunmnIndex = 0; colunmnIndex < limits.Value; colunmnIndex++) {
+              var chGroup = columnHeaderGroup.AddGroup(string.Format("Column Header[Row={0},Column={1}]", rowIndex, colunmnIndex));
+              chGroup.Expanded = false;
+              chGroup.LoadChildren = () => {
+                chGroup.AddProperty("<todo>", "");
+              };
+            }
+          }
+        }
+      };
+    }
+
+    private void AddTableRowHeaderProperties(PropertyGroup group, PropertyOptions options) {
+      var rowHeaderGroup = group.AddGroup("Row Header");
+      rowHeaderGroup.Expanded = false;
+      rowHeaderGroup.LoadChildren = () => {
+        AccessibleTableInfo rowInfo;
+        if (Failed(AccessBridge.Functions.GetAccessibleTableRowHeader(JvmId, _ac, out rowInfo))) {
+          rowHeaderGroup.AddProperty("Error", "Error retrieving column header info");
+        } else {
+          AddTableInfo(rowHeaderGroup, options, rowInfo);
+          var limits = LimitSize(rowInfo.rowCount, rowInfo.columnCount);
+          for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
+            for (var colunmnIndex = 0; colunmnIndex < limits.Value; colunmnIndex++) {
+              var rhGroup = rowHeaderGroup.AddGroup(string.Format("Row Header[Row={0},Column={1}]", rowIndex, colunmnIndex));
+              rhGroup.Expanded = false;
+              rhGroup.LoadChildren = () => {
+                rhGroup.AddProperty("<todo>", "");
+              };
+            }
+          }
+        }
+      };
+    }
+
+    private void AddTableSelectedColumnsProperties(AccessibleTableInfo tableInfo, PropertyGroup group) {
+      var numColSelections = AccessBridge.Functions.GetAccessibleTableColumnSelectionCount(JvmId, tableInfo.accessibleTable);
+      var selColGroup = group.AddGroup("Column selections", numColSelections);
+      selColGroup.Expanded = false;
+      selColGroup.LoadChildren = () => {
+        if (numColSelections > 0) {
+          var selections = new int[numColSelections];
+          if (Failed(AccessBridge.Functions.GetAccessibleTableColumnSelections(JvmId, tableInfo.accessibleTable, numColSelections, selections))) {
+            selColGroup.AddProperty("Error", "Error getting column selections");
+          } else {
+            for (var j = 0; j < LimitSize(numColSelections); j++) {
+              selColGroup.AddProperty(string.Format("Column index {0} of {1}", j + 1, numColSelections), selections[j]);
+            }
+          }
+        }
+      };
+    }
+
+    private void AddTableSelectedRowsProperties(AccessibleTableInfo tableInfo, PropertyGroup group) {
+      var numRowSelections = AccessBridge.Functions.GetAccessibleTableRowSelectionCount(JvmId, tableInfo.accessibleTable);
+      var selRowGroup = group.AddGroup("Row selections", numRowSelections);
+      selRowGroup.Expanded = false;
+      selRowGroup.LoadChildren = () => {
+        if (numRowSelections > 0) {
+          var selections = new int[numRowSelections];
+          if (Failed(AccessBridge.Functions.GetAccessibleTableRowSelections(JvmId, tableInfo.accessibleTable, numRowSelections, selections))) {
+            selRowGroup.AddProperty("Error", "Error getting row selections");
+          } else {
+            for (var j = 0; j < LimitSize(numRowSelections); j++) {
+              selRowGroup.AddProperty(string.Format("Row index {0} of {1}", j + 1, numRowSelections), selections[j]);
+            }
+          }
+        }
+      };
+    }
+
+    private void AddTableCellsProperties(AccessibleTableInfo tableInfo, PropertyGroup group, PropertyOptions options) {
+      if ((options & PropertyOptions.AccessibleTableCells) != 0) {
+        var cellsGroup = group.AddGroup("Cells");
+        cellsGroup.Expanded = false;
+        cellsGroup.LoadChildren = () => {
+          var limits = LimitSize(tableInfo.rowCount, tableInfo.columnCount);
+          for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
+            for (var colunmnIndex = 0; colunmnIndex < limits.Value; colunmnIndex++) {
+              AddTableCellGroup(tableInfo.accessibleTable, cellsGroup, options, rowIndex, colunmnIndex);
+            }
+          }
+        };
+      }
+    }
+
+    private void AddTableCellGroup(JavaObjectHandle accessibleTable, PropertyGroup cellsGroup, PropertyOptions options, int rowIndex, int colunmnIndex) {
+      var cellGroup = cellsGroup.AddGroup(string.Format("Cell [Row={0},Column={1}]", rowIndex, colunmnIndex));
+      cellGroup.Expanded = false;
+      cellGroup.LoadChildren = () => {
+        AccessibleTableCellInfo tableCellInfo;
+        if (Failed(AccessBridge.Functions.GetAccessibleTableCellInfo(accessibleTable.JvmId, accessibleTable, rowIndex, colunmnIndex, out tableCellInfo))) {
+          cellGroup.AddProperty("Error", "Error retrieving cell info");
+        } else {
+          var cellHandle = tableCellInfo.accessibleContext;
+          cellGroup.AddProperty("Index", tableCellInfo.index);
+          cellGroup.AddProperty("Row extent", tableCellInfo.rowExtent);
+          cellGroup.AddProperty("Column extent", tableCellInfo.columnExtent);
+          cellGroup.AddProperty("Is selected", tableCellInfo.isSelected);
+
+          AddSubContextProperties(cellGroup.Children, options, cellHandle);
+        }
+      };
+    }
+
+    private void AddTableSelectCellsProperties(AccessibleTableInfo tableInfo, PropertyGroup group, PropertyOptions options) {
+      if ((options & PropertyOptions.AccessibleTableCellsSelect) != 0) {
+        var cellsGroup = group.AddGroup("Select Cells");
+        cellsGroup.Expanded = false;
+        cellsGroup.LoadChildren = () => {
+          var limits = LimitSize(tableInfo.rowCount, tableInfo.columnCount);
+
+          for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
+            for (var columnIndex = 0; columnIndex < limits.Value; columnIndex++) {
+              AddTableSelectCellGroup(tableInfo, cellsGroup, options, rowIndex, columnIndex);
+            }
+          }
+        };
+      }
+    }
+
+    private void AddTableSelectCellGroup(AccessibleTableInfo tableInfo, PropertyGroup cellsGroup, PropertyOptions options, int rowIndex, int columnIndex) {
+      var cellGroup = cellsGroup.AddGroup(string.Format("Select Cell[Row={0},Column={1}]", rowIndex, columnIndex));
+      cellGroup.Expanded = false;
+      cellGroup.LoadChildren = () => {
+        var cellIndex = rowIndex * tableInfo.columnCount + columnIndex;
+        var node = SelectAndGetTableCell(cellIndex);
+        if (node == null) {
+          cellGroup.AddProperty("Error", "Error retrieving cell info");
+        } else {
+          AddSubContextProperties(cellGroup.Children, options, node);
+        }
+      };
+    }
+
+    /// <summary>
+    /// The only way we found to get the right info for a cell in a table is to
+    /// set the selection to a single cell, then to get the accessible context
+    /// for the selection. A side effect of this, of course, is that the table
+    /// selection will change in the Java Application.
+    ///
+    /// Note: The default implementation for table is incorrect due to an
+    /// defect in JavaAccessBridge: instead of returning the
+    /// AccessbleJTableCell, the AccessBridge implemenentation, for some
+    /// reason, has a hard-coded reference to JTable and calls
+    /// "getCellRendered" directly instead of calling
+    /// AccessibleContext.GetAccessibleChild(). So we need to call a custom
+    /// method for tables.
+    /// </summary>
+    private AccessibleContextNode SelectAndGetTableCell(int childIndex) {
+      // Get the current selection, just in case it contains "childIndex".
+      var childNode = FindNodeInSelection(childIndex);
+      if (childNode != null)
+        return childNode;
+
+      // Note that if the table only supports entire row selection, this call
+      // may end up selecting an entire row.
+      AccessBridge.Functions.ClearAccessibleSelectionFromContext(JvmId, _ac);
+      AccessBridge.Functions.AddAccessibleSelectionFromContext(JvmId, _ac, childIndex);
+      return FindNodeInSelection(childIndex);
     }
 
     private void AddTextProperties(PropertyList list, PropertyOptions options) {
@@ -819,12 +853,28 @@ namespace WindowsAccessBridgeInterop {
       }
     }
 
-    private void AddTableInfo(PropertyGroup group, AccessibleTableInfo tableInfo) {
+    private void AddTableInfo(PropertyGroup group, PropertyOptions options, AccessibleTableInfo tableInfo) {
       group.AddProperty("Row count", tableInfo.rowCount);
       group.AddProperty("Column count", tableInfo.columnCount);
+
+      var captionGroup = group.Children.AddGroup("Caption");
+      captionGroup.Expanded = false;
+      captionGroup.LoadChildren = () => {
+        AddSubContextProperties(captionGroup.Children, options, tableInfo.caption);
+      };
+
+      var summaryGroup = group.Children.AddGroup("Summary");
+      summaryGroup.Expanded = false;
+      summaryGroup.LoadChildren = () => {
+        AddSubContextProperties(summaryGroup.Children, options, tableInfo.summary);
+      };
     }
 
     protected void AddSubContextProperties(PropertyList list, PropertyOptions options, JavaObjectHandle contextHandle) {
+      if (contextHandle.IsNull) {
+        list.AddProperty("<None>", "");
+        return;
+      }
       var contextNode = new AccessibleContextNode(AccessBridge, contextHandle);
       AddSubContextProperties(list, options, contextNode);
     }
@@ -847,6 +897,16 @@ namespace WindowsAccessBridgeInterop {
         list.AddProperty("Role", info.role);
         list.AddProperty("Index in parent", info.indexInParent);
         list.AddProperty("accessibleInterfaces", info.accessibleInterfaces);
+        var parentGroup = list.AddGroup("Parent");
+        parentGroup.Expanded = false;
+        parentGroup.LoadChildren = () => {
+          var parentNode = GetParent() as AccessibleContextNode;
+          if (parentNode == null) {
+            parentGroup.Children.AddProperty("No parent", null);
+          } else {
+            parentNode.AddSubContextProperties(parentGroup.Children, options);
+          }
+        };
 
       } catch (Exception e) {
         list.AddProperty("Error", e.Message);
