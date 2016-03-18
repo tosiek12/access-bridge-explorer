@@ -72,39 +72,68 @@ namespace AccessBridgeExplorer {
       _listView.Items.Clear();
     }
 
+    /// <summary>
+    /// Update the list view contents minimally after a group has been
+    /// expanded/collapsed or any other change to <see
+    /// cref="_currentPropertyList"/>.
+    /// </summary>
     private void UpdateListView() {
       _listView.BeginUpdate();
       try {
         var newItems = CreateListViewItems(_currentPropertyList, _nodeState);
         var oldItems = _listView.Items;
         var oldInsertionIndex = 0;
+        // We go through each item in the new list and decide what to do in the
+        // existing list of items currently displayed. If there are additional
+        // nodes in the new list, we insert them in the existing list. If there
+        // are missing nodes in the new list we delete them from the existing
+        // list.
         for (var newIndex = 0; newIndex < newItems.Count; newIndex++) {
           var newItem = newItems[newIndex];
 
           // Find item with same tag in old list.
           var oldItemIndex = FindIndexOfTag(oldItems, oldInsertionIndex, newItem.Tag);
           if (oldItemIndex < 0) {
-            // Insert new item at current insertion location (at end or in middle)
+            // If this is a new node (existing node not found), insert new list
+            // view item at current insertion location (at end or in middle)
+
             oldItems.Insert(oldInsertionIndex, newItem);
             oldInsertionIndex++;
           } else {
+            // If we found an equivalent node in the existing list, delete
+            // existing items in between if needed, then update the existing
+            // item with the updated values.
+
             // Delete items in range [oldIndex, oldItemIndex[
             for (var i = oldInsertionIndex; i < oldItemIndex; i++) {
               oldItems.RemoveAt(oldInsertionIndex);
             }
             oldItemIndex = oldInsertionIndex;
+
+            // Update existing item
             var oldItem = oldItems[oldItemIndex];
             oldItem.ImageIndex = newItem.ImageIndex;
             oldItem.StateImageIndex = newItem.StateImageIndex;
-            //oldItem.Text = newItem.Text;
-            //oldItem.IndentCount = newItem.IndentCount;
+            oldItem.Text = newItem.Text;
+            oldItem.IndentCount = newItem.IndentCount;
             //oldItem.SubItems.Clear();
-            //oldItem.SubItems.AddRange(newItem.SubItems.Cast<ListViewItem.ListViewSubItem>().ToArray());
-            //oldItem.Tag = newItem.Tag;
+            for (var i = 1; i <= newItem.SubItems.Count - 1; i++) {
+              if (i >= oldItem.SubItems.Count) {
+                oldItem.SubItems.Add(newItem.SubItems[i].Text);
+              } else {
+                oldItem.SubItems[i].Text = newItem.SubItems[i].Text;
+              }
+            }
+            for (var i = oldItem.SubItems.Count - 1; i >= newItem.SubItems.Count; i--) {
+              oldItem.SubItems.RemoveAt(i);
+            }
+            oldItem.Tag = newItem.Tag;
             oldInsertionIndex++;
           }
         }
 
+        // Delete all the existing items that don't exist anymore, since we
+        // reached the end of the new list.
         while (oldInsertionIndex < oldItems.Count) {
           oldItems.RemoveAt(oldInsertionIndex);
         }
@@ -113,8 +142,22 @@ namespace AccessBridgeExplorer {
       }
     }
 
+    private static int FindIndexOfTag(ListView.ListViewItemCollection oldItems, int startIndex, object tag) {
+      for (var index = startIndex; index < oldItems.Count; index++) {
+        // This ends up calling PropertyListViewItemState.Equals()
+        if (Equals(oldItems[index].Tag, tag))
+          return index;
+      }
+      return -1;
+    }
+
+    /// <summary>
+    /// Create all list view items corresponding to all the properties and property groups
+    /// that should be displayed in the list view. Children of property groups that are not
+    /// expanded are skipped -- they will be created when the groups are expanded.
+    /// </summary>
     private static List<ListViewItem> CreateListViewItems(PropertyList propertyList, ExpandedNodeState expandedNodeState) {
-      List<ListViewItem> itemList = new List<ListViewItem>();
+      var itemList = new List<ListViewItem>();
       propertyList.ForEach(x => {
         AddListViewItem(x, 0, "", itemList, expandedNodeState);
       });
@@ -124,8 +167,6 @@ namespace AccessBridgeExplorer {
     private static void AddListViewItem(PropertyNode propertyNode, int indent, string parentPath, List<ListViewItem> itemList, ExpandedNodeState expandedNodeState) {
       var propertyNodePath = MakeNodePath(parentPath, propertyNode);
       var item = new ListViewItem();
-      item.Text = propertyNode.Name;
-      item.SubItems.Add(ValueToString(propertyNode));
       item.Tag = new PropertyListViewItemState {
         PropertyNode = propertyNode,
         Path = propertyNodePath,
@@ -143,6 +184,8 @@ namespace AccessBridgeExplorer {
           }
         }
       }
+      item.Text = propertyNode.Name;
+      item.SubItems.Add(ValueToString(propertyNode));
     }
 
     private static string MakeNodePath(string path, PropertyNode node) {
@@ -169,14 +212,10 @@ namespace AccessBridgeExplorer {
       return valueText;
     }
 
-    private static int FindIndexOfTag(ListView.ListViewItemCollection oldItems, int startIndex, object tag) {
-      for (var index = startIndex; index < oldItems.Count; index++) {
-        if (Equals(oldItems[index].Tag, tag))
-          return index;
-      }
-      return -1;
-    }
-
+    /// <summary>
+    /// Toggle expanded/collapsed state of the selecte list view item if
+    /// left/right keys are pressed and the item is a group.
+    /// </summary>
     private void PropertyListViewOnKeyDown(object sender, KeyEventArgs e) {
       var listView = (ListView)sender;
       if (listView.SelectedItems.Count == 0)
@@ -203,6 +242,10 @@ namespace AccessBridgeExplorer {
       }
     }
 
+    /// <summary>
+    /// Toggle the expanded/collapsed state of the list view item target of the
+    /// double click event.
+    /// </summary>
     private void PropertyListViewOnMouseDoubleClick(object sender, MouseEventArgs e) {
       var listView = (ListView)sender;
       var info = listView.HitTest(e.Location);
@@ -212,6 +255,10 @@ namespace AccessBridgeExplorer {
       TogglePropertyExpanded(info.Item);
     }
 
+    /// <summary>
+    /// Toggle expanded/collapsed state if mouse click on the image associated
+    /// with the list view item target of the click event.
+    /// </summary>
     private void PropertyListViewOnMouseClick(object sender, MouseEventArgs e) {
       var listView = (ListView)sender;
       var info = listView.HitTest(e.Location);
@@ -233,6 +280,10 @@ namespace AccessBridgeExplorer {
     }
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+    /// <summary>
+    /// State associated with each item in the list view. The state is stored in
+    /// the <see cref="ListViewItem.Tag"/> property.
+    /// </summary>
     private class PropertyListViewItemState {
       public PropertyNode PropertyNode { get; set; }
       public string Path { get; set; }
@@ -251,6 +302,11 @@ namespace AccessBridgeExplorer {
     }
 #pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
+    /// <summary>
+    /// Store the expanded/collapsed state of each group of the property list so
+    /// that when switching to a new property list, we can re-apply the
+    /// expanded/collapsed state to corresponding group in the new list.
+    /// </summary>
     public class ExpandedNodeState {
       private readonly Dictionary<string, bool> _expandedStates = new Dictionary<string, bool>();
 

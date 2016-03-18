@@ -58,6 +58,7 @@ namespace AccessBridgeExplorer {
         PropertyOptions.AccessibleKeyBindings |
         PropertyOptions.AccessibleRelationSet |
         PropertyOptions.ParentContext |
+        PropertyOptions.Children |
         PropertyOptions.ObjectDepth |
         PropertyOptions.TopLevelWindowInfo |
         PropertyOptions.ActiveDescendent |

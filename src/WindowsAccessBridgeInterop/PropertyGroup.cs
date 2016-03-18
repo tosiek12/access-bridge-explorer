@@ -22,7 +22,6 @@ namespace WindowsAccessBridgeInterop {
     private readonly PropertyList _children = new PropertyList();
 
     public PropertyGroup(string name, object value = null) : base(name, value) {
-      Expanded = true;
     }
 
     public PropertyNode AddProperty(string name, object value) {

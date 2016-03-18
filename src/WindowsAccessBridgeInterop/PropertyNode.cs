@@ -17,7 +17,7 @@ namespace WindowsAccessBridgeInterop {
   /// </summary>
   public class PropertyNode {
     private readonly string _name;
-    private readonly object _value;
+    private object _value;
 
     public PropertyNode(string name, object value) {
       _name = name;
@@ -30,6 +30,7 @@ namespace WindowsAccessBridgeInterop {
 
     public object Value {
       get { return _value; }
+      set { _value = value; }
     }
   }
 }

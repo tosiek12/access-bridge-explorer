@@ -42,7 +42,6 @@ namespace WindowsAccessBridgeInterop {
       list.AddProperty("WindowHandle", _hWnd);
       base.AddProperties(list, options);
       var group = list.AddGroup("Focused element");
-      group.Expanded = false;
       group.LoadChildren = () => {
         int vmid;
         JavaObjectHandle ac;

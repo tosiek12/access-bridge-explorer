@@ -37,5 +37,6 @@ namespace WindowsAccessBridgeInterop {
     AccessibleTable = 1 << 15,
     AccessibleTableCells = 1 << 16,
     AccessibleTableCellsSelect = 1 << 17,
+    Children = 1 << 18,
   }
 }
