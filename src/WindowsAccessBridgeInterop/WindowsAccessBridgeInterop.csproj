@@ -47,6 +47,7 @@
     <Compile Include="AccessBridgeNativeFunctions.cs" />
     <Compile Include="AccessBridgeNativeFunctionsLegacy.cs" />
     <Compile Include="AccessibleContextNode.cs" />
+    <Compile Include="AccessibleRectInfo.cs" />
     <Compile Include="AccessibleJvm.cs" />
     <Compile Include="AccessibleNode.cs" />
     <Compile Include="AccessibleTextReader.cs" />

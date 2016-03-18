@@ -303,7 +303,7 @@ namespace WindowsAccessBridgeInterop {
           var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
           list.AddProperty("Object Depth", depth);
         }
-        list.AddProperty("Bounds", string.Format("[{0}, {1}, {2}, {3}]", info.x, info.y, info.width, info.height));
+        list.AddProperty("Bounds", new AccessibleRectInfo(info.x, info.y, info.width, info.height));
         list.AddProperty("Role", info.role ?? "-");
         list.AddProperty("Role_en_US", info.role_en_US ?? "-");
         list.AddProperty("States", info.states ?? "-");
@@ -799,7 +799,7 @@ namespace WindowsAccessBridgeInterop {
     private void AddTextAttributeAtIndex(PropertyList list, int index) {
       AccessibleTextRectInfo rectInfo;
       if (Succeeded(AccessBridge.Functions.GetAccessibleTextRect(JvmId, _ac, out rectInfo, index))) {
-        list.AddProperty("Character bounding rectangle:", string.Format("[{0},{1},{2},{3}]", rectInfo.x, rectInfo.y, rectInfo.width, rectInfo.height));
+        list.AddProperty("Character bounding rectangle:", new AccessibleRectInfo(rectInfo));
       }
 
       int start;
@@ -900,7 +900,7 @@ namespace WindowsAccessBridgeInterop {
           var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
           list.AddProperty("Object Depth", depth);
         }
-        list.AddProperty("Bounds", string.Format("[{0}, {1}, {2}, {3}]", info.x, info.y, info.width, info.height));
+        list.AddProperty("Bounds", new AccessibleRectInfo(info.x, info.y, info.width, info.height));
         list.AddProperty("Role", info.role);
         list.AddProperty("States", info.states);
         list.AddProperty("accessibleInterfaces", info.accessibleInterfaces);
@@ -953,7 +953,10 @@ namespace WindowsAccessBridgeInterop {
     public override string ToString() {
       try {
         var info = GetInfo();
-        return string.Format("AccessibleContextNode(name={0},role={1},x={2},y={3},w={4},h={5})", info.name ?? " - ", info.role ?? " - ", info.x, info.y, info.width, info.height);
+        return string.Format("AccessibleContextNode(name={0},role={1},x={2},y={3},w={4},h={5})",
+          info.name ?? " - ",
+          info.role ?? " - ",
+          info.x, info.y, info.width, info.height);
       } catch (Exception e) {
         return string.Format("AccessibleContextNode(Error={0})", e.Message);
       }
