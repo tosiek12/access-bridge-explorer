@@ -290,7 +290,7 @@ namespace AccessBridgeExplorer {
       if (tag == null)
         return;
 
-      var rect = tag.PropertyNode.Value as AccessibleRectInfo;
+      var rect = GetRectangleFromPropertyNode(tag.PropertyNode);
       if (rect == null)
         return;
 
@@ -301,6 +301,20 @@ namespace AccessBridgeExplorer {
         PropertyNode = tag.PropertyNode,
         AccessibleRectInfo = rect,
       });
+    }
+
+    private static AccessibleRectInfo GetRectangleFromPropertyNode(PropertyNode node) {
+      if (node == null)
+        return null;
+
+      var group = node as PropertyGroup;
+      if (group != null) {
+        var rect = group.Children.Select(x => x.Value as AccessibleRectInfo).FirstOrDefault(x => x != null);
+        if (rect != null)
+          return rect;
+      }
+
+      return node.Value as AccessibleRectInfo;
     }
 
     private void ListViewOnGotFocus(object sender, EventArgs eventArgs) {
