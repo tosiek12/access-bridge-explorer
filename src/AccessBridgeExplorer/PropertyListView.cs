@@ -301,11 +301,7 @@ namespace AccessBridgeExplorer {
       if (selection == null)
         return;
 
-      var tag = selection.Tag as ListViewItemTag;
-      if (tag == null)
-        return;
-
-      var rect = GetRectangleFromPropertyNode(tag.PropertyNode);
+      var rect = GetRectangleFromPropertyNode(selection);
       if (rect == null)
         return;
 
@@ -313,23 +309,65 @@ namespace AccessBridgeExplorer {
         return;
 
       OnAccessibleRectInfoSelected(new AccessibleRectInfoSelectedEventArgs {
-        PropertyNode = tag.PropertyNode,
+        PropertyNode = ((ListViewItemTag)selection.Tag).PropertyNode,
         AccessibleRectInfo = rect,
       });
     }
 
-    private static AccessibleRectInfo GetRectangleFromPropertyNode(PropertyNode node) {
+    private static AccessibleRectInfo GetRectangleFromPropertyNode(ListViewItem selection) {
+      var tag = selection.Tag as ListViewItemTag;
+      if (tag == null)
+        return null;
+
+      var node = tag.PropertyNode;
       if (node == null)
         return null;
 
-      var group = node as PropertyGroup;
-      if (group != null) {
-        var rect = group.Children.Select(x => x.Value as AccessibleRectInfo).FirstOrDefault(x => x != null);
+      // If group, look for property with rectangle
+      {
+        var group = node as PropertyGroup;
+        if (group != null) {
+          var rect = group.Children.Select(x => x.Value as AccessibleRectInfo).FirstOrDefault(x => x != null);
+          if (rect != null)
+            return rect;
+        }
+      }
+
+      // If property with a rect, return the rect
+      {
+        var rect = node.Value as AccessibleRectInfo;
         if (rect != null)
           return rect;
       }
 
-      return node.Value as AccessibleRectInfo;
+      // Look for containing group, then for property with a rect
+      for (var parentGroupItem = FindParentGroupItem(selection); parentGroupItem != null; parentGroupItem = FindParentGroupItem(parentGroupItem)) {
+        var groupNode = (PropertyGroup)((ListViewItemTag)parentGroupItem.Tag).PropertyNode;
+        var rect = groupNode.Children.Select(x => x.Value as AccessibleRectInfo).FirstOrDefault(x => x != null);
+        if (rect != null)
+          return rect;
+      }
+
+      // If no parent group has a valid rectangle, last change is to look at all property node at indent = 0
+      return selection.ListView.Items.Cast<ListViewItem>()
+        .Where(x => x.IndentCount == 0)
+        .Select(x => (ListViewItemTag)x.Tag)
+        .Select(x => x.PropertyNode.Value as AccessibleRectInfo)
+        .FirstOrDefault(x => x != null);
+    }
+
+    private static ListViewItem FindParentGroupItem(ListViewItem selection) {
+      for (var i = selection.Index; i >= 0; i--) {
+        var item = selection.ListView.Items[i];
+        if (item.IndentCount == selection.IndentCount - 1) {
+          var itemTag = (ListViewItemTag)item.Tag;
+          var itemGroup = itemTag.PropertyNode as PropertyGroup;
+          if (itemGroup != null) {
+            return item;
+          }
+        }
+      }
+      return null;
     }
 
     private void ListViewOnGotFocus(object sender, EventArgs eventArgs) {
