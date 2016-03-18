@@ -95,6 +95,7 @@ namespace WindowsAccessBridgeInterop {
     /// </summary>
     private KeyValuePair<int, int> LimitSize(int count1, int count2) {
       Func<int, int, KeyValuePair<int, int>> result = (a, b) => new KeyValuePair<int, int>(a, b);
+      Func<double, int> round = a => (int)Math.Round(a);
 
       if (count1 <= 0 || count2 <= 0)
         return result(0, 0);
@@ -105,11 +106,15 @@ namespace WindowsAccessBridgeInterop {
       if (count2 == 1)
         return result(LimitSize(count1), 1);
 
-      if (count2 < AccessBridge.CollectionSizeLimit / 2)
-        return result((int)Math.Round((double)AccessBridge.CollectionSizeLimit / count2), count2);
+      if (count2 < AccessBridge.CollectionSizeLimit / 2) {
+        double maxSize = LimitSize(count1 * count2);
+        return result(round(maxSize / count2), count2);
+      }
 
-      if (count1 < AccessBridge.CollectionSizeLimit / 2)
-        return result(count1, (int)Math.Round((double)AccessBridge.CollectionSizeLimit / count1));
+      if (count1 < AccessBridge.CollectionSizeLimit / 2) {
+        double maxSize = LimitSize(count1 * count2);
+        return result(count1, round(maxSize / count1));
+      }
 
       double c1 = count1;
       double c2 = count2;
@@ -123,8 +128,8 @@ namespace WindowsAccessBridgeInterop {
       double y = Math.Sqrt(limit * c2 / c1);
       double x = limit / y;
 
-      int c1Max = (int)Math.Round(x);
-      int c2Max = (int)Math.Round(y);
+      int c1Max = round(x);
+      int c2Max = round(y);
       return result(Math.Min(c1Max, count1), Math.Min(c2Max, count2));
     }
 
