@@ -14,7 +14,7 @@
 
 namespace WindowsAccessBridgeInterop {
   public static class VersionNumber {
-    public const string Product = "0.9.3";
+    public const string Product = "0.9.4";
     public const string File = Product + ".0";
   }
 }
