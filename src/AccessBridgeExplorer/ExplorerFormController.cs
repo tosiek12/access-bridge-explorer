@@ -49,9 +49,12 @@ namespace AccessBridgeExplorer {
       _view.AccessibilityTree.AfterSelect += AccessibilityTreeAfterSelect;
       _view.AccessibilityTree.BeforeExpand += AccessibilityTreeBeforeExpand;
       _view.AccessibilityTree.KeyDown += AccessibilityTreeOnKeyDown;
+      _view.AccessibilityTree.GotFocus += AccessibilityTreeOnGotFocus;
 
       _view.EventList.MouseDoubleClick += AccessibilityEventListOnMouseDoubleClick;
       _view.EventList.KeyDown += AccessibilityEventListOnKeyDown;
+
+      _view.AccessibleComponentPropertyList.AccessibleRectInfoSelected += OnAccessibleRectInfoSelected;
 
       PropertyOptions = PropertyOptions.AccessibleContextInfo |
         PropertyOptions.AccessibleIcons |
@@ -614,6 +617,19 @@ namespace AccessBridgeExplorer {
       _navigation.AddNavigationAction(navigationEntry);
     }
 
+    private void AccessibilityTreeOnGotFocus(object sender, EventArgs eventArgs) {
+      var treeNode = _view.AccessibilityTree.SelectedNode;
+      if (treeNode == null)
+        return;
+
+      var nodeModel = treeNode.Tag as AccessibleNodeModel;
+      if (nodeModel == null)
+        return;
+
+      _overlayWindowRectangle = nodeModel.AccessibleNode.GetScreenRectangle();
+      UpdateOverlayWindow();
+    }
+
     private void AccessibilityTreeOnKeyDown(object sender, KeyEventArgs keyEventArgs) {
       if (keyEventArgs.KeyCode != Keys.Return)
         return;
@@ -647,6 +663,11 @@ namespace AccessBridgeExplorer {
         _overlayWindowRectangle = nodeModel.AccessibleNode.GetScreenRectangle();
         UpdateOverlayWindow();
       });
+    }
+
+    private void OnAccessibleRectInfoSelected(object sender, AccessibleRectInfoSelectedEventArgs e) {
+      _overlayWindowRectangle = e.AccessibleRectInfo.Rectangle;
+      UpdateOverlayWindow();
     }
 
     private void EnsureTreeNodeVisible(TreeNode node) {

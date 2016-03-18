@@ -12,11 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using WindowsAccessBridgeInterop;
 
 namespace AccessBridgeExplorer {
+  public class AccessibleRectInfoSelectedEventArgs : EventArgs {
+    public PropertyNode PropertyNode { get; set; }
+    public AccessibleRectInfo AccessibleRectInfo { get; set; }
+  }
+
   /// <summary>
   /// Wraps a <see cref="ListView"/> used to display a <see
   /// cref="PropertyList"/> to handle node identation and expand/collapse. The
@@ -44,10 +51,14 @@ namespace AccessBridgeExplorer {
       listView.UseCompatibleStateImageBehavior = false;
       listView.View = View.Details;
 
-      listView.MouseClick += PropertyListViewOnMouseClick;
-      listView.MouseDoubleClick += PropertyListViewOnMouseDoubleClick;
-      listView.KeyDown += PropertyListViewOnKeyDown;
+      listView.MouseClick += ListViewOnMouseClick;
+      listView.MouseDoubleClick += ListViewOnMouseDoubleClick;
+      listView.KeyDown += ListViewOnKeyDown;
+      listView.SelectedIndexChanged += ListOnSelectedIndexChanged;
+      listView.GotFocus += ListViewOnGotFocus;
     }
+
+    public event EventHandler<AccessibleRectInfoSelectedEventArgs> AccessibleRectInfoSelected;
 
     /// <summary>
     /// Set a new <paramref name="propertyList"/> to be displayed in the <see
@@ -150,7 +161,7 @@ namespace AccessBridgeExplorer {
     private static void AddListViewItem(PropertyNode propertyNode, int indent, string parentPath, List<ListViewItem> itemList, ExpandedNodeState expandedNodeState) {
       var propertyNodePath = MakeNodePath(parentPath, propertyNode);
       var item = new ListViewItem();
-      item.Tag = new PropertyListViewItemState {
+      item.Tag = new ItemTag {
         PropertyNode = propertyNode,
         Path = propertyNodePath,
       };
@@ -218,13 +229,13 @@ namespace AccessBridgeExplorer {
     /// Toggle expanded/collapsed state of the selecte list view item if
     /// left/right keys are pressed and the item is a group.
     /// </summary>
-    private void PropertyListViewOnKeyDown(object sender, KeyEventArgs e) {
+    private void ListViewOnKeyDown(object sender, KeyEventArgs e) {
       var listView = (ListView)sender;
       if (listView.SelectedItems.Count == 0)
         return;
 
       var item = listView.SelectedItems[0];
-      var itemState = (PropertyListViewItemState)item.Tag;
+      var itemState = (ItemTag)item.Tag;
       var group = itemState.PropertyNode as PropertyGroup;
       if (group == null)
         return;
@@ -248,7 +259,7 @@ namespace AccessBridgeExplorer {
     /// Toggle the expanded/collapsed state of the list view item target of the
     /// double click event.
     /// </summary>
-    private void PropertyListViewOnMouseDoubleClick(object sender, MouseEventArgs e) {
+    private void ListViewOnMouseDoubleClick(object sender, MouseEventArgs e) {
       var listView = (ListView)sender;
       var info = listView.HitTest(e.Location);
       if (info.Location == ListViewHitTestLocations.None)
@@ -261,7 +272,7 @@ namespace AccessBridgeExplorer {
     /// Toggle expanded/collapsed state if mouse click on the image associated
     /// with the list view item target of the click event.
     /// </summary>
-    private void PropertyListViewOnMouseClick(object sender, MouseEventArgs e) {
+    private void ListViewOnMouseClick(object sender, MouseEventArgs e) {
       var listView = (ListView)sender;
       var info = listView.HitTest(e.Location);
       if (info.Location != ListViewHitTestLocations.Image)
@@ -270,8 +281,34 @@ namespace AccessBridgeExplorer {
       TogglePropertyExpanded(info.Item);
     }
 
+    private void ListOnSelectedIndexChanged(object sender, EventArgs eventArgs) {
+      var selection = _listView.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
+      if (selection == null)
+        return;
+
+      var tag = selection.Tag as ItemTag;
+      if (tag == null)
+        return;
+
+      var rect = tag.PropertyNode.Value as AccessibleRectInfo;
+      if (rect == null)
+        return;
+
+      if (!rect.IsVisible)
+        return;
+
+      OnAccessibleRectInfoSelected(new AccessibleRectInfoSelectedEventArgs {
+        PropertyNode = tag.PropertyNode,
+        AccessibleRectInfo = rect,
+      });
+    }
+
+    private void ListViewOnGotFocus(object sender, EventArgs eventArgs) {
+      ListOnSelectedIndexChanged(sender, eventArgs);
+    }
+
     private void TogglePropertyExpanded(ListViewItem item) {
-      var itemState = (PropertyListViewItemState)item.Tag;
+      var itemState = (ItemTag)item.Tag;
       var group = itemState.PropertyNode as PropertyGroup;
       if (group == null)
         return;
@@ -286,15 +323,15 @@ namespace AccessBridgeExplorer {
     /// State associated with each item in the list view. The state is stored in
     /// the <see cref="ListViewItem.Tag"/> property.
     /// </summary>
-    private class PropertyListViewItemState {
+    private class ItemTag {
       public PropertyNode PropertyNode { get; set; }
       public string Path { get; set; }
 
       public override bool Equals(object obj) {
-        return Equals(obj as PropertyListViewItemState);
+        return Equals(obj as ItemTag);
       }
 
-      public bool Equals(PropertyListViewItemState obj) {
+      public bool Equals(ItemTag obj) {
         if (obj == null)
           return false;
 
@@ -322,6 +359,11 @@ namespace AccessBridgeExplorer {
           group.Expanded = savedState;
         }
       }
+    }
+
+    protected virtual void OnAccessibleRectInfoSelected(AccessibleRectInfoSelectedEventArgs e) {
+      var handler = AccessibleRectInfoSelected;
+      if (handler != null) handler(this, e);
     }
   }
 }
