@@ -94,15 +94,38 @@ namespace WindowsAccessBridgeInterop {
     /// shape of the initial rectangle.
     /// </summary>
     private KeyValuePair<int, int> LimitSize(int count1, int count2) {
+      Func<int, int, KeyValuePair<int, int>> result = (a, b) => new KeyValuePair<int, int>(a, b);
+
       if (count1 <= 0 || count2 <= 0)
-        return new KeyValuePair<int, int>(0, 0);
+        return result(0, 0);
+
+      if (count1 == 1)
+        return result(1, LimitSize(count2));
+
+      if (count2 == 1)
+        return result(LimitSize(count1), 1);
+
+      if (count2 < AccessBridge.CollectionSizeLimit / 2)
+        return result((int)Math.Round((double)AccessBridge.CollectionSizeLimit / count2), count2);
+
+      if (count1 < AccessBridge.CollectionSizeLimit / 2)
+        return result(count1, (int)Math.Round((double)AccessBridge.CollectionSizeLimit / count1));
 
       double c1 = count1;
       double c2 = count2;
       double limit = AccessBridge.CollectionSizeLimit;
-      int c1Max = (int)Math.Round(Math.Sqrt(limit * c2 / c1));
-      int c2Max = (int)Math.Round(limit / c1Max);
-      return new KeyValuePair<int, int>(Math.Min(c1Max, count1), Math.Min(c2Max, count2));
+      // We have 2 variables and 2 equations:
+      //   x * y = limit    <= we need to limit to the total size
+      //   x / y = c1 / c2  <= we want to make sure we have the same proportions
+      // After a quick transformation, the equations become
+      //   y = sqrt(limit * c2 / c1)
+      //   x = limit / y
+      double y = Math.Sqrt(limit * c2 / c1);
+      double x = limit / y;
+
+      int c1Max = (int)Math.Round(x);
+      int c2Max = (int)Math.Round(y);
+      return result(Math.Min(c1Max, count1), Math.Min(c2Max, count2));
     }
 
     public AccessibleContextInfo FetchNodeInfo() {
@@ -558,15 +581,7 @@ namespace WindowsAccessBridgeInterop {
           columnHeaderGroup.AddProperty("Error", "Error retrieving column header info");
         } else {
           AddTableInfo(columnHeaderGroup, options, columnInfo);
-          var limits = LimitSize(columnInfo.rowCount, columnInfo.columnCount);
-          for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
-            for (var colunmnIndex = 0; colunmnIndex < limits.Value; colunmnIndex++) {
-              var chGroup = columnHeaderGroup.AddGroup(string.Format("[Row={0},Column={1}]", rowIndex, colunmnIndex));
-              chGroup.LoadChildren = () => {
-                chGroup.AddProperty("<todo>", "");
-              };
-            }
-          }
+          AddTableCellsProperties(columnInfo, columnHeaderGroup, options);
         }
       };
     }
@@ -579,15 +594,7 @@ namespace WindowsAccessBridgeInterop {
           rowHeaderGroup.AddProperty("Error", "Error retrieving column header info");
         } else {
           AddTableInfo(rowHeaderGroup, options, rowInfo);
-          var limits = LimitSize(rowInfo.rowCount, rowInfo.columnCount);
-          for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
-            for (var colunmnIndex = 0; colunmnIndex < limits.Value; colunmnIndex++) {
-              var rhGroup = rowHeaderGroup.AddGroup(string.Format("[Row={0},Column={1}]", rowIndex, colunmnIndex));
-              rhGroup.LoadChildren = () => {
-                rhGroup.AddProperty("<todo>", "");
-              };
-            }
-          }
+          AddTableCellsProperties(rowInfo, rowHeaderGroup, options);
         }
       };
     }
@@ -630,21 +637,22 @@ namespace WindowsAccessBridgeInterop {
       if ((options & PropertyOptions.AccessibleTableCells) != 0) {
         var cellsGroup = group.AddGroup("Cells");
         cellsGroup.LoadChildren = () => {
-          var limits = LimitSize(tableInfo.rowCount, tableInfo.columnCount);
-          for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
-            for (var colunmnIndex = 0; colunmnIndex < limits.Value; colunmnIndex++) {
-              AddTableCellGroup(tableInfo.accessibleTable, cellsGroup, options, rowIndex, colunmnIndex);
+          if (tableInfo.rowCount <= 0 || tableInfo.columnCount <= 0) {
+            cellsGroup.AddProperty("<Empty>", "");
+          } else {
+            foreach (var rowCol in EnumerateRowColunms(tableInfo.rowCount, tableInfo.columnCount)) {
+              AddTableCellGroup(tableInfo.accessibleTable, cellsGroup, options, rowCol.RowIndex, rowCol.ColumnIndex);
             }
           }
         };
       }
     }
 
-    private void AddTableCellGroup(JavaObjectHandle accessibleTable, PropertyGroup cellsGroup, PropertyOptions options, int rowIndex, int colunmnIndex) {
-      var cellGroup = cellsGroup.AddGroup(string.Format("[Row={0}, Column={1}]", rowIndex, colunmnIndex));
+    private void AddTableCellGroup(JavaObjectHandle accessibleTable, PropertyGroup cellsGroup, PropertyOptions options, int rowIndex, int columnIndex) {
+      var cellGroup = cellsGroup.AddGroup(string.Format("[Row={0}, Column={1}]", rowIndex, columnIndex));
       cellGroup.LoadChildren = () => {
         AccessibleTableCellInfo tableCellInfo;
-        if (Failed(AccessBridge.Functions.GetAccessibleTableCellInfo(accessibleTable.JvmId, accessibleTable, rowIndex, colunmnIndex, out tableCellInfo))) {
+        if (Failed(AccessBridge.Functions.GetAccessibleTableCellInfo(accessibleTable.JvmId, accessibleTable, rowIndex, columnIndex, out tableCellInfo))) {
           cellGroup.AddProperty("Error", "Error retrieving cell info");
         } else {
           var cellHandle = tableCellInfo.accessibleContext;
@@ -662,11 +670,11 @@ namespace WindowsAccessBridgeInterop {
       if ((options & PropertyOptions.AccessibleTableCellsSelect) != 0) {
         var cellsGroup = group.AddGroup("Select Cells");
         cellsGroup.LoadChildren = () => {
-          var limits = LimitSize(tableInfo.rowCount, tableInfo.columnCount);
-
-          for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
-            for (var columnIndex = 0; columnIndex < limits.Value; columnIndex++) {
-              AddTableSelectCellGroup(tableInfo, cellsGroup, options, rowIndex, columnIndex);
+          if (tableInfo.rowCount <= 0 || tableInfo.columnCount <= 0) {
+            cellsGroup.AddProperty("<Empty>", "");
+          } else {
+            foreach (var rowCol in EnumerateRowColunms(tableInfo.rowCount, tableInfo.columnCount)) {
+              AddTableSelectCellGroup(tableInfo, cellsGroup, options, rowCol.RowIndex, rowCol.ColumnIndex);
             }
           }
         };
@@ -975,6 +983,33 @@ namespace WindowsAccessBridgeInterop {
         else sb.Append(ch);
       }
       return sb.ToString();
+    }
+
+    private IEnumerable<RowColumn> EnumerateRowColunms(int rowCount, int columnCount) {
+      var limits = LimitSize(rowCount, columnCount);
+      for (var rowIndex = 0; rowIndex < limits.Key; rowIndex++) {
+        for (var columnIndex = 0; columnIndex < limits.Value; columnIndex++) {
+          yield return new RowColumn(rowIndex, columnIndex);
+        }
+      }
+    }
+
+    private struct RowColumn {
+      private readonly int _rowIndex;
+      private readonly int _columnIndex;
+
+      public RowColumn(int rowIndex, int columnIndex) {
+        _rowIndex = rowIndex;
+        _columnIndex = columnIndex;
+      }
+
+      public int RowIndex {
+        get { return _rowIndex; }
+      }
+
+      public int ColumnIndex {
+        get { return _columnIndex; }
+      }
     }
   }
 }
