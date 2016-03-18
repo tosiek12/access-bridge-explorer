@@ -56,7 +56,6 @@ namespace AccessBridgeExplorer {
     public void SetPropertyList(PropertyList propertyList) {
       _listView.BeginUpdate();
       try {
-        _listView.Items.Clear();
         _currentPropertyList = propertyList;
         UpdateListView();
       } finally {
@@ -110,24 +109,8 @@ namespace AccessBridgeExplorer {
             }
             oldItemIndex = oldInsertionIndex;
 
-            // Update existing item
-            var oldItem = oldItems[oldItemIndex];
-            oldItem.ImageIndex = newItem.ImageIndex;
-            oldItem.StateImageIndex = newItem.StateImageIndex;
-            oldItem.Text = newItem.Text;
-            oldItem.IndentCount = newItem.IndentCount;
-            //oldItem.SubItems.Clear();
-            for (var i = 1; i <= newItem.SubItems.Count - 1; i++) {
-              if (i >= oldItem.SubItems.Count) {
-                oldItem.SubItems.Add(newItem.SubItems[i].Text);
-              } else {
-                oldItem.SubItems[i].Text = newItem.SubItems[i].Text;
-              }
-            }
-            for (var i = oldItem.SubItems.Count - 1; i >= newItem.SubItems.Count; i--) {
-              oldItem.SubItems.RemoveAt(i);
-            }
-            oldItem.Tag = newItem.Tag;
+            // Update existing item with new property data
+            UpdateListViewItem(oldItems[oldItemIndex], newItem);
             oldInsertionIndex++;
           }
         }
@@ -186,6 +169,25 @@ namespace AccessBridgeExplorer {
       }
       item.Text = propertyNode.Name;
       item.SubItems.Add(ValueToString(propertyNode));
+    }
+
+    private static void UpdateListViewItem(ListViewItem oldItem, ListViewItem newItem) {
+      oldItem.ImageIndex = newItem.ImageIndex;
+      oldItem.StateImageIndex = newItem.StateImageIndex;
+      oldItem.Text = newItem.Text;
+      oldItem.IndentCount = newItem.IndentCount;
+      //oldItem.SubItems.Clear();
+      for (var i = 1; i <= newItem.SubItems.Count - 1; i++) {
+        if (i >= oldItem.SubItems.Count) {
+          oldItem.SubItems.Add(newItem.SubItems[i].Text);
+        } else {
+          oldItem.SubItems[i].Text = newItem.SubItems[i].Text;
+        }
+      }
+      for (var i = oldItem.SubItems.Count - 1; i >= newItem.SubItems.Count; i--) {
+        oldItem.SubItems.RemoveAt(i);
+      }
+      oldItem.Tag = newItem.Tag;
     }
 
     private static string MakeNodePath(string path, PropertyNode node) {
