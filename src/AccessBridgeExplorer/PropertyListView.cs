@@ -50,6 +50,7 @@ namespace AccessBridgeExplorer {
       listView.SmallImageList = stateImageList;
       listView.UseCompatibleStateImageBehavior = false;
       listView.View = View.Details;
+      listView.HideSelection = false;
 
       listView.MouseClick += ListViewOnMouseClick;
       listView.MouseDoubleClick += ListViewOnMouseDoubleClick;
@@ -137,9 +138,10 @@ namespace AccessBridgeExplorer {
     }
 
     private static int FindIndexOfTag(ListView.ListViewItemCollection oldItems, int startIndex, object tag) {
+      var itemTag = (ListViewItemTag)tag;
       for (var index = startIndex; index < oldItems.Count; index++) {
-        // This ends up calling PropertyListViewItemState.Equals()
-        if (Equals(oldItems[index].Tag, tag))
+        var oldItemTag = (ListViewItemTag)oldItems[index].Tag;
+        if (Equals(itemTag.Path, oldItemTag.Path))
           return index;
       }
       return -1;
@@ -161,13 +163,9 @@ namespace AccessBridgeExplorer {
     private static void AddListViewItem(PropertyNode propertyNode, int indent, string parentPath, List<ListViewItem> itemList, ExpandedNodeState expandedNodeState) {
       var propertyNodePath = MakeNodePath(parentPath, propertyNode);
       var item = new ListViewItem();
-      item.Tag = new ItemTag {
-        PropertyNode = propertyNode,
-        Path = propertyNodePath,
-      };
-      item.IndentCount = indent;
-      itemList.Add(item);
+      itemList.Add(item); // Add the item before (optional) recursive call
 
+      // Add sub-properties recursively (if group)
       var propertyGroup = propertyNode as PropertyGroup;
       if (propertyGroup != null) {
         expandedNodeState.ApplyGroupState(propertyNodePath, propertyGroup);
@@ -178,27 +176,44 @@ namespace AccessBridgeExplorer {
           }
         }
       }
+
+      // Setup final item properties after recursion, in case property node
+      // value, for example, was changed as a side effect of the recursive call.
       item.Text = propertyNode.Name;
       item.SubItems.Add(ValueToString(propertyNode));
+      item.Tag = new ListViewItemTag(propertyNode, propertyNodePath);
+      item.IndentCount = indent;
     }
 
     private static void UpdateListViewItem(ListViewItem oldItem, ListViewItem newItem) {
-      oldItem.ImageIndex = newItem.ImageIndex;
-      oldItem.StateImageIndex = newItem.StateImageIndex;
-      oldItem.Text = newItem.Text;
-      oldItem.IndentCount = newItem.IndentCount;
-      //oldItem.SubItems.Clear();
-      for (var i = 1; i <= newItem.SubItems.Count - 1; i++) {
-        if (i >= oldItem.SubItems.Count) {
-          oldItem.SubItems.Add(newItem.SubItems[i].Text);
+      // Note: For performance reason, we only assign values if they have changed
+      if (oldItem.ImageIndex != newItem.ImageIndex)
+        oldItem.ImageIndex = newItem.ImageIndex;
+
+      if (oldItem.StateImageIndex != newItem.StateImageIndex)
+        oldItem.StateImageIndex = newItem.StateImageIndex;
+
+      if (oldItem.IndentCount != newItem.IndentCount)
+        oldItem.IndentCount = newItem.IndentCount;
+
+      if (!ReferenceEquals(oldItem.Tag, newItem.Tag))
+        oldItem.Tag = newItem.Tag;
+
+      // SubItem[0] is the same as the Text property. So we just need to
+      // synchronize the SubItems collections.
+      for (var i = 0; i < newItem.SubItems.Count; i++) {
+        var newText = newItem.SubItems[i].Text;
+        if (i < oldItem.SubItems.Count) {
+          if (oldItem.SubItems[i].Text != newText)
+            oldItem.SubItems[i].Text = newText;
         } else {
-          oldItem.SubItems[i].Text = newItem.SubItems[i].Text;
+          oldItem.SubItems.Add(newText);
         }
       }
+      // If there were more subitems in the existing item, remove them
       for (var i = oldItem.SubItems.Count - 1; i >= newItem.SubItems.Count; i--) {
         oldItem.SubItems.RemoveAt(i);
       }
-      oldItem.Tag = newItem.Tag;
     }
 
     private static string MakeNodePath(string path, PropertyNode node) {
@@ -235,7 +250,7 @@ namespace AccessBridgeExplorer {
         return;
 
       var item = listView.SelectedItems[0];
-      var itemState = (ItemTag)item.Tag;
+      var itemState = (ListViewItemTag)item.Tag;
       var group = itemState.PropertyNode as PropertyGroup;
       if (group == null)
         return;
@@ -286,7 +301,7 @@ namespace AccessBridgeExplorer {
       if (selection == null)
         return;
 
-      var tag = selection.Tag as ItemTag;
+      var tag = selection.Tag as ListViewItemTag;
       if (tag == null)
         return;
 
@@ -322,7 +337,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void TogglePropertyExpanded(ListViewItem item) {
-      var itemState = (ItemTag)item.Tag;
+      var itemState = (ListViewItemTag)item.Tag;
       var group = itemState.PropertyNode as PropertyGroup;
       if (group == null)
         return;
@@ -332,28 +347,27 @@ namespace AccessBridgeExplorer {
       UpdateListView();
     }
 
-#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     /// <summary>
     /// State associated with each item in the list view. The state is stored in
     /// the <see cref="ListViewItem.Tag"/> property.
     /// </summary>
-    private class ItemTag {
-      public PropertyNode PropertyNode { get; set; }
-      public string Path { get; set; }
+    private class ListViewItemTag {
+      private readonly PropertyNode _propertyNode;
+      private readonly string _path;
 
-      public override bool Equals(object obj) {
-        return Equals(obj as ItemTag);
+      public ListViewItemTag(PropertyNode node, string path) {
+        _propertyNode = node;
+        _path = path ?? "";
       }
 
-      public bool Equals(ItemTag obj) {
-        if (obj == null)
-          return false;
+      public PropertyNode PropertyNode {
+        get { return _propertyNode; }
+      }
 
-        return Equals(PropertyNode, obj.PropertyNode) &&
-               Equals(Path, obj.Path);
+      public string Path {
+        get { return _path; }
       }
     }
-#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
     /// <summary>
     /// Store the expanded/collapsed state of each group of the property list so

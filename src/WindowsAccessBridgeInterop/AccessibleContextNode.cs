@@ -100,12 +100,6 @@ namespace WindowsAccessBridgeInterop {
       if (count1 <= 0 || count2 <= 0)
         return result(0, 0);
 
-      if (count1 == 1)
-        return result(1, LimitSize(count2));
-
-      if (count2 == 1)
-        return result(LimitSize(count1), 1);
-
       if (count2 < AccessBridge.CollectionSizeLimit / 2) {
         double maxSize = LimitSize(count1 * count2);
         return result(round(maxSize / count2), count2);
@@ -300,7 +294,7 @@ namespace WindowsAccessBridgeInterop {
 
     protected override void AddProperties(PropertyList list, PropertyOptions options) {
       if (AccessibleContextHandle.IsNull) {
-        list.AddProperty("<Empty>", "No accessible context");
+        list.AddProperty("<None>", "No accessible context");
         return;
       }
 
@@ -348,13 +342,11 @@ namespace WindowsAccessBridgeInterop {
 
     private void AddParentContextProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.ParentContext) != 0) {
-        var parentContext = AccessBridge.Functions.GetAccessibleParentFromContext(JvmId, _ac);
-        if (!parentContext.IsNull) {
-          var group = list.AddGroup("Parent");
-          @group.LoadChildren = () => {
-            AddSubContextProperties(@group.Children, options, parentContext);
-          };
-        }
+        var group = list.AddGroup("Parent");
+        group.LoadChildren = () => {
+          var parentContext = AccessBridge.Functions.GetAccessibleParentFromContext(JvmId, _ac);
+          AddSubContextProperties(@group.Children, options, parentContext);
+        };
       }
     }
 
@@ -363,43 +355,36 @@ namespace WindowsAccessBridgeInterop {
         var group = list.AddGroup("Children");
         group.LoadChildren = () => {
           var count = GetInfo().childrenCount;
+          group.AddProperty("Count", count);
           group.Value = count;
-          if (count <= 0) {
-            group.AddProperty("<Empty>", "");
-          } else {
-            Enumerable.Range(0, count).ForEach(index => {
-              var childGroup = group.AddGroup(string.Format("Child {0} of {1}", index + 1, count));
-              childGroup.LoadChildren = () => {
-                var childHandle = AccessBridge.Functions.GetAccessibleChildFromContext(JvmId, _ac, index);
-                AddSubContextProperties(childGroup.Children, options, childHandle);
-              };
-            });
-          }
+          Enumerable.Range(0, LimitSize(count)).ForEach(index => {
+            var childGroup = group.AddGroup(string.Format("Child {0} of {1}", index + 1, count));
+            childGroup.LoadChildren = () => {
+              var childHandle = AccessBridge.Functions.GetAccessibleChildFromContext(JvmId, _ac, index);
+              AddSubContextProperties(childGroup.Children, options, childHandle);
+            };
+          });
         };
       }
     }
 
     private void AddTopLevelWindowProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.TopLevelWindowInfo) != 0) {
-        var topLevel = AccessBridge.Functions.GetTopLevelObject(JvmId, _ac);
-        if (!topLevel.IsNull) {
-          var group = list.AddGroup("Top level window");
-          group.LoadChildren = () => {
-            AddSubContextProperties(group.Children, options, topLevel);
-          };
-        }
+        var group = list.AddGroup("Top level window");
+        group.LoadChildren = () => {
+          var topLevel = AccessBridge.Functions.GetTopLevelObject(JvmId, _ac);
+          AddSubContextProperties(group.Children, options, topLevel);
+        };
       }
     }
 
     private void AddActiveDescendentProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.ActiveDescendent) != 0) {
-        var context = AccessBridge.Functions.GetActiveDescendent(JvmId, _ac);
-        if (!context.IsNull) {
-          var group = list.AddGroup("Active Descendent");
-          group.LoadChildren = () => {
-            AddSubContextProperties(group.Children, options, context);
-          };
-        }
+        var group = list.AddGroup("Active Descendant");
+        group.LoadChildren = () => {
+          var context = AccessBridge.Functions.GetActiveDescendent(JvmId, _ac);
+          AddSubContextProperties(group.Children, options, context);
+        };
       }
     }
 
@@ -409,21 +394,16 @@ namespace WindowsAccessBridgeInterop {
         if (info.accessibleSelection != 0) {
           var group = list.AddGroup("Selections");
           group.LoadChildren = () => {
-            var selCount = AccessBridge.Functions.GetAccessibleSelectionCountFromContext(JvmId, _ac);
-            group.Value = selCount;
-            if (selCount <= 0) {
-              group.AddProperty("<Empty>", "");
-            } else {
-              for (var i = 0; i < LimitSize(selCount); i++) {
-                var selGroup = group.AddGroup(string.Format("Selection {0} of {1}", i + 1, selCount));
-                var selectedContext = AccessBridge.Functions.GetAccessibleSelectionFromContext(JvmId, _ac, i);
-                if (selectedContext.IsNull) {
-                  selGroup.AddProperty(string.Format("Selection {0} of {1}", i + 1, selCount), "<Error>");
-                } else {
-                  AddSubContextProperties(selGroup.Children, options, selectedContext);
-                }
-              }
-            }
+            var count = AccessBridge.Functions.GetAccessibleSelectionCountFromContext(JvmId, _ac);
+            group.AddProperty("Count", count);
+            group.Value = count;
+            Enumerable.Range(0, LimitSize(count)).ForEach(index => {
+              var selGroup = group.AddGroup(string.Format("Selection {0} of {1}", index + 1, count));
+              selGroup.LoadChildren = () => {
+                var selectedContext = AccessBridge.Functions.GetAccessibleSelectionFromContext(JvmId, _ac, index);
+                AddSubContextProperties(selGroup.Children, options, selectedContext);
+              };
+            });
           };
         }
       }
@@ -431,55 +411,64 @@ namespace WindowsAccessBridgeInterop {
 
     private void AddKeyBindingsProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleKeyBindings) != 0) {
-        AccessibleKeyBindings keyBindings;
-        if (Succeeded(AccessBridge.Functions.GetAccessibleKeyBindings(JvmId, _ac, out keyBindings))) {
-          if (keyBindings.keyBindingsCount > 0) {
-            var group = list.AddGroup("Key Bindings", keyBindings.keyBindingsCount);
-            group.LoadChildren = () => {
-              for (var i = 0; i < LimitSize(keyBindings.keyBindingsCount); i++) {
-                var keyGroup = group.AddGroup(string.Format("Key binding {0} of {1}", i + 1, keyBindings.keyBindingsCount));
-                keyGroup.AddProperty("Character", keyBindings.keyBindingInfo[i].character);
-                keyGroup.AddProperty("Modifiers", keyBindings.keyBindingInfo[i].modifiers);
-              }
-            };
+        var group = list.AddGroup("Key Bindings");
+        group.LoadChildren = () => {
+          AccessibleKeyBindings keyBindings;
+          if (Failed(AccessBridge.Functions.GetAccessibleKeyBindings(JvmId, _ac, out keyBindings))) {
+            group.AddProperty("<Error>", "error retrieving key bindings");
+          } else {
+            var count = keyBindings.keyBindingsCount;
+            group.AddProperty("Count", count);
+            group.Value = count;
+            Enumerable.Range(0, LimitSize(count)).ForEach(index => {
+              var keyGroup = group.AddGroup(string.Format("Key binding {0} of {1}", index + 1, keyBindings.keyBindingsCount));
+              keyGroup.AddProperty("Character", keyBindings.keyBindingInfo[index].character);
+              keyGroup.AddProperty("Modifiers", keyBindings.keyBindingInfo[index].modifiers);
+            });
           }
-        }
+        };
       }
     }
 
     private void AddIconsProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleIcons) != 0) {
-        AccessibleIcons icons;
-        if (Succeeded(AccessBridge.Functions.GetAccessibleIcons(JvmId, _ac, out icons))) {
-          if (icons.iconsCount > 0) {
-            var group = list.AddGroup("Icons", icons.iconsCount);
-            group.LoadChildren = () => {
-              for (var i = 0; i < LimitSize(icons.iconsCount); i++) {
-                var iconGroup = group.AddGroup(string.Format("Icon {0} of {1}", i + 1, icons.iconsCount));
-                iconGroup.AddProperty("Height", icons.iconInfo[i].height);
-                iconGroup.AddProperty("Width", icons.iconInfo[i].width);
-              }
-            };
+        var group = list.AddGroup("Icons");
+        group.LoadChildren = () => {
+          AccessibleIcons icons;
+          if (Failed(AccessBridge.Functions.GetAccessibleIcons(JvmId, _ac, out icons))) {
+            group.AddProperty("<Error>", "error retrieving icons");
+          } else {
+            var count = icons.iconsCount;
+            group.AddProperty("Count", count);
+            group.Value = count;
+            Enumerable.Range(0, LimitSize(count)).ForEach(index => {
+              var iconGroup = group.AddGroup(string.Format("Icon {0} of {1}", index + 1, icons.iconsCount));
+              iconGroup.AddProperty("Height", icons.iconInfo[index].height);
+              iconGroup.AddProperty("Width", icons.iconInfo[index].width);
+            });
           }
-        }
+        };
       }
     }
 
     private void AddActionProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleActions) != 0) {
-        AccessibleActions actions;
-        if (Succeeded(AccessBridge.Functions.GetAccessibleActions(JvmId, _ac, out actions))) {
-          if (actions.actionsCount > 0) {
-            var group = list.AddGroup("Actions", actions.actionsCount);
-            group.LoadChildren = () => {
-              for (var i = 0; i < LimitSize(actions.actionsCount); i++) {
-                group.AddProperty(
-                  string.Format("Action {0} of {1}", i + 1, actions.actionsCount),
-                  actions.actionInfo[i].name);
-              }
-            };
+        var group = list.AddGroup("Actions");
+        group.LoadChildren = () => {
+          AccessibleActions actions;
+          if (Failed(AccessBridge.Functions.GetAccessibleActions(JvmId, _ac, out actions))) {
+            group.AddProperty("<Error>", "error retrieving actions");
+          } else {
+            var count = actions.actionsCount;
+            group.AddProperty("Count", count);
+            group.Value = count;
+            Enumerable.Range(0, LimitSize(count)).ForEach(index => {
+              group.AddProperty(
+                string.Format("Action {0} of {1}", index + 1, actions.actionsCount),
+                actions.actionInfo[index].name);
+            });
           }
-        }
+        };
       }
     }
 
@@ -512,24 +501,29 @@ namespace WindowsAccessBridgeInterop {
 
     private void AddRelationSetProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleRelationSet) != 0) {
-        AccessibleRelationSetInfo relationSetInfo;
-        if (Succeeded(AccessBridge.Functions.GetAccessibleRelationSet(JvmId, _ac, out relationSetInfo))) {
-          if (relationSetInfo.relationCount > 0) {
-            var group = list.AddGroup("Relation Set", relationSetInfo.relationCount);
-            group.LoadChildren = () => {
-              for (var i = 0; i < LimitSize(relationSetInfo.relationCount); i++) {
-                var relationInfo = relationSetInfo.relations[i];
-                var relGroup = group.AddGroup(string.Format("Relation {0} of {1}", i + 1, relationSetInfo.relationCount));
-                relGroup.AddProperty("Key", relationInfo.key);
-                var relSubGroup = relGroup.AddGroup("Targets", relationInfo.targetCount);
-                for (var j = 0; j < LimitSize(relationInfo.targetCount); j++) {
+        var group = list.AddGroup("Relation Set");
+        group.LoadChildren = () => {
+          AccessibleRelationSetInfo relationSetInfo;
+          if (Failed(AccessBridge.Functions.GetAccessibleRelationSet(JvmId, _ac, out relationSetInfo))) {
+            group.AddProperty("<Error>", "error retrieving relation set");
+          } else {
+            var count = relationSetInfo.relationCount;
+            group.AddProperty("Count", count);
+            group.Value = count;
+            Enumerable.Range(0, LimitSize(count)).ForEach(index => {
+              var relationInfo = relationSetInfo.relations[index];
+              var relGroup = group.AddGroup(string.Format("Relation {0} of {1}", index + 1, relationSetInfo.relationCount));
+              relGroup.AddProperty("Key", relationInfo.key);
+              var relSubGroup = relGroup.AddGroup("Targets", relationInfo.targetCount);
+              relSubGroup.LoadChildren = () => {
+                Enumerable.Range(0, LimitSize(relationInfo.targetCount)).ForEach(j => {
                   var targetGroup = relSubGroup.AddGroup(string.Format("Target {0} of {1}", j + 1, relationInfo.targetCount));
                   AddSubContextProperties(targetGroup.Children, options, relationInfo.targets[j]);
-                }
-              }
-            };
+                });
+              };
+            });
           }
-        }
+        };
       }
     }
 
@@ -540,15 +534,24 @@ namespace WindowsAccessBridgeInterop {
           var group = list.AddGroup("Value");
           group.LoadChildren = () => {
             var sb = new StringBuilder(TextBufferSize);
-            if (Succeeded(AccessBridge.Functions.GetCurrentAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
-              group.AddProperty("Current", sb);
+
+            if (Failed(AccessBridge.Functions.GetCurrentAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
+              sb.Clear();
+              sb.Append("<Error>");
             }
-            if (Succeeded(AccessBridge.Functions.GetMaximumAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
-              group.AddProperty("Maximum", sb);
+            group.AddProperty("Current", sb);
+
+            if (Failed(AccessBridge.Functions.GetMaximumAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
+              sb.Clear();
+              sb.Append("<Error>");
             }
-            if (Succeeded(AccessBridge.Functions.GetMinimumAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
-              group.AddProperty("Minimum", sb);
+            group.AddProperty("Maximum", sb);
+
+            if (Failed(AccessBridge.Functions.GetMinimumAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
+              sb.Clear();
+              sb.Append("<Error>");
             }
+            group.AddProperty("Minimum", sb);
           };
         }
       }
@@ -565,13 +568,97 @@ namespace WindowsAccessBridgeInterop {
               group.AddProperty("Error", "Error retrieving table info");
             } else {
               AddTableInfo(group, options, tableInfo);
-
               AddTableColumnHeaderProperties(group, options);
               AddTableRowHeaderProperties(group, options);
               AddTableSelectedColumnsProperties(tableInfo, group);
               AddTableSelectedRowsProperties(tableInfo, group);
               AddTableCellsProperties(tableInfo, group, options);
               AddTableSelectCellsProperties(tableInfo, group, options);
+            }
+          };
+        }
+      }
+    }
+
+    private void AddTextProperties(PropertyList list, PropertyOptions options) {
+      if ((options & PropertyOptions.AccessibleText) != 0) {
+        var info = GetInfo();
+        if (info.accessibleText != 0) {
+          var group = list.AddGroup("Accessible Text");
+          group.LoadChildren = () => {
+            var point = new Point(0, 0);
+
+            AccessibleTextInfo textInfo;
+            if (Failed(AccessBridge.Functions.GetAccessibleTextInfo(JvmId, _ac, out textInfo, point.X, point.Y))) {
+              group.AddProperty("<Error>", "Error retrieving text info");
+            } else {
+              group.AddProperty("Character count", textInfo.charCount);
+              group.AddProperty("Character index of caret", textInfo.caretIndex);
+              group.AddProperty(string.Format("Character index of point ({0}, {1})", point.X, point.Y), textInfo.indexAtPoint);
+
+              AccessibleTextSelectionInfo textSelection;
+              if (Succeeded(AccessBridge.Functions.GetAccessibleTextSelectionInfo(JvmId, _ac, out textSelection))) {
+                group.AddProperty("Selection start index", textSelection.selectionStartIndex);
+                group.AddProperty("Selection end index", textSelection.selectionEndIndex);
+                group.AddProperty("Selected text", textSelection.selectedText);
+              }
+
+              var caretGroup = group.AddGroup("Text attributes at caret");
+              caretGroup.LoadChildren = () => {
+                AddTextAttributeAtIndex(caretGroup.Children, textInfo.caretIndex);
+              };
+
+              var pointGroup = group.AddGroup(string.Format("Text attributes at point ({0}, {1})", point.X, point.Y));
+              pointGroup.LoadChildren = () => {
+                AddTextAttributeAtIndex(pointGroup.Children, textInfo.indexAtPoint);
+              };
+
+              var textGroup = group.AddGroup("Contents");
+              textGroup.LoadChildren = () => {
+                bool isEmpty = true;
+                var reader = new AccessibleTextReader(this, textInfo.charCount);
+                var lines = reader
+                  .ReadFullLines(AccessBridge.TextLineLengthLimit)
+                  .Where(x => !x.Continuation)
+                  .Take(AccessBridge.TextLineCountLimit);
+                foreach (var lineData in lines) {
+                  var lineEndOffset = lineData.Offset + lineData.Text.Length - 1;
+                  var name = string.Format("Line {0} [{1}, {2}]", lineData.Number + 1, lineData.Offset, lineEndOffset);
+                  var value = MakePrintable(lineData.Text) + (lineData.Incomplete ? "..." : "");
+                  textGroup.AddProperty(name, value);
+                  isEmpty = false;
+                }
+                if (isEmpty)
+                  textGroup.AddProperty("<Empty>", "No text contents");
+              };
+            }
+          };
+        }
+      }
+    }
+
+    private void AddHyperTextProperties(PropertyList list, PropertyOptions options) {
+      if ((options & PropertyOptions.AccessibleHyperText) != 0) {
+        var info = GetInfo();
+        if ((info.accessibleInterfaces & AccessibleInterfaces.cAccessibleHypertextInterface) != 0) {
+          var group = list.AddGroup("Accessible Hyper Text");
+          group.LoadChildren = () => {
+            AccessibleHypertextInfo hyperTextInfo;
+            if (Failed(AccessBridge.Functions.GetAccessibleHypertextExt(JvmId, _ac, 0, out hyperTextInfo))) {
+              group.AddProperty("<Error>", "Error retrieving hyper text info");
+            } else {
+              var linksGroup = group.AddGroup("Hyperlinks", hyperTextInfo.linkCount);
+              linksGroup.LoadChildren = () => {
+                Enumerable.Range(0, LimitSize(hyperTextInfo.linkCount)).ForEach(i => {
+                  var linkGroup = linksGroup.AddGroup(string.Format("Hyperlink {0} of {1}", i + 1, hyperTextInfo.linkCount));
+                  linkGroup.LoadChildren = () => {
+                    linkGroup.AddProperty("Start index", hyperTextInfo.links[i].startIndex);
+                    linkGroup.AddProperty("End index", hyperTextInfo.links[i].endIndex);
+                    linkGroup.AddProperty("Text", hyperTextInfo.links[i].text);
+                    //AddSubContextProperties(linkGroup.Children, options, hyperTextInfo.links[i].accessibleHyperlink);
+                  };
+                });
+              };
             }
           };
         }
@@ -608,7 +695,9 @@ namespace WindowsAccessBridgeInterop {
       var numColSelections = AccessBridge.Functions.GetAccessibleTableColumnSelectionCount(JvmId, tableInfo.accessibleTable);
       var selColGroup = group.AddGroup("Column selections", numColSelections);
       selColGroup.LoadChildren = () => {
-        if (numColSelections > 0) {
+        if (numColSelections <= 0) {
+          selColGroup.AddProperty("<Empty>", "no selection");
+        } else {
           var selections = new int[numColSelections];
           if (Failed(AccessBridge.Functions.GetAccessibleTableColumnSelections(JvmId, tableInfo.accessibleTable, numColSelections, selections))) {
             selColGroup.AddProperty("Error", "Error getting column selections");
@@ -640,24 +729,24 @@ namespace WindowsAccessBridgeInterop {
 
     private void AddTableCellsProperties(AccessibleTableInfo tableInfo, PropertyGroup group, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleTableCells) != 0) {
-        var cellsGroup = group.AddGroup("Cells");
+        var cellsGroup = group.AddGroup("Cells", string.Format("{0} row(s), {1} column(s)", tableInfo.rowCount, tableInfo.columnCount));
         cellsGroup.LoadChildren = () => {
           if (tableInfo.rowCount <= 0 || tableInfo.columnCount <= 0) {
             cellsGroup.AddProperty("<Empty>", "");
           } else {
             foreach (var rowCol in EnumerateRowColunms(tableInfo.rowCount, tableInfo.columnCount)) {
-              AddTableCellGroup(tableInfo.accessibleTable, cellsGroup, options, rowCol.RowIndex, rowCol.ColumnIndex);
+              AddTableCellGroup(tableInfo, cellsGroup, options, rowCol.RowIndex, rowCol.ColumnIndex);
             }
           }
         };
       }
     }
 
-    private void AddTableCellGroup(JavaObjectHandle accessibleTable, PropertyGroup cellsGroup, PropertyOptions options, int rowIndex, int columnIndex) {
-      var cellGroup = cellsGroup.AddGroup(string.Format("[Row={0}, Column={1}]", rowIndex, columnIndex));
+    private void AddTableCellGroup(AccessibleTableInfo tableInfo, PropertyGroup cellsGroup, PropertyOptions options, int rowIndex, int columnIndex) {
+      var cellGroup = cellsGroup.AddGroup(GetCellGroupTitle(tableInfo, rowIndex, columnIndex));
       cellGroup.LoadChildren = () => {
         AccessibleTableCellInfo tableCellInfo;
-        if (Failed(AccessBridge.Functions.GetAccessibleTableCellInfo(accessibleTable.JvmId, accessibleTable, rowIndex, columnIndex, out tableCellInfo))) {
+        if (Failed(AccessBridge.Functions.GetAccessibleTableCellInfo(tableInfo.accessibleTable.JvmId, tableInfo.accessibleTable, rowIndex, columnIndex, out tableCellInfo))) {
           cellGroup.AddProperty("Error", "Error retrieving cell info");
         } else {
           var cellHandle = tableCellInfo.accessibleContext;
@@ -673,7 +762,7 @@ namespace WindowsAccessBridgeInterop {
 
     private void AddTableSelectCellsProperties(AccessibleTableInfo tableInfo, PropertyGroup group, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleTableCellsSelect) != 0) {
-        var cellsGroup = group.AddGroup("Select Cells");
+        var cellsGroup = group.AddGroup("Select Cells", string.Format("{0} row(s), {1} column(s)", tableInfo.rowCount, tableInfo.columnCount));
         cellsGroup.LoadChildren = () => {
           if (tableInfo.rowCount <= 0 || tableInfo.columnCount <= 0) {
             cellsGroup.AddProperty("<Empty>", "");
@@ -687,7 +776,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     private void AddTableSelectCellGroup(AccessibleTableInfo tableInfo, PropertyGroup cellsGroup, PropertyOptions options, int rowIndex, int columnIndex) {
-      var cellGroup = cellsGroup.AddGroup(string.Format("[Row={0}, Column={1}]", rowIndex, columnIndex));
+      var cellGroup = cellsGroup.AddGroup(GetCellGroupTitle(tableInfo, rowIndex, columnIndex));
       cellGroup.LoadChildren = () => {
         var cellIndex = rowIndex * tableInfo.columnCount + columnIndex;
         var node = SelectAndGetTableCell(cellIndex);
@@ -724,89 +813,6 @@ namespace WindowsAccessBridgeInterop {
       AccessBridge.Functions.ClearAccessibleSelectionFromContext(JvmId, _ac);
       AccessBridge.Functions.AddAccessibleSelectionFromContext(JvmId, _ac, childIndex);
       return FindNodeInSelection(childIndex);
-    }
-
-    private void AddTextProperties(PropertyList list, PropertyOptions options) {
-      if ((options & PropertyOptions.AccessibleText) != 0) {
-        var info = GetInfo();
-        if (info.accessibleText != 0) {
-          var group = list.AddGroup("Accessible Text");
-          group.LoadChildren = () => {
-            var point = new Point(0, 0);
-
-            AccessibleTextInfo textInfo;
-            if (Succeeded(AccessBridge.Functions.GetAccessibleTextInfo(JvmId, _ac, out textInfo, point.X, point.Y))) {
-              group.AddProperty("Character count", textInfo.charCount);
-              group.AddProperty("Character index of caret", textInfo.caretIndex);
-              group.AddProperty(string.Format("Character index of point ({0}, {1})", point.X, point.Y), textInfo.indexAtPoint);
-
-              AccessibleTextSelectionInfo textSelection;
-              if (Succeeded(AccessBridge.Functions.GetAccessibleTextSelectionInfo(JvmId, _ac, out textSelection))) {
-                group.AddProperty("Selection start index", textSelection.selectionStartIndex);
-                group.AddProperty("Selection end index", textSelection.selectionEndIndex);
-                group.AddProperty("Selected text", textSelection.selectedText);
-              }
-
-              var caretGroup = group.AddGroup("Text attributes at caret");
-              caretGroup.LoadChildren = () => {
-                AddTextAttributeAtIndex(caretGroup.Children, textInfo.caretIndex);
-              };
-
-              var pointGroup = group.AddGroup(string.Format("Text attributes at point ({0}, {1})", point.X, point.Y));
-              pointGroup.LoadChildren = () => {
-                AddTextAttributeAtIndex(pointGroup.Children, textInfo.indexAtPoint);
-              };
-
-              var textGroup = group.AddGroup("Contents");
-              textGroup.LoadChildren = () => {
-                var reader = new AccessibleTextReader(this, textInfo.charCount);
-                var lines = reader
-                  .ReadFullLines(AccessBridge.TextLineLengthLimit)
-                  .Where(x => !x.Continuation)
-                  .Take(AccessBridge.TextLineCountLimit);
-                foreach (var lineData in lines) {
-                  var lineEndOffset = lineData.Offset + lineData.Text.Length - 1;
-                  var name = string.Format("Line {0} [{1}, {2}]", lineData.Number + 1, lineData.Offset, lineEndOffset);
-                  var value = MakePrintable(lineData.Text) + (lineData.Incomplete ? "..." : "");
-                  textGroup.AddProperty(name, value);
-                }
-              };
-            }
-          };
-        }
-      }
-    }
-
-    private void AddHyperTextProperties(PropertyList list, PropertyOptions options) {
-      if ((options & PropertyOptions.AccessibleHyperText) != 0) {
-        var info = GetInfo();
-        if ((info.accessibleInterfaces & AccessibleInterfaces.cAccessibleHypertextInterface) != 0) {
-          var group = list.AddGroup("Accessible Hyper Text");
-          group.LoadChildren = () => {
-            AccessibleHypertextInfo hyperTextInfo;
-#if true
-            if (Failed(AccessBridge.Functions.GetAccessibleHypertextExt(JvmId, _ac, 0, out hyperTextInfo))) {
-              group.AddProperty("Error", "Error retrieving hyper text info");
-              return;
-            }
-#else
-  // Note: This call does *not* return any value in the "hyperTextInfo.links" array
-      if (Failed(AccessBridge.Functions.GetAccessibleHypertext(JvmId, _ac.Handle, out hyperTextInfo))) {
-        group.AddProperty("Error", "No hyper text data");
-        return;
-      }
-#endif
-            var linksGroup = group.AddGroup("Hyperlinks", hyperTextInfo.linkCount);
-            for (var i = 0; i < LimitSize(hyperTextInfo.linkCount); i++) {
-              var linkGroup = linksGroup.AddGroup(string.Format("Hyperlink #{0}", i + 1));
-              linkGroup.AddProperty("Start index", hyperTextInfo.links[i].startIndex);
-              linkGroup.AddProperty("End index", hyperTextInfo.links[i].endIndex);
-              linkGroup.AddProperty("Text", hyperTextInfo.links[i].text);
-              //AddSubContextProperties(linkGroup.Children, options, hyperTextInfo.links[i].accessibleHyperlink);
-            }
-          };
-        }
-      }
     }
 
     private void AddTextAttributeAtIndex(PropertyList list, int index) {
@@ -988,6 +994,10 @@ namespace WindowsAccessBridgeInterop {
         else sb.Append(ch);
       }
       return sb.ToString();
+    }
+
+    private static string GetCellGroupTitle(AccessibleTableInfo tableInfo, int rowIndex, int columnIndex) {
+      return string.Format("[Row {0}/{1}, Col {2}/{3}]", rowIndex + 1, tableInfo.rowCount, columnIndex + 1, tableInfo.columnCount);
     }
 
     private IEnumerable<RowColumn> EnumerateRowColunms(int rowCount, int columnCount) {
