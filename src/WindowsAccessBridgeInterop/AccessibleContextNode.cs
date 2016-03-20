@@ -87,32 +87,65 @@ namespace WindowsAccessBridgeInterop {
     /// <summary>
     /// Limit the value of the arguments <paramref name="count1"/> and <paramref
     /// name="count2"/> so that their product does not exceed <see
+    /// cref="AccessBridge.CollectionSizeLimit"/>.
+    /// </summary>
+    private KeyValuePair<int, int> LimitSize(int count1, int count2) {
+      return LimitSizeToSquare(count1, count2);
+    }
+
+    /// <summary>
+    /// Limit the value of the arguments <paramref name="count1"/> and <paramref
+    /// name="count2"/> so that their product does not exceed <see
+    /// cref="AccessBridge.CollectionSizeLimit"/>. If the argument values need
+    /// to be adjusted, they are both adjusted so that they form a square.
+    /// </summary>
+    private KeyValuePair<int, int> LimitSizeToSquare(int count1, int count2) {
+      Func<int, int, KeyValuePair<int, int>> result = (a, b) => new KeyValuePair<int, int>(a, b);
+      Func<double, int> round = a => (int)Math.Round(a);
+      Func<double, double, double> min = (a, b) => Math.Min(a, b);
+
+      if (count1 <= 0 || count2 <= 0)
+        return result(0, 0);
+
+      double c1 = count1;
+      double c2 = count2;
+      double limit = AccessBridge.CollectionSizeLimit;
+
+      var squareSizeLength = Math.Sqrt(limit);
+
+      // If either c1 or c2 is less than the side length, use exact division.
+      if (c1 < squareSizeLength) {
+        return result(round(c1), round(min(c2, limit / c1)));
+      }
+
+      if (c2 < squareSizeLength) {
+        return result(round(min(c1, limit / c2)), round(c2));
+      }
+
+      // Otherwise limit both c1 and c2 to the side length.
+      return result(round(min(c1, squareSizeLength)), round(min(c2, squareSizeLength)));
+    }
+
+    /// <summary>
+    /// Limit the value of the arguments <paramref name="count1"/> and <paramref
+    /// name="count2"/> so that their product does not exceed <see
     /// cref="AccessBridge.CollectionSizeLimit"/>. If the argument values need
     /// to be adjusted, they are both adjusted by the same factor, so that their
     /// proportion remain the same. This is similar to decreasing the size of a
     /// rectangle so that its total surface is limited while maintaining the
     /// shape of the initial rectangle.
     /// </summary>
-    private KeyValuePair<int, int> LimitSize(int count1, int count2) {
+    private KeyValuePair<int, int> LimitSizeProportionally(int count1, int count2) {
       Func<int, int, KeyValuePair<int, int>> result = (a, b) => new KeyValuePair<int, int>(a, b);
       Func<double, int> round = a => (int)Math.Round(a);
 
       if (count1 <= 0 || count2 <= 0)
         return result(0, 0);
 
-      if (count2 < AccessBridge.CollectionSizeLimit / 2) {
-        double maxSize = LimitSize(count1 * count2);
-        return result(round(maxSize / count2), count2);
-      }
-
-      if (count1 < AccessBridge.CollectionSizeLimit / 2) {
-        double maxSize = LimitSize(count1 * count2);
-        return result(count1, round(maxSize / count1));
-      }
-
       double c1 = count1;
       double c2 = count2;
       double limit = AccessBridge.CollectionSizeLimit;
+
       // We have 2 variables and 2 equations:
       //   x * y = limit    <= we need to limit to the total size
       //   x / y = c1 / c2  <= we want to make sure we have the same proportions
@@ -120,7 +153,9 @@ namespace WindowsAccessBridgeInterop {
       //   y = sqrt(limit * c2 / c1)
       //   x = limit / y
       double y = Math.Sqrt(limit * c2 / c1);
+      y = Math.Max(1, y);
       double x = limit / y;
+      x = Math.Max(1, x);
 
       int c1Max = round(x);
       int c2Max = round(y);
@@ -649,8 +684,10 @@ namespace WindowsAccessBridgeInterop {
             } else {
               var linksGroup = group.AddGroup("Hyperlinks", hyperTextInfo.linkCount);
               linksGroup.LoadChildren = () => {
-                Enumerable.Range(0, LimitSize(hyperTextInfo.linkCount)).ForEach(i => {
-                  var linkGroup = linksGroup.AddGroup(string.Format("Hyperlink {0} of {1}", i + 1, hyperTextInfo.linkCount));
+                var count = hyperTextInfo.linkCount;
+                linksGroup.AddProperty("Count", count);
+                Enumerable.Range(0, LimitSize(count)).ForEach(i => {
+                  var linkGroup = linksGroup.AddGroup(string.Format("Hyperlink {0} of {1}", i + 1, count));
                   linkGroup.LoadChildren = () => {
                     linkGroup.AddProperty("Start index", hyperTextInfo.links[i].startIndex);
                     linkGroup.AddProperty("End index", hyperTextInfo.links[i].endIndex);
@@ -714,7 +751,9 @@ namespace WindowsAccessBridgeInterop {
       var numRowSelections = AccessBridge.Functions.GetAccessibleTableRowSelectionCount(JvmId, tableInfo.accessibleTable);
       var selRowGroup = group.AddGroup("Row selections", numRowSelections);
       selRowGroup.LoadChildren = () => {
-        if (numRowSelections > 0) {
+        if (numRowSelections <= 0) {
+          selRowGroup.AddProperty("<Empty>", "no selection");
+        } else {
           var selections = new int[numRowSelections];
           if (Failed(AccessBridge.Functions.GetAccessibleTableRowSelections(JvmId, tableInfo.accessibleTable, numRowSelections, selections))) {
             selRowGroup.AddProperty("Error", "Error getting row selections");
@@ -747,7 +786,7 @@ namespace WindowsAccessBridgeInterop {
       cellGroup.LoadChildren = () => {
         AccessibleTableCellInfo tableCellInfo;
         if (Failed(AccessBridge.Functions.GetAccessibleTableCellInfo(tableInfo.accessibleTable.JvmId, tableInfo.accessibleTable, rowIndex, columnIndex, out tableCellInfo))) {
-          cellGroup.AddProperty("Error", "Error retrieving cell info");
+          cellGroup.AddProperty("<Error>", "Error retrieving cell info");
         } else {
           var cellHandle = tableCellInfo.accessibleContext;
           cellGroup.AddProperty("Index", tableCellInfo.index);
@@ -781,7 +820,7 @@ namespace WindowsAccessBridgeInterop {
         var cellIndex = rowIndex * tableInfo.columnCount + columnIndex;
         var node = SelectAndGetTableCell(cellIndex);
         if (node == null) {
-          cellGroup.AddProperty("Error", "Error retrieving cell info");
+          cellGroup.AddProperty("<Error>", "Error retrieving cell info");
         } else {
           AddSubContextProperties(cellGroup.Children, options, node);
         }
