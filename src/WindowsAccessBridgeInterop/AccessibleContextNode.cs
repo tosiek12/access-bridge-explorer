@@ -111,19 +111,19 @@ namespace WindowsAccessBridgeInterop {
       double c2 = count2;
       double limit = AccessBridge.CollectionSizeLimit;
 
-      var squareSizeLength = Math.Sqrt(limit);
+      var squareSideLength = Math.Sqrt(limit);
 
       // If either c1 or c2 is less than the side length, use exact division.
-      if (c1 < squareSizeLength) {
+      if (c1 < squareSideLength) {
         return result(round(c1), round(min(c2, limit / c1)));
       }
 
-      if (c2 < squareSizeLength) {
+      if (c2 < squareSideLength) {
         return result(round(min(c1, limit / c2)), round(c2));
       }
 
       // Otherwise limit both c1 and c2 to the side length.
-      return result(round(min(c1, squareSizeLength)), round(min(c2, squareSizeLength)));
+      return result(round(min(c1, squareSideLength)), round(min(c2, squareSideLength)));
     }
 
     /// <summary>
