@@ -356,15 +356,15 @@ namespace WindowsAccessBridgeInterop {
         list.AddProperty("Name", info.name ?? "-");
         list.AddProperty("Description", info.description ?? "-");
         list.AddProperty("Name (JAWS algorithm)", GetVirtualAccessibleName());
-        if ((options & PropertyOptions.ObjectDepth) != 0) {
-          var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
-          list.AddProperty("Object Depth", depth);
-        }
-        list.AddProperty("Bounds", new AccessibleRectInfo(info.x, info.y, info.width, info.height));
         list.AddProperty("Role", info.role ?? "-");
         list.AddProperty("Role_en_US", info.role_en_US ?? "-");
         list.AddProperty("States", info.states ?? "-");
         list.AddProperty("States_en_US", info.states_en_US ?? "-");
+        list.AddProperty("Bounds", new AccessibleRectInfo(info.x, info.y, info.width, info.height));
+        if ((options & PropertyOptions.ObjectDepth) != 0) {
+          var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
+          list.AddProperty("Object Depth", depth);
+        }
         list.AddProperty("Children count", info.childrenCount);
         list.AddProperty("Index in parent", info.indexInParent);
         list.AddProperty("AccessibleComponent supported", info.accessibleComponent);
@@ -377,49 +377,57 @@ namespace WindowsAccessBridgeInterop {
 
     private void AddParentContextProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.ParentContext) != 0) {
-        var group = list.AddGroup("Parent");
-        group.LoadChildren = () => {
-          var parentContext = AccessBridge.Functions.GetAccessibleParentFromContext(JvmId, _ac);
-          AddSubContextProperties(@group.Children, options, parentContext);
-        };
+        var parentContext = AccessBridge.Functions.GetAccessibleParentFromContext(JvmId, _ac);
+        if (!parentContext.IsNull) {
+          var group = list.AddGroup("Parent");
+          group.LoadChildren = () => {
+            AddSubContextProperties(@group.Children, options, parentContext);
+          };
+        }
       }
     }
 
     private void AddChildrenProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.Children) != 0) {
-        var group = list.AddGroup("Children");
-        group.LoadChildren = () => {
-          var count = GetInfo().childrenCount;
-          group.AddProperty("Count", count);
-          group.Value = count;
-          Enumerable.Range(0, LimitSize(count)).ForEach(index => {
-            var childGroup = group.AddGroup(string.Format("Child {0} of {1}", index + 1, count));
-            childGroup.LoadChildren = () => {
+        var count = GetInfo().childrenCount;
+        if (count > 0) {
+          var group = list.AddGroup("Children");
+          group.LoadChildren = () => {
+            group.AddProperty("Count", count);
+            Enumerable.Range(0, LimitSize(count)).ForEach(index => {
               var childHandle = AccessBridge.Functions.GetAccessibleChildFromContext(JvmId, _ac, index);
-              AddSubContextProperties(childGroup.Children, options, childHandle);
-            };
-          });
-        };
+              var childNode = new AccessibleContextNode(AccessBridge, childHandle);
+              var childGroup = group.AddGroup(string.Format("{0} [{1} of {2}]", childNode.GetTitle(), index + 1, count));
+              childGroup.LoadChildren = () => {
+                AddSubContextProperties(childGroup.Children, options, childNode);
+              };
+            });
+          };
+        }
       }
     }
 
     private void AddTopLevelWindowProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.TopLevelWindowInfo) != 0) {
-        var group = list.AddGroup("Top level window");
-        group.LoadChildren = () => {
-          var topLevel = AccessBridge.Functions.GetTopLevelObject(JvmId, _ac);
-          AddSubContextProperties(group.Children, options, topLevel);
-        };
+        var topLevel = AccessBridge.Functions.GetTopLevelObject(JvmId, _ac);
+        if (!topLevel.IsNull) {
+          var group = list.AddGroup("Top level window");
+          group.LoadChildren = () => {
+            AddSubContextProperties(group.Children, options, topLevel);
+          };
+        }
       }
     }
 
     private void AddActiveDescendentProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.ActiveDescendent) != 0) {
-        var group = list.AddGroup("Active Descendant");
-        group.LoadChildren = () => {
-          var context = AccessBridge.Functions.GetActiveDescendent(JvmId, _ac);
-          AddSubContextProperties(group.Children, options, context);
-        };
+        var descendant = AccessBridge.Functions.GetActiveDescendent(JvmId, _ac);
+        if (!descendant.IsNull) {
+          var group = list.AddGroup("Active Descendant");
+          group.LoadChildren = () => {
+            AddSubContextProperties(group.Children, options, descendant);
+          };
+        }
       }
     }
 
@@ -431,7 +439,6 @@ namespace WindowsAccessBridgeInterop {
           group.LoadChildren = () => {
             var count = AccessBridge.Functions.GetAccessibleSelectionCountFromContext(JvmId, _ac);
             group.AddProperty("Count", count);
-            group.Value = count;
             Enumerable.Range(0, LimitSize(count)).ForEach(index => {
               var selGroup = group.AddGroup(string.Format("Selection {0} of {1}", index + 1, count));
               selGroup.LoadChildren = () => {
@@ -446,64 +453,70 @@ namespace WindowsAccessBridgeInterop {
 
     private void AddKeyBindingsProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleKeyBindings) != 0) {
-        var group = list.AddGroup("Key Bindings");
-        group.LoadChildren = () => {
-          AccessibleKeyBindings keyBindings;
-          if (Failed(AccessBridge.Functions.GetAccessibleKeyBindings(JvmId, _ac, out keyBindings))) {
-            group.AddProperty("<Error>", "error retrieving key bindings");
-          } else {
-            var count = keyBindings.keyBindingsCount;
-            group.AddProperty("Count", count);
-            group.Value = count;
-            Enumerable.Range(0, LimitSize(count)).ForEach(index => {
-              var keyGroup = group.AddGroup(string.Format("Key binding {0} of {1}", index + 1, keyBindings.keyBindingsCount));
-              keyGroup.AddProperty("Character", keyBindings.keyBindingInfo[index].character);
-              keyGroup.AddProperty("Modifiers", keyBindings.keyBindingInfo[index].modifiers);
-            });
+        AccessibleKeyBindings keyBindings;
+        if (Failed(AccessBridge.Functions.GetAccessibleKeyBindings(JvmId, _ac, out keyBindings))) {
+          var group = list.AddGroup("Key Bindings");
+          group.AddProperty("<Error>", "error retrieving key bindings");
+        } else {
+          var count = keyBindings.keyBindingsCount;
+          if (count > 0) {
+            var group = list.AddGroup("Key Bindings");
+            group.LoadChildren = () => {
+              group.AddProperty("Count", count);
+              Enumerable.Range(0, LimitSize(count)).ForEach(index => {
+                var keyGroup = group.AddGroup(string.Format("Key binding {0} of {1}", index + 1, keyBindings.keyBindingsCount));
+                keyGroup.AddProperty("Character", keyBindings.keyBindingInfo[index].character);
+                keyGroup.AddProperty("Modifiers", keyBindings.keyBindingInfo[index].modifiers);
+              });
+            };
           }
-        };
+        }
       }
     }
 
     private void AddIconsProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleIcons) != 0) {
-        var group = list.AddGroup("Icons");
-        group.LoadChildren = () => {
-          AccessibleIcons icons;
-          if (Failed(AccessBridge.Functions.GetAccessibleIcons(JvmId, _ac, out icons))) {
-            group.AddProperty("<Error>", "error retrieving icons");
-          } else {
-            var count = icons.iconsCount;
-            group.AddProperty("Count", count);
-            group.Value = count;
-            Enumerable.Range(0, LimitSize(count)).ForEach(index => {
-              var iconGroup = group.AddGroup(string.Format("Icon {0} of {1}", index + 1, icons.iconsCount));
-              iconGroup.AddProperty("Height", icons.iconInfo[index].height);
-              iconGroup.AddProperty("Width", icons.iconInfo[index].width);
-            });
+        AccessibleIcons icons;
+        if (Failed(AccessBridge.Functions.GetAccessibleIcons(JvmId, _ac, out icons))) {
+          var group = list.AddGroup("Icons");
+          group.AddProperty("<Error>", "error retrieving icons");
+        } else {
+          var count = icons.iconsCount;
+          if (count > 0) {
+            var group = list.AddGroup("Icons");
+            group.LoadChildren = () => {
+              group.AddProperty("Count", count);
+              Enumerable.Range(0, LimitSize(count)).ForEach(index => {
+                var iconGroup = group.AddGroup(string.Format("Icon {0} of {1}", index + 1, icons.iconsCount));
+                iconGroup.AddProperty("Height", icons.iconInfo[index].height);
+                iconGroup.AddProperty("Width", icons.iconInfo[index].width);
+              });
+            };
           }
-        };
+        }
       }
     }
 
     private void AddActionProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleActions) != 0) {
-        var group = list.AddGroup("Actions");
-        group.LoadChildren = () => {
-          AccessibleActions actions;
-          if (Failed(AccessBridge.Functions.GetAccessibleActions(JvmId, _ac, out actions))) {
-            group.AddProperty("<Error>", "error retrieving actions");
-          } else {
-            var count = actions.actionsCount;
-            group.AddProperty("Count", count);
-            group.Value = count;
-            Enumerable.Range(0, LimitSize(count)).ForEach(index => {
-              group.AddProperty(
-                string.Format("Action {0} of {1}", index + 1, actions.actionsCount),
-                actions.actionInfo[index].name);
-            });
+        AccessibleActions actions;
+        if (Failed(AccessBridge.Functions.GetAccessibleActions(JvmId, _ac, out actions))) {
+          var group = list.AddGroup("Actions");
+          group.AddProperty("<Error>", "error retrieving actions");
+        } else {
+          var count = actions.actionsCount;
+          if (count > 0) {
+            var group = list.AddGroup("Actions");
+            group.LoadChildren = () => {
+              group.AddProperty("Count", count);
+              Enumerable.Range(0, LimitSize(count)).ForEach(index => {
+                group.AddProperty(
+                  string.Format("Action {0} of {1}", index + 1, actions.actionsCount),
+                  actions.actionInfo[index].name);
+              });
+            };
           }
-        };
+        }
       }
     }
 
@@ -511,6 +524,7 @@ namespace WindowsAccessBridgeInterop {
       if ((options & PropertyOptions.VisibleChildren) != 0) {
         var group = list.AddGroup("Visible Children");
         group.LoadChildren = () => {
+          // Note: This can be a very expensive calls on the JVM side!
           var visibleCount = AccessBridge.Functions.GetVisibleChildrenCount(JvmId, _ac);
           group.AddProperty("Count", visibleCount);
           if (visibleCount > 0) {
@@ -518,8 +532,7 @@ namespace WindowsAccessBridgeInterop {
             if (Succeeded(AccessBridge.Functions.GetVisibleChildren(JvmId, _ac, 0, out childrenInfo))) {
               var childNodes = childrenInfo.children
                 .Take(LimitSize(childrenInfo.returnedChildrenCount))
-                .ToList().Select(x => new AccessibleContextNode(AccessBridge, x))
-                .ToList();
+                .Select(x => new AccessibleContextNode(AccessBridge, x));
               var childIndex = 0;
               childNodes.ForEach(childNode => {
                 var childGroup = group.AddGroup(string.Format("Child {0} of {1}", childIndex + 1, visibleCount));
@@ -536,29 +549,31 @@ namespace WindowsAccessBridgeInterop {
 
     private void AddRelationSetProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.AccessibleRelationSet) != 0) {
-        var group = list.AddGroup("Relation Set");
-        group.LoadChildren = () => {
-          AccessibleRelationSetInfo relationSetInfo;
-          if (Failed(AccessBridge.Functions.GetAccessibleRelationSet(JvmId, _ac, out relationSetInfo))) {
-            group.AddProperty("<Error>", "error retrieving relation set");
-          } else {
-            var count = relationSetInfo.relationCount;
-            group.AddProperty("Count", count);
-            group.Value = count;
-            Enumerable.Range(0, LimitSize(count)).ForEach(index => {
-              var relationInfo = relationSetInfo.relations[index];
-              var relGroup = group.AddGroup(string.Format("Relation {0} of {1}", index + 1, relationSetInfo.relationCount));
-              relGroup.AddProperty("Key", relationInfo.key);
-              var relSubGroup = relGroup.AddGroup("Targets", relationInfo.targetCount);
-              relSubGroup.LoadChildren = () => {
-                Enumerable.Range(0, LimitSize(relationInfo.targetCount)).ForEach(j => {
-                  var targetGroup = relSubGroup.AddGroup(string.Format("Target {0} of {1}", j + 1, relationInfo.targetCount));
-                  AddSubContextProperties(targetGroup.Children, options, relationInfo.targets[j]);
-                });
-              };
-            });
+        AccessibleRelationSetInfo relationSetInfo;
+        if (Failed(AccessBridge.Functions.GetAccessibleRelationSet(JvmId, _ac, out relationSetInfo))) {
+          var group = list.AddGroup("Relation Set");
+          group.AddProperty("<Error>", "error retrieving relation set");
+        } else {
+          var count = relationSetInfo.relationCount;
+          if (count > 0) {
+            var group = list.AddGroup("Relation Set");
+            group.LoadChildren = () => {
+              group.AddProperty("Count", count);
+              Enumerable.Range(0, LimitSize(count)).ForEach(index => {
+                var relationInfo = relationSetInfo.relations[index];
+                var relGroup = group.AddGroup(string.Format("Relation {0} of {1}", index + 1, relationSetInfo.relationCount));
+                relGroup.AddProperty("Key", relationInfo.key);
+                var relSubGroup = relGroup.AddGroup("Targets", relationInfo.targetCount);
+                relSubGroup.LoadChildren = () => {
+                  Enumerable.Range(0, LimitSize(relationInfo.targetCount)).ForEach(j => {
+                    var targetGroup = relSubGroup.AddGroup(string.Format("Target {0} of {1}", j + 1, relationInfo.targetCount));
+                    AddSubContextProperties(targetGroup.Children, options, relationInfo.targets[j]);
+                  });
+                };
+              });
+            };
           }
-        };
+        }
       }
     }
 
