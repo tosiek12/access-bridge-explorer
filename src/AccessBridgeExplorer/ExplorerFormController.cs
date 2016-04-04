@@ -31,6 +31,7 @@ namespace AccessBridgeExplorer {
     private readonly OverlayWindow _overlayWindow = new OverlayWindow();
     private readonly TooltipWindow _tooltipWindow = new TooltipWindow();
     private bool _overlayWindowEnabled;
+    private bool _autoDetectEnabled;
     private Rectangle? _overlayWindowRectangle;
     private bool _disposed;
     private int _eventId;
@@ -96,6 +97,7 @@ namespace AccessBridgeExplorer {
 
       LogMessage("Initializing Java Access Bridge and enumerating active Java application windows.");
       _accessBridge.Initilized += (sender, args) => {
+        EnableAutoDetect(_autoDetectEnabled);
         CreateEventMenuItems();
         CreatePropertyOptionsMenuItems();
         CreateLimitCollectionSizesMenuItems();
@@ -480,6 +482,7 @@ namespace AccessBridgeExplorer {
     }
 
     private int _refreshCallId = 0;
+
     public void RefreshTree() {
       if (_disposed)
         return;
@@ -552,6 +555,16 @@ namespace AccessBridgeExplorer {
       HideOverlayWindow();
       HideToolTip();
       _navigation.Clear();
+    }
+
+    private List<AccessibleJvm> GetAccessibleJvmsFromTree() {
+      return _view.AccessibilityTree.Nodes
+        .Cast<TreeNode>()
+        .Select(x => x.Tag)
+        .Cast<AccessibleNodeModel>()
+        .Select(x => x.AccessibleNode)
+        .Cast<AccessibleJvm>()
+        .ToList();
     }
 
     private static void DisposeTreeNodeList(TreeNodeCollection list) {
@@ -720,6 +733,29 @@ namespace AccessBridgeExplorer {
     public void EnableOverlayWindow(bool enabled) {
       _overlayWindowEnabled = enabled;
       UpdateOverlayWindow();
+    }
+
+    public void EnableAutoDetect(bool enabled) {
+      _autoDetectEnabled = enabled;
+      if (_accessBridge.IsLoaded) {
+        if (enabled) {
+          _accessBridge.Events.FocusGained += OnFocusGainedAutoDetectApplications;
+        } else {
+          _accessBridge.Events.FocusGained -= OnFocusGainedAutoDetectApplications;
+        }
+      }
+    }
+
+    private void OnFocusGainedAutoDetectApplications(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      UiAction(() => {
+        //
+        var jvms = GetAccessibleJvmsFromTree();
+        if (jvms.Any(x => x.JvmId == source.JvmId))
+          return;
+
+        var topLevel = _accessBridge.Functions.GetTopLevelObject(source.JvmId, source);
+        var hwnd = _accessBridge.Functions.GetHWNDFromAccessibleContext(topLevel.JvmId, topLevel);
+      });
     }
 
     /// <summary>

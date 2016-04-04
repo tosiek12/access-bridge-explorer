@@ -46,7 +46,8 @@ namespace AccessBridgeExplorer {
       SetDoubleBuffered(_accessibleComponentTabControl, true);
       SetDoubleBuffered(_bottomTabControl, true);
 
-      overlayEnableButton_Click(_overlayEnableButton, new EventArgs());
+      overlayEnableButton_Click(_overlayEnableButton, EventArgs.Empty);
+      autoDetectApplicationsMenuItem_CheckChanged(autoDetectApplicationsMenuItem, EventArgs.Empty);
       automaticallyCheckForUpdatesMenuItem_CheckedChanged(automaticallyCheckForUpdatesMenuItem, EventArgs.Empty);
     }
 
@@ -189,6 +190,10 @@ namespace AccessBridgeExplorer {
           e.Graphics.FillRectangle(new SolidBrush(e.Item.ForeColor), bounds);
         }
       }
+    }
+
+    private void autoDetectApplicationsMenuItem_CheckChanged(object sender, EventArgs e) {
+      _controller.EnableAutoDetect(autoDetectApplicationsMenuItem.Checked);
     }
 
     private void showOverlayMenuItem_Click(object sender, EventArgs e) {
