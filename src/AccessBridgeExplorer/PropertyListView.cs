@@ -19,11 +19,6 @@ using System.Windows.Forms;
 using WindowsAccessBridgeInterop;
 
 namespace AccessBridgeExplorer {
-  public class AccessibleRectInfoSelectedEventArgs : EventArgs {
-    public PropertyNode PropertyNode { get; set; }
-    public AccessibleRectInfo AccessibleRectInfo { get; set; }
-  }
-
   /// <summary>
   /// Wraps a <see cref="ListView"/> used to display a <see
   /// cref="PropertyList"/> to handle node identation and expand/collapse. The
@@ -60,6 +55,7 @@ namespace AccessBridgeExplorer {
     }
 
     public event EventHandler<AccessibleRectInfoSelectedEventArgs> AccessibleRectInfoSelected;
+    public event EventHandler<PropertyGroupErrorEventArgs> Error;
 
     /// <summary>
     /// Set a new <paramref name="propertyList"/> to be displayed in the <see
@@ -83,6 +79,36 @@ namespace AccessBridgeExplorer {
       _listView.Items.Clear();
     }
 
+    private class ListViewOperations : IIncrementalUpdateOperations<ListViewItem, ListViewItem> {
+      private readonly PropertyListView _listView;
+
+      public ListViewOperations(PropertyListView listView) {
+        _listView = listView;
+      }
+
+      public int FindOldItemIndex(IList<ListViewItem> items, int startIndex, ListViewItem newItem) {
+        return FindIndexOfTag(items, startIndex, newItem.Tag);
+      }
+
+      public void InsertNewItem(IList<ListViewItem> items, int index, ListViewItem newItem) {
+        _listView.InsertListViewItem(items, index, newItem);
+      }
+
+      public void UpdateOldItem(IList<ListViewItem> items, int index, ListViewItem newItem) {
+        _listView.UpdateListViewItem(items[index], newItem);
+      }
+
+      private int FindIndexOfTag(IList<ListViewItem> oldItems, int startIndex, object tag) {
+        var itemTag = (ListViewItemTag)tag;
+        for (var index = startIndex; index < oldItems.Count; index++) {
+          var oldItemTag = (ListViewItemTag)oldItems[index].Tag;
+          if (Equals(itemTag.Path, oldItemTag.Path))
+            return index;
+        }
+        return -1;
+      }
+    }
+
     /// <summary>
     /// Update the list view contents minimally after a group has been
     /// expanded/collapsed or any other change to <see
@@ -92,59 +118,11 @@ namespace AccessBridgeExplorer {
       _listView.BeginUpdate();
       try {
         var newItems = CreateListViewItems(_currentPropertyList, _nodeState);
-        var oldItems = _listView.Items;
-        var oldInsertionIndex = 0;
-        // We go through each item in the new list and decide what to do in the
-        // existing list of items currently displayed. If there are additional
-        // nodes in the new list, we insert them in the existing list. If there
-        // are missing nodes in the new list we delete them from the existing
-        // list.
-        for (var newIndex = 0; newIndex < newItems.Count; newIndex++) {
-          var newItem = newItems[newIndex];
-
-          // Find item with same tag in old list.
-          var oldItemIndex = FindIndexOfTag(oldItems, oldInsertionIndex, newItem.Tag);
-          if (oldItemIndex < 0) {
-            // If this is a new node (existing node not found), insert new list
-            // view item at current insertion location (at end or in middle)
-
-            oldItems.Insert(oldInsertionIndex, newItem);
-            oldInsertionIndex++;
-          } else {
-            // If we found an equivalent node in the existing list, delete
-            // existing items in between if needed, then update the existing
-            // item with the updated values.
-
-            // Delete items in range [oldIndex, oldItemIndex[
-            for (var i = oldInsertionIndex; i < oldItemIndex; i++) {
-              oldItems.RemoveAt(oldInsertionIndex);
-            }
-            oldItemIndex = oldInsertionIndex;
-
-            // Update existing item with new property data
-            UpdateListViewItem(oldItems[oldItemIndex], newItem);
-            oldInsertionIndex++;
-          }
-        }
-
-        // Delete all the existing items that don't exist anymore, since we
-        // reached the end of the new list.
-        while (oldInsertionIndex < oldItems.Count) {
-          oldItems.RemoveAt(oldInsertionIndex);
-        }
+        var oldItems = _listView.Items.AsList();
+        ListHelpers.IncrementalUpdate(oldItems, newItems, new ListViewOperations(this));
       } finally {
         _listView.EndUpdate();
       }
-    }
-
-    private static int FindIndexOfTag(ListView.ListViewItemCollection oldItems, int startIndex, object tag) {
-      var itemTag = (ListViewItemTag)tag;
-      for (var index = startIndex; index < oldItems.Count; index++) {
-        var oldItemTag = (ListViewItemTag)oldItems[index].Tag;
-        if (Equals(itemTag.Path, oldItemTag.Path))
-          return index;
-      }
-      return -1;
     }
 
     /// <summary>
@@ -185,7 +163,12 @@ namespace AccessBridgeExplorer {
       item.IndentCount = indent;
     }
 
-    private static void UpdateListViewItem(ListViewItem oldItem, ListViewItem newItem) {
+    private void InsertListViewItem(IList<ListViewItem> oldItems, int oldInsertionIndex, ListViewItem newItem) {
+      SetErrorHandler(newItem);
+      oldItems.Insert(oldInsertionIndex, newItem);
+    }
+
+    private void UpdateListViewItem(ListViewItem oldItem, ListViewItem newItem) {
       // Note: For performance reason, we only assign values if they have changed
       if (oldItem.ImageIndex != newItem.ImageIndex)
         oldItem.ImageIndex = newItem.ImageIndex;
@@ -196,8 +179,10 @@ namespace AccessBridgeExplorer {
       if (oldItem.IndentCount != newItem.IndentCount)
         oldItem.IndentCount = newItem.IndentCount;
 
-      if (!ReferenceEquals(oldItem.Tag, newItem.Tag))
+      if (!ReferenceEquals(oldItem.Tag, newItem.Tag)) {
+        SetErrorHandler(newItem);
         oldItem.Tag = newItem.Tag;
+      }
 
       // SubItem[0] is the same as the Text property. So we just need to
       // synchronize the SubItems collections.
@@ -213,6 +198,15 @@ namespace AccessBridgeExplorer {
       // If there were more subitems in the existing item, remove them
       for (var i = oldItem.SubItems.Count - 1; i >= newItem.SubItems.Count; i--) {
         oldItem.SubItems.RemoveAt(i);
+      }
+    }
+
+    private void SetErrorHandler(ListViewItem newItem) {
+      var group = newItem.Tag as PropertyGroup;
+      if (group != null) {
+        group.Error += (sender, args) => {
+          OnError(new PropertyGroupErrorEventArgs((PropertyGroup)sender, args.GetException()));
+        };
       }
     }
 
@@ -429,6 +423,11 @@ namespace AccessBridgeExplorer {
 
     protected virtual void OnAccessibleRectInfoSelected(AccessibleRectInfoSelectedEventArgs e) {
       var handler = AccessibleRectInfoSelected;
+      if (handler != null) handler(this, e);
+    }
+
+    protected virtual void OnError(PropertyGroupErrorEventArgs e) {
+      var handler = Error;
       if (handler != null) handler(this, e);
     }
   }

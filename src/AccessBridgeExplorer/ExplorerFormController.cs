@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -30,32 +29,20 @@ namespace AccessBridgeExplorer {
     private readonly AccessBridge _accessBridge = new AccessBridge();
     private readonly OverlayWindow _overlayWindow = new OverlayWindow();
     private readonly TooltipWindow _tooltipWindow = new TooltipWindow();
+    private readonly SingleDelayedTask _delayedRefreshTree = new SingleDelayedTask();
     private bool _overlayWindowEnabled;
     private bool _autoDetectEnabled;
     private Rectangle? _overlayWindowRectangle;
     private bool _disposed;
     private int _eventId;
     private int _messageId;
+    private int _refreshCallId;
 
     public ExplorerFormController(IExplorerFormView explorerFormView) {
       _navigation = new ExplorerFormNavigation();
       _view = explorerFormView;
       _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
       _overlayWindowEnabled = true;
-
-      _view.EventsMenu.Enabled = false;
-      _view.PropertiesMenu.Enabled = false;
-      _view.LimitCollectionSizesMenu.Enabled = false;
-
-      _view.AccessibilityTree.AfterSelect += AccessibilityTreeAfterSelect;
-      _view.AccessibilityTree.BeforeExpand += AccessibilityTreeBeforeExpand;
-      _view.AccessibilityTree.KeyDown += AccessibilityTreeOnKeyDown;
-      _view.AccessibilityTree.GotFocus += AccessibilityTreeOnGotFocus;
-
-      _view.EventList.MouseDoubleClick += AccessibilityEventListOnMouseDoubleClick;
-      _view.EventList.KeyDown += AccessibilityEventListOnKeyDown;
-
-      _view.AccessibleComponentPropertyList.AccessibleRectInfoSelected += OnAccessibleRectInfoSelected;
 
       PropertyOptions = PropertyOptions.AccessibleContextInfo |
         PropertyOptions.AccessibleIcons |
@@ -83,6 +70,21 @@ namespace AccessBridgeExplorer {
     }
 
     public void Initialize() {
+      _view.EventsMenu.Enabled = false;
+      _view.PropertiesMenu.Enabled = false;
+      _view.LimitCollectionSizesMenu.Enabled = false;
+
+      _view.AccessibilityTree.AfterSelect += AccessibilityTree_AfterSelect;
+      _view.AccessibilityTree.BeforeExpand += AccessibilityTree_BeforeExpand;
+      _view.AccessibilityTree.KeyDown += AccessibilityTree_KeyDown;
+      _view.AccessibilityTree.GotFocus += AccessibilityTree_GotFocus;
+
+      _view.EventList.MouseDoubleClick += AccessibilityEventList_MouseDoubleClick;
+      _view.EventList.KeyDown += AccessibilityEventListOnKeyDown;
+
+      _view.AccessibleComponentPropertyListView.AccessibleRectInfoSelected += ComponentPropertyListView_AccessibleRectInfoSelected;
+      _view.AccessibleComponentPropertyListView.Error += ComponentPropertyListView_Error;
+
       _overlayWindow.TopMost = true;
       _overlayWindow.Visible = true;
       _overlayWindow.Size = new Size(0, 0);
@@ -129,7 +131,7 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    private void AccessibilityEventListOnMouseDoubleClick(object sender, MouseEventArgs e) {
+    private void AccessibilityEventList_MouseDoubleClick(object sender, MouseEventArgs e) {
       ListViewHitTestInfo info = _view.EventList.HitTest(e.X, e.Y);
       if (info.Location == ListViewHitTestLocations.None)
         return;
@@ -254,10 +256,10 @@ namespace AccessBridgeExplorer {
 
     private void CreateLimitCollectionSizesMenuItems() {
       int index = 0;
-      foreach (var size in new int[] { 10, 20, 50, 100, 250, 500, 1000, 2000 }) {
+      foreach (var size in new[] { 10, 20, 50, 100, 250, 500, 1000, 2000 }) {
         char mnemonicCharacter = (char)('A' + index);
         var text = string.Format("&{0} - {1} elements", mnemonicCharacter, size);
-        CreateLimitSizeItem(_view.LimitCollectionSizesMenu, text, index, size,
+        CreateLimitSizeItem(_view.LimitCollectionSizesMenu, text, size,
           _accessBridge.CollectionSizeLimit,
           x => {
             _accessBridge.CollectionSizeLimit = x;
@@ -268,10 +270,10 @@ namespace AccessBridgeExplorer {
 
     private void CreateLimitTextLineCountMenuItems() {
       int index = 0;
-      foreach (var size in new int[] {100, 200, 300, 500, 1000, 2000, 5000}) {
+      foreach (var size in new[] { 100, 200, 300, 500, 1000, 2000, 5000 }) {
         char mnemonicCharacter = (char)('A' + index);
         var text = string.Format("&{0} - {1} lines", mnemonicCharacter, size);
-        CreateLimitSizeItem(_view.LimitTextLineCountMenu, text, index, size,
+        CreateLimitSizeItem(_view.LimitTextLineCountMenu, text, size,
           _accessBridge.TextLineCountLimit,
           x => {
             _accessBridge.TextLineCountLimit = x;
@@ -282,10 +284,10 @@ namespace AccessBridgeExplorer {
 
     private void CreateLimitTextLineLengthsMenuItems() {
       int index = 0;
-      foreach (var size in new int[] { 40, 80, 120, 160, 200, 300, 400, 500, 1000 }) {
+      foreach (var size in new[] { 40, 80, 120, 160, 200, 300, 400, 500, 1000 }) {
         char mnemonicCharacter = (char)('A' + index);
         var text = string.Format("&{0} - {1} characters", mnemonicCharacter, size);
-        CreateLimitSizeItem(_view.LimitTextLineLengthsMenu, text, index, size,
+        CreateLimitSizeItem(_view.LimitTextLineLengthsMenu, text, size,
           _accessBridge.TextLineLengthLimit,
           x => {
             _accessBridge.TextLineLengthLimit = x;
@@ -294,7 +296,7 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    private static void CreateLimitSizeItem(ToolStripMenuItem menu, string text, int index, int size, int defaultSize, Action<int> setter) {
+    private static void CreateLimitSizeItem(ToolStripMenuItem menu, string text, int size, int defaultSize, Action<int> setter) {
       var item = new ToolStripMenuItem();
       item.Text = text;
       item.CheckOnClick = false;
@@ -481,8 +483,6 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    private int _refreshCallId = 0;
-
     public void RefreshTree() {
       if (_disposed)
         return;
@@ -530,41 +530,130 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private void RefreshTree(List<AccessibleJvm> jvms) {
-      _view.AccessibilityTree.BeginUpdate();
-      try {
-        // Cleanup previous tree
-        DisposeTreeNodeList(_view.AccessibilityTree.Nodes);
-        _view.AccessibilityTree.Nodes.Clear();
-
-        // Add nodes for new tree, one node per JVM ID, expanded to the second level (windows).
-        var topLevelNodes = jvms.Select(x => new AccessibleNodeModel(_accessibleNodeModelResources, x));
-        topLevelNodes.ForEach(x => {
-          var node = x.CreateTreeNode();
-          _view.AccessibilityTree.Nodes.Add(node);
-          node.Expand();
-        });
-
-        if (_view.AccessibilityTree.Nodes.Count == 0) {
-          _view.AccessibilityTree.Nodes.Add("No application detected. Try presssing Refresh again.");
-        }
-      } finally {
-        _view.AccessibilityTree.EndUpdate();
-      }
+    private void RefreshTree(IList<AccessibleJvm> jvms) {
+      UpdateTree(jvms);
       _view.StatusLabel.Text = @"Ready.";
       HideOverlayWindow();
       HideToolTip();
       _navigation.Clear();
     }
 
-    private List<AccessibleJvm> GetAccessibleJvmsFromTree() {
-      return _view.AccessibilityTree.Nodes
-        .Cast<TreeNode>()
-        .Select(x => x.Tag)
-        .Cast<AccessibleNodeModel>()
-        .Select(x => x.AccessibleNode)
-        .Cast<AccessibleJvm>()
-        .ToList();
+    private void UpdateTree(IList<AccessibleJvm> jvms) {
+      ListHelpers.IncrementalUpdate(_view.AccessibilityTree.Nodes.AsList(), jvms, new JvmNodesOperations(this));
+      // Display help message if no jvm nodes
+      if (_view.AccessibilityTree.Nodes.Count == 0) {
+        _view.AccessibilityTree.Nodes.Add("No application detected. Try presssing Refresh again.");
+      }
+    }
+
+    private class JvmNodesOperations : IIncrementalUpdateOperations<TreeNode, AccessibleJvm> {
+      private readonly ExplorerFormController _controller;
+      private readonly WindowNodesOperations _windowNodesOperations;
+
+      public JvmNodesOperations(ExplorerFormController controller) {
+        _controller = controller;
+        _windowNodesOperations = new WindowNodesOperations(_controller);
+      }
+
+      public int FindOldItemIndex(IList<TreeNode> items, int startIndex, AccessibleJvm newItem) {
+        for (var i = 0; i < items.Count; i++) {
+          var node = items[i];
+          if ((node.Tag != null) && _controller.GetAccessibleJvmFromNode(node).JvmId == newItem.JvmId) {
+            return i;
+          }
+        }
+        return -1;
+      }
+
+      public void InsertNewItem(IList<TreeNode> items, int index, AccessibleJvm newItem) {
+        var model = new AccessibleNodeModel(_controller._accessibleNodeModelResources, newItem);
+        var node = model.CreateTreeNode();
+
+        // Insert and expand node at insertion position
+        _controller._view.AccessibilityTree.Nodes.Insert(index, node);
+        node.Expand();
+      }
+
+      public void UpdateOldItem(IList<TreeNode> items, int index, AccessibleJvm newItem) {
+        ListHelpers.IncrementalUpdate(items[index].Nodes.AsList(), newItem.Windows, _windowNodesOperations);
+
+        // JVM node text may be different as windows are added/removed
+        var jvmTreeNode = items[index];
+        var title = _controller.GetAccessibleJvmFromNode(jvmTreeNode).GetTitle();
+        if (jvmTreeNode.Text != title) {
+          jvmTreeNode.Text = title;
+        }
+      }
+    }
+
+    private class WindowNodesOperations : IIncrementalUpdateOperations<TreeNode, AccessibleWindow> {
+      private readonly ExplorerFormController _controller;
+
+      public WindowNodesOperations(ExplorerFormController controller) {
+        _controller = controller;
+      }
+
+      public int FindOldItemIndex(IList<TreeNode> items, int startIndex, AccessibleWindow newItem) {
+        for (var i = 0; i < items.Count; i++) {
+          var node = items[i];
+          if ((node.Tag != null) && _controller.GetAccessibleWindowFromNode(node).Hwnd == newItem.Hwnd) {
+            return i;
+          }
+        }
+        return -1;
+      }
+
+      public void InsertNewItem(IList<TreeNode> items, int index, AccessibleWindow newItem) {
+        var model = new AccessibleNodeModel(_controller._accessibleNodeModelResources, newItem);
+        var node = model.CreateTreeNode();
+        items.Insert(index, node);
+      }
+
+      public void UpdateOldItem(IList<TreeNode> items, int index, AccessibleWindow newItem) {
+        // Nothing to do, as display of window nodes don't change over time
+        var title = newItem.GetTitle();
+        var treeNode = items[index];
+        if (treeNode.Text != title) {
+          treeNode.Text = title;
+        }
+      }
+    }
+
+    private void AccessBridgeEvents_OnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      PostRefreshTree();
+    }
+
+    private void AccessBridgeEvents_JavaShutdown(int vmid) {
+      PostRefreshTree();
+    }
+
+    private void PostRefreshTree() {
+      _delayedRefreshTree.Post(TimeSpan.FromMilliseconds(200), () => {
+        try {
+          //var sw = Stopwatch.StartNew();
+          var jvms = _accessBridge.EnumJvms();
+          //Debug.WriteLine("{0}: enum jvms: {1} msec", Thread.CurrentThread.ManagedThreadId, sw.ElapsedMilliseconds);
+          UiAction(() => {
+            _view.AccessibilityTree.Invoke((Action)(() => {
+              //sw.Restart();
+              UpdateTree(jvms);
+              //Debug.WriteLine("{0}: Update tree: {1} msec", Thread.CurrentThread.ManagedThreadId, sw.ElapsedMilliseconds);
+            }));
+          });
+        } catch (Exception e) {
+          UiAction(() => { LogErrorMessage(e); });
+        }
+      });
+    }
+
+    private AccessibleJvm GetAccessibleJvmFromNode(TreeNode node) {
+      var model = (AccessibleNodeModel)node.Tag;
+      return (AccessibleJvm)model.AccessibleNode;
+    }
+
+    private AccessibleWindow GetAccessibleWindowFromNode(TreeNode node) {
+      var model = (AccessibleNodeModel)node.Tag;
+      return (AccessibleWindow)model.AccessibleNode;
     }
 
     private static void DisposeTreeNodeList(TreeNodeCollection list) {
@@ -587,11 +676,11 @@ namespace AccessBridgeExplorer {
         _view.AccessibilityTree.SelectedNode = null;
         _overlayWindowRectangle = null;
         UpdateOverlayWindow();
-        _view.AccessibleComponentPropertyList.Clear();
+        _view.AccessibleComponentPropertyListView.Clear();
       }
     }
 
-    private void AccessibilityTreeBeforeExpand(object sender, TreeViewCancelEventArgs e) {
+    private void AccessibilityTree_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
       var node = e.Node.Tag as NodeModel;
       if (node == null)
         return;
@@ -600,7 +689,7 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private void AccessibilityTreeAfterSelect(object sender, TreeViewEventArgs e) {
+    private void AccessibilityTree_AfterSelect(object sender, TreeViewEventArgs e) {
       var treeNode = e.Node;
       if (treeNode == null)
         return;
@@ -609,7 +698,7 @@ namespace AccessBridgeExplorer {
       if (nodeModel == null) {
         _overlayWindowRectangle = null;
         UpdateOverlayWindow();
-        _view.AccessibleComponentPropertyList.Clear();
+        _view.AccessibleComponentPropertyListView.Clear();
         return;
       }
 
@@ -617,20 +706,22 @@ namespace AccessBridgeExplorer {
       UiAction(() => {
         _overlayWindowRectangle = nodeModel.AccessibleNode.GetScreenRectangle();
         var propertyList = nodeModel.AccessibleNode.GetProperties(PropertyOptions);
-        _view.AccessibleComponentPropertyList.SetPropertyList(propertyList);
+        _view.AccessibleComponentPropertyListView.SetPropertyList(propertyList);
       });
 
       EnsureTreeNodeVisible(treeNode);
       UpdateOverlayWindow();
 
-      var navigationEntry = new NavigationEntry {
-        Description = string.Format("Navigate to \"{0}\"", nodeModel.AccessibleNode.GetTitle()),
-        Action = () => SelectTreeNode(nodeModel.AccessibleNode),
-      };
-      _navigation.AddNavigationAction(navigationEntry);
+      UiAction(() => {
+        var navigationEntry = new NavigationEntry {
+          Description = string.Format("Navigate to \"{0}\"", nodeModel.AccessibleNode.GetTitle()),
+          Action = () => SelectTreeNode(nodeModel.AccessibleNode),
+        };
+        _navigation.AddNavigationAction(navigationEntry);
+      });
     }
 
-    private void AccessibilityTreeOnGotFocus(object sender, EventArgs eventArgs) {
+    private void AccessibilityTree_GotFocus(object sender, EventArgs eventArgs) {
       var treeNode = _view.AccessibilityTree.SelectedNode;
       if (treeNode == null)
         return;
@@ -639,11 +730,13 @@ namespace AccessBridgeExplorer {
       if (nodeModel == null)
         return;
 
-      _overlayWindowRectangle = nodeModel.AccessibleNode.GetScreenRectangle();
-      UpdateOverlayWindow();
+      UiAction(() => {
+        _overlayWindowRectangle = nodeModel.AccessibleNode.GetScreenRectangle();
+        UpdateOverlayWindow();
+      });
     }
 
-    private void AccessibilityTreeOnKeyDown(object sender, KeyEventArgs keyEventArgs) {
+    private void AccessibilityTree_KeyDown(object sender, KeyEventArgs keyEventArgs) {
       if (keyEventArgs.KeyCode != Keys.Return)
         return;
       var treeNode = _view.AccessibilityTree.SelectedNode;
@@ -670,7 +763,7 @@ namespace AccessBridgeExplorer {
 
         // Update the property list
         var propertyList = nodeModel.AccessibleNode.GetProperties(PropertyOptions);
-        _view.AccessibleComponentPropertyList.SetPropertyList(propertyList);
+        _view.AccessibleComponentPropertyListView.SetPropertyList(propertyList);
 
         // Update the overlay window
         _overlayWindowRectangle = nodeModel.AccessibleNode.GetScreenRectangle();
@@ -678,9 +771,13 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private void OnAccessibleRectInfoSelected(object sender, AccessibleRectInfoSelectedEventArgs e) {
+    private void ComponentPropertyListView_AccessibleRectInfoSelected(object sender, AccessibleRectInfoSelectedEventArgs e) {
       _overlayWindowRectangle = e.AccessibleRectInfo.Rectangle;
       UpdateOverlayWindow();
+    }
+
+    private void ComponentPropertyListView_Error(object sender, PropertyGroupErrorEventArgs e) {
+      LogErrorMessage(e.GetException());
     }
 
     private void EnsureTreeNodeVisible(TreeNode node) {
@@ -739,23 +836,13 @@ namespace AccessBridgeExplorer {
       _autoDetectEnabled = enabled;
       if (_accessBridge.IsLoaded) {
         if (enabled) {
-          _accessBridge.Events.FocusGained += OnFocusGainedAutoDetectApplications;
+          _accessBridge.Events.FocusGained += AccessBridgeEvents_OnFocusGained;
+          _accessBridge.Events.JavaShutdown += AccessBridgeEvents_JavaShutdown;
         } else {
-          _accessBridge.Events.FocusGained -= OnFocusGainedAutoDetectApplications;
+          _accessBridge.Events.FocusGained -= AccessBridgeEvents_OnFocusGained;
+          _accessBridge.Events.JavaShutdown -= AccessBridgeEvents_JavaShutdown;
         }
       }
-    }
-
-    private void OnFocusGainedAutoDetectApplications(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      UiAction(() => {
-        //
-        var jvms = GetAccessibleJvmsFromTree();
-        if (jvms.Any(x => x.JvmId == source.JvmId))
-          return;
-
-        var topLevel = _accessBridge.Functions.GetTopLevelObject(source.JvmId, source);
-        var hwnd = _accessBridge.Functions.GetHWNDFromAccessibleContext(topLevel.JvmId, topLevel);
-      });
     }
 
     /// <summary>

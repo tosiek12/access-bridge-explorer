@@ -23,10 +23,14 @@ namespace WindowsAccessBridgeInterop {
   /// specific Java Window.
   /// </summary>
   public class AccessibleWindow : AccessibleContextNode {
-    private readonly IntPtr _hWnd;
+    private readonly IntPtr _hwnd;
 
-    public AccessibleWindow(AccessBridge accessBridge, IntPtr hWnd, JavaObjectHandle ac) : base(accessBridge, ac) {
-      _hWnd = hWnd;
+    public AccessibleWindow(AccessBridge accessBridge, IntPtr hwnd, JavaObjectHandle ac) : base(accessBridge, ac) {
+      _hwnd = hwnd;
+    }
+
+    public IntPtr Hwnd {
+      get { return _hwnd; }
     }
 
     public override AccessibleNode GetParent() {
@@ -35,17 +39,17 @@ namespace WindowsAccessBridgeInterop {
 
     protected override void AddToolTipProperties(PropertyList list, PropertyOptions options) {
       base.AddToolTipProperties(list, options);
-      list.AddProperty("WindowHandle", _hWnd);
+      list.AddProperty("WindowHandle", _hwnd);
     }
 
     protected override void AddProperties(PropertyList list, PropertyOptions options) {
-      list.AddProperty("WindowHandle", _hWnd);
+      list.AddProperty("WindowHandle", _hwnd);
       base.AddProperties(list, options);
       var group = list.AddGroup("Focused element");
       group.LoadChildren = () => {
         int vmid;
         JavaObjectHandle ac;
-        if (Failed(AccessBridge.Functions.GetAccessibleContextWithFocus(_hWnd, out vmid, out ac))) {
+        if (Failed(AccessBridge.Functions.GetAccessibleContextWithFocus(_hwnd, out vmid, out ac))) {
           group.AddProperty("<Error>", "Error retrieving focused element");
         } else {
           AddSubContextProperties(group.Children, options, ac);
@@ -78,7 +82,7 @@ namespace WindowsAccessBridgeInterop {
       // Multi monitor notes:
       // https://msdn.microsoft.com/en-us/library/windows/desktop/dd162827(v=vs.85).aspx
       var hwnd = NativeMethods.WindowFromPoint(screenPoint);
-      if (hwnd != _hWnd)
+      if (hwnd != _hwnd)
         return null;
 
       return base.GetNodePathAt(screenPoint);
@@ -91,11 +95,11 @@ namespace WindowsAccessBridgeInterop {
       if (!(other is AccessibleWindow))
         return false;
 
-      return _hWnd == ((AccessibleWindow) other)._hWnd;
+      return _hwnd == ((AccessibleWindow) other)._hwnd;
     }
 
     public override string ToString() {
-      return string.Format("AccessibleWindowNode(hwnd={0})", _hWnd);
+      return string.Format("AccessibleWindowNode(hwnd={0})", _hwnd);
     }
   }
 }

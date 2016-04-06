@@ -28,17 +28,19 @@ namespace AccessBridgeExplorer {
     private const Keys CaptureKey = Keys.Control | Keys.OemPipe;
     private readonly WindowsHotKeyHandler _hotKeyHandler;
     private readonly ExplorerFormController _controller;
-    private readonly PropertyListView _accessibleComponentPropertyListView;
+    private readonly PropertyListView _accessibleComponentPropertyListViewView;
     private bool _capturing;
     private int _navigationVersion = int.MinValue;
+    private bool _updateNotificationShown;
 
     public ExplorerForm() {
       InitializeComponent();
-      mainToolStrip.Renderer = new OverlayButtonRenderer(this);
-      _accessibleComponentPropertyListView = new PropertyListView(_accessibleContextPropertyList, _propertyImageList);
+      _accessibleComponentPropertyListViewView = new PropertyListView(_accessibleContextPropertyList, _propertyImageList);
       _controller = new ExplorerFormController(this);
       _hotKeyHandler = new WindowsHotKeyHandler();
-      _hotKeyHandler.KeyPressed += HotKeyHandlerOnKeyPressed;
+      _hotKeyHandler.KeyPressed += HotKeyHandler_KeyPressed;
+
+      mainToolStrip.Renderer = new OverlayButtonRenderer(this);
       SetDoubleBuffered(_accessibilityTree, true);
       SetDoubleBuffered(_messageList, true);
       SetDoubleBuffered(_accessibleContextPropertyList, true);
@@ -60,11 +62,11 @@ namespace AccessBridgeExplorer {
         } catch (Exception ex) {
           _controller.LogErrorMessage(ex);
         }
-        Application.Idle += ApplicationOnIdle;
+        Application.Idle += Application_Idle;
       });
     }
 
-    private void ApplicationOnIdle(object sender, EventArgs eventArgs) {
+    private void Application_Idle(object sender, EventArgs eventArgs) {
       UpdateNavigationState();
       UpdateNotificationMenu();
     }
@@ -103,7 +105,7 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private void HotKeyHandlerOnKeyPressed(object sender, EventArgs eventArgs) {
+    private void HotKeyHandler_KeyPressed(object sender, EventArgs eventArgs) {
       _controller.RefreshTree();
 
       var screenPoint = MousePosition;
@@ -123,7 +125,6 @@ namespace AccessBridgeExplorer {
       _controller.RefreshTree();
     }
 
-    private bool _updateNotificationShown;
     private void checkForUpdateMenuItem_Click(object sender, EventArgs e) {
       _updateNotificationShown = false;
       updateChecker.CheckNow();
@@ -241,7 +242,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
-      Application.Idle -= ApplicationOnIdle;
+      Application.Idle -= Application_Idle;
       _controller.Dispose();
       _hotKeyHandler.Dispose();
     }
@@ -351,8 +352,8 @@ namespace AccessBridgeExplorer {
       get { return _accessibilityTree; }
     }
 
-    PropertyListView IExplorerFormView.AccessibleComponentPropertyList {
-      get { return _accessibleComponentPropertyListView; }
+    PropertyListView IExplorerFormView.AccessibleComponentPropertyListView {
+      get { return _accessibleComponentPropertyListViewView; }
     }
 
     TabPage IExplorerFormView.MessageListPage {

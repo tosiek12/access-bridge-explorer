@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 
 namespace WindowsAccessBridgeInterop {
   /// <summary>
@@ -23,6 +24,10 @@ namespace WindowsAccessBridgeInterop {
 
     public PropertyGroup(string name, object value = null) : base(name, value) {
     }
+
+    public bool Expanded { get; set; }
+
+    public event EventHandler<ErrorEventArgs> Error;
 
     public PropertyNode AddProperty(string name, object value) {
       return _children.AddProperty(name, value);
@@ -39,12 +44,20 @@ namespace WindowsAccessBridgeInterop {
         if (LoadChildren != null) {
           var temp = LoadChildren;
           LoadChildren = null;
-          temp();
+          try {
+            temp();
+          } catch (Exception e) {
+            OnError(new ErrorEventArgs(e));
+          }
         }
         return _children;
       }
     }
 
-    public bool Expanded { get; set; }
+    protected virtual void OnError(ErrorEventArgs e) {
+      var handler = Error;
+      if (handler != null)
+        handler(this, e);
+    }
   }
 }

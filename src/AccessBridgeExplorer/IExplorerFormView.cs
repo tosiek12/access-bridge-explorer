@@ -26,7 +26,7 @@ namespace AccessBridgeExplorer {
     TabPage AccessibilityTreePage { get; }
     TreeView AccessibilityTree { get; }
 
-    PropertyListView AccessibleComponentPropertyList { get; }
+    PropertyListView AccessibleComponentPropertyListView { get; }
 
     TabPage MessageListPage { get; }
     ListView MessageList { get; }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using System.Windows.Forms;
 using WindowsAccessBridgeInterop;
@@ -39,12 +40,23 @@ namespace AccessBridgeExplorer.Model {
     }
 
     public override void SetupTreeNode(TreeNode node) {
-      var hasChildren = _accessibleNode.GetChildren().Any();
+      bool hasChildren;
+      try {
+        hasChildren = _accessibleNode.GetChildren().Any();
+      } catch {
+        hasChildren = false;
+      }
+
       if (hasChildren) {
         AddFakeChild(node);
       }
 
-      node.Text = _accessibleNode.GetTitle();
+      try {
+        node.Text = _accessibleNode.GetTitle();
+      } catch (Exception e) {
+        node.Text = string.Format("Error: {0}", e.Message);
+      }
+
       if (_accessibleNode.IsManagedDescendant) { 
         node.NodeFont = _resources.ManagedDescendantFont;
       }
