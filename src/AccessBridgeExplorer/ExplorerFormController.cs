@@ -577,11 +577,16 @@ namespace AccessBridgeExplorer {
       }
 
       public override void UpdateItem(IList<TreeNode> items, int index, AccessibleJvm newItem) {
+        // Update the tree node to point to the new AccessibleJvm
+        var jvmTreeNode = items[index];
+        _controller.SetNodeAccessibleJvm(jvmTreeNode, newItem);
+
+        // Update the tree nodes representing the list of windows
         ListHelpers.IncrementalUpdate(items[index].Nodes.AsList(), newItem.Windows, _windowNodesOperations);
 
-        // JVM node text may be different as windows are added/removed
-        var jvmTreeNode = items[index];
-        var title = _controller.GetAccessibleJvmFromNode(jvmTreeNode).GetTitle();
+        // Update tree node text, as AccessibleJvm text may be different as windows
+        // are added/removed
+        var title = newItem.GetTitle();
         if (jvmTreeNode.Text != title) {
           jvmTreeNode.Text = title;
         }
@@ -617,9 +622,12 @@ namespace AccessBridgeExplorer {
       }
 
       public override void UpdateItem(IList<TreeNode> items, int index, AccessibleWindow newItem) {
-        // Nothing to do, as display of window nodes don't change over time
-        var title = newItem.GetTitle();
+        // Update the tree node to point to the new AccessibleWindow node
         var treeNode = items[index];
+        _controller.SetNodeAccessibleWindow(treeNode, newItem);
+
+        // Update tree node text, as AccessibleWindow titles may change over time.
+        var title = newItem.GetTitle();
         if (treeNode.Text != title) {
           treeNode.Text = title;
         }
@@ -642,15 +650,10 @@ namespace AccessBridgeExplorer {
     private void PostRefreshTree() {
       _delayedRefreshTree.Post(TimeSpan.FromMilliseconds(200), () => {
         try {
-          //var sw = Stopwatch.StartNew();
+          // Enumerate on thread pool thread, refresh on UI thread.
           var jvms = _accessBridge.EnumJvms();
-          //Debug.WriteLine("{0}: enum jvms: {1} msec", Thread.CurrentThread.ManagedThreadId, sw.ElapsedMilliseconds);
           UiAction(() => {
-            _view.AccessibilityTree.Invoke((Action)(() => {
-              //sw.Restart();
-              UpdateTree(jvms);
-              //Debug.WriteLine("{0}: Update tree: {1} msec", Thread.CurrentThread.ManagedThreadId, sw.ElapsedMilliseconds);
-            }));
+            UpdateTree(jvms);
           });
         } catch (Exception e) {
           UiAction(() => { LogErrorMessage(e); });
@@ -663,9 +666,19 @@ namespace AccessBridgeExplorer {
       return (AccessibleJvm)model.AccessibleNode;
     }
 
+    private void SetNodeAccessibleJvm(TreeNode node, AccessibleJvm value) {
+      var model = (AccessibleNodeModel)node.Tag;
+      model.AccessibleNode = value;
+    }
+
     private AccessibleWindow GetAccessibleWindowFromNode(TreeNode node) {
       var model = (AccessibleNodeModel)node.Tag;
       return (AccessibleWindow)model.AccessibleNode;
+    }
+
+    private void SetNodeAccessibleWindow(TreeNode node, AccessibleWindow value) {
+      var model = (AccessibleNodeModel)node.Tag;
+      model.AccessibleNode = value;
     }
 
     private void DisposeTreeNode(TreeNode node) {

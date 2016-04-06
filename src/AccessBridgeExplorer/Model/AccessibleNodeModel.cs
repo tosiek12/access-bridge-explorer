@@ -21,7 +21,7 @@ using AccessBridgeExplorer.Utils;
 namespace AccessBridgeExplorer.Model {
   public class AccessibleNodeModel : NodeModel {
     private readonly AccessibleNodeModelResources _resources;
-    private readonly AccessibleNode _accessibleNode;
+    private AccessibleNode _accessibleNode;
 
     public AccessibleNodeModel(AccessibleNodeModelResources resources, AccessibleNode accessibleNode) {
       _resources = resources;
@@ -30,6 +30,7 @@ namespace AccessBridgeExplorer.Model {
 
     public AccessibleNode AccessibleNode {
       get { return _accessibleNode; }
+      set { _accessibleNode = value; }
     }
 
     public override void AddChildren(TreeNode node) {
