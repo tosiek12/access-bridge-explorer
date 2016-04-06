@@ -16,6 +16,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using WindowsAccessBridgeInterop;
+using AccessBridgeExplorer.Utils;
 
 namespace AccessBridgeExplorer.Model {
   public class AccessibleNodeModel : NodeModel {

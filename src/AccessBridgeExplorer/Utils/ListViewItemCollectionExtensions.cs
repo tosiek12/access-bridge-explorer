@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace AccessBridgeExplorer {
+namespace AccessBridgeExplorer.Utils {
   public static class ListViewItemCollectionExtensions {
     public static IList<ListViewItem> AsList(this ListView.ListViewItemCollection collection) {
       return new ListViewItemCollectionWrapper(collection);

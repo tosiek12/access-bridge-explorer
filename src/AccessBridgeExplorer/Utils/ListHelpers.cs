@@ -14,7 +14,7 @@
 
 using System.Collections.Generic;
 
-namespace AccessBridgeExplorer {
+namespace AccessBridgeExplorer.Utils {
   public interface IIncrementalUpdateOperations<TSource, TNew> {
     int FindOldItemIndex(IList<TSource> items, int startIndex, TNew newItem);
     void InsertNewItem(IList<TSource> items, int index, TNew newItem);

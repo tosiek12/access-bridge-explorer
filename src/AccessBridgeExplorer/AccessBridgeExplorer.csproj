@@ -90,21 +90,21 @@
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
     <Compile Include="AccessibleRectInfoSelectedEventArgs.cs" />
-    <Compile Include="SingleDelayedTask.cs" />
+    <Compile Include="Utils\SingleDelayedTask.cs" />
     <Compile Include="ExplorerFormNavigation.cs" />
     <Compile Include="ExplorerFormController.cs" />
     <Compile Include="IExplorerFormNavigation.cs" />
     <Compile Include="IExplorerFormView.cs" />
-    <Compile Include="ExceptionUtils.cs" />
-    <Compile Include="IMessageQueue.cs" />
-    <Compile Include="ListHelpers.cs" />
-    <Compile Include="ListViewItemCollectionExtensions.cs" />
+    <Compile Include="Utils\ExceptionUtils.cs" />
+    <Compile Include="Utils\IMessageQueue.cs" />
+    <Compile Include="Utils\ListHelpers.cs" />
+    <Compile Include="Utils\ListViewItemCollectionExtensions.cs" />
     <Compile Include="Model\AccessibleNodeModelResources.cs" />
     <Compile Include="NotificationPanelEntry.cs" />
     <Compile Include="NotificationPanelIcon.cs" />
     <Compile Include="PropertyGroupErrorEventArgs.cs" />
     <Compile Include="PropertyListView.cs" />
-    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Utils\EnumerableExtensions.cs" />
     <Compile Include="EventForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -141,7 +141,7 @@
     <Compile Include="NotificationPanel.Designer.cs">
       <DependentUpon>NotificationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="TreeNodeCollectionExtensions.cs" />
+    <Compile Include="Utils\TreeNodeCollectionExtensions.cs" />
     <Compile Include="UpdateChecker.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -150,8 +150,8 @@
     </Compile>
     <Compile Include="UpdateInfoArgs.cs" />
     <Compile Include="Model\AccessibleNodeModel.cs" />
-    <Compile Include="User32Utils.cs" />
-    <Compile Include="WindowsHotKeyHandler.cs" />
+    <Compile Include="Utils\User32Utils.cs" />
+    <Compile Include="Utils\WindowsHotKeyHandler.cs" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Windows.Forms;
+using AccessBridgeExplorer.Utils;
 
 namespace AccessBridgeExplorer {
   public interface IExplorerFormView {

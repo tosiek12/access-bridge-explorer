@@ -15,10 +15,12 @@
 using System;
 using System.Timers;
 
-namespace AccessBridgeExplorer {
+namespace AccessBridgeExplorer.Utils {
   /// <summary>
-  /// Execution of callback driven by a queue with a single element. Each new posted callback
-  /// overrides the previously enqueued callback.
+  /// Execution of callbacks driven by a queue with a single element. Each new
+  /// posted callback overrides the previously enqueued callback. The callback
+  /// executes on a thread of the default <see
+  /// cref="System.Threading.ThreadPool"/>.
   /// </summary>
   public class SingleDelayedTask {
     private readonly Timer _timer = new Timer();
@@ -28,6 +30,11 @@ namespace AccessBridgeExplorer {
       _timer.AutoReset = false;
     }
 
+    /// <summary>
+    /// Enqeue <paramref name="callback"/> to be executed after the specified
+    /// <paramref name="delay"/>. The currently enqueued callback is removed
+    /// from the queue and won't be executed.
+    /// </summary>
     public void Post(TimeSpan delay, Action callback) {
       _timer.Stop();
       if (_currentHandler != null) {
@@ -35,15 +42,12 @@ namespace AccessBridgeExplorer {
         _currentHandler = null;
       }
 
-      ElapsedEventHandler handler = (obj, args) => {
+      _currentHandler = (obj, args) => {
         callback();
       };
-
-      _currentHandler = handler;
       _timer.Elapsed += _currentHandler;
       _timer.Interval = delay.TotalMilliseconds;
       _timer.Start();
-
     }
   }
 }

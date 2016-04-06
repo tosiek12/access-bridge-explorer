@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace AccessBridgeExplorer {
+namespace AccessBridgeExplorer.Utils {
   public static class TreeNodeCollectionExtensions {
     public static IList<TreeNode> AsList(this TreeNodeCollection collection) {
       return new TreeNodeCollectionWrapper(collection);
