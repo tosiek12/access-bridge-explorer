@@ -19,6 +19,10 @@ using System.Windows.Forms;
 
 namespace AccessBridgeExplorer.Utils {
   public static class TreeNodeCollectionExtensions {
+    /// <summary>
+    /// Wraps a <see cref="TreeNodeCollection"/> as an <see
+    /// cref="IList{TreeNode}"/>.
+    /// </summary>
     public static IList<TreeNode> AsList(this TreeNodeCollection collection) {
       return new TreeNodeCollectionWrapper(collection);
     }

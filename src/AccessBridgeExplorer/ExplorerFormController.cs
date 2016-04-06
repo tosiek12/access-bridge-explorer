@@ -532,6 +532,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void RefreshTree(IList<AccessibleJvm> jvms) {
+      _view.AccessibilityTree.Nodes.Clear();
       UpdateTree(jvms);
       _view.StatusLabel.Text = @"Ready.";
       HideOverlayWindow();
@@ -547,7 +548,7 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    private class JvmNodesOperations : IIncrementalUpdateOperations<TreeNode, AccessibleJvm> {
+    private class JvmNodesOperations : IncrementalUpdateOperations<TreeNode, AccessibleJvm> {
       private readonly ExplorerFormController _controller;
       private readonly WindowNodesOperations _windowNodesOperations;
 
@@ -556,7 +557,7 @@ namespace AccessBridgeExplorer {
         _windowNodesOperations = new WindowNodesOperations(_controller);
       }
 
-      public int FindOldItemIndex(IList<TreeNode> items, int startIndex, AccessibleJvm newItem) {
+      public override int FindItem(IList<TreeNode> items, int startIndex, AccessibleJvm newItem) {
         for (var i = 0; i < items.Count; i++) {
           var node = items[i];
           if ((node.Tag != null) && _controller.GetAccessibleJvmFromNode(node).JvmId == newItem.JvmId) {
@@ -566,7 +567,7 @@ namespace AccessBridgeExplorer {
         return -1;
       }
 
-      public void InsertNewItem(IList<TreeNode> items, int index, AccessibleJvm newItem) {
+      public override void InsertItem(IList<TreeNode> items, int index, AccessibleJvm newItem) {
         var model = new AccessibleNodeModel(_controller._accessibleNodeModelResources, newItem);
         var node = model.CreateTreeNode();
 
@@ -575,7 +576,7 @@ namespace AccessBridgeExplorer {
         node.Expand();
       }
 
-      public void UpdateOldItem(IList<TreeNode> items, int index, AccessibleJvm newItem) {
+      public override void UpdateItem(IList<TreeNode> items, int index, AccessibleJvm newItem) {
         ListHelpers.IncrementalUpdate(items[index].Nodes.AsList(), newItem.Windows, _windowNodesOperations);
 
         // JVM node text may be different as windows are added/removed
@@ -585,16 +586,21 @@ namespace AccessBridgeExplorer {
           jvmTreeNode.Text = title;
         }
       }
+
+      public override void RemoveItem(IList<TreeNode> items, int index) {
+        _controller.DisposeTreeNode(items[index]);
+        base.RemoveItem(items, index);
+      }
     }
 
-    private class WindowNodesOperations : IIncrementalUpdateOperations<TreeNode, AccessibleWindow> {
+    private class WindowNodesOperations : IncrementalUpdateOperations<TreeNode, AccessibleWindow> {
       private readonly ExplorerFormController _controller;
 
       public WindowNodesOperations(ExplorerFormController controller) {
         _controller = controller;
       }
 
-      public int FindOldItemIndex(IList<TreeNode> items, int startIndex, AccessibleWindow newItem) {
+      public override int FindItem(IList<TreeNode> items, int startIndex, AccessibleWindow newItem) {
         for (var i = 0; i < items.Count; i++) {
           var node = items[i];
           if ((node.Tag != null) && _controller.GetAccessibleWindowFromNode(node).Hwnd == newItem.Hwnd) {
@@ -604,19 +610,24 @@ namespace AccessBridgeExplorer {
         return -1;
       }
 
-      public void InsertNewItem(IList<TreeNode> items, int index, AccessibleWindow newItem) {
+      public override void InsertItem(IList<TreeNode> items, int index, AccessibleWindow newItem) {
         var model = new AccessibleNodeModel(_controller._accessibleNodeModelResources, newItem);
         var node = model.CreateTreeNode();
         items.Insert(index, node);
       }
 
-      public void UpdateOldItem(IList<TreeNode> items, int index, AccessibleWindow newItem) {
+      public override void UpdateItem(IList<TreeNode> items, int index, AccessibleWindow newItem) {
         // Nothing to do, as display of window nodes don't change over time
         var title = newItem.GetTitle();
         var treeNode = items[index];
         if (treeNode.Text != title) {
           treeNode.Text = title;
         }
+      }
+
+      public override void RemoveItem(IList<TreeNode> items, int index) {
+        _controller.DisposeTreeNode(items[index]);
+        base.RemoveItem(items, index);
       }
     }
 
@@ -657,17 +668,17 @@ namespace AccessBridgeExplorer {
       return (AccessibleWindow)model.AccessibleNode;
     }
 
-    private static void DisposeTreeNodeList(TreeNodeCollection list) {
-      foreach (TreeNode node in list) {
-        DisposeTreeNode(node);
-      }
-    }
-
-    private static void DisposeTreeNode(TreeNode node) {
+    private void DisposeTreeNode(TreeNode node) {
       DisposeTreeNodeList(node.Nodes);
       var model = node.Tag as AccessibleNodeModel;
       if (model != null) {
         model.AccessibleNode.Dispose();
+      }
+    }
+
+    private void DisposeTreeNodeList(TreeNodeCollection list) {
+      foreach (TreeNode node in list) {
+        DisposeTreeNode(node);
       }
     }
 

@@ -80,22 +80,22 @@ namespace AccessBridgeExplorer {
       _listView.Items.Clear();
     }
 
-    private class ListViewOperations : IIncrementalUpdateOperations<ListViewItem, ListViewItem> {
+    private class ListViewOperations : IncrementalUpdateOperations<ListViewItem, ListViewItem> {
       private readonly PropertyListView _listView;
 
       public ListViewOperations(PropertyListView listView) {
         _listView = listView;
       }
 
-      public int FindOldItemIndex(IList<ListViewItem> items, int startIndex, ListViewItem newItem) {
+      public override int FindItem(IList<ListViewItem> items, int startIndex, ListViewItem newItem) {
         return FindIndexOfTag(items, startIndex, newItem.Tag);
       }
 
-      public void InsertNewItem(IList<ListViewItem> items, int index, ListViewItem newItem) {
+      public override void InsertItem(IList<ListViewItem> items, int index, ListViewItem newItem) {
         _listView.InsertListViewItem(items, index, newItem);
       }
 
-      public void UpdateOldItem(IList<ListViewItem> items, int index, ListViewItem newItem) {
+      public override void UpdateItem(IList<ListViewItem> items, int index, ListViewItem newItem) {
         _listView.UpdateListViewItem(items[index], newItem);
       }
 

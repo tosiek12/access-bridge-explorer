@@ -15,18 +15,42 @@
 using System.Collections.Generic;
 
 namespace AccessBridgeExplorer.Utils {
-  public interface IIncrementalUpdateOperations<TSource, TNew> {
-    int FindOldItemIndex(IList<TSource> items, int startIndex, TNew newItem);
-    void InsertNewItem(IList<TSource> items, int index, TNew newItem);
-    void UpdateOldItem(IList<TSource> items, int index, TNew newItem);
+  public abstract class IncrementalUpdateOperations<TSource, TNew> {
+    /// <summary>
+    /// Find the index of the element of <paramref name="items"/> associated to
+    /// <paramref name="newItem"/>, starting the search at <paramref
+    /// name="startIndex"/>. Returns <code>-1</code> if not found.
+    /// </summary>
+    public abstract int FindItem(IList<TSource> items, int startIndex, TNew newItem);
+
+    /// <summary>
+    /// Insert <paramref name="newItem"/> at <paramref name="index"/> in
+    /// <paramref name="items"/>. It is assumed that <paramref name="items"/> is
+    /// actually updated with a new element at <paramref name="index"/>.
+    /// </summary>
+    public abstract void InsertItem(IList<TSource> items, int index, TNew newItem);
+
+    /// <summary>
+    /// Update the element of <paramref name="items"/> at <paramref name="index"/>
+    /// with <paramref name="newItem"/>. It is assumed that <paramref name="items"/>
+    /// retains the same number of elements.
+    /// </summary>
+    public abstract void UpdateItem(IList<TSource> items, int index, TNew newItem);
+
+    public virtual void RemoveItem(IList<TSource> items, int index) {
+      items.RemoveAt(index);
+    }
   }
 
   public static class ListHelpers {
     /// <summary>
-    /// Update the <paramref name="oldItems"/> list incrementally by adding/removing/updating elements
-    /// so that it ends up being equivalent to <paramref name="newItems"/>
+    /// Update the <paramref name="items"/> list incrementally by
+    /// adding/removing/updating elements so that it ends up being equivalent to
+    /// <paramref name="newItems"/>. It is assumed that the elements of
+    /// <paramref name="items"/> and <paramref name="newItems"/> are always
+    /// deterministically ordered.
     /// </summary>
-    public static void IncrementalUpdate<TSource, TNew>(IList<TSource> oldItems, IList<TNew> newItems, IIncrementalUpdateOperations<TSource, TNew> operations) {
+    public static void IncrementalUpdate<TSource, TNew>(IList<TSource> items, IList<TNew> newItems, IncrementalUpdateOperations<TSource, TNew> operations) {
       // The insertion position in "oldItems". Elements located *before* |oldInsertionIndex|
       // in "oldItems" have been processed and won't be touched anymore.
       var oldInsertionIndex = 0;
@@ -40,12 +64,12 @@ namespace AccessBridgeExplorer.Utils {
         var newItem = newItems[newIndex];
 
         // Find item with same tag in old list.
-        var oldItemIndex = operations.FindOldItemIndex(oldItems, oldInsertionIndex, newItem);
+        var oldItemIndex = operations.FindItem(items, oldInsertionIndex, newItem);
         if (oldItemIndex < 0) {
           // If this is a new node (existing node not found), insert new list
           // view item at current insertion location (at end or in middle)
 
-          operations.InsertNewItem(oldItems, oldInsertionIndex, newItem);
+          operations.InsertItem(items, oldInsertionIndex, newItem);
           oldInsertionIndex++;
         } else {
           // If we found an equivalent node in the existing list, delete
@@ -54,20 +78,20 @@ namespace AccessBridgeExplorer.Utils {
 
           // Delete items in range [oldIndex, oldItemIndex[
           for (var i = oldInsertionIndex; i < oldItemIndex; i++) {
-            oldItems.RemoveAt(oldInsertionIndex);
+            operations.RemoveItem(items, oldInsertionIndex);
           }
           oldItemIndex = oldInsertionIndex;
 
           // Update existing item with new property data
-          operations.UpdateOldItem(oldItems, oldItemIndex, newItem);
+          operations.UpdateItem(items, oldItemIndex, newItem);
           oldInsertionIndex++;
         }
       }
 
       // Delete all the existing items that don't exist anymore, since we
       // reached the end of the new list.
-      while (oldInsertionIndex < oldItems.Count) {
-        oldItems.RemoveAt(oldInsertionIndex);
+      while (oldInsertionIndex < items.Count) {
+        operations.RemoveItem(items, oldInsertionIndex);
       }
     }
   }

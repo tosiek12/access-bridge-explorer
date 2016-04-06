@@ -19,6 +19,10 @@ using System.Windows.Forms;
 
 namespace AccessBridgeExplorer.Utils {
   public static class ListViewItemCollectionExtensions {
+    /// <summary>
+    /// Wraps a <see cref="ListView.ListViewItemCollection"/> as an <see
+    /// cref="IList{ListViewItem}"/>.
+    /// </summary>
     public static IList<ListViewItem> AsList(this ListView.ListViewItemCollection collection) {
       return new ListViewItemCollectionWrapper(collection);
     }
