@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
@@ -24,20 +23,24 @@ namespace WindowsAccessBridgeInterop {
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct JOBJECT32 {
-    public Int32 Value;
-
-    public JOBJECT32(Int32 value) {
-      Value = value;
-    }
-
     public static JOBJECT32 Zero = default(JOBJECT32);
 
+    private readonly int _value;
+
+    public JOBJECT32(int value) {
+      _value = value;
+    }
+
+    public int Value {
+      get { return _value; }
+    }
+
     public static bool operator ==(JOBJECT32 x, JOBJECT32 y) {
-      return x.Value == y.Value;
+      return x._value == y._value;
     }
 
     public static bool operator !=(JOBJECT32 x, JOBJECT32 y) {
-      return x.Value == y.Value;
+      return x._value == y._value;
     }
 
     public override bool Equals(object obj) {
@@ -48,7 +51,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public override int GetHashCode() {
-      return Value.GetHashCode();
+      return _value.GetHashCode();
     }
   }
 }

@@ -43,7 +43,7 @@ namespace WindowsAccessBridgeInterop {
 
     public JavaObjectHandle(int jvmId, JOBJECT32 handle) {
       _jvmId = jvmId;
-      _handle.Value = handle.Value;
+      _handle = new JOBJECT64(handle.Value);
       _isLegacy = true;
       if (handle.Value == 0) {
         GC.SuppressFinalize(this);

@@ -135,6 +135,7 @@ namespace WindowsAccessBridgeInterop {
     /// rectangle so that its total surface is limited while maintaining the
     /// shape of the initial rectangle.
     /// </summary>
+    // ReSharper disable once UnusedMember.Local
     private KeyValuePair<int, int> LimitSizeProportionally(int count1, int count2) {
       Func<int, int, KeyValuePair<int, int>> result = (a, b) => new KeyValuePair<int, int>(a, b);
       Func<double, int> round = a => (int)Math.Round(a);

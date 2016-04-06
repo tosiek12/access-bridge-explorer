@@ -36,6 +36,7 @@ namespace WindowsAccessBridgeInterop {
       return new JavaObjectHandle(vmid, handle);
     }
 
+    // ReSharper disable once UnusedParameter.Local
     private JOBJECT64 Unwrap(int vmid, JavaObjectHandle objectHandle) {
       return objectHandle.Handle;
     }

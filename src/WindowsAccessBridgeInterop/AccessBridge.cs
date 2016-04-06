@@ -141,7 +141,7 @@ namespace WindowsAccessBridgeInterop {
 
       try {
         var windows = new List<AccessibleWindow>();
-        var success = Win32.NativeMethods.EnumWindows((hWnd, lParam) => {
+        var success = NativeMethods.EnumWindows((hWnd, lParam) => {
           if (Functions.IsJavaWindow(hWnd)) {
             int vmId;
             JavaObjectHandle ac;

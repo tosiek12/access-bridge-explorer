@@ -53,7 +53,7 @@ namespace AccessBridgeExplorer.Utils {
     /// hot-key identifier.</param>
     /// <param name="key"></param>
     public void Register(Control control, int id, Keys key) {
-      if (this._control != null) {
+      if (_control != null) {
         throw new InvalidOperationException("Hotkey already registered");
       }
 
@@ -91,6 +91,7 @@ namespace AccessBridgeExplorer.Utils {
     }
 
     private static void ThrowLastWin32Error(string message) {
+      // ReSharper disable once InconsistentNaming
       const int E_FAIL = (unchecked((int)0x80004005));
       try {
         var hr = Marshal.GetHRForLastWin32Error();

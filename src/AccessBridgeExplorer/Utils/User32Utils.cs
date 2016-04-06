@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace AccessBridgeExplorer.Utils {
@@ -61,11 +62,13 @@ namespace AccessBridgeExplorer.Utils {
       //wl = (WindowStylesEx)GetWindowLong(handleRef.Handle, GWL.ExStyle);
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum GWL {
       ExStyle = -20
     }
 
     [Flags]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum WindowStylesEx : uint {
       /// <summary>Specifies a window that accepts drag-drop files.</summary>
       WS_EX_ACCEPTFILES = 0x00000010,
@@ -216,6 +219,7 @@ namespace AccessBridgeExplorer.Utils {
       WS_EX_WINDOWEDGE = 0x00000100
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum LWA {
       ColorKey = 0x1,
       Alpha = 0x2

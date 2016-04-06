@@ -532,8 +532,13 @@ namespace AccessBridgeExplorer {
     }
 
     private void RefreshTree(IList<AccessibleJvm> jvms) {
-      _view.AccessibilityTree.Nodes.Clear();
-      UpdateTree(jvms);
+      _view.AccessibilityTree.BeginUpdate();
+      try {
+        _view.AccessibilityTree.Nodes.Clear();
+        UpdateTree(jvms);
+      } finally {
+        _view.AccessibilityTree.EndUpdate();
+      }
       _view.StatusLabel.Text = @"Ready.";
       HideOverlayWindow();
       HideToolTip();

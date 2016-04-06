@@ -24,16 +24,24 @@ namespace WindowsAccessBridgeInterop {
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct JOBJECT64 {
-    public Int64 Value;
-
     public static JOBJECT64 Zero = default(JOBJECT64);
 
+    private readonly long _value;
+
+    public JOBJECT64(long value) {
+      _value = value;
+    }
+
+    public long Value {
+      get { return _value; }
+    }
+
     public static bool operator ==(JOBJECT64 x, JOBJECT64 y) {
-      return x.Value == y.Value;
+      return x._value == y._value;
     }
 
     public static bool operator !=(JOBJECT64 x, JOBJECT64 y) {
-      return x.Value == y.Value;
+      return x._value == y._value;
     }
 
     public override bool Equals(object obj) {
@@ -44,7 +52,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public override int GetHashCode() {
-      return Value.GetHashCode();
+      return _value.GetHashCode();
     }
   }
 }
