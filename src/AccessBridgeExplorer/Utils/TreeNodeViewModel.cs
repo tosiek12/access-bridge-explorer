@@ -15,6 +15,10 @@
 using System.Windows.Forms;
 
 namespace AccessBridgeExplorer.Utils {
+  /// <summary>
+  /// Implementation of <see cref="TreeListViewModel"/> using a single <see
+  /// cref="TreeNode"/> as the input.
+  /// </summary>
   public class TreeNodeViewModel : TreeListViewModel {
     private readonly TreeNode _rootNode;
     private readonly bool _isRootVisible;
