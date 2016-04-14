@@ -37,27 +37,27 @@ namespace AccessBridgeExplorer {
 
     private void CreateNodes(TreeNodeCollection parentList, Exception error, StackTrace stackTrace) {
       var errorNode = parentList.Add("Exception");
-      DisplayError(errorNode.Nodes, error);
+      CreateErrorNodes(errorNode.Nodes, error);
 
       var stackNode = parentList.Add("Stacktrace");
-      DisplayStackStrace(stackNode.Nodes, stackTrace);
+      CreateStackStraceNodes(stackNode.Nodes, stackTrace);
     }
 
-    private static void DisplayError(TreeNodeCollection parentList, Exception error) {
+    private static void CreateErrorNodes(TreeNodeCollection parentList, Exception error) {
       parentList.Add(string.Format("Message: {0}", error.Message));
       parentList.Add(string.Format("Type: {0}", error.GetType().FullName));
 
       var stackTrace = new StackTrace(error, fNeedFileInfo: true);
       var node = parentList.Add("Stacktrace");
-      DisplayStackStrace(node.Nodes, stackTrace);
+      CreateStackStraceNodes(node.Nodes, stackTrace);
 
       if (error.InnerException != null) {
         var errorNode = parentList.Add("Inner Exception");
-        DisplayError(errorNode.Nodes, error.InnerException);
+        CreateErrorNodes(errorNode.Nodes, error.InnerException);
       }
     }
 
-    private static void DisplayStackStrace(TreeNodeCollection parentList, StackTrace stackTrace) {
+    private static void CreateStackStraceNodes(TreeNodeCollection parentList, StackTrace stackTrace) {
       var frames = stackTrace.GetFrames() ?? new StackFrame[0];
       foreach (var frame in frames) {
         var frameNode = new TreeNode();

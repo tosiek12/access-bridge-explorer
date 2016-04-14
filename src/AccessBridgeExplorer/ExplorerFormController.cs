@@ -510,7 +510,11 @@ namespace AccessBridgeExplorer {
     }
 
     public void LogErrorMessage(Exception error) {
+      // Note: Exceptions don't capture the full stack trace, so we capture the full stack
+      // trace here to display in the error dialog.
+      // See http://stackoverflow.com/questions/5301535/exception-call-stack-truncated-without-any-re-throwing
       var stackTrace = new StackTrace(fNeedFileInfo: true);
+
       for (var current = error; current != null; current = current.InnerException) {
         var exception = current;
 
