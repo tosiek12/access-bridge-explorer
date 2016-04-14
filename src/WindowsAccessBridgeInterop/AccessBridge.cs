@@ -136,18 +136,33 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public List<AccessibleJvm> EnumJvms() {
+      return EnumJvms(hwnd => {
+        return CreateAccessibleWindow(hwnd);
+      });
+    }
+
+    public AccessibleWindow CreateAccessibleWindow(IntPtr hwnd) {
+      if (!Functions.IsJavaWindow(hwnd))
+        return null;
+
+      int vmId;
+      JavaObjectHandle ac;
+      if (!Functions.GetAccessibleContextFromHWND(hwnd, out vmId, out ac))
+        return null;
+
+      return new AccessibleWindow(this, hwnd, ac);
+    }
+
+    public List<AccessibleJvm> EnumJvms(Func<IntPtr, AccessibleWindow> windowFunc) {
       if (_library == null)
         return new List<AccessibleJvm>();
 
       try {
         var windows = new List<AccessibleWindow>();
         var success = NativeMethods.EnumWindows((hWnd, lParam) => {
-          if (Functions.IsJavaWindow(hWnd)) {
-            int vmId;
-            JavaObjectHandle ac;
-            if (Functions.GetAccessibleContextFromHWND(hWnd, out vmId, out ac)) {
-              windows.Add(new AccessibleWindow(this, hWnd, ac));
-            }
+          var window = windowFunc(hWnd);
+          if (window != null) {
+            windows.Add(window);
           }
           return true;
         }, IntPtr.Zero);
