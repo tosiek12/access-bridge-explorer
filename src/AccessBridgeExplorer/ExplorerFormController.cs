@@ -517,11 +517,9 @@ namespace AccessBridgeExplorer {
         var item = LogMessage("{0}{1}", (exception == error ? "ERROR: " : "      "), exception.Message);
         item.Tag = new MessageInfo {
           OnDisplay = () => {
-#if false
             var form = new ExceptionForm();
             form.DisplayError(error, stackTrace);
             _view.ShowDialog(form);
-#endif
           }
         };
       }
