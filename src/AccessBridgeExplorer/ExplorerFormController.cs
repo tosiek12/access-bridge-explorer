@@ -13,7 +13,9 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Text;
@@ -31,6 +33,8 @@ namespace AccessBridgeExplorer {
     private readonly OverlayWindow _overlayWindow = new OverlayWindow();
     private readonly TooltipWindow _tooltipWindow = new TooltipWindow();
     private readonly SingleDelayedTask _delayedRefreshTree = new SingleDelayedTask();
+    private readonly HwndCache _windowCache = new HwndCache();
+
     private bool _overlayWindowEnabled;
     private bool _autoDetectEnabled;
     private Rectangle? _overlayWindowRectangle;
@@ -80,8 +84,11 @@ namespace AccessBridgeExplorer {
       _view.AccessibilityTree.KeyDown += AccessibilityTree_KeyDown;
       _view.AccessibilityTree.GotFocus += AccessibilityTree_GotFocus;
 
+      _view.MessageList.MouseDoubleClick += AccessibilityMessageList_MouseDoubleClick;
+      _view.MessageList.KeyDown += AccessibilityMessageList_KeyDown;
+
       _view.EventList.MouseDoubleClick += AccessibilityEventList_MouseDoubleClick;
-      _view.EventList.KeyDown += AccessibilityEventListOnKeyDown;
+      _view.EventList.KeyDown += AccessibilityEventList_KeyDown;
 
       _view.AccessibleComponentPropertyListView.AccessibleRectInfoSelected += ComponentPropertyListView_AccessibleRectInfoSelected;
       _view.AccessibleComponentPropertyListView.Error += ComponentPropertyListView_Error;
@@ -119,7 +126,7 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private void AccessibilityEventListOnKeyDown(object sender, KeyEventArgs e) {
+    private void AccessibilityEventList_KeyDown(object sender, KeyEventArgs e) {
       if (_view.EventList.SelectedItems.Count == 0)
         return;
 
@@ -137,6 +144,42 @@ namespace AccessBridgeExplorer {
       if (info.Location == ListViewHitTestLocations.None)
         return;
       ShowEvent(info.Item);
+    }
+
+    private void AccessibilityMessageList_KeyDown(object sender, KeyEventArgs e) {
+      if (_view.MessageList.SelectedItems.Count == 0)
+        return;
+
+      switch (e.KeyCode & Keys.KeyCode) {
+        case Keys.Return:
+          foreach (ListViewItem item in _view.EventList.SelectedItems) {
+            ShowMessage(item);
+          }
+          break;
+      }
+    }
+
+    private void AccessibilityMessageList_MouseDoubleClick(object sender, MouseEventArgs e) {
+      ListViewHitTestInfo info = _view.MessageList.HitTest(e.X, e.Y);
+      if (info.Location == ListViewHitTestLocations.None)
+        return;
+      ShowMessage(info.Item);
+    }
+
+    private void ShowMessage(ListViewItem item) {
+      var messageInfo = item.Tag as MessageInfo;
+      if (messageInfo == null)
+        return;
+
+      if (messageInfo.OnDisplay == null)
+        return;
+
+      try {
+        messageInfo.OnDisplay();
+      } catch (Exception e) {
+        LogErrorMessage(e);
+        _view.ShowMessageBox(e.Message, @"Error displaying message data", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+      }
     }
 
     private void ShowEvent(ListViewItem item) {
@@ -392,6 +435,10 @@ namespace AccessBridgeExplorer {
       public Action OnDisplay { get; set; }
     }
 
+    public class MessageInfo {
+      public Action OnDisplay { get; set; }
+    }
+
     public void LogEvent(EventInfo eventInfo) {
       _eventId++;
       var time = DateTime.Now;
@@ -451,7 +498,7 @@ namespace AccessBridgeExplorer {
       AddListViewItem(_view.EventList, item);
     }
 
-    public void LogMessage(string format, params object[] args) {
+    public ListViewItem LogMessage(string format, params object[] args) {
       _messageId++;
       var time = DateTime.Now;
       ListViewItem item = new ListViewItem();
@@ -459,11 +506,24 @@ namespace AccessBridgeExplorer {
       item.SubItems.Add(time.ToLongTimeString());
       item.SubItems.Add(string.Format(format, args));
       AddListViewItem(_view.MessageList, item);
+      return item;
     }
 
     public void LogErrorMessage(Exception error) {
+      var stackTrace = new StackTrace(fNeedFileInfo: true);
       for (var current = error; current != null; current = current.InnerException) {
-        LogMessage("{0}{1}", (current == error ? "ERROR: " : "      "), current.Message);
+        var exception = current;
+
+        var item = LogMessage("{0}{1}", (exception == error ? "ERROR: " : "      "), exception.Message);
+        item.Tag = new MessageInfo {
+          OnDisplay = () => {
+#if false
+            var form = new ExceptionForm();
+            form.DisplayError(error, stackTrace);
+            _view.ShowDialog(form);
+#endif
+          }
+        };
       }
     }
 
@@ -482,6 +542,10 @@ namespace AccessBridgeExplorer {
       } finally {
         listview.EndUpdate();
       }
+    }
+
+    public List<AccessibleJvm> EnumJvms() {
+      return _accessBridge.EnumJvms(hwnd => _windowCache.Get(_accessBridge, hwnd));
     }
 
     public void RefreshTree() {
@@ -506,7 +570,8 @@ namespace AccessBridgeExplorer {
         // Enumerate JVMs/Windows and update the accessibility tree.
         var currentRefreshCallId = _refreshCallId;
         try {
-          var jvms = _accessBridge.EnumJvms();
+          _windowCache.Clear();
+          var jvms = EnumJvms();
           RefreshTree(jvms);
           if (jvms.Count == 0) {
             var sb = new StringBuilder();
@@ -551,6 +616,32 @@ namespace AccessBridgeExplorer {
       if (_view.AccessibilityTree.Nodes.Count == 0) {
         _view.AccessibilityTree.Nodes.Add("No application detected. Try presssing Refresh again.");
       }
+
+#if false
+      TestExceptionForm();
+#endif
+    }
+
+    private void TestExceptionForm() {
+      try {
+        ThrowException<int>();
+      } catch (Exception e1) {
+        try {
+          Test<string>.ThrowInvalidException(e1);
+        } catch (Exception e2) {
+          LogErrorMessage(e2);
+        }
+      }
+    }
+
+    private static void ThrowException<T>() {
+      throw new ApplicationException("Test");
+    }
+
+    private class Test<T> {
+      public static void ThrowInvalidException(Exception e1) {
+        throw new InvalidOperationException("Invalid Op", e1);
+      }
     }
 
     private class JvmNodesOperations : IncrementalUpdateOperations<TreeNode, AccessibleJvm> {
@@ -584,7 +675,7 @@ namespace AccessBridgeExplorer {
       public override void UpdateItem(IList<TreeNode> items, int index, AccessibleJvm newItem) {
         // Update the tree node to point to the new AccessibleJvm
         var jvmTreeNode = items[index];
-        _controller.SetNodeAccessibleJvm(jvmTreeNode, newItem);
+        //_controller.SetNodeAccessibleJvm(jvmTreeNode, newItem);
 
         // Update the tree nodes representing the list of windows
         ListHelpers.IncrementalUpdate(items[index].Nodes.AsList(), newItem.Windows, _windowNodesOperations);
@@ -629,7 +720,7 @@ namespace AccessBridgeExplorer {
       public override void UpdateItem(IList<TreeNode> items, int index, AccessibleWindow newItem) {
         // Update the tree node to point to the new AccessibleWindow node
         var treeNode = items[index];
-        _controller.SetNodeAccessibleWindow(treeNode, newItem);
+        //_controller.SetNodeAccessibleWindow(treeNode, newItem);
 
         // Update tree node text, as AccessibleWindow titles may change over time.
         var title = newItem.GetTitle();
@@ -656,7 +747,7 @@ namespace AccessBridgeExplorer {
       _delayedRefreshTree.Post(TimeSpan.FromMilliseconds(200), () => {
         try {
           // Enumerate on thread pool thread, refresh on UI thread.
-          var jvms = _accessBridge.EnumJvms();
+          var jvms = EnumJvms();
           UiAction(() => {
             UpdateTree(jvms);
           });
@@ -1010,7 +1101,7 @@ namespace AccessBridgeExplorer {
       UpdateOverlayWindow();
     }
 
-    #region Event Handlers
+#region Event Handlers
     // ReSharper disable UnusedMember.Local
     // ReSharper disable UnusedParameter.Local
     private void EventsOnPropertyChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source, string property, string oldValue, string newValue) {
@@ -1210,6 +1301,18 @@ namespace AccessBridgeExplorer {
     }
     // ReSharper restore UnusedParameter.Local
     // ReSharper restore UnusedMember.Local
-    #endregion
+#endregion
+
+    public class HwndCache {
+      private readonly ConcurrentDictionary<IntPtr, AccessibleWindow> _cache = new ConcurrentDictionary<IntPtr, AccessibleWindow>();
+
+      public AccessibleWindow Get(AccessBridge accessBridge, IntPtr hwnd) {
+        return _cache.GetOrAdd(hwnd, key => accessBridge.CreateAccessibleWindow(key));
+      }
+
+      public void Clear() {
+        _cache.Clear();
+      }
+    }
   }
 }
