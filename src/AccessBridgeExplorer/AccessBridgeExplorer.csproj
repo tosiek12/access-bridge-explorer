@@ -96,7 +96,9 @@
     <Compile Include="ExceptionForm.Designer.cs">
       <DependentUpon>ExceptionForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="TreeListView.cs" />
+    <Compile Include="Utils\TreeListView.cs" />
+    <Compile Include="Utils\TreeListViewModel.cs" />
+    <Compile Include="Utils\TreeNodeViewModel.cs" />
     <Compile Include="Utils\SingleDelayedTask.cs" />
     <Compile Include="ExplorerFormNavigation.cs" />
     <Compile Include="ExplorerFormController.cs" />

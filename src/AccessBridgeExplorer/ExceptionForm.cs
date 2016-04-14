@@ -15,6 +15,7 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using AccessBridgeExplorer.Utils;
 
 namespace AccessBridgeExplorer {
   public partial class ExceptionForm : Form {
@@ -30,7 +31,7 @@ namespace AccessBridgeExplorer {
       CreateNodes(topLevelNode.Nodes, error, stackTrace);
       topLevelNode.ExpandAll();
 
-      _treeListView.SetNodes(topLevelNode.Nodes);
+      _treeListView.SetModel(new TreeNodeViewModel(topLevelNode, false));
 
       errorDetailListView.Select();
     }
