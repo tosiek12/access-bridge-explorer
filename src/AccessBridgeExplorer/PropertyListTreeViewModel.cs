@@ -36,7 +36,7 @@ namespace AccessBridgeExplorer {
       return false;
     }
 
-    public override int GetChildrenCount(PropertyNode node) {
+    public override int GetChildCount(PropertyNode node) {
       var group = node as PropertyGroup;
       if (group == null)
         return 0;

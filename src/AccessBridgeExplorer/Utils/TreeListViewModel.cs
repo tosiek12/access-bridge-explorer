@@ -32,10 +32,11 @@ namespace AccessBridgeExplorer.Utils {
     /// <summary>
     /// Return the number of children of a given <paramref name="node"/>.
     /// </summary>
-    public abstract int GetChildrenCount(TNode node);
+    public abstract int GetChildCount(TNode node);
 
     /// <summary>
-    /// Return the child at <paramref name="index"/> of a given <paramref name="node"/>.
+    /// Return the child at <paramref name="index"/> of a given <paramref
+    /// name="node"/>.
     /// </summary>
     public abstract TNode GetChildAt(TNode node, int index);
 
@@ -56,18 +57,26 @@ namespace AccessBridgeExplorer.Utils {
     /// </summary>
     public abstract string GetNodeText(TNode node);
 
+    /// <summary>
+    /// Return the number of additional text items of a given <paramref
+    /// name="node"/>.
+    /// </summary>
     public virtual int GetNodeSubItemCount(TNode node) {
       return 0;
     }
 
+    /// <summary>
+    /// Return the additional text at <paramref name="index"/> of a given
+    /// <paramref name="node"/>.
+    /// </summary>
     public virtual string GetNodeSubItemAt(TNode node, int index) {
       return "";
     }
 
     /// <summary>
-    /// Return the path of a given <paramref name="node"/>.
+    /// Return the path component of a given <paramref name="node"/>.
     /// </summary>
-    public virtual string GetNodePath(TNode node) {
+    public virtual string GetNodePathComponent(TNode node) {
       return GetNodeText(node);
     }
   }

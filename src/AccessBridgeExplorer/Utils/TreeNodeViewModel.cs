@@ -16,8 +16,8 @@ using System.Windows.Forms;
 
 namespace AccessBridgeExplorer.Utils {
   /// <summary>
-  /// Implementation of <see cref="TreeListViewModel{TNode}"/> using a single
-  /// <see cref="TreeNode"/> as the input.
+  /// Implementation of <see cref="TreeListViewModel{TreeNode}"/> using a single
+  /// <see cref="TreeNode"/> as input.
   /// </summary>
   public class TreeNodeViewModel : TreeListViewModel<TreeNode> {
     private readonly TreeNode _rootNode;
@@ -44,7 +44,7 @@ namespace AccessBridgeExplorer.Utils {
       return node.IsExpanded;
     }
 
-    public override int GetChildrenCount(TreeNode node) {
+    public override int GetChildCount(TreeNode node) {
       return node.Nodes.Count;
     }
 

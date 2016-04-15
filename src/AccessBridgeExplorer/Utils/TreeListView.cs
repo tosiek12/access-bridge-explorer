@@ -74,8 +74,7 @@ namespace AccessBridgeExplorer.Utils {
         return _listView
           .SelectedItems
           .Cast<ListViewItem>()
-          .Select(x => (ListViewItemTag)x.Tag)
-          .Select(x => x.Node)
+          .Select(x => ((ListViewItemTag)x.Tag).Node)
           .ToList();
       }
     }
@@ -100,6 +99,7 @@ namespace AccessBridgeExplorer.Utils {
     /// </summary>
     public void Clear() {
       _listView.Items.Clear();
+      _currentModel = null;
     }
 
     /// <summary>
@@ -140,11 +140,13 @@ namespace AccessBridgeExplorer.Utils {
     /// </summary>
     private List<ListViewItem> CreateListViewItems(TreeListViewModel<TNode> model, ExpandedNodeState expandedNodeState) {
       var itemList = new List<ListViewItem>();
+      if (model == null)
+        return itemList;
 
       if (model.IsRootVisible()) {
         CreateListViewItem(itemList, expandedNodeState, "", 0, model, model.GetRootNode());
       } else {
-        Enumerable.Range(0, model.GetChildrenCount(model.GetRootNode())).ForEach(index => {
+        Enumerable.Range(0, model.GetChildCount(model.GetRootNode())).ForEach(index => {
           CreateListViewItem(itemList, expandedNodeState, "", 0, model, model.GetChildAt(model.GetRootNode(), index));
         });
       }
@@ -161,7 +163,7 @@ namespace AccessBridgeExplorer.Utils {
         var isExpanded = expandedNodeState.IsExpanded(model, node, propertyNodePath);
         item.ImageIndex = isExpanded ? 1 : 0;
         if (isExpanded) {
-          Enumerable.Range(0, model.GetChildrenCount(node)).ForEach(index => {
+          Enumerable.Range(0, model.GetChildCount(node)).ForEach(index => {
             CreateListViewItem(itemList, expandedNodeState, propertyNodePath, indent + 1, model, model.GetChildAt(node, index));
           });
         }
@@ -232,7 +234,7 @@ namespace AccessBridgeExplorer.Utils {
     }
 
     private static string MakeNodePath(TreeListViewModel<TNode> model, string path, TNode node) {
-      var text = model.GetNodePath(node).Replace('\\', '-');
+      var text = model.GetNodePathComponent(node).Replace('\\', '-');
       if (string.IsNullOrEmpty(path))
         return text;
       return path + "\\" + text;
