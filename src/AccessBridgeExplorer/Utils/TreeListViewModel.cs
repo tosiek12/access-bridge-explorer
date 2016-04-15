@@ -56,6 +56,14 @@ namespace AccessBridgeExplorer.Utils {
     /// </summary>
     public abstract string GetNodeText(object modelNode);
 
+    public virtual int GetNodeSubItemCount(object modelNode) {
+      return 0;
+    }
+
+    public virtual string GetNodeSubItemAt(object modelNode, int index) {
+      return "";
+    }
+
     /// <summary>
     /// Return the path of a given <paramref name="modelNode"/>.
     /// </summary>

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -47,6 +48,24 @@ namespace AccessBridgeExplorer.Utils {
       listView.KeyDown += ListViewOnKeyDown;
     }
 
+    public event EventHandler<ModelNodeArgs> ModelNodeShow;
+    public event EventHandler<ModelNodeArgs> ModelNodeHide;
+    public event EventHandler<ModelNodeArgs> ModelNodeExpand;
+    public event EventHandler<ModelNodeArgs> ModelNodeCollapse;
+
+    public IList<object> SelectedModelNodes {
+      get {
+        return _listView
+          .SelectedItems
+          .Cast<ListViewItem>()
+          .Select(x => x.Tag)
+          .OfType<ListViewItemTag>()
+          .Select(x => x.ModelNode)
+          .Where(x => x != null)
+          .ToList();
+      }
+    }
+
     /// <summary>
     /// Set a new <paramref name="model"/> to be displayed in the <see
     /// cref="ListView"/>.
@@ -76,9 +95,25 @@ namespace AccessBridgeExplorer.Utils {
     private void UpdateListView() {
       _listView.BeginUpdate();
       try {
-        var newItems = CreateListViewItems(_currentModel, _nodeState);
         var oldItems = _listView.Items.AsList();
-        ListHelpers.IncrementalUpdate(oldItems, newItems, new ListViewOperations(this));
+        var oldModelNodes = new HashSet<object>(oldItems.Select(x => ((ListViewItemTag)x.Tag).ModelNode));
+
+        var newItems = CreateListViewItems(_currentModel, _nodeState);
+        var newModelNodes = new HashSet<object>(newItems.Select(x => ((ListViewItemTag)x.Tag).ModelNode));
+
+        ListHelpers.IncrementalUpdate(oldItems, newItems, new ListViewOperations());
+
+        // Fire events related to adding/removing nodes from the display
+        // inserted = newItems \ oldItems
+        // removed = oldItems \ newItems
+        foreach (var modelNode in newModelNodes) {
+          if (!oldModelNodes.Contains(modelNode))
+            OnModelNodeShow(new ModelNodeArgs(modelNode));
+        }
+        foreach (var modelNode in oldModelNodes) {
+          if (!newModelNodes.Contains(modelNode))
+            OnModelNodeHide(new ModelNodeArgs(modelNode));
+        }
       } finally {
         _listView.EndUpdate();
       }
@@ -93,16 +128,16 @@ namespace AccessBridgeExplorer.Utils {
       var itemList = new List<ListViewItem>();
 
       if (model.IsRootVisible()) {
-        AddListViewItem(model, model.GetRootNode(), 0, "", itemList, expandedNodeState);
+        CreateListViewItem(itemList, expandedNodeState, "", 0, model, model.GetRootNode());
       } else {
         Enumerable.Range(0, model.GetChildrenCount(model.GetRootNode())).ForEach(index => {
-          AddListViewItem(model, model.GetChildAt(model.GetRootNode(), index), 0, "", itemList, expandedNodeState);
+          CreateListViewItem(itemList, expandedNodeState, "", 0, model, model.GetChildAt(model.GetRootNode(), index));
         });
       }
       return itemList;
     }
 
-    private void AddListViewItem(TreeListViewModel model, object modelNode, int indent, string parentPath, List<ListViewItem> itemList, ExpandedNodeState expandedNodeState) {
+    private void CreateListViewItem(List<ListViewItem> itemList, ExpandedNodeState expandedNodeState, string parentPath, int indent, TreeListViewModel model, object modelNode) {
       var propertyNodePath = MakeNodePath(model, parentPath, modelNode);
       var item = new ListViewItem();
       itemList.Add(item); // Add the item before (optional) recursive call
@@ -113,7 +148,7 @@ namespace AccessBridgeExplorer.Utils {
         item.ImageIndex = isExpanded ? 1 : 0;
         if (isExpanded) {
           Enumerable.Range(0, model.GetChildrenCount(modelNode)).ForEach(index => {
-            AddListViewItem(model, model.GetChildAt(modelNode, index), indent + 1, propertyNodePath, itemList, expandedNodeState);
+            CreateListViewItem(itemList, expandedNodeState, propertyNodePath, indent + 1, model, model.GetChildAt(modelNode, index));
           });
         }
       }
@@ -121,27 +156,54 @@ namespace AccessBridgeExplorer.Utils {
       // Setup final item properties after recursion, in case property node
       // value, for example, was changed as a side effect of the recursive call.
       item.Text = model.GetNodeText(modelNode);
+      var subItemCount = model.GetNodeSubItemCount(modelNode);
+      for (var subItem = 0; subItem < subItemCount; subItem++) {
+        item.SubItems.Add(model.GetNodeSubItemAt(modelNode, subItem));
+      }
       item.Tag = new ListViewItemTag(modelNode, propertyNodePath);
       item.IndentCount = indent;
     }
 
     private class ListViewOperations : IncrementalUpdateOperations<ListViewItem, ListViewItem> {
-      private readonly TreeListView _listView;
-
-      public ListViewOperations(TreeListView listView) {
-        _listView = listView;
-      }
-
       public override int FindItem(IList<ListViewItem> items, int startIndex, ListViewItem newItem) {
         return FindIndexOfTag(items, startIndex, newItem.Tag);
       }
 
       public override void InsertItem(IList<ListViewItem> items, int index, ListViewItem newItem) {
-        _listView.InsertListViewItem(items, index, newItem);
+        items.Insert(index, newItem);
       }
 
       public override void UpdateItem(IList<ListViewItem> items, int index, ListViewItem newItem) {
-        _listView.UpdateListViewItem(items[index], newItem);
+        ListViewItem oldItem = items[index];
+        // Note: For performance reason, we only assign values if they have changed
+        if (oldItem.ImageIndex != newItem.ImageIndex)
+          oldItem.ImageIndex = newItem.ImageIndex;
+
+        if (oldItem.StateImageIndex != newItem.StateImageIndex)
+          oldItem.StateImageIndex = newItem.StateImageIndex;
+
+        if (oldItem.IndentCount != newItem.IndentCount)
+          oldItem.IndentCount = newItem.IndentCount;
+
+        if (!ReferenceEquals(oldItem.Tag, newItem.Tag)) {
+          oldItem.Tag = newItem.Tag;
+        }
+
+        // SubItem[0] is the same as the Text property. So we just need to
+        // synchronize the SubItems collections.
+        for (var i = 0; i < newItem.SubItems.Count; i++) {
+          var newText = newItem.SubItems[i].Text;
+          if (i < oldItem.SubItems.Count) {
+            if (oldItem.SubItems[i].Text != newText)
+              oldItem.SubItems[i].Text = newText;
+          } else {
+            oldItem.SubItems.Add(newText);
+          }
+        }
+        // If there were more subitems in the existing item, remove them
+        for (var i = oldItem.SubItems.Count - 1; i >= newItem.SubItems.Count; i--) {
+          oldItem.SubItems.RemoveAt(i);
+        }
       }
 
       private int FindIndexOfTag(IList<ListViewItem> oldItems, int startIndex, object tag) {
@@ -152,42 +214,6 @@ namespace AccessBridgeExplorer.Utils {
             return index;
         }
         return -1;
-      }
-    }
-
-    private void InsertListViewItem(IList<ListViewItem> oldItems, int oldInsertionIndex, ListViewItem newItem) {
-      oldItems.Insert(oldInsertionIndex, newItem);
-    }
-
-    private void UpdateListViewItem(ListViewItem oldItem, ListViewItem newItem) {
-      // Note: For performance reason, we only assign values if they have changed
-      if (oldItem.ImageIndex != newItem.ImageIndex)
-        oldItem.ImageIndex = newItem.ImageIndex;
-
-      if (oldItem.StateImageIndex != newItem.StateImageIndex)
-        oldItem.StateImageIndex = newItem.StateImageIndex;
-
-      if (oldItem.IndentCount != newItem.IndentCount)
-        oldItem.IndentCount = newItem.IndentCount;
-
-      if (!ReferenceEquals(oldItem.Tag, newItem.Tag)) {
-        oldItem.Tag = newItem.Tag;
-      }
-
-      // SubItem[0] is the same as the Text property. So we just need to
-      // synchronize the SubItems collections.
-      for (var i = 0; i < newItem.SubItems.Count; i++) {
-        var newText = newItem.SubItems[i].Text;
-        if (i < oldItem.SubItems.Count) {
-          if (oldItem.SubItems[i].Text != newText)
-            oldItem.SubItems[i].Text = newText;
-        } else {
-          oldItem.SubItems.Add(newText);
-        }
-      }
-      // If there were more subitems in the existing item, remove them
-      for (var i = oldItem.SubItems.Count - 1; i >= newItem.SubItems.Count; i--) {
-        oldItem.SubItems.RemoveAt(i);
       }
     }
 
@@ -262,6 +288,10 @@ namespace AccessBridgeExplorer.Utils {
 
       var isExpanded = _nodeState.IsExpanded(_currentModel, modelNode, itemState.Path);
       _nodeState.SetExpanded(itemState.Path, !isExpanded);
+      if (isExpanded)
+        OnModelNodeCollapse(new ModelNodeArgs(modelNode));
+      else
+        OnModelNodeExpand(new ModelNodeArgs(modelNode));
       UpdateListView();
     }
 
@@ -306,6 +336,26 @@ namespace AccessBridgeExplorer.Utils {
         }
         return model.IsNodeExpanded(modelNode);
       }
+    }
+
+    protected virtual void OnModelNodeShow(ModelNodeArgs e) {
+      var handler = ModelNodeShow;
+      if (handler != null) handler(this, e);
+    }
+
+    protected virtual void OnModelNodeHide(ModelNodeArgs e) {
+      var handler = ModelNodeHide;
+      if (handler != null) handler(this, e);
+    }
+
+    protected virtual void OnModelNodeExpand(ModelNodeArgs e) {
+      var handler = ModelNodeExpand;
+      if (handler != null) handler(this, e);
+    }
+
+    protected virtual void OnModelNodeCollapse(ModelNodeArgs e) {
+      var handler = ModelNodeCollapse;
+      if (handler != null) handler(this, e);
     }
   }
 }

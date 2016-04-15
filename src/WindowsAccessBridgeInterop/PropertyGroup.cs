@@ -54,6 +54,10 @@ namespace WindowsAccessBridgeInterop {
       }
     }
 
+    public override string ToString() {
+      return string.Format("Group: {0}-{1}", Name, Value ?? "");
+    }
+
     protected virtual void OnError(ErrorEventArgs e) {
       var handler = Error;
       if (handler != null)

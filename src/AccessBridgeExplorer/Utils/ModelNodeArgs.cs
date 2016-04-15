@@ -1,4 +1,4 @@
-﻿// Copyright 2015 Google Inc. All Rights Reserved.
+// Copyright 2016 Google Inc. All Rights Reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,25 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace WindowsAccessBridgeInterop {
-  /// <summary>
-  /// A (name, value) pair.
-  /// </summary>
-  public class PropertyNode {
-    private readonly string _name;
-    private readonly object _value;
+using System;
 
-    public PropertyNode(string name, object value) {
-      _name = name;
-      _value = value;
+namespace AccessBridgeExplorer.Utils {
+  public class ModelNodeArgs : EventArgs {
+    private readonly object _modelNode;
+
+    public ModelNodeArgs(object modelNode) {
+      _modelNode = modelNode;
     }
 
-    public string Name {
-      get { return _name; }
-    }
-
-    public object Value {
-      get { return _value; }
-    }
+    public object ModelNode { get { return _modelNode; } }
   }
 }
