@@ -64,7 +64,7 @@ namespace AccessBridgeExplorer {
       _treeListView.Clear();
     }
 
-    private void TreeListViewOnNodeVisibilityChanged(object s, NodeArgs<PropertyNode> nodeArgs) {
+    private void TreeListViewOnNodeVisibilityChanged(object s, NodeVisibilityChangedArg<PropertyNode> nodeArgs) {
       var group = nodeArgs.Node as PropertyGroup;
       if (group != null) {
         _knownGroups.Add(group);

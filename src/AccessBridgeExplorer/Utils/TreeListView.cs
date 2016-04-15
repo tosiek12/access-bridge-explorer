@@ -48,10 +48,27 @@ namespace AccessBridgeExplorer.Utils {
       listView.KeyDown += ListViewOnKeyDown;
     }
 
-    public event EventHandler<NodeArgs<TNode>> NodeVisibilityChanged;
+    /// <summary>
+    /// Invoked when a <see cref="TNode"/> object is added or removed from the
+    /// underlying list of <see cref="ListView"/> items, as a result of a
+    /// collapse/expand operation.
+    /// </summary>
+    public event EventHandler<NodeVisibilityChangedArg<TNode>> NodeVisibilityChanged;
+    /// <summary>
+    /// Invoked when a <see cref="TNode"/> object is expanded in this <see
+    /// cref="TreeListView{TNode}"/>
+    /// </summary>
     public event EventHandler<NodeArgs<TNode>> NodeExpanded;
+    /// <summary>
+    /// Invoked when a <see cref="TNode"/> object is collapsed in this <see
+    /// cref="TreeListView{TNode}"/>
+    /// </summary>
     public event EventHandler<NodeArgs<TNode>> NodeCollapsed;
 
+    /// <summary>
+    /// Return the list of <see cref="TNode"/> corresponding the list of items
+    /// selected in this <see cref="TreeListView{TNode}"/>.
+    /// </summary>
     public IList<TNode> SelectedNodes {
       get {
         return _listView
