@@ -82,6 +82,7 @@ namespace AccessBridgeExplorer {
             | System.Windows.Forms.AnchorStyles.Right)));
       this.errorDetailListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader3});
+      this.errorDetailListView.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.errorDetailListView.FullRowSelect = true;
       this.errorDetailListView.Location = new System.Drawing.Point(8, 8);
       this.errorDetailListView.Name = "errorDetailListView";
