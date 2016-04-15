@@ -15,13 +15,28 @@
 using System;
 
 namespace AccessBridgeExplorer.Utils {
-  public class ModelNodeArgs : EventArgs {
-    private readonly object _modelNode;
+  public class NodeArgs<TNode> : EventArgs where TNode : class {
+    private readonly TNode _node;
 
-    public ModelNodeArgs(object modelNode) {
-      _modelNode = modelNode;
+    public NodeArgs(TNode node) {
+      _node = node;
     }
 
-    public object ModelNode { get { return _modelNode; } }
+    public TNode Node {
+      get { return _node; }
+    }
+  }
+
+  public class NodeVisibilityChangedArg<TNode> : NodeArgs<TNode> where TNode : class {
+    private readonly bool _visible;
+
+    public NodeVisibilityChangedArg(TNode node, bool visible)
+      : base(node) {
+      _visible = visible;
+    }
+
+    public bool Visible {
+      get { return _visible; }
+    }
   }
 }

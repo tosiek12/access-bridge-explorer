@@ -14,13 +14,13 @@
 
 namespace AccessBridgeExplorer.Utils {
   /// <summary>
-  /// Model to use with a <see cref="TreeListView"/>.
+  /// Model to use with a <see cref="TreeListView{TNode}"/>.
   /// </summary>
-  public abstract class TreeListViewModel {
+  public abstract class TreeListViewModel<TNode> where TNode : class {
     /// <summary>
     /// Return the root node of the model.
     /// </summary>
-    public abstract object GetRootNode();
+    public abstract TNode GetRootNode();
 
     /// <summary>
     /// Return <code>true</code> is the root node should be displayed at the top
@@ -32,42 +32,42 @@ namespace AccessBridgeExplorer.Utils {
     /// <summary>
     /// Return the number of children of a given <paramref name="modelNode"/>.
     /// </summary>
-    public abstract int GetChildrenCount(object modelNode);
+    public abstract int GetChildrenCount(TNode modelNode);
 
     /// <summary>
     /// Return the child at <paramref name="index"/> of a given <paramref name="modelNode"/>.
     /// </summary>
-    public abstract object GetChildAt(object modelNode, int index);
+    public abstract TNode GetChildAt(TNode modelNode, int index);
 
     /// <summary>
     /// Return the expandable state of a given <paramref name="modelNode"/>.
     /// </summary>
-    public abstract bool IsNodeExpandable(object modelNode);
+    public abstract bool IsNodeExpandable(TNode modelNode);
 
     /// <summary>
     /// Return the initial expanded state of a given <paramref name="modelNode"/>.
     /// </summary>
-    public virtual bool IsNodeExpanded(object modelNode) {
+    public virtual bool IsNodeExpanded(TNode modelNode) {
       return false;
     }
 
     /// <summary>
     /// Return the text of a given <paramref name="modelNode"/>.
     /// </summary>
-    public abstract string GetNodeText(object modelNode);
+    public abstract string GetNodeText(TNode modelNode);
 
-    public virtual int GetNodeSubItemCount(object modelNode) {
+    public virtual int GetNodeSubItemCount(TNode modelNode) {
       return 0;
     }
 
-    public virtual string GetNodeSubItemAt(object modelNode, int index) {
+    public virtual string GetNodeSubItemAt(TNode modelNode, int index) {
       return "";
     }
 
     /// <summary>
     /// Return the path of a given <paramref name="modelNode"/>.
     /// </summary>
-    public virtual string GetNodePath(object modelNode) {
+    public virtual string GetNodePath(TNode modelNode) {
       return GetNodeText(modelNode);
     }
   }

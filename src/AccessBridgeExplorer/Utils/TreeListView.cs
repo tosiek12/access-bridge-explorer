@@ -19,13 +19,13 @@ using System.Windows.Forms;
 
 namespace AccessBridgeExplorer.Utils {
   /// <summary>
-  /// Display a tree structure based on a <see cref="TreeListViewModel"/> in a
-  /// <see cref="ListView"/>.
+  /// Display a tree structure based on a <see cref="TreeListViewModel{TNode}"/>
+  /// in a <see cref="ListView"/>.
   /// </summary>
-  public class TreeListView {
-    private TreeListViewModel _currentModel;
+  public class TreeListView<TNode> where TNode : class {
     private readonly ListView _listView;
     private readonly ExpandedNodeState _nodeState = new ExpandedNodeState();
+    private TreeListViewModel<TNode> _currentModel;
 
     /// <summary>
     /// Setup event handlers and image list. Can be called in the Forms
@@ -48,20 +48,17 @@ namespace AccessBridgeExplorer.Utils {
       listView.KeyDown += ListViewOnKeyDown;
     }
 
-    public event EventHandler<ModelNodeArgs> ModelNodeShow;
-    public event EventHandler<ModelNodeArgs> ModelNodeHide;
-    public event EventHandler<ModelNodeArgs> ModelNodeExpand;
-    public event EventHandler<ModelNodeArgs> ModelNodeCollapse;
+    public event EventHandler<NodeArgs<TNode>> NodeVisibilityChanged;
+    public event EventHandler<NodeArgs<TNode>> NodeExpanded;
+    public event EventHandler<NodeArgs<TNode>> NodeCollapsed;
 
-    public IList<object> SelectedModelNodes {
+    public IList<TNode> SelectedModelNodes {
       get {
         return _listView
           .SelectedItems
           .Cast<ListViewItem>()
-          .Select(x => x.Tag)
-          .OfType<ListViewItemTag>()
+          .Select(x => (ListViewItemTag)x.Tag)
           .Select(x => x.ModelNode)
-          .Where(x => x != null)
           .ToList();
       }
     }
@@ -70,7 +67,7 @@ namespace AccessBridgeExplorer.Utils {
     /// Set a new <paramref name="model"/> to be displayed in the <see
     /// cref="ListView"/>.
     /// </summary>
-    public void SetModel(TreeListViewModel model) {
+    public void SetModel(TreeListViewModel<TNode> model) {
       _listView.BeginUpdate();
       try {
         _currentModel = model;
@@ -96,10 +93,10 @@ namespace AccessBridgeExplorer.Utils {
       _listView.BeginUpdate();
       try {
         var oldItems = _listView.Items.AsList();
-        var oldModelNodes = new HashSet<object>(oldItems.Select(x => ((ListViewItemTag)x.Tag).ModelNode));
+        var oldModelNodes = new HashSet<TNode>(oldItems.Select(x => ((ListViewItemTag)x.Tag).ModelNode));
 
         var newItems = CreateListViewItems(_currentModel, _nodeState);
-        var newModelNodes = new HashSet<object>(newItems.Select(x => ((ListViewItemTag)x.Tag).ModelNode));
+        var newModelNodes = new HashSet<TNode>(newItems.Select(x => ((ListViewItemTag)x.Tag).ModelNode));
 
         ListHelpers.IncrementalUpdate(oldItems, newItems, new ListViewOperations());
 
@@ -108,11 +105,11 @@ namespace AccessBridgeExplorer.Utils {
         // removed = oldItems \ newItems
         foreach (var modelNode in newModelNodes) {
           if (!oldModelNodes.Contains(modelNode))
-            OnModelNodeShow(new ModelNodeArgs(modelNode));
+            OnNodeVisibilityChanged(new NodeVisibilityChangedArg<TNode>(modelNode, true));
         }
         foreach (var modelNode in oldModelNodes) {
           if (!newModelNodes.Contains(modelNode))
-            OnModelNodeHide(new ModelNodeArgs(modelNode));
+            OnNodeVisibilityChanged(new NodeVisibilityChangedArg<TNode>(modelNode, false));
         }
       } finally {
         _listView.EndUpdate();
@@ -124,7 +121,7 @@ namespace AccessBridgeExplorer.Utils {
     /// that should be displayed in the list view. Children of property groups that are not
     /// expanded are skipped -- they will be created when the groups are expanded.
     /// </summary>
-    private List<ListViewItem> CreateListViewItems(TreeListViewModel model, ExpandedNodeState expandedNodeState) {
+    private List<ListViewItem> CreateListViewItems(TreeListViewModel<TNode> model, ExpandedNodeState expandedNodeState) {
       var itemList = new List<ListViewItem>();
 
       if (model.IsRootVisible()) {
@@ -137,7 +134,7 @@ namespace AccessBridgeExplorer.Utils {
       return itemList;
     }
 
-    private void CreateListViewItem(List<ListViewItem> itemList, ExpandedNodeState expandedNodeState, string parentPath, int indent, TreeListViewModel model, object modelNode) {
+    private void CreateListViewItem(List<ListViewItem> itemList, ExpandedNodeState expandedNodeState, string parentPath, int indent, TreeListViewModel<TNode> model, TNode modelNode) {
       var propertyNodePath = MakeNodePath(model, parentPath, modelNode);
       var item = new ListViewItem();
       itemList.Add(item); // Add the item before (optional) recursive call
@@ -217,7 +214,7 @@ namespace AccessBridgeExplorer.Utils {
       }
     }
 
-    private static string MakeNodePath(TreeListViewModel model, string path, object modelNode) {
+    private static string MakeNodePath(TreeListViewModel<TNode> model, string path, TNode modelNode) {
       var text = model.GetNodePath(modelNode).Replace('\\', '-');
       if (string.IsNullOrEmpty(path))
         return text;
@@ -289,9 +286,9 @@ namespace AccessBridgeExplorer.Utils {
       var isExpanded = _nodeState.IsExpanded(_currentModel, modelNode, itemState.Path);
       _nodeState.SetExpanded(itemState.Path, !isExpanded);
       if (isExpanded)
-        OnModelNodeCollapse(new ModelNodeArgs(modelNode));
+        OnNodeCollapsed(new NodeArgs<TNode>(modelNode));
       else
-        OnModelNodeExpand(new ModelNodeArgs(modelNode));
+        OnNodeExpanded(new NodeArgs<TNode>(modelNode));
       UpdateListView();
     }
 
@@ -300,15 +297,15 @@ namespace AccessBridgeExplorer.Utils {
     /// the <see cref="ListViewItem.Tag"/> property.
     /// </summary>
     private class ListViewItemTag {
-      private readonly object _modelNode;
+      private readonly TNode _modelNode;
       private readonly string _path;
 
-      public ListViewItemTag(object modelNode, string path) {
+      public ListViewItemTag(TNode modelNode, string path) {
         _modelNode = modelNode;
         _path = path ?? "";
       }
 
-      public object ModelNode {
+      public TNode ModelNode {
         get { return _modelNode; }
       }
 
@@ -329,7 +326,7 @@ namespace AccessBridgeExplorer.Utils {
         _expandedStates[path] = expanded;
       }
 
-      public bool IsExpanded(TreeListViewModel model, object modelNode, string path) {
+      public bool IsExpanded(TreeListViewModel<TNode> model, TNode modelNode, string path) {
         bool savedState;
         if (_expandedStates.TryGetValue(path, out savedState)) {
           return savedState;
@@ -338,23 +335,18 @@ namespace AccessBridgeExplorer.Utils {
       }
     }
 
-    protected virtual void OnModelNodeShow(ModelNodeArgs e) {
-      var handler = ModelNodeShow;
+    protected virtual void OnNodeVisibilityChanged(NodeVisibilityChangedArg<TNode> e) {
+      var handler = NodeVisibilityChanged;
       if (handler != null) handler(this, e);
     }
 
-    protected virtual void OnModelNodeHide(ModelNodeArgs e) {
-      var handler = ModelNodeHide;
+    protected virtual void OnNodeExpanded(NodeArgs<TNode> e) {
+      var handler = NodeExpanded;
       if (handler != null) handler(this, e);
     }
 
-    protected virtual void OnModelNodeExpand(ModelNodeArgs e) {
-      var handler = ModelNodeExpand;
-      if (handler != null) handler(this, e);
-    }
-
-    protected virtual void OnModelNodeCollapse(ModelNodeArgs e) {
-      var handler = ModelNodeCollapse;
+    protected virtual void OnNodeCollapsed(NodeArgs<TNode> e) {
+      var handler = NodeCollapsed;
       if (handler != null) handler(this, e);
     }
   }

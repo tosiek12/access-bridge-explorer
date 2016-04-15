@@ -16,7 +16,11 @@ using WindowsAccessBridgeInterop;
 using AccessBridgeExplorer.Utils;
 
 namespace AccessBridgeExplorer {
-  public class PropertyListTreeViewModel : TreeListViewModel {
+  /// <summary>
+  /// Implementation of <see cref="TreeListViewModel{TNode}"/> using a single
+  /// <see cref="PropertyList"/> as the input.
+  /// </summary>
+  public class PropertyListTreeViewModel : TreeListViewModel<PropertyNode> {
     private readonly PropertyGroup _rootNode;
 
     public PropertyListTreeViewModel(PropertyList propertyList) {
@@ -24,7 +28,7 @@ namespace AccessBridgeExplorer {
       _rootNode.Children.AddRange(propertyList);
     }
 
-    public override object GetRootNode() {
+    public override PropertyNode GetRootNode() {
       return _rootNode;
     }
 
@@ -32,45 +36,40 @@ namespace AccessBridgeExplorer {
       return false;
     }
 
-    public override int GetChildrenCount(object modelNode) {
-      var node = (PropertyNode)modelNode;
+    public override int GetChildrenCount(PropertyNode modelNode) {
       var group = modelNode as PropertyGroup;
       if (group == null)
         return 0;
       return group.Children.Count;
     }
 
-    public override object GetChildAt(object modelNode, int index) {
+    public override PropertyNode GetChildAt(PropertyNode modelNode, int index) {
       var group = (PropertyGroup)modelNode;
       return group.Children[index];
     }
 
-    public override bool IsNodeExpandable(object modelNode) {
-      var node = (PropertyNode)modelNode;
+    public override bool IsNodeExpandable(PropertyNode modelNode) {
       var group = modelNode as PropertyGroup;
       return group != null;
     }
 
-    public override bool IsNodeExpanded(object modelNode) {
-      var node = (PropertyNode)modelNode;
+    public override bool IsNodeExpanded(PropertyNode modelNode) {
       var group = modelNode as PropertyGroup;
       if (group != null)
         return group.Expanded;
       return false;
     }
 
-    public override string GetNodeText(object modelNode) {
-      var node = (PropertyNode)modelNode;
-      return node.Name;
+    public override string GetNodeText(PropertyNode modelNode) {
+      return modelNode.Name;
     }
 
-    public override int GetNodeSubItemCount(object modelNode) {
+    public override int GetNodeSubItemCount(PropertyNode modelNode) {
       return 1;
     }
 
-    public override string GetNodeSubItemAt(object modelNode, int index) {
-      var node = (PropertyNode)modelNode;
-      return ValueToString(node);
+    public override string GetNodeSubItemAt(PropertyNode modelNode, int index) {
+      return ValueToString(modelNode);
     }
 
     private static string ValueToString(PropertyNode propertyNode) {

@@ -97,7 +97,7 @@
       <DependentUpon>ExceptionForm.cs</DependentUpon>
     </Compile>
     <Compile Include="PropertyListTreeViewModel.cs" />
-    <Compile Include="Utils\ModelNodeArgs.cs" />
+    <Compile Include="Utils\TreeListViewNodeArgs.cs" />
     <Compile Include="Utils\TreeListView.cs" />
     <Compile Include="Utils\TreeListViewModel.cs" />
     <Compile Include="Utils\TreeNodeViewModel.cs" />

@@ -19,11 +19,11 @@ using AccessBridgeExplorer.Utils;
 
 namespace AccessBridgeExplorer {
   public partial class ExceptionForm : Form {
-    private readonly TreeListView _treeListView;
+    private readonly TreeListView<TreeNode> _treeListView;
 
     public ExceptionForm() {
       InitializeComponent();
-      _treeListView = new TreeListView(errorDetailListView, errorDetailListViewImageList);
+      _treeListView = new TreeListView<TreeNode>(errorDetailListView, errorDetailListViewImageList);
     }
 
     public void DisplayError(Exception error, StackTrace stackTrace) {

@@ -28,7 +28,7 @@ namespace AccessBridgeExplorer {
   /// contents of the listview.
   /// </summary>
   public class PropertyListView {
-    private readonly TreeListView _treeListView;
+    private readonly TreeListView<PropertyNode> _treeListView;
     private readonly HashSet<PropertyGroup> _knownGroups = new HashSet<PropertyGroup>();
     private PropertyList _currentPropertyList;
 
@@ -37,8 +37,8 @@ namespace AccessBridgeExplorer {
     /// constructor, just after <code>InitializeComponent</code>.
     /// </summary>
     public PropertyListView(ListView listView, ImageList stateImageList) {
-      _treeListView = new TreeListView(listView, stateImageList);
-      _treeListView.ModelNodeShow += TreeListViewOnModelNodeShow;
+      _treeListView = new TreeListView<PropertyNode>(listView, stateImageList);
+      _treeListView.NodeVisibilityChanged += TreeListViewOnNodeVisibilityChanged;
       listView.SelectedIndexChanged += ListOnSelectedIndexChanged;
       listView.GotFocus += ListViewOnGotFocus;
     }
@@ -64,8 +64,8 @@ namespace AccessBridgeExplorer {
       _treeListView.Clear();
     }
 
-    private void TreeListViewOnModelNodeShow(object s, ModelNodeArgs modelNodeArgs) {
-      var group = modelNodeArgs.ModelNode as PropertyGroup;
+    private void TreeListViewOnNodeVisibilityChanged(object s, NodeArgs<PropertyNode> nodeArgs) {
+      var group = nodeArgs.Node as PropertyGroup;
       if (group != null) {
         _knownGroups.Add(group);
         group.Error += (sender, args) => {
@@ -79,7 +79,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void ListOnSelectedIndexChanged(object sender, EventArgs eventArgs) {
-      var propertyNode = _treeListView.SelectedModelNodes.Cast<PropertyNode>().FirstOrDefault();
+      var propertyNode = _treeListView.SelectedModelNodes.FirstOrDefault();
       if (propertyNode == null)
         return;
 

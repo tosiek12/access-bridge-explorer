@@ -16,10 +16,10 @@ using System.Windows.Forms;
 
 namespace AccessBridgeExplorer.Utils {
   /// <summary>
-  /// Implementation of <see cref="TreeListViewModel"/> using a single <see
-  /// cref="TreeNode"/> as the input.
+  /// Implementation of <see cref="TreeListViewModel{TNode}"/> using a single
+  /// <see cref="TreeNode"/> as the input.
   /// </summary>
-  public class TreeNodeViewModel : TreeListViewModel {
+  public class TreeNodeViewModel : TreeListViewModel<TreeNode> {
     private readonly TreeNode _rootNode;
     private readonly bool _isRootVisible;
 
@@ -32,33 +32,28 @@ namespace AccessBridgeExplorer.Utils {
       return _isRootVisible;
     }
 
-    public override object GetRootNode() {
+    public override TreeNode GetRootNode() {
       return _rootNode;
     }
 
-    public override bool IsNodeExpandable(object modelNode) {
-      TreeNode treeNode = (TreeNode)modelNode;
-      return treeNode.Nodes.Count > 0;
+    public override bool IsNodeExpandable(TreeNode modelNode) {
+      return modelNode.Nodes.Count > 0;
     }
 
-    public override bool IsNodeExpanded(object modelNode) {
-      TreeNode treeNode = (TreeNode)modelNode;
-      return treeNode.IsExpanded;
+    public override bool IsNodeExpanded(TreeNode modelNode) {
+      return modelNode.IsExpanded;
     }
 
-    public override int GetChildrenCount(object modelNode) {
-      TreeNode treeNode = (TreeNode)modelNode;
-      return treeNode.Nodes.Count;
+    public override int GetChildrenCount(TreeNode modelNode) {
+      return modelNode.Nodes.Count;
     }
 
-    public override object GetChildAt(object modelNode, int index) {
-      TreeNode treeNode = (TreeNode)modelNode;
-      return treeNode.Nodes[index];
+    public override TreeNode GetChildAt(TreeNode modelNode, int index) {
+      return modelNode.Nodes[index];
     }
 
-    public override string GetNodeText(object modelNode) {
-      TreeNode treeNode = (TreeNode)modelNode;
-      return treeNode.Text;
+    public override string GetNodeText(TreeNode modelNode) {
+      return modelNode.Text;
     }
   }
 }
