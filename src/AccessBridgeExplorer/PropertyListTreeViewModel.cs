@@ -36,40 +36,40 @@ namespace AccessBridgeExplorer {
       return false;
     }
 
-    public override int GetChildrenCount(PropertyNode modelNode) {
-      var group = modelNode as PropertyGroup;
+    public override int GetChildrenCount(PropertyNode node) {
+      var group = node as PropertyGroup;
       if (group == null)
         return 0;
       return group.Children.Count;
     }
 
-    public override PropertyNode GetChildAt(PropertyNode modelNode, int index) {
-      var group = (PropertyGroup)modelNode;
+    public override PropertyNode GetChildAt(PropertyNode node, int index) {
+      var group = (PropertyGroup)node;
       return group.Children[index];
     }
 
-    public override bool IsNodeExpandable(PropertyNode modelNode) {
-      var group = modelNode as PropertyGroup;
+    public override bool IsNodeExpandable(PropertyNode node) {
+      var group = node as PropertyGroup;
       return group != null;
     }
 
-    public override bool IsNodeExpanded(PropertyNode modelNode) {
-      var group = modelNode as PropertyGroup;
+    public override bool IsNodeExpanded(PropertyNode node) {
+      var group = node as PropertyGroup;
       if (group != null)
         return group.Expanded;
       return false;
     }
 
-    public override string GetNodeText(PropertyNode modelNode) {
-      return modelNode.Name;
+    public override string GetNodeText(PropertyNode node) {
+      return node.Name;
     }
 
-    public override int GetNodeSubItemCount(PropertyNode modelNode) {
+    public override int GetNodeSubItemCount(PropertyNode node) {
       return 1;
     }
 
-    public override string GetNodeSubItemAt(PropertyNode modelNode, int index) {
-      return ValueToString(modelNode);
+    public override string GetNodeSubItemAt(PropertyNode node, int index) {
+      return ValueToString(node);
     }
 
     private static string ValueToString(PropertyNode propertyNode) {

@@ -79,7 +79,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void ListOnSelectedIndexChanged(object sender, EventArgs eventArgs) {
-      var propertyNode = _treeListView.SelectedModelNodes.FirstOrDefault();
+      var propertyNode = _treeListView.SelectedNodes.FirstOrDefault();
       if (propertyNode == null)
         return;
 

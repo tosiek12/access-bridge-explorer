@@ -52,13 +52,13 @@ namespace AccessBridgeExplorer.Utils {
     public event EventHandler<NodeArgs<TNode>> NodeExpanded;
     public event EventHandler<NodeArgs<TNode>> NodeCollapsed;
 
-    public IList<TNode> SelectedModelNodes {
+    public IList<TNode> SelectedNodes {
       get {
         return _listView
           .SelectedItems
           .Cast<ListViewItem>()
           .Select(x => (ListViewItemTag)x.Tag)
-          .Select(x => x.ModelNode)
+          .Select(x => x.Node)
           .ToList();
       }
     }
@@ -93,23 +93,23 @@ namespace AccessBridgeExplorer.Utils {
       _listView.BeginUpdate();
       try {
         var oldItems = _listView.Items.AsList();
-        var oldModelNodes = new HashSet<TNode>(oldItems.Select(x => ((ListViewItemTag)x.Tag).ModelNode));
+        var oldNodes = new HashSet<TNode>(oldItems.Select(x => ((ListViewItemTag)x.Tag).Node));
 
         var newItems = CreateListViewItems(_currentModel, _nodeState);
-        var newModelNodes = new HashSet<TNode>(newItems.Select(x => ((ListViewItemTag)x.Tag).ModelNode));
+        var newNodes = new HashSet<TNode>(newItems.Select(x => ((ListViewItemTag)x.Tag).Node));
 
         ListHelpers.IncrementalUpdate(oldItems, newItems, new ListViewOperations());
 
         // Fire events related to adding/removing nodes from the display
         // inserted = newItems \ oldItems
         // removed = oldItems \ newItems
-        foreach (var modelNode in newModelNodes) {
-          if (!oldModelNodes.Contains(modelNode))
-            OnNodeVisibilityChanged(new NodeVisibilityChangedArg<TNode>(modelNode, true));
+        foreach (var node in newNodes) {
+          if (!oldNodes.Contains(node))
+            OnNodeVisibilityChanged(new NodeVisibilityChangedArg<TNode>(node, true));
         }
-        foreach (var modelNode in oldModelNodes) {
-          if (!newModelNodes.Contains(modelNode))
-            OnNodeVisibilityChanged(new NodeVisibilityChangedArg<TNode>(modelNode, false));
+        foreach (var node in oldNodes) {
+          if (!newNodes.Contains(node))
+            OnNodeVisibilityChanged(new NodeVisibilityChangedArg<TNode>(node, false));
         }
       } finally {
         _listView.EndUpdate();
@@ -134,30 +134,30 @@ namespace AccessBridgeExplorer.Utils {
       return itemList;
     }
 
-    private void CreateListViewItem(List<ListViewItem> itemList, ExpandedNodeState expandedNodeState, string parentPath, int indent, TreeListViewModel<TNode> model, TNode modelNode) {
-      var propertyNodePath = MakeNodePath(model, parentPath, modelNode);
+    private void CreateListViewItem(List<ListViewItem> itemList, ExpandedNodeState expandedNodeState, string parentPath, int indent, TreeListViewModel<TNode> model, TNode node) {
+      var propertyNodePath = MakeNodePath(model, parentPath, node);
       var item = new ListViewItem();
       itemList.Add(item); // Add the item before (optional) recursive call
 
       // Add sub-properties recursively (if group)
-      if (model.IsNodeExpandable(modelNode)) {
-        var isExpanded = expandedNodeState.IsExpanded(model, modelNode, propertyNodePath);
+      if (model.IsNodeExpandable(node)) {
+        var isExpanded = expandedNodeState.IsExpanded(model, node, propertyNodePath);
         item.ImageIndex = isExpanded ? 1 : 0;
         if (isExpanded) {
-          Enumerable.Range(0, model.GetChildrenCount(modelNode)).ForEach(index => {
-            CreateListViewItem(itemList, expandedNodeState, propertyNodePath, indent + 1, model, model.GetChildAt(modelNode, index));
+          Enumerable.Range(0, model.GetChildrenCount(node)).ForEach(index => {
+            CreateListViewItem(itemList, expandedNodeState, propertyNodePath, indent + 1, model, model.GetChildAt(node, index));
           });
         }
       }
 
       // Setup final item properties after recursion, in case property node
       // value, for example, was changed as a side effect of the recursive call.
-      item.Text = model.GetNodeText(modelNode);
-      var subItemCount = model.GetNodeSubItemCount(modelNode);
+      item.Text = model.GetNodeText(node);
+      var subItemCount = model.GetNodeSubItemCount(node);
       for (var subItem = 0; subItem < subItemCount; subItem++) {
-        item.SubItems.Add(model.GetNodeSubItemAt(modelNode, subItem));
+        item.SubItems.Add(model.GetNodeSubItemAt(node, subItem));
       }
-      item.Tag = new ListViewItemTag(modelNode, propertyNodePath);
+      item.Tag = new ListViewItemTag(node, propertyNodePath);
       item.IndentCount = indent;
     }
 
@@ -214,8 +214,8 @@ namespace AccessBridgeExplorer.Utils {
       }
     }
 
-    private static string MakeNodePath(TreeListViewModel<TNode> model, string path, TNode modelNode) {
-      var text = model.GetNodePath(modelNode).Replace('\\', '-');
+    private static string MakeNodePath(TreeListViewModel<TNode> model, string path, TNode node) {
+      var text = model.GetNodePath(node).Replace('\\', '-');
       if (string.IsNullOrEmpty(path))
         return text;
       return path + "\\" + text;
@@ -232,20 +232,20 @@ namespace AccessBridgeExplorer.Utils {
 
       var item = listView.SelectedItems[0];
       var itemState = (ListViewItemTag)item.Tag;
-      var modelNode = itemState.ModelNode;
-      if (modelNode == null)
+      var node = itemState.Node;
+      if (node == null)
         return;
 
       switch (e.KeyCode) {
         case Keys.Add:
         case Keys.Right:
-          if (!_nodeState.IsExpanded(_currentModel, modelNode, itemState.Path))
+          if (!_nodeState.IsExpanded(_currentModel, node, itemState.Path))
             ToggleExpanded(item);
           break;
 
         case Keys.Subtract:
         case Keys.Left:
-          if (_nodeState.IsExpanded(_currentModel, modelNode, itemState.Path))
+          if (_nodeState.IsExpanded(_currentModel, node, itemState.Path))
             ToggleExpanded(item);
           break;
       }
@@ -279,16 +279,16 @@ namespace AccessBridgeExplorer.Utils {
 
     private void ToggleExpanded(ListViewItem item) {
       var itemState = (ListViewItemTag)item.Tag;
-      var modelNode = itemState.ModelNode;
-      if (modelNode == null)
+      var node = itemState.Node;
+      if (node == null)
         return;
 
-      var isExpanded = _nodeState.IsExpanded(_currentModel, modelNode, itemState.Path);
+      var isExpanded = _nodeState.IsExpanded(_currentModel, node, itemState.Path);
       _nodeState.SetExpanded(itemState.Path, !isExpanded);
       if (isExpanded)
-        OnNodeCollapsed(new NodeArgs<TNode>(modelNode));
+        OnNodeCollapsed(new NodeArgs<TNode>(node));
       else
-        OnNodeExpanded(new NodeArgs<TNode>(modelNode));
+        OnNodeExpanded(new NodeArgs<TNode>(node));
       UpdateListView();
     }
 
@@ -297,16 +297,16 @@ namespace AccessBridgeExplorer.Utils {
     /// the <see cref="ListViewItem.Tag"/> property.
     /// </summary>
     private class ListViewItemTag {
-      private readonly TNode _modelNode;
+      private readonly TNode _node;
       private readonly string _path;
 
-      public ListViewItemTag(TNode modelNode, string path) {
-        _modelNode = modelNode;
+      public ListViewItemTag(TNode node, string path) {
+        _node = node;
         _path = path ?? "";
       }
 
-      public TNode ModelNode {
-        get { return _modelNode; }
+      public TNode Node {
+        get { return _node; }
       }
 
       public string Path {
@@ -326,12 +326,12 @@ namespace AccessBridgeExplorer.Utils {
         _expandedStates[path] = expanded;
       }
 
-      public bool IsExpanded(TreeListViewModel<TNode> model, TNode modelNode, string path) {
+      public bool IsExpanded(TreeListViewModel<TNode> model, TNode node, string path) {
         bool savedState;
         if (_expandedStates.TryGetValue(path, out savedState)) {
           return savedState;
         }
-        return model.IsNodeExpanded(modelNode);
+        return model.IsNodeExpanded(node);
       }
     }
 

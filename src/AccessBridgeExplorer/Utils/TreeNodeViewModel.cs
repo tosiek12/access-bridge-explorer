@@ -36,24 +36,24 @@ namespace AccessBridgeExplorer.Utils {
       return _rootNode;
     }
 
-    public override bool IsNodeExpandable(TreeNode modelNode) {
-      return modelNode.Nodes.Count > 0;
+    public override bool IsNodeExpandable(TreeNode node) {
+      return node.Nodes.Count > 0;
     }
 
-    public override bool IsNodeExpanded(TreeNode modelNode) {
-      return modelNode.IsExpanded;
+    public override bool IsNodeExpanded(TreeNode node) {
+      return node.IsExpanded;
     }
 
-    public override int GetChildrenCount(TreeNode modelNode) {
-      return modelNode.Nodes.Count;
+    public override int GetChildrenCount(TreeNode node) {
+      return node.Nodes.Count;
     }
 
-    public override TreeNode GetChildAt(TreeNode modelNode, int index) {
-      return modelNode.Nodes[index];
+    public override TreeNode GetChildAt(TreeNode node, int index) {
+      return node.Nodes[index];
     }
 
-    public override string GetNodeText(TreeNode modelNode) {
-      return modelNode.Text;
+    public override string GetNodeText(TreeNode node) {
+      return node.Text;
     }
   }
 }
