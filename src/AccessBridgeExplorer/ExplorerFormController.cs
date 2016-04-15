@@ -152,7 +152,7 @@ namespace AccessBridgeExplorer {
 
       switch (e.KeyCode & Keys.KeyCode) {
         case Keys.Return:
-          foreach (ListViewItem item in _view.EventList.SelectedItems) {
+          foreach (ListViewItem item in _view.MessageList.SelectedItems) {
             ShowMessage(item);
           }
           break;
