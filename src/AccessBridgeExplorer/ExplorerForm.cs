@@ -282,15 +282,23 @@ namespace AccessBridgeExplorer {
     }
 
     public void Invoke(Action action) {
-      base.Invoke(action);
+      if (InvokeRequired) {
+        base.Invoke(action);
+      } else {
+        action();
+      }
+    }
+
+    public T Compute<T>(Func<T> function) {
+      if (InvokeRequired) {
+        return (T)base.Invoke(function);
+      } else {
+        return function();
+      }
     }
 
     public void InvokeLater(Action action) {
       BeginInvoke(action);
-    }
-
-    public T Compute<T>(Func<T> function) {
-      return (T)base.Invoke(function);
     }
 
     private void navigateForwardButton_Click(object sender, EventArgs e) {
