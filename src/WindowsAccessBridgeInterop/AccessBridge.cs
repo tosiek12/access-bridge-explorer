@@ -141,18 +141,6 @@ namespace WindowsAccessBridgeInterop {
       });
     }
 
-    public AccessibleWindow CreateAccessibleWindow(IntPtr hwnd) {
-      if (!Functions.IsJavaWindow(hwnd))
-        return null;
-
-      int vmId;
-      JavaObjectHandle ac;
-      if (!Functions.GetAccessibleContextFromHWND(hwnd, out vmId, out ac))
-        return null;
-
-      return new AccessibleWindow(this, hwnd, ac);
-    }
-
     public List<AccessibleJvm> EnumJvms(Func<IntPtr, AccessibleWindow> windowFunc) {
       if (_library == null)
         return new List<AccessibleJvm>();
@@ -181,6 +169,18 @@ namespace WindowsAccessBridgeInterop {
       } catch (Exception e) {
         throw new ApplicationException("Error detecting running applications", e);
       }
+    }
+
+    public AccessibleWindow CreateAccessibleWindow(IntPtr hwnd) {
+      if (!Functions.IsJavaWindow(hwnd))
+        return null;
+
+      int vmId;
+      JavaObjectHandle ac;
+      if (!Functions.GetAccessibleContextFromHWND(hwnd, out vmId, out ac))
+        return null;
+
+      return new AccessibleWindow(this, hwnd, ac);
     }
 
     public class AccessBridgeLibrary : UnmanagedLibrary {
