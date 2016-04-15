@@ -37,10 +37,10 @@ namespace AccessBridgeExplorer {
     }
 
     private void CreateNodes(TreeNodeCollection parentList, Exception error, StackTrace stackTrace) {
-      var errorNode = parentList.Add("Exception");
+      var errorNode = parentList.Add("Exception info");
       CreateErrorNodes(errorNode.Nodes, error);
 
-      var stackNode = parentList.Add("Stacktrace");
+      var stackNode = parentList.Add("Logger stacktrace");
       CreateStackStraceNodes(stackNode.Nodes, stackTrace);
     }
 
@@ -53,7 +53,7 @@ namespace AccessBridgeExplorer {
       CreateStackStraceNodes(node.Nodes, stackTrace);
 
       if (error.InnerException != null) {
-        var errorNode = parentList.Add("Inner Exception");
+        var errorNode = parentList.Add("Inner Exception info");
         CreateErrorNodes(errorNode.Nodes, error.InnerException);
       }
     }
