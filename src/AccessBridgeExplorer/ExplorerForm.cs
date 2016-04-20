@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using WindowsAccessBridgeInterop;
 using AccessBridgeExplorer.Utils;
 
 namespace AccessBridgeExplorer {
@@ -70,6 +71,11 @@ namespace AccessBridgeExplorer {
     private void Application_Idle(object sender, EventArgs eventArgs) {
       UpdateNavigationState();
       UpdateNotificationMenu();
+      int count = JavaObjectHandle.FlushReleaseQueue();
+      if (count > 0) {
+        // testing
+        //_controller.LogMessage("Released {0} java objects after finalization", count);
+      }
     }
 
     private void UpdateNotificationMenu() {

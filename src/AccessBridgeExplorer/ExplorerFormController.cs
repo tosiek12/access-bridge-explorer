@@ -749,8 +749,8 @@ namespace AccessBridgeExplorer {
       _delayedRefreshTree.Post(TimeSpan.FromMilliseconds(200), () => {
         try {
           // Enumerate on thread pool thread, refresh on UI thread.
-          var jvms = EnumJvms();
           UiAction(() => {
+            var jvms = EnumJvms();
             UpdateTree(jvms);
           });
         } catch (Exception e) {
