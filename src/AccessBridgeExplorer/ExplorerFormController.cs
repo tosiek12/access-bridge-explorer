@@ -17,6 +17,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -584,7 +585,7 @@ namespace AccessBridgeExplorer {
             _view.ShowNotification(new NotificationPanelEntry {
               Text = sb.ToString(),
               Icon = NotificationPanelIcon.Info,
-              IsExpired = () => _refreshCallId != currentRefreshCallId
+              IsExpired = () => GetAccessibleJvmsFromTree().Any()
             });
           }
         } catch (Exception e) {
@@ -738,6 +739,12 @@ namespace AccessBridgeExplorer {
     }
 
     private void AccessBridgeEvents_OnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      // Access the top level object as fast as possible to
+      // ensure the application knows there is an active screen reader.
+      if (_windowCache.Windows.All(x => x.JvmId != vmid)) {
+        var topLevel =_accessBridge.Functions.GetTopLevelObject(source.JvmId, source);
+        topLevel.Dispose();
+      }
       PostRefreshTree();
     }
 
@@ -764,19 +771,19 @@ namespace AccessBridgeExplorer {
       return (AccessibleJvm)model.AccessibleNode;
     }
 
-    private void SetNodeAccessibleJvm(TreeNode node, AccessibleJvm value) {
-      var model = (AccessibleNodeModel)node.Tag;
-      model.AccessibleNode = value;
-    }
-
     private AccessibleWindow GetAccessibleWindowFromNode(TreeNode node) {
       var model = (AccessibleNodeModel)node.Tag;
       return (AccessibleWindow)model.AccessibleNode;
     }
 
-    private void SetNodeAccessibleWindow(TreeNode node, AccessibleWindow value) {
-      var model = (AccessibleNodeModel)node.Tag;
-      model.AccessibleNode = value;
+    private IEnumerable<AccessibleJvm> GetAccessibleJvmsFromTree() {
+      return _view.AccessibilityTree.Nodes
+        .AsList()
+        .Select(x => x.Tag)
+        .Where(x => x != null)
+        .OfType<AccessibleNodeModel>()
+        .Select(x => x.AccessibleNode)
+        .OfType<AccessibleJvm>();
     }
 
     private void DisposeTreeNode(TreeNode node) {
@@ -1314,6 +1321,10 @@ namespace AccessBridgeExplorer {
 
       public void Clear() {
         _cache.Clear();
+      }
+
+      public IEnumerable<AccessibleWindow> Windows {
+        get { return _cache.Values.Where(x => x != null); }
       }
     }
   }
