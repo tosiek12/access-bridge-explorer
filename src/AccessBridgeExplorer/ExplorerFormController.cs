@@ -981,17 +981,13 @@ namespace AccessBridgeExplorer {
     /// </summary>
     public NodePath GetNodePathAt(Point screenPoint) {
       return UiCompute(() => {
-        foreach (TreeNode treeNode in _view.AccessibilityTree.Nodes) {
-          var node = treeNode.Tag as AccessibleNodeModel;
-          if (node == null)
-            continue;
-
-          var result = node.AccessibleNode.GetNodePathAt(screenPoint);
-          if (result != null)
-            return result;
-        }
-
-        return null;
+        // Note: We should never have more than one window because
+        // AccessibleWindow uses WindowFromPoint to filter out themselves if
+        // needed.
+        return GetAccessibleJvmsFromTree()
+          .Select(node => node.GetNodePathAt(screenPoint))
+          .Where(x => x != null)
+          .FirstOrDefault();
       });
     }
 
