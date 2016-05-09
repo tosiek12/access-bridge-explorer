@@ -117,7 +117,7 @@ namespace WindowsAccessBridgeInterop {
           var rect = x.LeafNode.GetScreenRectangle();
           if (rect == null)
             return int.MaxValue;
-          return rect.Value.Width * rect.Value.Width;
+          return rect.Value.Width * rect.Value.Height;
         })
         .ToList();
 
