@@ -234,49 +234,49 @@ namespace AccessBridgeExplorer {
       // _propertiesMenu
       // 
       this._propertiesMenu.Name = "_propertiesMenu";
-      this._propertiesMenu.Size = new System.Drawing.Size(205, 22);
-      this._propertiesMenu.Text = "Display &Properties";
+      this._propertiesMenu.Size = new System.Drawing.Size(250, 22);
+      this._propertiesMenu.Text = "Display Accessible &Properties";
       this._propertiesMenu.ToolTipText = "Properties to show in Component Properties";
       // 
       // _eventsMenu
       // 
       this._eventsMenu.Name = "_eventsMenu";
-      this._eventsMenu.Size = new System.Drawing.Size(205, 22);
-      this._eventsMenu.Text = "Capture &Events";
+      this._eventsMenu.Size = new System.Drawing.Size(250, 22);
+      this._eventsMenu.Text = "Capture Accessibility &Events";
       this._eventsMenu.ToolTipText = "Events to capture and display in the events window";
       // 
       // toolStripSeparator1
       // 
       this.toolStripSeparator1.Name = "toolStripSeparator1";
-      this.toolStripSeparator1.Size = new System.Drawing.Size(202, 6);
+      this.toolStripSeparator1.Size = new System.Drawing.Size(247, 6);
       // 
       // _limitCollectionsCountMenu
       // 
       this._limitCollectionsCountMenu.Name = "_limitCollectionsCountMenu";
-      this._limitCollectionsCountMenu.Size = new System.Drawing.Size(205, 22);
+      this._limitCollectionsCountMenu.Size = new System.Drawing.Size(250, 22);
       this._limitCollectionsCountMenu.Text = "Limit &collections to";
       // 
       // _limitTextLineCountsMenu
       // 
       this._limitTextLineCountsMenu.Name = "_limitTextLineCountsMenu";
-      this._limitTextLineCountsMenu.Size = new System.Drawing.Size(205, 22);
-      this._limitTextLineCountsMenu.Text = "Limit &text length to";
+      this._limitTextLineCountsMenu.Size = new System.Drawing.Size(250, 22);
+      this._limitTextLineCountsMenu.Text = "Limit &text contents to";
       // 
       // _limitTextLineLengthsMenu
       // 
       this._limitTextLineLengthsMenu.Name = "_limitTextLineLengthsMenu";
-      this._limitTextLineLengthsMenu.Size = new System.Drawing.Size(205, 22);
-      this._limitTextLineLengthsMenu.Text = "Limit text &lines length to";
+      this._limitTextLineLengthsMenu.Size = new System.Drawing.Size(250, 22);
+      this._limitTextLineLengthsMenu.Text = "Limit text &lines to";
       // 
       // separator5
       // 
       this.separator5.Name = "separator5";
-      this.separator5.Size = new System.Drawing.Size(202, 6);
+      this.separator5.Size = new System.Drawing.Size(247, 6);
       // 
       // showOverlayMenuItem
       // 
       this.showOverlayMenuItem.Name = "showOverlayMenuItem";
-      this.showOverlayMenuItem.Size = new System.Drawing.Size(205, 22);
+      this.showOverlayMenuItem.Size = new System.Drawing.Size(250, 22);
       this.showOverlayMenuItem.Text = "Show &Overlay";
       this.showOverlayMenuItem.ToolTipText = "Toggle selected component overlay window";
       this.showOverlayMenuItem.Click += new System.EventHandler(this.showOverlayMenuItem_Click);
@@ -287,8 +287,9 @@ namespace AccessBridgeExplorer {
       this.autoDetectApplicationsMenuItem.CheckOnClick = true;
       this.autoDetectApplicationsMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
       this.autoDetectApplicationsMenuItem.Name = "autoDetectApplicationsMenuItem";
-      this.autoDetectApplicationsMenuItem.Size = new System.Drawing.Size(205, 22);
-      this.autoDetectApplicationsMenuItem.Text = "Auto-detect applications";
+      this.autoDetectApplicationsMenuItem.Size = new System.Drawing.Size(250, 22);
+      this.autoDetectApplicationsMenuItem.Text = "&Auto-detect running applications";
+      this.autoDetectApplicationsMenuItem.ToolTipText = "Automatically refresh the Accessibility Tree when new applications are detected";
       this.autoDetectApplicationsMenuItem.CheckedChanged += new System.EventHandler(this.autoDetectApplicationsMenuItem_CheckChanged);
       // 
       // helpMenu
@@ -539,7 +540,7 @@ namespace AccessBridgeExplorer {
       this.accessibleComponentTabPage.Name = "accessibleComponentTabPage";
       this.accessibleComponentTabPage.Size = new System.Drawing.Size(532, 389);
       this.accessibleComponentTabPage.TabIndex = 0;
-      this.accessibleComponentTabPage.Text = "Component Properties";
+      this.accessibleComponentTabPage.Text = "Accessible Component Properties";
       this.accessibleComponentTabPage.UseVisualStyleBackColor = true;
       // 
       // _accessibleContextPropertyList
@@ -686,7 +687,7 @@ namespace AccessBridgeExplorer {
       this._eventListPage.Name = "_eventListPage";
       this._eventListPage.Size = new System.Drawing.Size(1000, 211);
       this._eventListPage.TabIndex = 0;
-      this._eventListPage.Text = "Events";
+      this._eventListPage.Text = "Accessibility Events";
       this._eventListPage.UseVisualStyleBackColor = true;
       // 
       // _eventList
@@ -787,7 +788,7 @@ namespace AccessBridgeExplorer {
       this.notificationPanel.Margin = new System.Windows.Forms.Padding(0);
       this.notificationPanel.MinimumSize = new System.Drawing.Size(100, 20);
       this.notificationPanel.Name = "notificationPanel";
-      this.notificationPanel.Size = new System.Drawing.Size(566, 68);
+      this.notificationPanel.Size = new System.Drawing.Size(566, 40);
       this.notificationPanel.TabIndex = 2;
       // 
       // updateChecker
