@@ -1018,57 +1018,58 @@ namespace AccessBridgeExplorer {
     }
 
     public void SelectTreeNode(NodePath nodePath) {
-      TreeNode lastFoundTreeNode = null;
-      // Pop each node and find it in the corresponding collection
-      var parentNodeList = _view.AccessibilityTree.Nodes;
-      while (nodePath.Count > 0) {
-        var childNode = nodePath.Pop();
+      UiAction(() => {
+        TreeNode lastFoundTreeNode = null;
+        // Pop each node and find it in the corresponding collection
+        var parentNodeList = _view.AccessibilityTree.Nodes;
+        while (nodePath.Count > 0) {
+          var childNode = nodePath.Pop();
 
-        var childTreeNode = FindTreeNodeInList(parentNodeList, childNode);
-        if (childTreeNode == null) {
-          LogMessage("Error finding child node in node list: {0}", childNode);
-          break;
+          var childTreeNode = FindTreeNodeInList(parentNodeList, childNode);
+          if (childTreeNode == null) {
+            LogMessage("Error finding child node in node list: {0}", childNode);
+            break;
+          }
+          lastFoundTreeNode = childTreeNode;
+
+          if (nodePath.Count == 0) {
+            // Expand the whole subtree to force each node to refresh their value
+            // in case the sub-tree disappears from the accessible application
+            // (e.g. in the case of an ephemeral window).
+            childNode.FetchSubTree();
+            break;
+          }
+
+          childTreeNode.Expand();
+          parentNodeList = childTreeNode.Nodes;
         }
-        lastFoundTreeNode = childTreeNode;
 
-        if (nodePath.Count == 0) {
-          // Expand the whole subtree to force each node to refresh their value
-          // in case the sub-tree disappears from the accessible application
-          // (e.g. in the case of an ephemeral window).
-          childNode.FetchSubTree();
-          break;
+        if (lastFoundTreeNode != null) {
+          _view.AccessibilityTree.SelectedNode = lastFoundTreeNode;
+          EnsureTreeNodeVisible(lastFoundTreeNode);
         }
-
-        childTreeNode.Expand();
-        parentNodeList = childTreeNode.Nodes;
-      }
-
-      if (lastFoundTreeNode != null) {
-        _view.AccessibilityTree.SelectedNode = lastFoundTreeNode;
-        EnsureTreeNodeVisible(lastFoundTreeNode);
-      }
+      });
     }
 
     private TreeNode FindTreeNodeInList(TreeNodeCollection list, AccessibleNode node) {
-      return UiCompute(() => {
-        // Search by child index (for transient nodes)
-        var childIndex = node.GetIndexInParent();
-        if (childIndex >= 0 && childIndex < list.Count) {
-          return list[childIndex];
-        }
+      // Sequential search (for Jvm, Window nodes).
+      foreach (TreeNode treeNode in list) {
+        var childNode = treeNode.Tag as AccessibleNodeModel;
+        if (childNode == null)
+          continue;
 
-        // Sequential search (for Jvm, Window nodes).
-        foreach (TreeNode treeNode in list) {
-          var childNode = treeNode.Tag as AccessibleNodeModel;
-          if (childNode == null)
-            continue;
-
-          if (childNode.AccessibleNode.Equals(node)) {
-            return treeNode;
-          }
+        if (childNode.AccessibleNode.Equals(node)) {
+          return treeNode;
         }
-        return null;
-      });
+      }
+
+      // Search by child index (for transient nodes)
+      var childIndex = node.GetIndexInParent();
+      if (childIndex >= 0 && childIndex < list.Count) {
+        return list[childIndex];
+      }
+
+      return null;
     }
 
     public void ShowToolTip(Point screenPoint, NodePath nodePath) {
