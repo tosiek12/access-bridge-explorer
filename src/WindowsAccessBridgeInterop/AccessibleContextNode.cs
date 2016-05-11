@@ -967,6 +967,7 @@ namespace WindowsAccessBridgeInterop {
         var info = GetInfo();
         // Limit string sizes to avoid making the tooltip too big
         const int stringMaxLength = 60;
+        list.AddProperty("Role", LimitStringSize(info.role, stringMaxLength));
         list.AddProperty("Name", LimitStringSize(info.name, stringMaxLength));
         list.AddProperty("Description", LimitStringSize(info.description, stringMaxLength));
         list.AddProperty("Name (JAWS algorithm)", LimitStringSize(GetVirtualAccessibleName(), stringMaxLength));
@@ -975,7 +976,6 @@ namespace WindowsAccessBridgeInterop {
           list.AddProperty("Object Depth", depth);
         }
         list.AddProperty("Bounds", new AccessibleRectInfo(info.x, info.y, info.width, info.height));
-        list.AddProperty("Role", info.role);
         list.AddProperty("States", info.states);
         list.AddProperty("accessibleInterfaces", info.accessibleInterfaces);
       } catch (Exception e) {
