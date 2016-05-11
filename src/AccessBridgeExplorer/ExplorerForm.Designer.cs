@@ -57,6 +57,7 @@ namespace AccessBridgeExplorer {
       this._limitTextLineLengthsMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.separator5 = new System.Windows.Forms.ToolStripSeparator();
       this.showOverlayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.showOverlayOnFocusMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.autoDetectApplicationsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.viewHelpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -226,6 +227,7 @@ namespace AccessBridgeExplorer {
             this._limitTextLineLengthsMenu,
             this.separator5,
             this.showOverlayMenuItem,
+            this.showOverlayOnFocusMenuItem,
             this.autoDetectApplicationsMenuItem});
       this.optionsMenu.Name = "optionsMenu";
       this.optionsMenu.Size = new System.Drawing.Size(61, 20);
@@ -280,6 +282,14 @@ namespace AccessBridgeExplorer {
       this.showOverlayMenuItem.Text = "Show &Overlay";
       this.showOverlayMenuItem.ToolTipText = "Toggle selected component overlay window";
       this.showOverlayMenuItem.Click += new System.EventHandler(this.showOverlayMenuItem_Click);
+      // 
+      // showOverlayOnFocusMenuItem
+      // 
+      this.showOverlayOnFocusMenuItem.Name = "showOverlayOnFocusMenuItem";
+      this.showOverlayOnFocusMenuItem.Size = new System.Drawing.Size(250, 22);
+      this.showOverlayOnFocusMenuItem.Text = "Show Overlay on &Focus Events";
+      this.showOverlayOnFocusMenuItem.ToolTipText = "Show the overlay window when focus gained events are received";
+      this.showOverlayOnFocusMenuItem.Click += new System.EventHandler(this.showOverlayOnFocusMenuItem_Click);
       // 
       // autoDetectApplicationsMenuItem
       // 
@@ -919,6 +929,7 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
     private NotificationPanel notificationPanel;
     private System.Windows.Forms.ToolStripMenuItem showNotificationMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem showOverlayOnFocusMenuItem;
     private UpdateChecker updateChecker;
     private System.Windows.Forms.ToolStripMenuItem checkForUpdateMenuItem;
     private System.Windows.Forms.ToolStripMenuItem automaticallyCheckForUpdatesMenuItem;

@@ -37,6 +37,7 @@ namespace AccessBridgeExplorer {
     private readonly HwndCache _windowCache = new HwndCache();
 
     private bool _overlayWindowEnabled;
+    private bool _showOverlayWindowOnFocusEnabled;
     private bool _autoDetectEnabled;
     private Rectangle? _overlayWindowRectangle;
     private bool _disposed;
@@ -49,6 +50,7 @@ namespace AccessBridgeExplorer {
       _view = explorerFormView;
       _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
       _overlayWindowEnabled = true;
+      _showOverlayWindowOnFocusEnabled = false;
 
       PropertyOptions = PropertyOptions.AccessibleContextInfo |
         PropertyOptions.AccessibleIcons |
@@ -117,6 +119,8 @@ namespace AccessBridgeExplorer {
         _view.EventsMenu.Enabled = true;
         _view.PropertiesMenu.Enabled = true;
         _view.LimitCollectionSizesMenu.Enabled = true;
+        _view.ShowOverlayWindowMenu.Checked = _overlayWindowEnabled;
+        _view.ShowOverlayWindowOnFocusMenu.Enabled = _overlayWindowEnabled;
         LogMessage("Ready!");
       };
 
@@ -739,13 +743,32 @@ namespace AccessBridgeExplorer {
     }
 
     private void AccessBridgeEvents_OnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      // Access the top level object as fast as possible to
-      // ensure the application knows there is an active screen reader.
-      if (_windowCache.Windows.All(x => x.JvmId != vmid)) {
-        var topLevel =_accessBridge.Functions.GetTopLevelObject(source.JvmId, source);
-        topLevel.Dispose();
-      }
-      PostRefreshTree();
+      UiAction(() => {
+        // Access the top level object as fast as possible to
+        // ensure the application knows there is an active screen reader.
+        if (_windowCache.Windows.All(x => x.JvmId != vmid)) {
+          var topLevel = _accessBridge.Functions.GetTopLevelObject(source.JvmId, source);
+          topLevel.Dispose();
+        }
+        PostRefreshTree();
+      });
+    }
+
+    private void AccessBridgeEvents_ShowOverlayWindowOnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      UiAction(() => {
+        if (source.IsNull) {
+          return;
+        }
+        var node = new AccessibleContextNode(_accessBridge, source);
+        var rect = node.GetScreenRectangle();
+        if (rect == null) {
+          return;
+        }
+
+        _overlayWindowRectangle = rect;
+        UpdateOverlayWindow();
+        ShowToolTip(rect.Value.Location, node);
+      });
     }
 
     private void AccessBridgeEvents_JavaShutdown(int vmid) {
@@ -962,6 +985,21 @@ namespace AccessBridgeExplorer {
       UpdateOverlayWindow();
     }
 
+    public void EnableShowOverlayWindowOnFocus(bool enabled) {
+      _showOverlayWindowOnFocusEnabled = enabled;
+      if (!enabled) {
+        HideOverlayWindow();
+        HideToolTip();
+      }
+      if (_accessBridge.IsLoaded) {
+        if (enabled) {
+          _accessBridge.Events.FocusGained += AccessBridgeEvents_ShowOverlayWindowOnFocusGained;
+        } else {
+          _accessBridge.Events.FocusGained -= AccessBridgeEvents_ShowOverlayWindowOnFocusGained;
+        }
+      }
+    }
+
     public void EnableAutoDetect(bool enabled) {
       _autoDetectEnabled = enabled;
       if (_accessBridge.IsLoaded) {
@@ -1074,8 +1112,12 @@ namespace AccessBridgeExplorer {
 
     public void ShowToolTip(Point screenPoint, NodePath nodePath) {
       UiAction(() => {
-        var node = nodePath.LeafNode;
+        ShowToolTip(screenPoint, nodePath.LeafNode);
+      });
+    }
 
+    public void ShowToolTip(Point screenPoint, AccessibleNode node) {
+      UiAction(() => {
         var sb = new StringBuilder();
         foreach (var x in node.GetToolTipProperties(PropertyOptions)) {
           if (sb.Length > 0)

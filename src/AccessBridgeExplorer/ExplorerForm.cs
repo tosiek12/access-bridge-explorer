@@ -174,12 +174,20 @@ namespace AccessBridgeExplorer {
       var enable = !button.Checked;
       button.Checked = enable;
       showOverlayMenuItem.Checked = enable;
+      showOverlayOnFocusMenuItem.Enabled = enable;
       if (enable) {
         button.ForeColor = Color.FromArgb(128, 255, 128);
       } else {
         button.ForeColor = SystemColors.InactiveCaption;
       }
       _controller.EnableOverlayWindow(enable);
+    }
+
+    private void showOverlayOnFocusMenuItem_Click(object sender, EventArgs e) {
+      var enable = !showOverlayOnFocusMenuItem.Checked;
+      showOverlayMenuItem.Checked = enable;
+      showOverlayOnFocusMenuItem.Checked = enable;
+      _controller.EnableShowOverlayWindowOnFocus(enable);
     }
 
     private class OverlayButtonRenderer : ToolStripProfessionalRenderer {
@@ -405,6 +413,14 @@ namespace AccessBridgeExplorer {
 
     ToolStripMenuItem IExplorerFormView.LimitTextLineLengthsMenu {
       get { return _limitTextLineLengthsMenu; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.ShowOverlayWindowMenu {
+      get { return showOverlayMenuItem; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.ShowOverlayWindowOnFocusMenu {
+      get { return showOverlayOnFocusMenuItem; }
     }
 
     ToolStripStatusLabel IExplorerFormView.StatusLabel {
