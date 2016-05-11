@@ -34,10 +34,10 @@ namespace AccessBridgeExplorer {
     private readonly OverlayWindow _overlayWindow = new OverlayWindow();
     private readonly TooltipWindow _tooltipWindow = new TooltipWindow();
     private readonly SingleDelayedTask _delayedRefreshTree = new SingleDelayedTask();
+    private readonly SingleDelayedTask _hideOverlayOnFocusLost = new SingleDelayedTask();
     private readonly HwndCache _windowCache = new HwndCache();
 
     private bool _overlayWindowEnabled;
-    private bool _showOverlayWindowOnFocusEnabled;
     private bool _autoDetectEnabled;
     private Rectangle? _overlayWindowRectangle;
     private bool _disposed;
@@ -50,7 +50,6 @@ namespace AccessBridgeExplorer {
       _view = explorerFormView;
       _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
       _overlayWindowEnabled = true;
-      _showOverlayWindowOnFocusEnabled = false;
 
       PropertyOptions = PropertyOptions.AccessibleContextInfo |
         PropertyOptions.AccessibleIcons |
@@ -754,8 +753,13 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private void AccessBridgeEvents_ShowOverlayWindowOnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+    private void AccessBridgeEvents_ShowOverlayWindowOnFocusGained_OnActiveDescendantChanged(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldactivedescendent, JavaObjectHandle newactivedescendent) {
+      AccessBridgeEvents_ShowOverlayWindowOnFocusGained_OnFocusGained(vmid, evt, newactivedescendent);
+    }
+
+    private void AccessBridgeEvents_ShowOverlayWindowOnFocusGained_OnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
       UiAction(() => {
+        _hideOverlayOnFocusLost.Cancel();
         if (source.IsNull) {
           return;
         }
@@ -768,6 +772,17 @@ namespace AccessBridgeExplorer {
         _overlayWindowRectangle = rect;
         UpdateOverlayWindow();
         ShowToolTip(rect.Value.Location, node);
+      });
+    }
+
+    private void AccessBridgeEvents_ShowOverlayWindowOnFocusGained_OnFocusLost(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+      UiAction(() => {
+        _hideOverlayOnFocusLost.Post(TimeSpan.FromMilliseconds(100), () => {
+          UiAction(() => {
+            HideOverlayWindow();
+            HideToolTip();
+          });
+        });
       });
     }
 
@@ -986,16 +1001,20 @@ namespace AccessBridgeExplorer {
     }
 
     public void EnableShowOverlayWindowOnFocus(bool enabled) {
-      _showOverlayWindowOnFocusEnabled = enabled;
+      _hideOverlayOnFocusLost.Cancel();
       if (!enabled) {
         HideOverlayWindow();
         HideToolTip();
       }
       if (_accessBridge.IsLoaded) {
         if (enabled) {
-          _accessBridge.Events.FocusGained += AccessBridgeEvents_ShowOverlayWindowOnFocusGained;
+          _accessBridge.Events.FocusGained += AccessBridgeEvents_ShowOverlayWindowOnFocusGained_OnFocusGained;
+          _accessBridge.Events.FocusLost += AccessBridgeEvents_ShowOverlayWindowOnFocusGained_OnFocusLost;
+          _accessBridge.Events.PropertyActiveDescendentChange += AccessBridgeEvents_ShowOverlayWindowOnFocusGained_OnActiveDescendantChanged;
         } else {
-          _accessBridge.Events.FocusGained -= AccessBridgeEvents_ShowOverlayWindowOnFocusGained;
+          _accessBridge.Events.FocusGained -= AccessBridgeEvents_ShowOverlayWindowOnFocusGained_OnFocusGained;
+          _accessBridge.Events.FocusLost -= AccessBridgeEvents_ShowOverlayWindowOnFocusGained_OnFocusLost;
+          _accessBridge.Events.PropertyActiveDescendentChange -= AccessBridgeEvents_ShowOverlayWindowOnFocusGained_OnActiveDescendantChanged;
         }
       }
     }
@@ -1143,6 +1162,7 @@ namespace AccessBridgeExplorer {
 
     public void OnFocusLost() {
       HideOverlayWindow();
+      HideToolTip();
     }
 
     public void OnFocusGained() {

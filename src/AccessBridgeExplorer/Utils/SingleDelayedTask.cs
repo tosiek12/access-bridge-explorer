@@ -36,11 +36,7 @@ namespace AccessBridgeExplorer.Utils {
     /// from the queue and won't be executed.
     /// </summary>
     public void Post(TimeSpan delay, Action callback) {
-      _timer.Stop();
-      if (_currentHandler != null) {
-        _timer.Elapsed -= _currentHandler;
-        _currentHandler = null;
-      }
+      Cancel();
 
       _currentHandler = (obj, args) => {
         callback();
@@ -48,6 +44,17 @@ namespace AccessBridgeExplorer.Utils {
       _timer.Elapsed += _currentHandler;
       _timer.Interval = delay.TotalMilliseconds;
       _timer.Start();
+    }
+
+    /// <summary>
+    /// Cancels the currently enqueued delayed task if there is one.
+    /// </summary>
+    public void Cancel() {
+      _timer.Stop();
+      if (_currentHandler != null) {
+        _timer.Elapsed -= _currentHandler;
+        _currentHandler = null;
+      }
     }
   }
 }
