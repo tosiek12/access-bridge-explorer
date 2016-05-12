@@ -59,7 +59,11 @@ namespace AccessBridgeExplorer {
       this.componentOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.activateOverlayOnTreeSelectionMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.activateOverlayOnFocusMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.activateOverlayOnActiveDescendantMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
       this.showTooltipAndOverlayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.showOverlayOnlyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.showTooltipOnlyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.autoDetectApplicationsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.viewHelpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -111,13 +115,8 @@ namespace AccessBridgeExplorer {
       this.eventNewValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.eventsToolStrip = new System.Windows.Forms.ToolStrip();
       this.clearEventsButton = new System.Windows.Forms.ToolStripButton();
-      this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.notificationPanel = new AccessBridgeExplorer.NotificationPanel();
       this.updateChecker = new AccessBridgeExplorer.UpdateChecker(this.components);
-      this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
-      this.showTooltipOnlyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.showOverlayOnlyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.activateOverlayOnActiveDescendantMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
       this.mainToolStrip.SuspendLayout();
@@ -167,7 +166,7 @@ namespace AccessBridgeExplorer {
       // 
       this.exitMenuItem.Name = "exitMenuItem";
       this.exitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.X)));
-      this.exitMenuItem.Size = new System.Drawing.Size(129, 22);
+      this.exitMenuItem.Size = new System.Drawing.Size(152, 22);
       this.exitMenuItem.Text = "E&xit";
       this.exitMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
       // 
@@ -317,6 +316,11 @@ namespace AccessBridgeExplorer {
       this.activateOverlayOnActiveDescendantMenuItem.Text = "Activate on &Active Descendant events";
       this.activateOverlayOnActiveDescendantMenuItem.ToolTipText = "Show the Overlay window when focus gained events are received";
       this.activateOverlayOnActiveDescendantMenuItem.Click += new System.EventHandler(this.activateOverlayOnActiveDescendantMenuItem_Click);
+      // 
+      // toolStripMenuItem3
+      // 
+      this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+      this.toolStripMenuItem3.Size = new System.Drawing.Size(272, 6);
       // 
       // showTooltipAndOverlayMenuItem
       // 
@@ -833,11 +837,6 @@ namespace AccessBridgeExplorer {
       this.clearEventsButton.TextAlign = System.Drawing.ContentAlignment.TopLeft;
       this.clearEventsButton.Click += new System.EventHandler(this.clearEventsButton_Click);
       // 
-      // testToolStripMenuItem
-      // 
-      this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-      this.testToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
-      // 
       // notificationPanel
       // 
       this.notificationPanel.AccessibleName = "Notification Panel";
@@ -857,11 +856,6 @@ namespace AccessBridgeExplorer {
       this.updateChecker.Url = "https://google.github.io/access-bridge-explorer/latest_version.txt";
       this.updateChecker.UpdateInfoAvailable += new System.EventHandler<AccessBridgeExplorer.UpdateInfoArgs>(this.updateChecker_UpdateInfoAvailable);
       this.updateChecker.UpdateInfoError += new System.EventHandler<System.IO.ErrorEventArgs>(this.updateChecker_UpdateInfoError);
-      // 
-      // toolStripMenuItem3
-      // 
-      this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-      this.toolStripMenuItem3.Size = new System.Drawing.Size(272, 6);
       // 
       // ExplorerForm
       // 
@@ -976,7 +970,6 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripSeparator separator4;
     private System.Windows.Forms.ToolStripMenuItem optionsMenu;
     private System.Windows.Forms.ToolStripMenuItem _propertiesMenu;
-    private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
     private System.Windows.Forms.ToolStripSeparator separator5;
     private System.Windows.Forms.ToolStripMenuItem activateOverlayOnTreeSelectionMenuItem;
     private System.Windows.Forms.ToolStripButton activateOverlayOnTreeSelectionButton;

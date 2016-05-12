@@ -45,7 +45,9 @@ namespace AccessBridgeExplorer {
     ToolStripMenuItem ActivateOverlayOnFocusMenu { get; }
     ToolStripMenuItem ActivateOverlayOnActiveDescendantMenu { get; }
 
-    ToolStripMenuItem ShowTooltipWithOverlayMenu { get; }
+    ToolStripMenuItem ShowTooltipAndOverlayMenuItem { get; }
+    ToolStripMenuItem ShowTooltipOnlyMenuItem { get; }
+    ToolStripMenuItem ShowOverlayOnlyMenuItem { get; }
 
     ToolStripStatusLabel StatusLabel { get; }
 

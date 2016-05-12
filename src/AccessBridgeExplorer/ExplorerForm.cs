@@ -212,19 +212,19 @@ namespace AccessBridgeExplorer {
     private void showTooltipAndOverlayMenuItem_Click(object sender, EventArgs e) {
       var enable = !showTooltipAndOverlayMenuItem.Checked;
       showTooltipAndOverlayMenuItem.Checked = enable;
-      _controller.EnableShowTooltipWithOverlay(enable);
+      _controller.SetOverlayDisplayType(OverlayDisplayType.OverlayAndTooltip);
     }
 
     private void showTooltipOnlyMenuItem_Click(object sender, EventArgs e) {
       var enable = !showTooltipAndOverlayMenuItem.Checked;
       showTooltipAndOverlayMenuItem.Checked = enable;
-      _controller.EnableShowTooltipWithOverlay(enable);
+      _controller.SetOverlayDisplayType(OverlayDisplayType.TooltipOnly);
     }
 
     private void showOverlayOnlyMenuItem_Click(object sender, EventArgs e) {
       var enable = !showTooltipAndOverlayMenuItem.Checked;
       showTooltipAndOverlayMenuItem.Checked = enable;
-      _controller.EnableShowTooltipWithOverlay(enable);
+      _controller.SetOverlayDisplayType(OverlayDisplayType.OverlayOnly);
     }
 
     private class OverlayButtonRenderer : ToolStripProfessionalRenderer {
@@ -460,8 +460,16 @@ namespace AccessBridgeExplorer {
       get { return activateOverlayOnActiveDescendantMenuItem; }
     }
 
-    ToolStripMenuItem IExplorerFormView.ShowTooltipWithOverlayMenu {
+    ToolStripMenuItem IExplorerFormView.ShowTooltipAndOverlayMenuItem {
       get { return showTooltipAndOverlayMenuItem; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.ShowTooltipOnlyMenuItem {
+      get { return showTooltipOnlyMenuItem; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.ShowOverlayOnlyMenuItem {
+      get { return showOverlayOnlyMenuItem; }
     }
 
     ToolStripStatusLabel IExplorerFormView.StatusLabel {

@@ -38,7 +38,7 @@ namespace AccessBridgeExplorer {
     private readonly HwndCache _windowCache = new HwndCache();
 
     private OverlayActivation _overlayActivation;
-    private OverlayDisplay _overlayDisplay;
+    private OverlayDisplayType _overlayDisplayType;
     private bool _autoDetectEnabled;
     private Rectangle? _overlayWindowRectangle;
     private bool _disposed;
@@ -55,18 +55,12 @@ namespace AccessBridgeExplorer {
       OnActiveDescendantChanged = 0x08,
     }
 
-    private enum OverlayDisplay {
-      Overlay,
-      Tooltip,
-      Both,
-    }
-
     public ExplorerFormController(IExplorerFormView explorerFormView) {
       _navigation = new ExplorerFormNavigation();
       _view = explorerFormView;
       _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
       _overlayActivation = OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentRectangleSelection;
-      _overlayDisplay = OverlayDisplay.Overlay; 
+      _overlayDisplayType = OverlayDisplayType.OverlayOnly; 
 
       PropertyOptions = PropertyOptions.AccessibleContextInfo |
         PropertyOptions.AccessibleIcons |
@@ -136,6 +130,7 @@ namespace AccessBridgeExplorer {
         _view.PropertiesMenu.Enabled = true;
         _view.LimitCollectionSizesMenu.Enabled = true;
         UpdateActivateOverlayMenuItems();
+        SetOverlayDisplayType(_overlayDisplayType);
 
         LogMessage("Ready!");
       };
@@ -821,11 +816,11 @@ namespace AccessBridgeExplorer {
       }
 
       _overlayWindowRectangle = node.GetScreenRectangle();
-      if (_overlayDisplay == OverlayDisplay.Both || _overlayDisplay == OverlayDisplay.Overlay) {
+      if (_overlayDisplayType == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayType == OverlayDisplayType.OverlayOnly) {
         ShowOverlayWindow();
       }
 
-      if (_overlayDisplay == OverlayDisplay.Both || _overlayDisplay == OverlayDisplay.Tooltip) {
+      if (_overlayDisplayType == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayType == OverlayDisplayType.TooltipOnly) {
         ShowTooltipWindow(node);
       }
     }
@@ -1058,9 +1053,14 @@ namespace AccessBridgeExplorer {
       UpdateOverlayActivation(OverlayActivation.OnActiveDescendantChanged, enabled);
     }
 
-    public void EnableShowTooltipWithOverlay(bool enabled) {
+    public void SetOverlayDisplayType(OverlayDisplayType displayType) {
+      _overlayDisplayType = displayType;
       //UpdateOverlayActivation(FollowFocusActions.ShowTooltipWithOverlay, enabled);
+      _view.ShowTooltipAndOverlayMenuItem.Checked = (_overlayDisplayType == OverlayDisplayType.OverlayAndTooltip);
+      _view.ShowTooltipOnlyMenuItem.Checked = (_overlayDisplayType == OverlayDisplayType.TooltipOnly);
+      _view.ShowOverlayOnlyMenuItem.Checked = (_overlayDisplayType == OverlayDisplayType.OverlayOnly);
     }
+
 
     private void UpdateOverlayActivation(OverlayActivation value, bool enabled) {
       var previous = _overlayActivation;
@@ -1481,5 +1481,11 @@ namespace AccessBridgeExplorer {
         get { return _cache.Values.Where(x => x != null); }
       }
     }
+  }
+
+  public enum OverlayDisplayType {
+    OverlayOnly,
+    TooltipOnly,
+    OverlayAndTooltip,
   }
 }
