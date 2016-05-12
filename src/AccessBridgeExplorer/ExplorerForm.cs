@@ -50,7 +50,7 @@ namespace AccessBridgeExplorer {
       SetDoubleBuffered(_accessibleComponentTabControl, true);
       SetDoubleBuffered(_bottomTabControl, true);
 
-      overlayEnableButton_Click(_overlayEnableButton, EventArgs.Empty);
+      activateOverlayOnTreeSelectionButton_Click(activateOverlayOnTreeSelectionButton, EventArgs.Empty);
       autoDetectApplicationsMenuItem_CheckChanged(autoDetectApplicationsMenuItem, EventArgs.Empty);
       automaticallyCheckForUpdatesMenuItem_CheckedChanged(automaticallyCheckForUpdatesMenuItem, EventArgs.Empty);
     }
@@ -169,25 +169,62 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private void overlayEnableButton_Click(object sender, EventArgs e) {
-      var button = (ToolStripButton)sender;
-      var enable = !button.Checked;
-      button.Checked = enable;
-      showOverlayMenuItem.Checked = enable;
-      showOverlayOnFocusMenuItem.Enabled = enable;
-      if (enable) {
-        button.ForeColor = Color.FromArgb(128, 255, 128);
-      } else {
-        button.ForeColor = SystemColors.InactiveCaption;
-      }
-      _controller.EnableOverlayWindow(enable);
+    private void activateOverlayOnTreeSelectionButton_Click(object sender, EventArgs e) {
+      var enable = !activateOverlayOnTreeSelectionButton.Checked;
+      _controller.EnableActivateOverlayOnTreeSelection(enable);
+
+      //button.Checked = enable;
+      //activateOverlayOnTreeSelectionMenuItem.Checked = enable;
+      //activateOverlayOnFocusMenuItem.Enabled = enable;
+      //showTooltipAndOverlayMenuItem.Enabled = enable;
+      //if (enable) {
+      //  button.ForeColor = Color.FromArgb(128, 255, 128);
+      //} else {
+      //  button.ForeColor = SystemColors.InactiveCaption;
+      //}
+      //_controller.EnableShowOverlayOnTreeSelection(enable);
     }
 
-    private void showOverlayOnFocusMenuItem_Click(object sender, EventArgs e) {
-      var enable = !showOverlayOnFocusMenuItem.Checked;
-      showOverlayMenuItem.Checked = enable;
-      showOverlayOnFocusMenuItem.Checked = enable;
-      _controller.EnableShowOverlayWindowOnFocus(enable);
+    private void activateOverlayOnTreeSelectionMenuItem_Click(object sender, EventArgs e) {
+      var enable = !activateOverlayOnTreeSelectionMenuItem.Checked;
+      _controller.EnableActivateOverlayOnTreeSelection(enable);
+      //activateOverlayOnTreeSelectionButton_Click(activateOverlayOnTreeSelectionButton, new EventArgs());
+    }
+
+    private void activateOverlayOnFocusMenuItem_Click(object sender, EventArgs e) {
+      var enable = !activateOverlayOnFocusMenuItem.Checked;
+      _controller.EnableActivateOverlayOnFocus(enable);
+      //var enable = !activateOverlayOnFocusMenuItem.Checked;
+      //activateOverlayOnTreeSelectionMenuItem.Checked = enable;
+      //activateOverlayOnFocusMenuItem.Checked = enable;
+      //_controller.EnableShowOverlayWindowOnFocus(enable);
+    }
+
+    private void activateOverlayOnActiveDescendantMenuItem_Click(object sender, EventArgs e) {
+      var enable = !activateOverlayOnActiveDescendantMenuItem.Checked;
+      _controller.EnableActivateOverlayOnActiveDescendant(enable);
+      //var enable = !activateOverlayOnFocusMenuItem.Checked;
+      //activateOverlayOnTreeSelectionMenuItem.Checked = enable;
+      //activateOverlayOnFocusMenuItem.Checked = enable;
+      //_controller.EnableShowOverlayWindowOnFocus(enable);
+    }
+
+    private void showTooltipAndOverlayMenuItem_Click(object sender, EventArgs e) {
+      var enable = !showTooltipAndOverlayMenuItem.Checked;
+      showTooltipAndOverlayMenuItem.Checked = enable;
+      _controller.EnableShowTooltipWithOverlay(enable);
+    }
+
+    private void showTooltipOnlyMenuItem_Click(object sender, EventArgs e) {
+      var enable = !showTooltipAndOverlayMenuItem.Checked;
+      showTooltipAndOverlayMenuItem.Checked = enable;
+      _controller.EnableShowTooltipWithOverlay(enable);
+    }
+
+    private void showOverlayOnlyMenuItem_Click(object sender, EventArgs e) {
+      var enable = !showTooltipAndOverlayMenuItem.Checked;
+      showTooltipAndOverlayMenuItem.Checked = enable;
+      _controller.EnableShowTooltipWithOverlay(enable);
     }
 
     private class OverlayButtonRenderer : ToolStripProfessionalRenderer {
@@ -200,7 +237,7 @@ namespace AccessBridgeExplorer {
       protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e) {
         base.OnRenderButtonBackground(e);
 
-        if (ReferenceEquals(e.Item, _explorerForm._overlayEnableButton)) {
+        if (ReferenceEquals(e.Item, _explorerForm.activateOverlayOnTreeSelectionButton)) {
           var bounds = new Rectangle(Point.Empty, e.Item.Size);
           bounds.Inflate(-1, -1);
           e.Graphics.FillRectangle(new SolidBrush(e.Item.ForeColor), bounds);
@@ -210,10 +247,6 @@ namespace AccessBridgeExplorer {
 
     private void autoDetectApplicationsMenuItem_CheckChanged(object sender, EventArgs e) {
       _controller.EnableAutoDetect(autoDetectApplicationsMenuItem.Checked);
-    }
-
-    private void showOverlayMenuItem_Click(object sender, EventArgs e) {
-      overlayEnableButton_Click(_overlayEnableButton, new EventArgs());
     }
 
     private void catpureButton_MouseDown(object sender, MouseEventArgs e) {
@@ -415,12 +448,20 @@ namespace AccessBridgeExplorer {
       get { return _limitTextLineLengthsMenu; }
     }
 
-    ToolStripMenuItem IExplorerFormView.ShowOverlayWindowMenu {
-      get { return showOverlayMenuItem; }
+    ToolStripMenuItem IExplorerFormView.ActivateOverlayOnTreeSelectionMenu {
+      get { return activateOverlayOnTreeSelectionMenuItem; }
     }
 
-    ToolStripMenuItem IExplorerFormView.ShowOverlayWindowOnFocusMenu {
-      get { return showOverlayOnFocusMenuItem; }
+    ToolStripMenuItem IExplorerFormView.ActivateOverlayOnFocusMenu {
+      get { return activateOverlayOnFocusMenuItem; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.ActivateOverlayOnActiveDescendantMenu {
+      get { return activateOverlayOnActiveDescendantMenuItem; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.ShowTooltipWithOverlayMenu {
+      get { return showTooltipAndOverlayMenuItem; }
     }
 
     ToolStripStatusLabel IExplorerFormView.StatusLabel {

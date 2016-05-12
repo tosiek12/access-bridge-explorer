@@ -361,7 +361,7 @@ namespace WindowsAccessBridgeInterop {
         list.AddProperty("Role_en_US", info.role_en_US ?? "-");
         list.AddProperty("States", info.states ?? "-");
         list.AddProperty("States_en_US", info.states_en_US ?? "-");
-        list.AddProperty("Bounds", new AccessibleRectInfo(info.x, info.y, info.width, info.height));
+        list.AddProperty("Bounds", new AccessibleRectInfo(this, info.x, info.y, info.width, info.height));
         if ((options & PropertyOptions.ObjectDepth) != 0) {
           var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
           list.AddProperty("Object Depth", depth);
@@ -873,7 +873,7 @@ namespace WindowsAccessBridgeInterop {
     private void AddTextAttributeAtIndex(PropertyList list, int index) {
       AccessibleTextRectInfo rectInfo;
       if (Succeeded(AccessBridge.Functions.GetAccessibleTextRect(JvmId, _ac, out rectInfo, index))) {
-        list.AddProperty("Character bounding rectangle:", new AccessibleRectInfo(rectInfo));
+        list.AddProperty("Character bounding rectangle:", new AccessibleRectInfo(this, rectInfo));
       }
 
       int start;
@@ -975,7 +975,7 @@ namespace WindowsAccessBridgeInterop {
           var depth = AccessBridge.Functions.GetObjectDepth(JvmId, _ac);
           list.AddProperty("Object Depth", depth);
         }
-        list.AddProperty("Bounds", new AccessibleRectInfo(info.x, info.y, info.width, info.height));
+        list.AddProperty("Bounds", new AccessibleRectInfo(this, info.x, info.y, info.width, info.height));
         list.AddProperty("States", info.states);
         list.AddProperty("accessibleInterfaces", info.accessibleInterfaces);
       } catch (Exception e) {

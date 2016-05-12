@@ -17,23 +17,26 @@ using System.Drawing;
 
 namespace WindowsAccessBridgeInterop {
   public class AccessibleRectInfo : IEquatable<AccessibleRectInfo> {
-    public AccessibleRectInfo(int x, int y, int width, int height) {
+    private readonly AccessibleContextNode _node;
+
+    public AccessibleRectInfo(AccessibleContextNode node, int x, int y, int width, int height) {
+      _node = node;
       X = x;
       Y = y;
       Width = width;
       Height = height;
     }
 
-    public AccessibleRectInfo(Point location, Size size) :
-      this(location.X, location.Y, size.Width, size.Height) {
+    public AccessibleRectInfo(AccessibleContextNode node, Point location, Size size) :
+      this(node, location.X, location.Y, size.Width, size.Height) {
     }
 
-    public AccessibleRectInfo(AccessibleTextRectInfo rect) :
-      this(rect.x, rect.y, rect.width, rect.height) {
+    public AccessibleRectInfo(AccessibleContextNode node, AccessibleTextRectInfo rect) :
+      this(node, rect.x, rect.y, rect.width, rect.height) {
     }
 
-    public AccessibleRectInfo(Rectangle rect) :
-      this(rect.X, rect.Y, rect.Width, rect.Width) {
+    public AccessibleRectInfo(AccessibleContextNode node, Rectangle rect) :
+      this(node, rect.X, rect.Y, rect.Width, rect.Width) {
     }
 
     public int X { get; private set; }
@@ -57,6 +60,10 @@ namespace WindowsAccessBridgeInterop {
 
     public Rectangle Rectangle {
       get { return new Rectangle(Location, Size); }
+    }
+
+    public AccessibleContextNode AccessibleNode {
+      get { return _node; }
     }
 
     public override bool Equals(object obj) {
