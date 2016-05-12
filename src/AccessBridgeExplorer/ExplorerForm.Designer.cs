@@ -58,6 +58,7 @@ namespace AccessBridgeExplorer {
       this.separator5 = new System.Windows.Forms.ToolStripSeparator();
       this.componentOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.activateOverlayOnTreeSelectionMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.activateOverlayOnComponentSelectionMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.activateOverlayOnFocusMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.activateOverlayOnActiveDescendantMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
@@ -283,6 +284,7 @@ namespace AccessBridgeExplorer {
       // 
       this.componentOverlayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.activateOverlayOnTreeSelectionMenuItem,
+            this.activateOverlayOnComponentSelectionMenuItem,
             this.activateOverlayOnFocusMenuItem,
             this.activateOverlayOnActiveDescendantMenuItem,
             this.toolStripMenuItem3,
@@ -300,6 +302,14 @@ namespace AccessBridgeExplorer {
       this.activateOverlayOnTreeSelectionMenuItem.Text = "Activate on &Accessbility Tree selection";
       this.activateOverlayOnTreeSelectionMenuItem.ToolTipText = "Show the Overlay window when a component is selected in the Accessibility Tree";
       this.activateOverlayOnTreeSelectionMenuItem.Click += new System.EventHandler(this.activateOverlayOnTreeSelectionMenuItem_Click);
+      // 
+      // activateOverlayOnComponentSelectionMenuItem
+      // 
+      this.activateOverlayOnComponentSelectionMenuItem.Name = "activateOverlayOnComponentSelectionMenuItem";
+      this.activateOverlayOnComponentSelectionMenuItem.Size = new System.Drawing.Size(275, 22);
+      this.activateOverlayOnComponentSelectionMenuItem.Text = "Activate on &Component selection";
+      this.activateOverlayOnComponentSelectionMenuItem.ToolTipText = "Show the Overlay window when a component is selected in the Accessible Component Properties panel";
+      this.activateOverlayOnComponentSelectionMenuItem.Click += new System.EventHandler(this.activateOverlayOnComponentSelectionMenuItem_Click);
       // 
       // activateOverlayOnFocusMenuItem
       // 
@@ -972,6 +982,7 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripMenuItem _propertiesMenu;
     private System.Windows.Forms.ToolStripSeparator separator5;
     private System.Windows.Forms.ToolStripMenuItem activateOverlayOnTreeSelectionMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem activateOverlayOnComponentSelectionMenuItem;
     private System.Windows.Forms.ToolStripButton activateOverlayOnTreeSelectionButton;
     private System.Windows.Forms.ToolStripMenuItem aboutMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;

@@ -42,8 +42,11 @@ namespace AccessBridgeExplorer {
     ToolStripMenuItem LimitTextLineLengthsMenu { get; }
 
     ToolStripMenuItem ActivateOverlayOnTreeSelectionMenu { get; }
+    ToolStripMenuItem ActivateOverlayOnComponentSelectionMenu { get; }
     ToolStripMenuItem ActivateOverlayOnFocusMenu { get; }
     ToolStripMenuItem ActivateOverlayOnActiveDescendantMenu { get; }
+
+    ToolStripButton ActivateOverlayOnTreeSelectionButton { get; }
 
     ToolStripMenuItem ShowTooltipAndOverlayMenuItem { get; }
     ToolStripMenuItem ShowTooltipOnlyMenuItem { get; }

@@ -50,7 +50,7 @@ namespace AccessBridgeExplorer {
     private enum OverlayActivation {
       Disabled = 0x0,
       OnTreeSelection = 0x01,
-      OnComponentRectangleSelection = 0x02,
+      OnComponentSelection = 0x02,
       OnFocusGained = 0x04,
       OnActiveDescendantChanged = 0x08,
     }
@@ -59,7 +59,7 @@ namespace AccessBridgeExplorer {
       _navigation = new ExplorerFormNavigation();
       _view = explorerFormView;
       _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
-      _overlayActivation = OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentRectangleSelection;
+      _overlayActivation = OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection;
       _overlayDisplayType = OverlayDisplayType.OverlayOnly; 
 
       PropertyOptions = PropertyOptions.AccessibleContextInfo |
@@ -146,6 +146,8 @@ namespace AccessBridgeExplorer {
       _view.ActivateOverlayOnTreeSelectionMenu.Checked = (_overlayActivation & OverlayActivation.OnTreeSelection) != 0;
       _view.ActivateOverlayOnFocusMenu.Checked = (_overlayActivation & OverlayActivation.OnFocusGained) != 0;
       _view.ActivateOverlayOnActiveDescendantMenu.Checked = (_overlayActivation & OverlayActivation.OnActiveDescendantChanged) != 0;
+
+      UpdateOverlayButton();
     }
 
     private void AccessibilityEventList_KeyDown(object sender, KeyEventArgs e) {
@@ -978,7 +980,7 @@ namespace AccessBridgeExplorer {
 
     private void ComponentPropertyListView_AccessibleRectInfoSelected(object sender, AccessibleRectInfoSelectedEventArgs e) {
       _overlayWindowRectangle = e.AccessibleRectInfo.Rectangle;
-      UpdateOverlayDisplay(e.AccessibleRectInfo.AccessibleNode, OverlayActivation.OnComponentRectangleSelection);
+      UpdateOverlayDisplay(e.AccessibleRectInfo.AccessibleNode, OverlayActivation.OnComponentSelection);
     }
 
     private void ComponentPropertyListView_Error(object sender, PropertyGroupErrorEventArgs e) {
@@ -1045,12 +1047,27 @@ namespace AccessBridgeExplorer {
       UpdateOverlayActivation(OverlayActivation.OnTreeSelection, enabled);
     }
 
+    public void EnableActivateOverlayOnComponentSelection(bool enabled) {
+      UpdateOverlayActivation(OverlayActivation.OnComponentSelection, enabled);
+    }
+
     public void EnableActivateOverlayOnFocus(bool enabled) {
       UpdateOverlayActivation(OverlayActivation.OnFocusGained, enabled);
     }
 
     public void EnableActivateOverlayOnActiveDescendant(bool enabled) {
       UpdateOverlayActivation(OverlayActivation.OnActiveDescendantChanged, enabled);
+    }
+
+    private void UpdateOverlayButton() {
+      var enable = _view.ActivateOverlayOnTreeSelectionMenu.Checked;
+      var button = _view.ActivateOverlayOnTreeSelectionButton;
+      button.Checked = enable;
+      if (enable) {
+        button.ForeColor = Color.FromArgb(128, 255, 128);
+      } else {
+        button.ForeColor = SystemColors.InactiveCaption;
+      }
     }
 
     public void SetOverlayDisplayType(OverlayDisplayType displayType) {

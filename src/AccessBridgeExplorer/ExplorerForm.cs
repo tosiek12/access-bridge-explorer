@@ -172,41 +172,26 @@ namespace AccessBridgeExplorer {
     private void activateOverlayOnTreeSelectionButton_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnTreeSelectionButton.Checked;
       _controller.EnableActivateOverlayOnTreeSelection(enable);
-
-      //button.Checked = enable;
-      //activateOverlayOnTreeSelectionMenuItem.Checked = enable;
-      //activateOverlayOnFocusMenuItem.Enabled = enable;
-      //showTooltipAndOverlayMenuItem.Enabled = enable;
-      //if (enable) {
-      //  button.ForeColor = Color.FromArgb(128, 255, 128);
-      //} else {
-      //  button.ForeColor = SystemColors.InactiveCaption;
-      //}
-      //_controller.EnableShowOverlayOnTreeSelection(enable);
     }
 
     private void activateOverlayOnTreeSelectionMenuItem_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnTreeSelectionMenuItem.Checked;
       _controller.EnableActivateOverlayOnTreeSelection(enable);
-      //activateOverlayOnTreeSelectionButton_Click(activateOverlayOnTreeSelectionButton, new EventArgs());
+    }
+
+    private void activateOverlayOnComponentSelectionMenuItem_Click(object sender, EventArgs e) {
+      var enable = !activateOverlayOnComponentSelectionMenuItem.Checked;
+      _controller.EnableActivateOverlayOnComponentSelection(enable);
     }
 
     private void activateOverlayOnFocusMenuItem_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnFocusMenuItem.Checked;
       _controller.EnableActivateOverlayOnFocus(enable);
-      //var enable = !activateOverlayOnFocusMenuItem.Checked;
-      //activateOverlayOnTreeSelectionMenuItem.Checked = enable;
-      //activateOverlayOnFocusMenuItem.Checked = enable;
-      //_controller.EnableShowOverlayWindowOnFocus(enable);
     }
 
     private void activateOverlayOnActiveDescendantMenuItem_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnActiveDescendantMenuItem.Checked;
       _controller.EnableActivateOverlayOnActiveDescendant(enable);
-      //var enable = !activateOverlayOnFocusMenuItem.Checked;
-      //activateOverlayOnTreeSelectionMenuItem.Checked = enable;
-      //activateOverlayOnFocusMenuItem.Checked = enable;
-      //_controller.EnableShowOverlayWindowOnFocus(enable);
     }
 
     private void showTooltipAndOverlayMenuItem_Click(object sender, EventArgs e) {
@@ -452,12 +437,20 @@ namespace AccessBridgeExplorer {
       get { return activateOverlayOnTreeSelectionMenuItem; }
     }
 
+    ToolStripMenuItem IExplorerFormView.ActivateOverlayOnComponentSelectionMenu {
+      get { return activateOverlayOnComponentSelectionMenuItem; }
+    }
+
     ToolStripMenuItem IExplorerFormView.ActivateOverlayOnFocusMenu {
       get { return activateOverlayOnFocusMenuItem; }
     }
 
     ToolStripMenuItem IExplorerFormView.ActivateOverlayOnActiveDescendantMenu {
       get { return activateOverlayOnActiveDescendantMenuItem; }
+    }
+
+    ToolStripButton IExplorerFormView.ActivateOverlayOnTreeSelectionButton {
+      get { return activateOverlayOnTreeSelectionButton; }
     }
 
     ToolStripMenuItem IExplorerFormView.ShowTooltipAndOverlayMenuItem {
