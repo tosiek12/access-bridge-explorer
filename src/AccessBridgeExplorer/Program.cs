@@ -13,7 +13,9 @@
 // limitations under the License.
 
 using System;
+using System.Reflection;
 using System.Windows.Forms;
+using AccessBridgeExplorer.Utils;
 
 namespace AccessBridgeExplorer {
   static class Program {
@@ -22,6 +24,8 @@ namespace AccessBridgeExplorer {
     /// </summary>
     [STAThread]
     static void Main() {
+      UserSettingsProvider.Instance = new UserSettings(Assembly.GetEntryAssembly().GetName().Name);
+
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       Application.Run(new ExplorerForm());

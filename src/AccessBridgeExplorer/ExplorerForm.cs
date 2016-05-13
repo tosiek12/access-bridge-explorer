@@ -28,6 +28,10 @@ namespace AccessBridgeExplorer {
     /// For the US standard keyboard, the '\|' key
     /// </summary>
     private const Keys CaptureKey = Keys.Control | Keys.OemPipe;
+
+    private const string AutoupdateCheckSettingsKey = "autoupdate.check";
+
+    private readonly IUserSettings _userSettings;
     private readonly WindowsHotKeyHandler _hotKeyHandler;
     private readonly ExplorerFormController _controller;
     private readonly PropertyListView _accessibleComponentPropertyListViewView;
@@ -37,8 +41,9 @@ namespace AccessBridgeExplorer {
 
     public ExplorerForm() {
       InitializeComponent();
+      _userSettings = UserSettingsProvider.Instance;
       _accessibleComponentPropertyListViewView = new PropertyListView(_accessibleContextPropertyList, _propertyImageList);
-      _controller = new ExplorerFormController(this);
+      _controller = new ExplorerFormController(this, _userSettings);
       _hotKeyHandler = new WindowsHotKeyHandler();
       _hotKeyHandler.KeyPressed += HotKeyHandler_KeyPressed;
 
@@ -50,14 +55,20 @@ namespace AccessBridgeExplorer {
       SetDoubleBuffered(_accessibleComponentTabControl, true);
       SetDoubleBuffered(_bottomTabControl, true);
 
-      activateOverlayOnTreeSelectionButton_Click(activateOverlayOnTreeSelectionButton, EventArgs.Empty);
-      autoDetectApplicationsMenuItem_CheckChanged(autoDetectApplicationsMenuItem, EventArgs.Empty);
-      automaticallyCheckForUpdatesMenuItem_CheckedChanged(automaticallyCheckForUpdatesMenuItem, EventArgs.Empty);
+      _userSettings.Loaded += UserSettings_OnLoaded;
+      //activateOverlayOnTreeSelectionButton_Click(activateOverlayOnTreeSelectionButton, EventArgs.Empty);
+      //autoDetectApplicationsMenuItem_CheckChanged(autoDetectApplicationsMenuItem, EventArgs.Empty);
+      //automaticallyCheckForUpdatesMenuItem_CheckedChanged(automaticallyCheckForUpdatesMenuItem, EventArgs.Empty);
+    }
+
+    private void UserSettings_OnLoaded(object sender, EventArgs eventArgs) {
+      automaticallyCheckForUpdatesMenuItem.Checked = updateChecker.Enabled = _userSettings.GetBoolValue(AutoupdateCheckSettingsKey, true);
     }
 
     private void MainForm_Shown(object sender, EventArgs e) {
       InvokeLater(() => {
         _controller.LogIntroMessages();
+        _userSettings.Load();
         _controller.Initialize();
         try {
           _hotKeyHandler.Register(this, 1, CaptureKey);
@@ -145,6 +156,7 @@ namespace AccessBridgeExplorer {
 
     private void automaticallyCheckForUpdatesMenuItem_CheckedChanged(object sender, EventArgs e) {
       updateChecker.Enabled = automaticallyCheckForUpdatesMenuItem.Checked;
+      _userSettings.SetBoolValue(AutoupdateCheckSettingsKey, updateChecker.Enabled);
     }
 
     private void updateChecker_UpdateInfoAvailable(object sender, UpdateInfoArgs e) {

@@ -17,6 +17,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -27,6 +28,7 @@ using AccessBridgeExplorer.Utils;
 
 namespace AccessBridgeExplorer {
   public class ExplorerFormController : IDisposable {
+    private readonly IUserSettings _userSettings;
     private readonly IExplorerFormView _view;
     private readonly IExplorerFormNavigation _navigation;
     private readonly AccessibleNodeModelResources _accessibleNodeModelResources;
@@ -39,6 +41,7 @@ namespace AccessBridgeExplorer {
 
     private OverlayActivation _overlayActivation;
     private OverlayDisplayType _overlayDisplayType;
+    private PropertyOptions _propertyOptions;
     private bool _autoDetectEnabled;
     private Rectangle? _overlayWindowRectangle;
     private bool _disposed;
@@ -55,33 +58,22 @@ namespace AccessBridgeExplorer {
       OnActiveDescendantChanged = 0x08,
     }
 
-    public ExplorerFormController(IExplorerFormView explorerFormView) {
+    public ExplorerFormController(IExplorerFormView explorerFormView, IUserSettings userSetting) {
+      _userSettings = userSetting;
+      _userSettings.Loaded += UserSettings_OnLoaded;
+      _userSettings.Error += UserSettings_OnError;
+
+      var test = userSetting.CreateEnumUserSetting("test", OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection);
+      //_overlayActivation = (OverlayActivation)_userSettings.GetIntValue("overlay.activation", (int)(OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection));
+
       _navigation = new ExplorerFormNavigation();
       _view = explorerFormView;
       _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
-      _overlayActivation = OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection;
-      _overlayDisplayType = OverlayDisplayType.OverlayOnly; 
-
-      PropertyOptions = PropertyOptions.AccessibleContextInfo |
-        PropertyOptions.AccessibleIcons |
-        PropertyOptions.AccessibleKeyBindings |
-        PropertyOptions.AccessibleRelationSet |
-        PropertyOptions.ParentContext |
-        PropertyOptions.Children |
-        PropertyOptions.ObjectDepth |
-        PropertyOptions.TopLevelWindowInfo |
-        PropertyOptions.ActiveDescendent |
-        PropertyOptions.AccessibleText |
-        PropertyOptions.AccessibleHyperText |
-        PropertyOptions.AccessibleValue |
-        PropertyOptions.AccessibleSelection |
-        PropertyOptions.AccessibleTable |
-        PropertyOptions.AccessibleTableCells |
-        PropertyOptions.AccessibleTableCellsSelect |
-        PropertyOptions.AccessibleActions;
     }
 
-    public PropertyOptions PropertyOptions { get; set; }
+    public PropertyOptions PropertyOptions {
+      get { return _propertyOptions; }
+    }
 
     public IExplorerFormNavigation Navigation {
       get { return _navigation; }
@@ -140,6 +132,43 @@ namespace AccessBridgeExplorer {
         // discover the list of JVMs by the time we enumerate all windows.
         _accessBridge.Initialize();
       });
+    }
+
+    private void UserSettings_OnLoaded(object sender, EventArgs eventArgs) {
+      if (_disposed)
+        return;
+
+      _autoDetectEnabled = _userSettings.GetBoolValue("autoDetectApplication", true);
+      _overlayActivation = (OverlayActivation)_userSettings.GetIntValue("overlay.activation", (int)(OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection));
+      _overlayDisplayType = (OverlayDisplayType)_userSettings.GetIntValue("overlay.displayType", (int)OverlayDisplayType.OverlayOnly);
+      _propertyOptions = (PropertyOptions)_userSettings.GetIntValue("accessibleComponent.displayProperties", (int)(PropertyOptions.AccessibleContextInfo |
+        PropertyOptions.AccessibleIcons |
+        PropertyOptions.AccessibleKeyBindings |
+        PropertyOptions.AccessibleRelationSet |
+        PropertyOptions.ParentContext |
+        PropertyOptions.Children |
+        PropertyOptions.ObjectDepth |
+        PropertyOptions.TopLevelWindowInfo |
+        PropertyOptions.ActiveDescendent |
+        PropertyOptions.AccessibleText |
+        PropertyOptions.AccessibleHyperText |
+        PropertyOptions.AccessibleValue |
+        PropertyOptions.AccessibleSelection |
+        PropertyOptions.AccessibleTable |
+        PropertyOptions.AccessibleTableCells |
+        PropertyOptions.AccessibleTableCellsSelect |
+        PropertyOptions.AccessibleActions));
+
+      _accessBridge.CollectionSizeLimit = _userSettings.GetIntValue("collections.size.limit", _accessBridge.CollectionSizeLimit);
+      _accessBridge.TextLineCountLimit = _userSettings.GetIntValue("text.lineCount.limit", _accessBridge.TextLineCountLimit);
+      _accessBridge.TextLineLengthLimit = _userSettings.GetIntValue("text.lineLength.limit", _accessBridge.TextLineLengthLimit);
+    }
+
+    private void UserSettings_OnError(object sender, ErrorEventArgs errorEventArgs) {
+      if (_disposed)
+        return;
+
+      LogErrorMessage(errorEventArgs.GetException());
     }
 
     private void UpdateActivateOverlayMenuItems() {
@@ -315,9 +344,9 @@ namespace AccessBridgeExplorer {
       // Create click handler
       item.CheckedChanged += (sender, args) => {
         if (item.Checked) {
-          PropertyOptions |= value;
+          _propertyOptions |= value;
         } else {
-          PropertyOptions &= ~value;
+          _propertyOptions &= ~value;
         }
       };
     }
@@ -389,6 +418,9 @@ namespace AccessBridgeExplorer {
     public void Dispose() {
       if (_disposed)
         return;
+
+      _userSettings.Error -= UserSettings_OnError;
+      _userSettings.Loaded -= UserSettings_OnLoaded;
 
       _hideOverlayOnFocusLost.Cancel();
       _delayedRefreshTree.Cancel();
