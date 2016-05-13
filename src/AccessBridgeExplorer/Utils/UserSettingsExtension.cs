@@ -65,18 +65,48 @@ namespace AccessBridgeExplorer.Utils {
         _setter = setter;
         _key = key;
         _defaultValue = defaultValue;
+
+        _userSettings.Loaded += (sender, args) => {
+          OnLoaded();
+          OnSync();
+        };
       }
 
-      public T Value {
+      public override event EventHandler Sync;
+      public override event EventHandler Loaded;
+      public override event EventHandler<ChangedEventArgs<T>> Changed;
+
+      public override T Value {
         get { return _getter(_key, _defaultValue); }
         set {
-          if (Equals(value, _defaultValue)) {
-            _userSettings.Remove(_key);
+          var oldValue = Value;
+          if (Equals(value, oldValue)) {
             return;
           }
 
-          _setter(_key, value);
+          if (Equals(value, _defaultValue)) {
+            _userSettings.Remove(_key);
+          } else {
+            _setter(_key, value);
+          }
+          OnChanged(new ChangedEventArgs<T>(this, oldValue, value));
+          OnSync();
         }
+      }
+
+      protected virtual void OnChanged(ChangedEventArgs<T> e) {
+        var handler = Changed;
+        if (handler != null) handler(this, e);
+      }
+
+      protected virtual void OnSync() {
+        var handler = Sync;
+        if (handler != null) handler(this, EventArgs.Empty);
+      }
+
+      protected virtual void OnLoaded() {
+        var handler = Loaded;
+        if (handler != null) handler(this, EventArgs.Empty);
       }
     }
   }

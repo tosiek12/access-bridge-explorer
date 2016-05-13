@@ -207,21 +207,15 @@ namespace AccessBridgeExplorer {
     }
 
     private void showTooltipAndOverlayMenuItem_Click(object sender, EventArgs e) {
-      var enable = !showTooltipAndOverlayMenuItem.Checked;
-      showTooltipAndOverlayMenuItem.Checked = enable;
-      _controller.SetOverlayDisplayType(OverlayDisplayType.OverlayAndTooltip);
+      _controller.OverlayDisplayType = OverlayDisplayType.OverlayAndTooltip;
     }
 
     private void showTooltipOnlyMenuItem_Click(object sender, EventArgs e) {
-      var enable = !showTooltipAndOverlayMenuItem.Checked;
-      showTooltipAndOverlayMenuItem.Checked = enable;
-      _controller.SetOverlayDisplayType(OverlayDisplayType.TooltipOnly);
+      _controller.OverlayDisplayType = OverlayDisplayType.TooltipOnly;
     }
 
     private void showOverlayOnlyMenuItem_Click(object sender, EventArgs e) {
-      var enable = !showTooltipAndOverlayMenuItem.Checked;
-      showTooltipAndOverlayMenuItem.Checked = enable;
-      _controller.SetOverlayDisplayType(OverlayDisplayType.OverlayOnly);
+      _controller.OverlayDisplayType = OverlayDisplayType.OverlayOnly;
     }
 
     private class OverlayButtonRenderer : ToolStripProfessionalRenderer {

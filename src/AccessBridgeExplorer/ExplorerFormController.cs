@@ -40,7 +40,7 @@ namespace AccessBridgeExplorer {
     private readonly HwndCache _windowCache = new HwndCache();
 
     private OverlayActivation _overlayActivation;
-    private OverlayDisplayType _overlayDisplayType;
+    private readonly UserSetting<OverlayDisplayType> _overlayDisplayType;
     private PropertyOptions _propertyOptions;
     private bool _autoDetectEnabled;
     private Rectangle? _overlayWindowRectangle;
@@ -63,8 +63,12 @@ namespace AccessBridgeExplorer {
       _userSettings.Loaded += UserSettings_OnLoaded;
       _userSettings.Error += UserSettings_OnError;
 
-      var test = userSetting.CreateEnumUserSetting("test", OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection);
-      //_overlayActivation = (OverlayActivation)_userSettings.GetIntValue("overlay.activation", (int)(OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection));
+      _overlayDisplayType = _userSettings.CreateEnumUserSetting("overlay.displayType", OverlayDisplayType.OverlayOnly);
+      _overlayDisplayType.Sync += (sender, args) => {
+        _view.ShowTooltipAndOverlayMenuItem.Checked = (_overlayDisplayType.Value == OverlayDisplayType.OverlayAndTooltip);
+        _view.ShowTooltipOnlyMenuItem.Checked = (_overlayDisplayType.Value == OverlayDisplayType.TooltipOnly);
+        _view.ShowOverlayOnlyMenuItem.Checked = (_overlayDisplayType.Value == OverlayDisplayType.OverlayOnly);
+      };
 
       _navigation = new ExplorerFormNavigation();
       _view = explorerFormView;
@@ -122,7 +126,6 @@ namespace AccessBridgeExplorer {
         _view.PropertiesMenu.Enabled = true;
         _view.LimitCollectionSizesMenu.Enabled = true;
         UpdateActivateOverlayMenuItems();
-        SetOverlayDisplayType(_overlayDisplayType);
 
         LogMessage("Ready!");
       };
@@ -140,7 +143,6 @@ namespace AccessBridgeExplorer {
 
       _autoDetectEnabled = _userSettings.GetBoolValue("autoDetectApplication", true);
       _overlayActivation = (OverlayActivation)_userSettings.GetIntValue("overlay.activation", (int)(OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection));
-      _overlayDisplayType = (OverlayDisplayType)_userSettings.GetIntValue("overlay.displayType", (int)OverlayDisplayType.OverlayOnly);
       _propertyOptions = (PropertyOptions)_userSettings.GetIntValue("accessibleComponent.displayProperties", (int)(PropertyOptions.AccessibleContextInfo |
         PropertyOptions.AccessibleIcons |
         PropertyOptions.AccessibleKeyBindings |
@@ -850,11 +852,11 @@ namespace AccessBridgeExplorer {
       }
 
       _overlayWindowRectangle = node.GetScreenRectangle();
-      if (_overlayDisplayType == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayType == OverlayDisplayType.OverlayOnly) {
+      if (_overlayDisplayType.Value == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayType.Value == OverlayDisplayType.OverlayOnly) {
         ShowOverlayWindow();
       }
 
-      if (_overlayDisplayType == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayType == OverlayDisplayType.TooltipOnly) {
+      if (_overlayDisplayType.Value == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayType.Value == OverlayDisplayType.TooltipOnly) {
         ShowTooltipWindow(node);
       }
     }
@@ -1102,14 +1104,9 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    public void SetOverlayDisplayType(OverlayDisplayType displayType) {
-      _overlayDisplayType = displayType;
-      //UpdateOverlayActivation(FollowFocusActions.ShowTooltipWithOverlay, enabled);
-      _view.ShowTooltipAndOverlayMenuItem.Checked = (_overlayDisplayType == OverlayDisplayType.OverlayAndTooltip);
-      _view.ShowTooltipOnlyMenuItem.Checked = (_overlayDisplayType == OverlayDisplayType.TooltipOnly);
-      _view.ShowOverlayOnlyMenuItem.Checked = (_overlayDisplayType == OverlayDisplayType.OverlayOnly);
+    public OverlayDisplayType OverlayDisplayType {
+      set { _overlayDisplayType.Value = value; }
     }
-
 
     private void UpdateOverlayActivation(OverlayActivation value, bool enabled) {
       var previous = _overlayActivation;

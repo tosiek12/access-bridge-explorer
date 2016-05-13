@@ -130,6 +130,7 @@ namespace AccessBridgeExplorer.Utils {
 
     public void Remove(string key) {
       _values.Remove(key);
+      Save();
     }
 
     private static void CheckValidValue(string value) {
