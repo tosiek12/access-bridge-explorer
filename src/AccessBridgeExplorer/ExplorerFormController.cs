@@ -75,7 +75,12 @@ namespace AccessBridgeExplorer {
         UpdateOverlayActivation(args.PreviousValue);
       };
 
-      _propertyOptions = new EnumUserSetting<PropertyOptions>(_userSettings, "accessibleComponent.displayProperties", PropertyOptions.AccessibleContextInfo |
+      _propertyOptions = new PropertyOptionsSetting(this);
+      _autoDetectApplicationsEnabled = new AutoDetectApplicationsSetting(this);
+    }
+
+    private class PropertyOptionsSetting : EnumUserSetting<PropertyOptions> {
+      private const PropertyOptions DefaultPropertyOptions = PropertyOptions.AccessibleContextInfo |
         PropertyOptions.AccessibleIcons |
         PropertyOptions.AccessibleKeyBindings |
         PropertyOptions.AccessibleRelationSet |
@@ -91,14 +96,16 @@ namespace AccessBridgeExplorer {
         PropertyOptions.AccessibleTable |
         PropertyOptions.AccessibleTableCells |
         PropertyOptions.AccessibleTableCellsSelect |
-        PropertyOptions.AccessibleActions);
-      _propertyOptions.Changed += (sender, args) => {
-        // TODO: Refresh accessible component property pane?
-        //if (_disposed)
-        //  return;
-      };
+        PropertyOptions.AccessibleActions;
 
-      _autoDetectApplicationsEnabled = new AutoDetectApplicationsSetting(this);
+      public PropertyOptionsSetting(ExplorerFormController controller) :
+        base(controller._userSettings, "accessibleComponent.displayProperties", DefaultPropertyOptions) {
+        Changed += (sender, args) => {
+          // TODO: Refresh accessible component property pane?
+          //if (_disposed)
+          //  return;
+        };
+      }
     }
 
     private class AutoDetectApplicationsSetting : BoolUserSetting {
