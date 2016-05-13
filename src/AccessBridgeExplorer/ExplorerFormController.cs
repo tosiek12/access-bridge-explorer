@@ -41,7 +41,7 @@ namespace AccessBridgeExplorer {
 
     private readonly UserSetting<OverlayActivation> _overlayActivation;
     private readonly UserSetting<OverlayDisplayType> _overlayDisplayType;
-    private PropertyOptions _propertyOptions;
+    private readonly UserSetting<PropertyOptions> _propertyOptions;
     private bool _autoDetectEnabled;
     private Rectangle? _overlayWindowRectangle;
     private bool _disposed;
@@ -73,10 +73,34 @@ namespace AccessBridgeExplorer {
           return;
         UpdateOverlayActivation(args.PreviousValue);
       };
+
+      _propertyOptions = _userSettings.CreateEnumUserSetting("accessibleComponent.displayProperties",
+        PropertyOptions.AccessibleContextInfo |
+        PropertyOptions.AccessibleIcons |
+        PropertyOptions.AccessibleKeyBindings |
+        PropertyOptions.AccessibleRelationSet |
+        PropertyOptions.ParentContext |
+        PropertyOptions.Children |
+        PropertyOptions.ObjectDepth |
+        PropertyOptions.TopLevelWindowInfo |
+        PropertyOptions.ActiveDescendent |
+        PropertyOptions.AccessibleText |
+        PropertyOptions.AccessibleHyperText |
+        PropertyOptions.AccessibleValue |
+        PropertyOptions.AccessibleSelection |
+        PropertyOptions.AccessibleTable |
+        PropertyOptions.AccessibleTableCells |
+        PropertyOptions.AccessibleTableCellsSelect |
+        PropertyOptions.AccessibleActions);
+      _propertyOptions.Changed += (sender, args) => {
+        // TODO: Refresh accessible component property pane?
+        //if (_disposed)
+        //  return;
+      };
     }
 
     public PropertyOptions PropertyOptions {
-      get { return _propertyOptions; }
+      get { return _propertyOptions.Value; }
     }
 
     public IExplorerFormNavigation Navigation {
@@ -146,23 +170,6 @@ namespace AccessBridgeExplorer {
         return;
 
       _autoDetectEnabled = _userSettings.GetBoolValue("autoDetectApplication", true);
-      _propertyOptions = (PropertyOptions)_userSettings.GetIntValue("accessibleComponent.displayProperties", (int)(PropertyOptions.AccessibleContextInfo |
-        PropertyOptions.AccessibleIcons |
-        PropertyOptions.AccessibleKeyBindings |
-        PropertyOptions.AccessibleRelationSet |
-        PropertyOptions.ParentContext |
-        PropertyOptions.Children |
-        PropertyOptions.ObjectDepth |
-        PropertyOptions.TopLevelWindowInfo |
-        PropertyOptions.ActiveDescendent |
-        PropertyOptions.AccessibleText |
-        PropertyOptions.AccessibleHyperText |
-        PropertyOptions.AccessibleValue |
-        PropertyOptions.AccessibleSelection |
-        PropertyOptions.AccessibleTable |
-        PropertyOptions.AccessibleTableCells |
-        PropertyOptions.AccessibleTableCellsSelect |
-        PropertyOptions.AccessibleActions));
 
       _accessBridge.CollectionSizeLimit = _userSettings.GetIntValue("collections.size.limit", _accessBridge.CollectionSizeLimit);
       _accessBridge.TextLineCountLimit = _userSettings.GetIntValue("text.lineCount.limit", _accessBridge.TextLineCountLimit);
@@ -358,9 +365,9 @@ namespace AccessBridgeExplorer {
       // Create click handler
       item.CheckedChanged += (sender, args) => {
         if (item.Checked) {
-          _propertyOptions |= value;
+          _propertyOptions.Value |= value;
         } else {
-          _propertyOptions &= ~value;
+          _propertyOptions.Value &= ~value;
         }
       };
     }
