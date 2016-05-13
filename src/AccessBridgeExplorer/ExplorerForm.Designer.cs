@@ -73,7 +73,7 @@ namespace AccessBridgeExplorer {
       this.automaticallyCheckForUpdatesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
       this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.activateOverlayOnTreeSelectionButton = new System.Windows.Forms.ToolStripButton();
+      this._enableOverlayButton = new System.Windows.Forms.ToolStripButton();
       this.statusBarStrip = new System.Windows.Forms.StatusStrip();
       this._statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.mainToolStrip = new System.Windows.Forms.ToolStrip();
@@ -118,6 +118,8 @@ namespace AccessBridgeExplorer {
       this.clearEventsButton = new System.Windows.Forms.ToolStripButton();
       this.notificationPanel = new AccessBridgeExplorer.NotificationPanel();
       this.updateChecker = new AccessBridgeExplorer.UpdateChecker(this.components);
+      this.enableOverlayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
       this.mainToolStrip.SuspendLayout();
@@ -167,7 +169,7 @@ namespace AccessBridgeExplorer {
       // 
       this.exitMenuItem.Name = "exitMenuItem";
       this.exitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.X)));
-      this.exitMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.exitMenuItem.Size = new System.Drawing.Size(129, 22);
       this.exitMenuItem.Text = "E&xit";
       this.exitMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
       // 
@@ -283,6 +285,8 @@ namespace AccessBridgeExplorer {
       // componentOverlayToolStripMenuItem
       // 
       this.componentOverlayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.enableOverlayMenuItem,
+            this.toolStripMenuItem4,
             this.activateOverlayOnTreeSelectionMenuItem,
             this.activateOverlayOnComponentSelectionMenuItem,
             this.activateOverlayOnFocusMenuItem,
@@ -308,7 +312,8 @@ namespace AccessBridgeExplorer {
       this.activateOverlayOnComponentSelectionMenuItem.Name = "activateOverlayOnComponentSelectionMenuItem";
       this.activateOverlayOnComponentSelectionMenuItem.Size = new System.Drawing.Size(275, 22);
       this.activateOverlayOnComponentSelectionMenuItem.Text = "Activate on &Component selection";
-      this.activateOverlayOnComponentSelectionMenuItem.ToolTipText = "Show the Overlay window when a component is selected in the Accessible Component Properties panel";
+      this.activateOverlayOnComponentSelectionMenuItem.ToolTipText = "Show the Overlay window when a component is selected in the Accessible Component " +
+    "Properties panel";
       this.activateOverlayOnComponentSelectionMenuItem.Click += new System.EventHandler(this.activateOverlayOnComponentSelectionMenuItem_Click);
       // 
       // activateOverlayOnFocusMenuItem
@@ -424,15 +429,14 @@ namespace AccessBridgeExplorer {
       // 
       // activateOverlayOnTreeSelectionButton
       // 
-      this.activateOverlayOnTreeSelectionButton.BackColor = System.Drawing.SystemColors.ButtonFace;
-      this.activateOverlayOnTreeSelectionButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
-      this.activateOverlayOnTreeSelectionButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-      this.activateOverlayOnTreeSelectionButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.activateOverlayOnTreeSelectionButton.Name = "activateOverlayOnTreeSelectionButton";
-      this.activateOverlayOnTreeSelectionButton.Size = new System.Drawing.Size(23, 24);
-      this.activateOverlayOnTreeSelectionButton.Text = "Overlay";
-      this.activateOverlayOnTreeSelectionButton.ToolTipText = "Enable/Disable the accessibility window overlay";
-      this.activateOverlayOnTreeSelectionButton.Click += new System.EventHandler(this.activateOverlayOnTreeSelectionButton_Click);
+      this._enableOverlayButton.BackColor = System.Drawing.SystemColors.ButtonFace;
+      this._enableOverlayButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
+      this._enableOverlayButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+      this._enableOverlayButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this._enableOverlayButton.Name = "_enableOverlayButton";
+      this._enableOverlayButton.Size = new System.Drawing.Size(23, 24);
+      this._enableOverlayButton.Text = "Overlay";
+      this._enableOverlayButton.ToolTipText = "Enable/Disable the accessibility window overlay";
       // 
       // statusBarStrip
       // 
@@ -463,7 +467,7 @@ namespace AccessBridgeExplorer {
             this._refreshButton,
             this._findComponentButton,
             this.separator2,
-            this.activateOverlayOnTreeSelectionButton,
+            this._enableOverlayButton,
             this.separator3,
             this.showHelpButton});
       this.mainToolStrip.Location = new System.Drawing.Point(0, 24);
@@ -867,6 +871,18 @@ namespace AccessBridgeExplorer {
       this.updateChecker.UpdateInfoAvailable += new System.EventHandler<AccessBridgeExplorer.UpdateInfoArgs>(this.updateChecker_UpdateInfoAvailable);
       this.updateChecker.UpdateInfoError += new System.EventHandler<System.IO.ErrorEventArgs>(this.updateChecker_UpdateInfoError);
       // 
+      // enabledOverlayMenuItem
+      // 
+      this.enableOverlayMenuItem.CheckOnClick = true;
+      this.enableOverlayMenuItem.Name = "enableOverlayMenuItem";
+      this.enableOverlayMenuItem.Size = new System.Drawing.Size(275, 22);
+      this.enableOverlayMenuItem.Text = "Enable";
+      // 
+      // toolStripMenuItem4
+      // 
+      this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+      this.toolStripMenuItem4.Size = new System.Drawing.Size(272, 6);
+      // 
       // ExplorerForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -983,7 +999,7 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripSeparator separator5;
     private System.Windows.Forms.ToolStripMenuItem activateOverlayOnTreeSelectionMenuItem;
     private System.Windows.Forms.ToolStripMenuItem activateOverlayOnComponentSelectionMenuItem;
-    private System.Windows.Forms.ToolStripButton activateOverlayOnTreeSelectionButton;
+    private System.Windows.Forms.ToolStripButton _enableOverlayButton;
     private System.Windows.Forms.ToolStripMenuItem aboutMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
     private NotificationPanel notificationPanel;
@@ -1004,6 +1020,8 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripMenuItem showOverlayOnlyMenuItem;
     private System.Windows.Forms.ToolStripMenuItem showTooltipOnlyMenuItem;
     private System.Windows.Forms.ToolStripMenuItem activateOverlayOnActiveDescendantMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem enableOverlayMenuItem;
+    private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
   }
 }
 

@@ -181,11 +181,6 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private void activateOverlayOnTreeSelectionButton_Click(object sender, EventArgs e) {
-      var enable = !activateOverlayOnTreeSelectionButton.Checked;
-      _controller.EnableOverlayActivationFlag(OverlayActivation.OnTreeSelection, enable);
-    }
-
     private void activateOverlayOnTreeSelectionMenuItem_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnTreeSelectionMenuItem.Checked;
       _controller.EnableOverlayActivationFlag(OverlayActivation.OnTreeSelection, enable);
@@ -228,7 +223,7 @@ namespace AccessBridgeExplorer {
       protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e) {
         base.OnRenderButtonBackground(e);
 
-        if (ReferenceEquals(e.Item, _explorerForm.activateOverlayOnTreeSelectionButton)) {
+        if (ReferenceEquals(e.Item, _explorerForm._enableOverlayButton)) {
           var bounds = new Rectangle(Point.Empty, e.Item.Size);
           bounds.Inflate(-1, -1);
           e.Graphics.FillRectangle(new SolidBrush(e.Item.ForeColor), bounds);
@@ -439,6 +434,14 @@ namespace AccessBridgeExplorer {
       get { return _limitTextLineLengthsMenu; }
     }
 
+    ToolStripMenuItem IExplorerFormView.EnableOverlayMenuItem {
+      get { return enableOverlayMenuItem; }
+    }
+
+    ToolStripButton IExplorerFormView.EnableOverlayButton {
+      get { return _enableOverlayButton; }
+    }
+
     ToolStripMenuItem IExplorerFormView.ActivateOverlayOnTreeSelectionMenu {
       get { return activateOverlayOnTreeSelectionMenuItem; }
     }
@@ -453,10 +456,6 @@ namespace AccessBridgeExplorer {
 
     ToolStripMenuItem IExplorerFormView.ActivateOverlayOnActiveDescendantMenu {
       get { return activateOverlayOnActiveDescendantMenuItem; }
-    }
-
-    ToolStripButton IExplorerFormView.ActivateOverlayOnTreeSelectionButton {
-      get { return activateOverlayOnTreeSelectionButton; }
     }
 
     ToolStripMenuItem IExplorerFormView.ShowTooltipAndOverlayMenuItem {

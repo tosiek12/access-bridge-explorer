@@ -40,10 +40,11 @@ namespace AccessBridgeExplorer {
     private readonly SingleDelayedTask _hideOverlayOnFocusLost = new SingleDelayedTask();
     private readonly HwndCache _windowCache = new HwndCache();
 
+    private readonly UserSetting<bool> _autoDetectApplicationsEnabled;
     private readonly UserSetting<OverlayActivation> _overlayActivation;
     private readonly UserSetting<OverlayDisplayType> _overlayDisplayType;
     private readonly UserSetting<PropertyOptions> _propertyOptions;
-    private readonly UserSetting<bool> _autoDetectApplicationsEnabled;
+    private readonly UserSetting<bool> _enableOverlaySetting;
     private readonly UserSetting<int> _collectionSizeLimit;
     private readonly UserSetting<int> _textLineCountLimit;
     private readonly UserSetting<int> _textLineLengthLimit;
@@ -61,8 +62,14 @@ namespace AccessBridgeExplorer {
 
       _userSettings.Error += UserSettings_OnError;
 
-      _overlayDisplayType = new OverlayDisplayTypeSetting(this);
+      _enableOverlaySetting = new BoolUserSetting(userSetting, "overlay.enabled", true);
+      _enableOverlaySetting.Changed += (sender, args) => {
+        _view.EnableOverlayMenuItem.Checked = args.NewValue;
+        UpdateOverlayActivationMenuItems();
+      };
+
       _overlayActivation = new OverlayActivationSetting(this);
+      _overlayDisplayType = new OverlayDisplayTypeSetting(this);
       _propertyOptions = new PropertyOptionsSetting(this);
       _autoDetectApplicationsEnabled = new AutoDetectApplicationsSetting(this);
 
@@ -220,6 +227,8 @@ namespace AccessBridgeExplorer {
       _view.EventList.MouseDoubleClick += AccessibilityEventList_MouseDoubleClick;
       _view.EventList.KeyDown += AccessibilityEventList_KeyDown;
 
+      _view.EnableOverlayMenuItem.CheckedChanged += EnableOverlayMenuItem_OnCheckedChanged;
+      _view.EnableOverlayButton.Click += EnableOverlayButton_OnClick;
       _view.AccessibleComponentPropertyListView.AccessibleRectInfoSelected += ComponentPropertyListView_AccessibleRectInfoSelected;
       _view.AccessibleComponentPropertyListView.Error += ComponentPropertyListView_Error;
 
@@ -246,6 +255,7 @@ namespace AccessBridgeExplorer {
         _view.EventsMenu.Enabled = true;
         _view.PropertiesMenu.Enabled = true;
         _view.LimitCollectionSizesMenu.Enabled = true;
+        UpdateOverlayActivationMenuItems();
 
         LogMessage("Ready!");
       };
@@ -255,6 +265,14 @@ namespace AccessBridgeExplorer {
         // discover the list of JVMs by the time we enumerate all windows.
         _accessBridge.Initialize();
       });
+    }
+
+    private void EnableOverlayMenuItem_OnCheckedChanged(object sender, EventArgs eventArgs) {
+      _enableOverlaySetting.Value = _view.EnableOverlayMenuItem.Checked;
+    }
+
+    private void EnableOverlayButton_OnClick(object sender, EventArgs eventArgs) {
+      _enableOverlaySetting.Value = !_view.EnableOverlayButton.Checked;
     }
 
     private void UserSettings_OnError(object sender, ErrorEventArgs errorEventArgs) {
@@ -271,10 +289,9 @@ namespace AccessBridgeExplorer {
       _view.ActivateOverlayOnActiveDescendantMenu.Checked = (_overlayActivation.Value & OverlayActivation.OnActiveDescendantChanged) != 0;
 
       // Update overlay button (which applies only to tree activation).
-      var onTreeSelectionEnabled = _view.ActivateOverlayOnTreeSelectionMenu.Checked;
-      var button = _view.ActivateOverlayOnTreeSelectionButton;
-      button.Checked = onTreeSelectionEnabled;
-      if (onTreeSelectionEnabled) {
+      var button = _view.EnableOverlayButton;
+      button.Checked = _enableOverlaySetting.Value;
+      if (button.Checked) {
         button.ForeColor = Color.FromArgb(128, 255, 128);
       } else {
         button.ForeColor = SystemColors.InactiveCaption;

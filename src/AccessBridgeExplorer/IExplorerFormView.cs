@@ -41,12 +41,13 @@ namespace AccessBridgeExplorer {
     ToolStripMenuItem LimitTextLineCountMenu { get; }
     ToolStripMenuItem LimitTextLineLengthsMenu { get; }
 
+    ToolStripMenuItem EnableOverlayMenuItem { get; }
+    ToolStripButton EnableOverlayButton { get; }
+
     ToolStripMenuItem ActivateOverlayOnTreeSelectionMenu { get; }
     ToolStripMenuItem ActivateOverlayOnComponentSelectionMenu { get; }
     ToolStripMenuItem ActivateOverlayOnFocusMenu { get; }
     ToolStripMenuItem ActivateOverlayOnActiveDescendantMenu { get; }
-
-    ToolStripButton ActivateOverlayOnTreeSelectionButton { get; }
 
     ToolStripMenuItem ShowTooltipAndOverlayMenuItem { get; }
     ToolStripMenuItem ShowTooltipOnlyMenuItem { get; }
