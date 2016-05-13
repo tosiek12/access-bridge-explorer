@@ -44,7 +44,7 @@ namespace AccessBridgeExplorer {
     private readonly UserSetting<OverlayActivation> _overlayActivation;
     private readonly UserSetting<OverlayDisplayType> _overlayDisplayType;
     private readonly UserSetting<PropertyOptions> _propertyOptions;
-    private readonly UserSetting<bool> _enableOverlaySetting;
+    private readonly UserSetting<bool> _overlayEnabledSetting;
     private readonly UserSetting<int> _collectionSizeLimit;
     private readonly UserSetting<int> _textLineCountLimit;
     private readonly UserSetting<int> _textLineLengthLimit;
@@ -62,8 +62,8 @@ namespace AccessBridgeExplorer {
 
       _userSettings.Error += UserSettings_OnError;
 
-      _enableOverlaySetting = new BoolUserSetting(userSetting, "overlay.enabled", true);
-      _enableOverlaySetting.Changed += (sender, args) => {
+      _overlayEnabledSetting = new BoolUserSetting(userSetting, "overlay.enabled", true);
+      _overlayEnabledSetting.Changed += (sender, args) => {
         _view.EnableOverlayMenuItem.Checked = args.NewValue;
         UpdateOverlayActivationMenuItems();
       };
@@ -268,11 +268,11 @@ namespace AccessBridgeExplorer {
     }
 
     private void EnableOverlayMenuItem_OnCheckedChanged(object sender, EventArgs eventArgs) {
-      _enableOverlaySetting.Value = _view.EnableOverlayMenuItem.Checked;
+      _overlayEnabledSetting.Value = _view.EnableOverlayMenuItem.Checked;
     }
 
     private void EnableOverlayButton_OnClick(object sender, EventArgs eventArgs) {
-      _enableOverlaySetting.Value = !_view.EnableOverlayButton.Checked;
+      _overlayEnabledSetting.Value = !_view.EnableOverlayButton.Checked;
     }
 
     private void UserSettings_OnError(object sender, ErrorEventArgs errorEventArgs) {
@@ -290,7 +290,7 @@ namespace AccessBridgeExplorer {
 
       // Update overlay button (which applies only to tree activation).
       var button = _view.EnableOverlayButton;
-      button.Checked = _enableOverlaySetting.Value;
+      button.Checked = _overlayEnabledSetting.Value;
       if (button.Checked) {
         button.ForeColor = Color.FromArgb(128, 255, 128);
       } else {
@@ -963,6 +963,10 @@ namespace AccessBridgeExplorer {
     }
 
     private void UpdateOverlayDisplay(AccessibleNode node, OverlayActivation activation) {
+      if (!_overlayEnabledSetting.Value) {
+        return;
+      }
+
       if ((_overlayActivation.Value & activation) == 0) {
         return;
       }
