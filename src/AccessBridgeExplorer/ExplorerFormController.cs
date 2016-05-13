@@ -98,15 +98,46 @@ namespace AccessBridgeExplorer {
         //  return;
       };
 
-      _autoDetectApplicationsEnabled = new AutoDetectSetting(this);
+      _autoDetectApplicationsEnabled = new AutoDetectApplicationsSetting(this);
     }
 
-    private class AutoDetectSetting : BoolUserSetting {
-      public AutoDetectSetting(ExplorerFormController controller) :
+    private class AutoDetectApplicationsSetting : BoolUserSetting {
+      private readonly ExplorerFormController _controller;
+
+      public AutoDetectApplicationsSetting(ExplorerFormController controller) :
         base(controller._userSettings, "runningApplications.autoDetect", true) {
+        _controller = controller;
         controller._accessBridge.Initilized += (sender, args) => {
           OnSync(new SyncEventArgs<bool>(this, Value));
         };
+
+        Sync += (sender, args) => {
+          if (controller._accessBridge.IsLoaded) {
+            if (args.Value) {
+              controller._accessBridge.Events.FocusGained += AccessBridgeEvents_OnFocusGained;
+              controller._accessBridge.Events.JavaShutdown += AccessBridgeEvents_JavaShutdown;
+            } else {
+              controller._accessBridge.Events.FocusGained -= AccessBridgeEvents_OnFocusGained;
+              controller._accessBridge.Events.JavaShutdown -= AccessBridgeEvents_JavaShutdown;
+            }
+          }
+        };
+      }
+
+      private void AccessBridgeEvents_OnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+        _controller.UiAction(() => {
+          // Access the top level object as fast as possible to
+          // ensure the application knows there is an active screen reader.
+          if (_controller._windowCache.Windows.All(x => x.JvmId != vmid)) {
+            var topLevel = _controller._accessBridge.Functions.GetTopLevelObject(source.JvmId, source);
+            topLevel.Dispose();
+          }
+          _controller.PostRefreshTree();
+        });
+      }
+
+      private void AccessBridgeEvents_JavaShutdown(int vmid) {
+        _controller.PostRefreshTree();
       }
     }
 
@@ -826,18 +857,6 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    private void AccessBridgeEvents_OnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      UiAction(() => {
-        // Access the top level object as fast as possible to
-        // ensure the application knows there is an active screen reader.
-        if (_windowCache.Windows.All(x => x.JvmId != vmid)) {
-          var topLevel = _accessBridge.Functions.GetTopLevelObject(source.JvmId, source);
-          topLevel.Dispose();
-        }
-        PostRefreshTree();
-      });
-    }
-
     private void AccessBridgeEvents_OverlayActivation_OnActiveDescendantChanged(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldactivedescendent, JavaObjectHandle newactivedescendent) {
       UiAction(() => {
         UpdateOverlayDisplay(newactivedescendent, OverlayActivation.OnActiveDescendantChanged);
@@ -887,10 +906,6 @@ namespace AccessBridgeExplorer {
       if (_overlayDisplayType.Value == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayType.Value == OverlayDisplayType.TooltipOnly) {
         ShowTooltipWindow(node);
       }
-    }
-
-    private void AccessBridgeEvents_JavaShutdown(int vmid) {
-      PostRefreshTree();
     }
 
     private void PostRefreshTree() {
@@ -1158,15 +1173,6 @@ namespace AccessBridgeExplorer {
 
     public void EnableAutoDetect(bool enabled) {
       _autoDetectApplicationsEnabled.Value = enabled;
-      if (_accessBridge.IsLoaded) {
-        if (enabled) {
-          _accessBridge.Events.FocusGained += AccessBridgeEvents_OnFocusGained;
-          _accessBridge.Events.JavaShutdown += AccessBridgeEvents_JavaShutdown;
-        } else {
-          _accessBridge.Events.FocusGained -= AccessBridgeEvents_OnFocusGained;
-          _accessBridge.Events.JavaShutdown -= AccessBridgeEvents_JavaShutdown;
-        }
-      }
     }
 
     /// <summary>
