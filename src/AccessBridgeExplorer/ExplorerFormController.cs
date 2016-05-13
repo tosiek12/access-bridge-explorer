@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using WindowsAccessBridgeInterop;
 using AccessBridgeExplorer.Model;
 using AccessBridgeExplorer.Utils;
+using AccessBridgeExplorer.Utils.Settings;
 
 namespace AccessBridgeExplorer {
   public class ExplorerFormController : IDisposable {
@@ -42,7 +43,7 @@ namespace AccessBridgeExplorer {
     private readonly UserSetting<OverlayActivation> _overlayActivation;
     private readonly UserSetting<OverlayDisplayType> _overlayDisplayType;
     private readonly UserSetting<PropertyOptions> _propertyOptions;
-    private bool _autoDetectEnabled;
+    private readonly UserSetting<bool> _autoDetectApplicationsEnabled;
     private Rectangle? _overlayWindowRectangle;
     private bool _disposed;
     private int _eventId;
@@ -58,7 +59,7 @@ namespace AccessBridgeExplorer {
       _userSettings.Loaded += UserSettings_OnLoaded;
       _userSettings.Error += UserSettings_OnError;
 
-      _overlayDisplayType = _userSettings.CreateEnumUserSetting("overlay.displayType", OverlayDisplayType.OverlayOnly);
+      _overlayDisplayType = new EnumUserSetting<OverlayDisplayType>(_userSettings, "overlay.displayType", OverlayDisplayType.OverlayOnly);
       _overlayDisplayType.Sync += (sender, args) => {
         if (_disposed)
           return;
@@ -67,15 +68,14 @@ namespace AccessBridgeExplorer {
         _view.ShowOverlayOnlyMenuItem.Checked = (_overlayDisplayType.Value == OverlayDisplayType.OverlayOnly);
       };
 
-      _overlayActivation = _userSettings.CreateEnumUserSetting("overlay.activation", OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection);
+      _overlayActivation = new EnumUserSetting<OverlayActivation>(_userSettings, "overlay.activation", OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection);
       _overlayActivation.Changed += (sender, args) => {
         if (_disposed)
           return;
         UpdateOverlayActivation(args.PreviousValue);
       };
 
-      _propertyOptions = _userSettings.CreateEnumUserSetting("accessibleComponent.displayProperties",
-        PropertyOptions.AccessibleContextInfo |
+      _propertyOptions = new EnumUserSetting<PropertyOptions>(_userSettings, "accessibleComponent.displayProperties", PropertyOptions.AccessibleContextInfo |
         PropertyOptions.AccessibleIcons |
         PropertyOptions.AccessibleKeyBindings |
         PropertyOptions.AccessibleRelationSet |
@@ -97,6 +97,17 @@ namespace AccessBridgeExplorer {
         //if (_disposed)
         //  return;
       };
+
+      _autoDetectApplicationsEnabled = new AutoDetectSetting(this);
+    }
+
+    private class AutoDetectSetting : BoolUserSetting {
+      public AutoDetectSetting(ExplorerFormController controller) :
+        base(controller._userSettings, "runningApplications.autoDetect", true) {
+        controller._accessBridge.Initilized += (sender, args) => {
+          OnSync(new SyncEventArgs<bool>(this, Value));
+        };
+      }
     }
 
     public PropertyOptions PropertyOptions {
@@ -144,7 +155,7 @@ namespace AccessBridgeExplorer {
 
       LogMessage("Initializing Java Access Bridge and enumerating active Java application windows.");
       _accessBridge.Initilized += (sender, args) => {
-        EnableAutoDetect(_autoDetectEnabled);
+        EnableAutoDetect(_autoDetectApplicationsEnabled.Value);
         CreateEventMenuItems();
         CreatePropertyOptionsMenuItems();
         CreateLimitCollectionSizesMenuItems();
@@ -168,8 +179,6 @@ namespace AccessBridgeExplorer {
     private void UserSettings_OnLoaded(object sender, EventArgs eventArgs) {
       if (_disposed)
         return;
-
-      _autoDetectEnabled = _userSettings.GetBoolValue("autoDetectApplication", true);
 
       _accessBridge.CollectionSizeLimit = _userSettings.GetIntValue("collections.size.limit", _accessBridge.CollectionSizeLimit);
       _accessBridge.TextLineCountLimit = _userSettings.GetIntValue("text.lineCount.limit", _accessBridge.TextLineCountLimit);
@@ -1148,7 +1157,7 @@ namespace AccessBridgeExplorer {
     }
 
     public void EnableAutoDetect(bool enabled) {
-      _autoDetectEnabled = enabled;
+      _autoDetectApplicationsEnabled.Value = enabled;
       if (_accessBridge.IsLoaded) {
         if (enabled) {
           _accessBridge.Events.FocusGained += AccessBridgeEvents_OnFocusGained;

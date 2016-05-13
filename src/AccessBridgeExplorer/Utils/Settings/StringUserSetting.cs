@@ -12,26 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.IO;
-
-namespace AccessBridgeExplorer.Utils {
-  public interface IUserSettings {
-    event EventHandler<ErrorEventArgs> Error;
-    event EventHandler Loaded;
-    event EventHandler Saving;
-
-    void SetValue(string key, string value);
-    void SetIntValue(string key, int value);
-    void SetBoolValue(string key, bool value);
-
-    string GetValue(string key, string defaultValue);
-    int GetIntValue(string key, int defaultValue);
-    bool GetBoolValue(string key, bool defaultValue);
-
-    void Remove(string key);
-
-    void Load();
-    void Save();
+namespace AccessBridgeExplorer.Utils.Settings {
+  public class StringUserSetting : UserSettingImpl<string> {
+    public StringUserSetting(IUserSettings userSettings, string key, string defaultValue) :
+      base(userSettings, userSettings.GetValue, userSettings.SetValue, key, defaultValue) {
+    }
   }
 }

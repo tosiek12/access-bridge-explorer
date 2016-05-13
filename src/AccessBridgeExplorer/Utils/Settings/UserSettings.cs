@@ -18,14 +18,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace AccessBridgeExplorer.Utils {
+namespace AccessBridgeExplorer.Utils.Settings {
   public class UserSettings : IUserSettings {
     private readonly string _directoryName;
     private readonly Dictionary<string, string> _values = new Dictionary<string, string>();
 
     public UserSettings(string directoryName) {
       if (string.IsNullOrWhiteSpace(directoryName)) {
-        throw new ArgumentException("Invalid user settings file directory name", "directoryName");
+        throw new ArgumentException(@"Invalid user settings file directory name", "directoryName");
       }
       _directoryName = directoryName;
     }
@@ -135,7 +135,7 @@ namespace AccessBridgeExplorer.Utils {
 
     private static void CheckValidValue(string value) {
       if (value.IndexOf('\n') >= 0) {
-        throw new ArgumentException("User setting cannot contain newline characters", value);
+        throw new ArgumentException(@"User setting cannot contain newline characters", value);
       }
     }
 

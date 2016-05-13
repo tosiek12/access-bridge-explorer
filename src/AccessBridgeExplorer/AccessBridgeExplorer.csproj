@@ -97,9 +97,17 @@
       <DependentUpon>ExceptionForm.cs</DependentUpon>
     </Compile>
     <Compile Include="PropertyListTreeViewModel.cs" />
-    <Compile Include="Utils\IUserSettings.cs" />
-    <Compile Include="Utils\UserSetting.cs" />
-    <Compile Include="Utils\UserSettings.cs" />
+    <Compile Include="Utils\Settings\BoolUserSetting.cs" />
+    <Compile Include="Utils\Settings\EnumUserSetting.cs" />
+    <Compile Include="Utils\Settings\IntUserSetting.cs" />
+    <Compile Include="Utils\Settings\IUserSettings.cs" />
+    <Compile Include="Utils\Settings\ChangedEventArgs.cs" />
+    <Compile Include="Utils\Settings\StringUserSetting.cs" />
+    <Compile Include="Utils\Settings\SyncEventArgs.cs" />
+    <Compile Include="Utils\Settings\UserSetting.cs" />
+    <Compile Include="Utils\Settings\UserSettingBase.cs" />
+    <Compile Include="Utils\Settings\UserSettingImpl.cs" />
+    <Compile Include="Utils\Settings\UserSettings.cs" />
     <Compile Include="Utils\TreeListViewNodeArgs.cs" />
     <Compile Include="Utils\TreeListView.cs" />
     <Compile Include="Utils\TreeListViewModel.cs" />
@@ -165,8 +173,7 @@
     <Compile Include="UpdateInfoArgs.cs" />
     <Compile Include="Model\AccessibleNodeModel.cs" />
     <Compile Include="Utils\User32Utils.cs" />
-    <Compile Include="Utils\UserSettingsExtension.cs" />
-    <Compile Include="Utils\UserSettingsProvider.cs" />
+    <Compile Include="Utils\Settings\UserSettingsProvider.cs" />
     <Compile Include="Utils\WindowsHotKeyHandler.cs" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>

@@ -14,7 +14,7 @@
 
 using System;
 
-namespace AccessBridgeExplorer.Utils {
+namespace AccessBridgeExplorer.Utils.Settings {
   public abstract class UserSetting<T> {
     public abstract T Value { get; set; }
 
@@ -30,47 +30,5 @@ namespace AccessBridgeExplorer.Utils {
     /// Invoked when the setting value is (initially) loaded or changed.
     /// </summary>
     public abstract event EventHandler<SyncEventArgs<T>> Sync;
-  }
-
-  public class ChangedEventArgs<T> : EventArgs {
-    private readonly UserSetting<T> _userSetting;
-    private readonly T _previousValue;
-    private readonly T _newValue;
-
-    public ChangedEventArgs(UserSetting<T> userSetting, T previousValue, T newValue) {
-      _userSetting = userSetting;
-      _previousValue = previousValue;
-      _newValue = newValue;
-    }
-
-    public UserSetting<T> Setting {
-      get { return _userSetting; }
-    }
-
-    public T PreviousValue {
-      get { return _previousValue; }
-    }
-
-    public T NewValue {
-      get { return _newValue; }
-    }
-  }
-
-  public class SyncEventArgs<T> : EventArgs {
-    private readonly UserSetting<T> _userSetting;
-    private readonly T _value;
-
-    public SyncEventArgs(UserSetting<T> userSetting, T value) {
-      _userSetting = userSetting;
-      _value = value;
-    }
-
-    public UserSetting<T> Setting {
-      get { return _userSetting; }
-    }
-
-    public T Value {
-      get { return _value; }
-    }
   }
 }

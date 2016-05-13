@@ -19,6 +19,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using WindowsAccessBridgeInterop;
 using AccessBridgeExplorer.Utils;
+using AccessBridgeExplorer.Utils.Settings;
 
 namespace AccessBridgeExplorer {
   public partial class ExplorerForm : Form, IExplorerFormView, IMessageQueue {
@@ -46,7 +47,7 @@ namespace AccessBridgeExplorer {
       _hotKeyHandler = new WindowsHotKeyHandler();
       _hotKeyHandler.KeyPressed += HotKeyHandler_KeyPressed;
 
-      _automaticallyCheckForUpdate = _userSettings.CreateUserSetting("update.autoCheck", true);
+      _automaticallyCheckForUpdate = new BoolUserSetting(_userSettings, "update.autoCheck", true);
       _automaticallyCheckForUpdate.Sync += (sender, args) => {
         updateChecker.Enabled = args.Value;
         automaticallyCheckForUpdatesMenuItem.Checked = args.Value;

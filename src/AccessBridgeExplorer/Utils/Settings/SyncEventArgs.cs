@@ -12,8 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace AccessBridgeExplorer.Utils {
-  public static class UserSettingsProvider {
-    public static IUserSettings Instance { get; set; }
+using System;
+
+namespace AccessBridgeExplorer.Utils.Settings {
+  public class SyncEventArgs<T> : EventArgs {
+    private readonly UserSetting<T> _userSetting;
+    private readonly T _value;
+
+    public SyncEventArgs(UserSetting<T> userSetting, T value) {
+      _userSetting = userSetting;
+      _value = value;
+    }
+
+    public UserSetting<T> Setting {
+      get { return _userSetting; }
+    }
+
+    public T Value {
+      get { return _value; }
+    }
   }
 }
