@@ -182,27 +182,27 @@ namespace AccessBridgeExplorer {
 
     private void activateOverlayOnTreeSelectionButton_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnTreeSelectionButton.Checked;
-      _controller.EnableActivateOverlayOnTreeSelection(enable);
+      _controller.EnableOverlayActivationFlag(OverlayActivation.OnTreeSelection, enable);
     }
 
     private void activateOverlayOnTreeSelectionMenuItem_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnTreeSelectionMenuItem.Checked;
-      _controller.EnableActivateOverlayOnTreeSelection(enable);
+      _controller.EnableOverlayActivationFlag(OverlayActivation.OnTreeSelection, enable);
     }
 
     private void activateOverlayOnComponentSelectionMenuItem_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnComponentSelectionMenuItem.Checked;
-      _controller.EnableActivateOverlayOnComponentSelection(enable);
+      _controller.EnableOverlayActivationFlag(OverlayActivation.OnComponentSelection, enable);
     }
 
     private void activateOverlayOnFocusMenuItem_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnFocusMenuItem.Checked;
-      _controller.EnableActivateOverlayOnFocus(enable);
+      _controller.EnableOverlayActivationFlag(OverlayActivation.OnFocusGained, enable);
     }
 
     private void activateOverlayOnActiveDescendantMenuItem_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnActiveDescendantMenuItem.Checked;
-      _controller.EnableActivateOverlayOnActiveDescendant(enable);
+      _controller.EnableOverlayActivationFlag(OverlayActivation.OnActiveDescendantChanged, enable);
     }
 
     private void showTooltipAndOverlayMenuItem_Click(object sender, EventArgs e) {

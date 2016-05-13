@@ -49,15 +49,6 @@ namespace AccessBridgeExplorer {
     private int _messageId;
     private int _refreshCallId;
 
-    [Flags]
-    private enum OverlayActivation {
-      None = 0x0,
-      OnTreeSelection = 0x01,
-      OnComponentSelection = 0x02,
-      OnFocusGained = 0x04,
-      OnActiveDescendantChanged = 0x08,
-    }
-
     public ExplorerFormController(IExplorerFormView explorerFormView, IUserSettings userSetting) {
       _view = explorerFormView;
       _userSettings = userSetting;
@@ -1098,23 +1089,7 @@ namespace AccessBridgeExplorer {
       _overlayWindow.Size = new Size(0, 0);
     }
 
-    public void EnableActivateOverlayOnTreeSelection(bool enabled) {
-      EnableOverlayActivationFlag(OverlayActivation.OnTreeSelection, enabled);
-    }
-
-    public void EnableActivateOverlayOnComponentSelection(bool enabled) {
-      EnableOverlayActivationFlag(OverlayActivation.OnComponentSelection, enabled);
-    }
-
-    public void EnableActivateOverlayOnFocus(bool enabled) {
-      EnableOverlayActivationFlag(OverlayActivation.OnFocusGained, enabled);
-    }
-
-    public void EnableActivateOverlayOnActiveDescendant(bool enabled) {
-      EnableOverlayActivationFlag(OverlayActivation.OnActiveDescendantChanged, enabled);
-    }
-
-    private void EnableOverlayActivationFlag(OverlayActivation value, bool enabled) {
+    public void EnableOverlayActivationFlag(OverlayActivation value, bool enabled) {
       _overlayActivation.Value = CombineActivationFlags(_overlayActivation.Value, value, enabled);
     }
 
@@ -1532,6 +1507,15 @@ namespace AccessBridgeExplorer {
         get { return _cache.Values.Where(x => x != null); }
       }
     }
+  }
+
+  [Flags]
+  public enum OverlayActivation {
+    None = 0x0,
+    OnTreeSelection = 0x01,
+    OnComponentSelection = 0x02,
+    OnFocusGained = 0x04,
+    OnActiveDescendantChanged = 0x08,
   }
 
   public enum OverlayDisplayType {
