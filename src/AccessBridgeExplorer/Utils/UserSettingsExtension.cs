@@ -68,11 +68,11 @@ namespace AccessBridgeExplorer.Utils {
 
         _userSettings.Loaded += (sender, args) => {
           OnLoaded();
-          OnSync();
+          OnSync(new SyncEventArgs<T>(this, Value));
         };
       }
 
-      public override event EventHandler Sync;
+      public override event EventHandler<SyncEventArgs<T>> Sync;
       public override event EventHandler Loaded;
       public override event EventHandler<ChangedEventArgs<T>> Changed;
 
@@ -90,7 +90,7 @@ namespace AccessBridgeExplorer.Utils {
             _setter(_key, value);
           }
           OnChanged(new ChangedEventArgs<T>(this, oldValue, value));
-          OnSync();
+          OnSync(new SyncEventArgs<T>(this, value));
         }
       }
 
@@ -99,9 +99,9 @@ namespace AccessBridgeExplorer.Utils {
         if (handler != null) handler(this, e);
       }
 
-      protected virtual void OnSync() {
+      protected virtual void OnSync(SyncEventArgs<T> e) {
         var handler = Sync;
-        if (handler != null) handler(this, EventArgs.Empty);
+        if (handler != null) handler(this, e);
       }
 
       protected virtual void OnLoaded() {

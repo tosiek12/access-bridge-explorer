@@ -29,12 +29,11 @@ namespace AccessBridgeExplorer {
     /// </summary>
     private const Keys CaptureKey = Keys.Control | Keys.OemPipe;
 
-    private const string AutoupdateCheckSettingsKey = "autoupdate.check";
-
     private readonly IUserSettings _userSettings;
     private readonly WindowsHotKeyHandler _hotKeyHandler;
     private readonly ExplorerFormController _controller;
     private readonly PropertyListView _accessibleComponentPropertyListViewView;
+    private readonly UserSetting<bool> _automaticallyCheckForUpdate;
     private bool _capturing;
     private int _navigationVersion = int.MinValue;
     private bool _updateNotificationShown;
@@ -47,6 +46,12 @@ namespace AccessBridgeExplorer {
       _hotKeyHandler = new WindowsHotKeyHandler();
       _hotKeyHandler.KeyPressed += HotKeyHandler_KeyPressed;
 
+      _automaticallyCheckForUpdate = _userSettings.CreateUserSetting("update.autoCheck", true);
+      _automaticallyCheckForUpdate.Sync += (sender, args) => {
+        updateChecker.Enabled = args.Value;
+        automaticallyCheckForUpdatesMenuItem.Checked = args.Value;
+      };
+
       mainToolStrip.Renderer = new OverlayButtonRenderer(this);
       SetDoubleBuffered(_accessibilityTree, true);
       SetDoubleBuffered(_messageList, true);
@@ -55,14 +60,9 @@ namespace AccessBridgeExplorer {
       SetDoubleBuffered(_accessibleComponentTabControl, true);
       SetDoubleBuffered(_bottomTabControl, true);
 
-      _userSettings.Loaded += UserSettings_OnLoaded;
       //activateOverlayOnTreeSelectionButton_Click(activateOverlayOnTreeSelectionButton, EventArgs.Empty);
       //autoDetectApplicationsMenuItem_CheckChanged(autoDetectApplicationsMenuItem, EventArgs.Empty);
       //automaticallyCheckForUpdatesMenuItem_CheckedChanged(automaticallyCheckForUpdatesMenuItem, EventArgs.Empty);
-    }
-
-    private void UserSettings_OnLoaded(object sender, EventArgs eventArgs) {
-      automaticallyCheckForUpdatesMenuItem.Checked = updateChecker.Enabled = _userSettings.GetBoolValue(AutoupdateCheckSettingsKey, true);
     }
 
     private void MainForm_Shown(object sender, EventArgs e) {
@@ -155,8 +155,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void automaticallyCheckForUpdatesMenuItem_CheckedChanged(object sender, EventArgs e) {
-      updateChecker.Enabled = automaticallyCheckForUpdatesMenuItem.Checked;
-      _userSettings.SetBoolValue(AutoupdateCheckSettingsKey, updateChecker.Enabled);
+      _automaticallyCheckForUpdate.Value = automaticallyCheckForUpdatesMenuItem.Checked;
     }
 
     private void updateChecker_UpdateInfoAvailable(object sender, UpdateInfoArgs e) {

@@ -29,7 +29,7 @@ namespace AccessBridgeExplorer.Utils {
     /// <summary>
     /// Invoked when the setting value is (initially) loaded or changed.
     /// </summary>
-    public abstract event EventHandler Sync;
+    public abstract event EventHandler<SyncEventArgs<T>> Sync;
   }
 
   public class ChangedEventArgs<T> : EventArgs {
@@ -53,6 +53,24 @@ namespace AccessBridgeExplorer.Utils {
 
     public T NewValue {
       get { return _newValue; }
+    }
+  }
+
+  public class SyncEventArgs<T> : EventArgs {
+    private readonly UserSetting<T> _userSetting;
+    private readonly T _value;
+
+    public SyncEventArgs(UserSetting<T> userSetting, T value) {
+      _userSetting = userSetting;
+      _value = value;
+    }
+
+    public UserSetting<T> Setting {
+      get { return _userSetting; }
+    }
+
+    public T Value {
+      get { return _value; }
     }
   }
 }
