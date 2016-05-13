@@ -40,14 +40,15 @@ namespace AccessBridgeExplorer {
     private readonly SingleDelayedTask _hideOverlayOnFocusLost = new SingleDelayedTask();
     private readonly HwndCache _windowCache = new HwndCache();
 
-    private readonly UserSetting<bool> _autoDetectApplicationsEnabled;
-    private readonly UserSetting<OverlayActivation> _overlayActivation;
-    private readonly UserSetting<OverlayDisplayType> _overlayDisplayType;
-    private readonly UserSetting<PropertyOptions> _propertyOptions;
+    private readonly UserSetting<bool> _autoDetectApplicationsEnabledSetting;
+    private readonly UserSetting<OverlayActivation> _overlayActivationSetting;
+    private readonly UserSetting<OverlayDisplayType> _overlayDisplayTypeSetting;
+    private readonly UserSetting<PropertyOptions> _propertyOptionsSetting;
     private readonly UserSetting<bool> _overlayEnabledSetting;
-    private readonly UserSetting<int> _collectionSizeLimit;
-    private readonly UserSetting<int> _textLineCountLimit;
-    private readonly UserSetting<int> _textLineLengthLimit;
+    private readonly UserSetting<int> _collectionSizeLimitSetting;
+    private readonly UserSetting<int> _textLineCountLimitSetting;
+    private readonly UserSetting<int> _textLineLengthLimitSetting;
+
     private Rectangle? _overlayWindowRectangle;
     private bool _disposed;
     private int _eventId;
@@ -68,21 +69,21 @@ namespace AccessBridgeExplorer {
         UpdateOverlayActivationMenuItems();
       };
 
-      _overlayActivation = new OverlayActivationSetting(this);
-      _overlayDisplayType = new OverlayDisplayTypeSetting(this);
-      _propertyOptions = new PropertyOptionsSetting(this);
-      _autoDetectApplicationsEnabled = new AutoDetectApplicationsSetting(this);
+      _overlayActivationSetting = new OverlayActivationSetting(this);
+      _overlayDisplayTypeSetting = new OverlayDisplayTypeSetting(this);
+      _propertyOptionsSetting = new PropertyOptionsSetting(this);
+      _autoDetectApplicationsEnabledSetting = new AutoDetectApplicationsSetting(this);
 
-      _collectionSizeLimit = new IntUserSetting(_userSettings, "accessBridge.collections.size.limit", _accessBridge.CollectionSizeLimit);
-      _collectionSizeLimit.Sync += (sender, args) => {
+      _collectionSizeLimitSetting = new IntUserSetting(_userSettings, "accessBridge.collections.size.limit", _accessBridge.CollectionSizeLimit);
+      _collectionSizeLimitSetting.Sync += (sender, args) => {
         _accessBridge.CollectionSizeLimit = args.Value;
       };
-      _textLineCountLimit = new IntUserSetting(_userSettings, "accessBridge.text.lineCount.limit", _accessBridge.TextLineCountLimit);
-      _textLineCountLimit.Sync += (sender, args) => {
+      _textLineCountLimitSetting = new IntUserSetting(_userSettings, "accessBridge.text.lineCount.limit", _accessBridge.TextLineCountLimit);
+      _textLineCountLimitSetting.Sync += (sender, args) => {
         _accessBridge.TextLineCountLimit = args.Value;
       };
-      _textLineLengthLimit = new IntUserSetting(_userSettings, "accessBridge.text.lineLength.limit", _accessBridge.TextLineLengthLimit);
-      _textLineLengthLimit.Sync += (sender, args) => {
+      _textLineLengthLimitSetting = new IntUserSetting(_userSettings, "accessBridge.text.lineLength.limit", _accessBridge.TextLineLengthLimit);
+      _textLineLengthLimitSetting.Sync += (sender, args) => {
         _accessBridge.TextLineLengthLimit = args.Value;
       };
     }
@@ -200,7 +201,7 @@ namespace AccessBridgeExplorer {
     }
 
     public PropertyOptions PropertyOptions {
-      get { return _propertyOptions.Value; }
+      get { return _propertyOptionsSetting.Value; }
     }
 
     public IExplorerFormNavigation Navigation {
@@ -208,7 +209,7 @@ namespace AccessBridgeExplorer {
     }
 
     public OverlayDisplayType OverlayDisplayType {
-      set { _overlayDisplayType.Value = value; }
+      set { _overlayDisplayTypeSetting.Value = value; }
     }
 
     public void Initialize() {
@@ -246,7 +247,7 @@ namespace AccessBridgeExplorer {
 
       LogMessage("Initializing Java Access Bridge and enumerating active Java application windows.");
       _accessBridge.Initilized += (sender, args) => {
-        EnableAutoDetect(_autoDetectApplicationsEnabled.Value);
+        EnableAutoDetect(_autoDetectApplicationsEnabledSetting.Value);
         CreateEventMenuItems();
         CreatePropertyOptionsMenuItems();
         CreateLimitCollectionSizesMenuItems();
@@ -283,10 +284,10 @@ namespace AccessBridgeExplorer {
     }
 
     private void UpdateOverlayActivationMenuItems() {
-      _view.ActivateOverlayOnTreeSelectionMenu.Checked = (_overlayActivation.Value & OverlayActivation.OnTreeSelection) != 0;
-      _view.ActivateOverlayOnComponentSelectionMenu.Checked = (_overlayActivation.Value & OverlayActivation.OnComponentSelection) != 0;
-      _view.ActivateOverlayOnFocusMenu.Checked = (_overlayActivation.Value & OverlayActivation.OnFocusGained) != 0;
-      _view.ActivateOverlayOnActiveDescendantMenu.Checked = (_overlayActivation.Value & OverlayActivation.OnActiveDescendantChanged) != 0;
+      _view.ActivateOverlayOnTreeSelectionMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnTreeSelection) != 0;
+      _view.ActivateOverlayOnComponentSelectionMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnComponentSelection) != 0;
+      _view.ActivateOverlayOnFocusMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnFocusGained) != 0;
+      _view.ActivateOverlayOnActiveDescendantMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnActiveDescendantChanged) != 0;
 
       // Update overlay button (which applies only to tree activation).
       var button = _view.EnableOverlayButton;
@@ -475,9 +476,9 @@ namespace AccessBridgeExplorer {
       // Create click handler
       item.CheckedChanged += (sender, args) => {
         if (item.Checked) {
-          _propertyOptions.Value |= value;
+          _propertyOptionsSetting.Value |= value;
         } else {
-          _propertyOptions.Value &= ~value;
+          _propertyOptionsSetting.Value &= ~value;
         }
       };
     }
@@ -488,9 +489,9 @@ namespace AccessBridgeExplorer {
         char mnemonicCharacter = (char)('A' + index);
         var text = string.Format("&{0} - {1} elements", mnemonicCharacter, size);
         CreateLimitSizeItem(_view.LimitCollectionSizesMenu, text, size,
-          _collectionSizeLimit.Value,
+          _collectionSizeLimitSetting.Value,
           x => {
-            _collectionSizeLimit.Value = x;
+            _collectionSizeLimitSetting.Value = x;
           });
         index++;
       }
@@ -502,9 +503,9 @@ namespace AccessBridgeExplorer {
         char mnemonicCharacter = (char)('A' + index);
         var text = string.Format("&{0} - {1} lines", mnemonicCharacter, size);
         CreateLimitSizeItem(_view.LimitTextLineCountMenu, text, size,
-          _textLineCountLimit.Value,
+          _textLineCountLimitSetting.Value,
           x => {
-            _textLineCountLimit.Value = x;
+            _textLineCountLimitSetting.Value = x;
           });
         index++;
       }
@@ -516,9 +517,9 @@ namespace AccessBridgeExplorer {
         char mnemonicCharacter = (char)('A' + index);
         var text = string.Format("&{0} - {1} characters", mnemonicCharacter, size);
         CreateLimitSizeItem(_view.LimitTextLineLengthsMenu, text, size,
-          _textLineLengthLimit.Value,
+          _textLineLengthLimitSetting.Value,
           x => {
-            _textLineLengthLimit.Value = x;
+            _textLineLengthLimitSetting.Value = x;
           });
         index++;
       }
@@ -967,16 +968,16 @@ namespace AccessBridgeExplorer {
         return;
       }
 
-      if ((_overlayActivation.Value & activation) == 0) {
+      if ((_overlayActivationSetting.Value & activation) == 0) {
         return;
       }
 
       _overlayWindowRectangle = node.GetScreenRectangle();
-      if (_overlayDisplayType.Value == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayType.Value == OverlayDisplayType.OverlayOnly) {
+      if (_overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayOnly) {
         ShowOverlayWindow();
       }
 
-      if (_overlayDisplayType.Value == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayType.Value == OverlayDisplayType.TooltipOnly) {
+      if (_overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayTypeSetting.Value == OverlayDisplayType.TooltipOnly) {
         ShowTooltipWindow(node);
       }
     }
@@ -1194,26 +1195,26 @@ namespace AccessBridgeExplorer {
     }
 
     public void EnableOverlayActivationFlag(OverlayActivation value, bool enabled) {
-      _overlayActivation.Value = CombineActivationFlags(_overlayActivation.Value, value, enabled);
+      _overlayActivationSetting.Value = CombineActivationFlags(_overlayActivationSetting.Value, value, enabled);
     }
 
     private void UpdateOverlayActivation(OverlayActivation previous) {
       _hideOverlayOnFocusLost.Cancel();
 
       // Update UI
-      if (_overlayActivation.Value == OverlayActivation.None) {
+      if (_overlayActivationSetting.Value == OverlayActivation.None) {
         HideOverlayWindow();
         HideToolTip();
       }
 
       // Update event handlers
       if (_accessBridge.IsLoaded) {
-        if (FlagActivated(previous, _overlayActivation.Value, OverlayActivation.OnFocusGained | OverlayActivation.OnActiveDescendantChanged)) {
+        if (FlagActivated(previous, _overlayActivationSetting.Value, OverlayActivation.OnFocusGained | OverlayActivation.OnActiveDescendantChanged)) {
           _accessBridge.Events.FocusGained += AccessBridgeEvents_OverlayActivation_OnFocusGained;
           _accessBridge.Events.FocusLost += AccessBridgeEvents_OverlayActivation_OnFocusLost;
           _accessBridge.Events.JavaShutdown += AccessBridgeEvents_OverlayActivation_OnJavaShutdown;
           _accessBridge.Events.PropertyActiveDescendentChange += AccessBridgeEvents_OverlayActivation_OnActiveDescendantChanged;
-        } else if (FlagDeactivated(previous, _overlayActivation.Value, OverlayActivation.OnFocusGained | OverlayActivation.OnActiveDescendantChanged)) {
+        } else if (FlagDeactivated(previous, _overlayActivationSetting.Value, OverlayActivation.OnFocusGained | OverlayActivation.OnActiveDescendantChanged)) {
           _accessBridge.Events.FocusGained -= AccessBridgeEvents_OverlayActivation_OnFocusGained;
           _accessBridge.Events.FocusLost -= AccessBridgeEvents_OverlayActivation_OnFocusLost;
           _accessBridge.Events.JavaShutdown -= AccessBridgeEvents_OverlayActivation_OnJavaShutdown;
@@ -1245,7 +1246,7 @@ namespace AccessBridgeExplorer {
     }
 
     public void EnableAutoDetect(bool enabled) {
-      _autoDetectApplicationsEnabled.Value = enabled;
+      _autoDetectApplicationsEnabledSetting.Value = enabled;
     }
 
     /// <summary>

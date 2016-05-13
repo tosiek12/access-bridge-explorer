@@ -34,7 +34,7 @@ namespace AccessBridgeExplorer {
     private readonly WindowsHotKeyHandler _hotKeyHandler;
     private readonly ExplorerFormController _controller;
     private readonly PropertyListView _accessibleComponentPropertyListViewView;
-    private readonly UserSetting<bool> _automaticallyCheckForUpdate;
+    private readonly UserSetting<bool> _automaticallyCheckForUpdateSetting;
     private bool _capturing;
     private int _navigationVersion = int.MinValue;
     private bool _updateNotificationShown;
@@ -47,8 +47,8 @@ namespace AccessBridgeExplorer {
       _hotKeyHandler = new WindowsHotKeyHandler();
       _hotKeyHandler.KeyPressed += HotKeyHandler_KeyPressed;
 
-      _automaticallyCheckForUpdate = new BoolUserSetting(_userSettings, "update.autoCheck", true);
-      _automaticallyCheckForUpdate.Sync += (sender, args) => {
+      _automaticallyCheckForUpdateSetting = new BoolUserSetting(_userSettings, "update.autoCheck", true);
+      _automaticallyCheckForUpdateSetting.Sync += (sender, args) => {
         updateChecker.Enabled = args.Value;
         automaticallyCheckForUpdatesMenuItem.Checked = args.Value;
       };
@@ -156,7 +156,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void automaticallyCheckForUpdatesMenuItem_CheckedChanged(object sender, EventArgs e) {
-      _automaticallyCheckForUpdate.Value = automaticallyCheckForUpdatesMenuItem.Checked;
+      _automaticallyCheckForUpdateSetting.Value = automaticallyCheckForUpdatesMenuItem.Checked;
     }
 
     private void updateChecker_UpdateInfoAvailable(object sender, UpdateInfoArgs e) {
