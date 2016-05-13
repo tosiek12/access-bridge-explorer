@@ -59,24 +59,41 @@ namespace AccessBridgeExplorer {
       _userSettings.Loaded += UserSettings_OnLoaded;
       _userSettings.Error += UserSettings_OnError;
 
-      _overlayDisplayType = new EnumUserSetting<OverlayDisplayType>(_userSettings, "overlay.displayType", OverlayDisplayType.OverlayOnly);
-      _overlayDisplayType.Sync += (sender, args) => {
-        if (_disposed)
-          return;
-        _view.ShowTooltipAndOverlayMenuItem.Checked = (_overlayDisplayType.Value == OverlayDisplayType.OverlayAndTooltip);
-        _view.ShowTooltipOnlyMenuItem.Checked = (_overlayDisplayType.Value == OverlayDisplayType.TooltipOnly);
-        _view.ShowOverlayOnlyMenuItem.Checked = (_overlayDisplayType.Value == OverlayDisplayType.OverlayOnly);
-      };
-
-      _overlayActivation = new EnumUserSetting<OverlayActivation>(_userSettings, "overlay.activation", OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection);
-      _overlayActivation.Changed += (sender, args) => {
-        if (_disposed)
-          return;
-        UpdateOverlayActivation(args.PreviousValue);
-      };
-
+      _overlayDisplayType = new OverlayDisplayTypeSetting(this);
+      _overlayActivation = new OverlayActivationSetting(this);
       _propertyOptions = new PropertyOptionsSetting(this);
       _autoDetectApplicationsEnabled = new AutoDetectApplicationsSetting(this);
+    }
+
+    private class OverlayDisplayTypeSetting : EnumUserSetting<OverlayDisplayType> {
+      public OverlayDisplayTypeSetting(ExplorerFormController controller) :
+        base(controller._userSettings, "overlay.displayType", OverlayDisplayType.OverlayOnly) {
+        Sync += (sender, args) => {
+          if (controller._disposed)
+            return;
+          controller._view.ShowTooltipAndOverlayMenuItem.Checked = (args.Value == OverlayDisplayType.OverlayAndTooltip);
+          controller._view.ShowTooltipOnlyMenuItem.Checked = (args.Value == OverlayDisplayType.TooltipOnly);
+          controller._view.ShowOverlayOnlyMenuItem.Checked = (args.Value == OverlayDisplayType.OverlayOnly);
+        };
+      }
+    }
+
+    private class OverlayActivationSetting : EnumUserSetting<OverlayActivation> {
+      public OverlayActivationSetting(ExplorerFormController controller) :
+        base(controller._userSettings, "overlay.activation", OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection) {
+        Changed += (sender, args) => {
+          if (controller._disposed)
+            return;
+          controller.UpdateOverlayActivation(args.PreviousValue);
+        };
+
+        controller._accessBridge.Initilized += (sender, args) => {
+          if (controller._disposed)
+            return;
+
+          OnChanged(new ChangedEventArgs<OverlayActivation>(this, OverlayActivation.None, Value));
+        };
+      }
     }
 
     private class PropertyOptionsSetting : EnumUserSetting<PropertyOptions> {
@@ -102,7 +119,7 @@ namespace AccessBridgeExplorer {
         base(controller._userSettings, "accessibleComponent.displayProperties", DefaultPropertyOptions) {
         Changed += (sender, args) => {
           // TODO: Refresh accessible component property pane?
-          //if (_disposed)
+          //if (controller._disposed)
           //  return;
         };
       }
@@ -115,10 +132,16 @@ namespace AccessBridgeExplorer {
         base(controller._userSettings, "runningApplications.autoDetect", true) {
         _controller = controller;
         controller._accessBridge.Initilized += (sender, args) => {
+          if (controller._disposed)
+            return;
+
           OnSync(new SyncEventArgs<bool>(this, Value));
         };
 
         Sync += (sender, args) => {
+          if (controller._disposed)
+            return;
+
           if (controller._accessBridge.IsLoaded) {
             if (args.Value) {
               controller._accessBridge.Events.FocusGained += AccessBridgeEvents_OnFocusGained;
@@ -132,6 +155,9 @@ namespace AccessBridgeExplorer {
       }
 
       private void AccessBridgeEvents_OnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
+        if (_controller._disposed)
+          return;
+
         _controller.UiAction(() => {
           // Access the top level object as fast as possible to
           // ensure the application knows there is an active screen reader.
@@ -144,6 +170,9 @@ namespace AccessBridgeExplorer {
       }
 
       private void AccessBridgeEvents_JavaShutdown(int vmid) {
+        if (_controller._disposed)
+          return;
+
         _controller.PostRefreshTree();
       }
     }
@@ -202,7 +231,6 @@ namespace AccessBridgeExplorer {
         _view.EventsMenu.Enabled = true;
         _view.PropertiesMenu.Enabled = true;
         _view.LimitCollectionSizesMenu.Enabled = true;
-        UpdateOverlayActivation(OverlayActivation.None);
 
         LogMessage("Ready!");
       };
@@ -1319,7 +1347,7 @@ namespace AccessBridgeExplorer {
       ShowOverlayWindow();
     }
 
-#region Event Handlers
+    #region Event Handlers
     // ReSharper disable UnusedMember.Local
     // ReSharper disable UnusedParameter.Local
     private void EventsOnPropertyChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source, string property, string oldValue, string newValue) {
@@ -1519,7 +1547,7 @@ namespace AccessBridgeExplorer {
     }
     // ReSharper restore UnusedParameter.Local
     // ReSharper restore UnusedMember.Local
-#endregion
+    #endregion
 
     public class HwndCache {
       private readonly ConcurrentDictionary<IntPtr, AccessibleWindow> _cache = new ConcurrentDictionary<IntPtr, AccessibleWindow>();
