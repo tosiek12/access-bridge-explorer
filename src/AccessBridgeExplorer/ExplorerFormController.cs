@@ -59,20 +59,24 @@ namespace AccessBridgeExplorer {
     }
 
     public ExplorerFormController(IExplorerFormView explorerFormView, IUserSettings userSetting) {
+      _view = explorerFormView;
       _userSettings = userSetting;
+      _navigation = new ExplorerFormNavigation();
+      _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
+
       _userSettings.Loaded += UserSettings_OnLoaded;
       _userSettings.Error += UserSettings_OnError;
 
       _overlayDisplayType = _userSettings.CreateEnumUserSetting("overlay.displayType", OverlayDisplayType.OverlayOnly);
       _overlayDisplayType.Sync += (sender, args) => {
+        if (_disposed)
+          return;
+
         _view.ShowTooltipAndOverlayMenuItem.Checked = (_overlayDisplayType.Value == OverlayDisplayType.OverlayAndTooltip);
         _view.ShowTooltipOnlyMenuItem.Checked = (_overlayDisplayType.Value == OverlayDisplayType.TooltipOnly);
         _view.ShowOverlayOnlyMenuItem.Checked = (_overlayDisplayType.Value == OverlayDisplayType.OverlayOnly);
       };
 
-      _navigation = new ExplorerFormNavigation();
-      _view = explorerFormView;
-      _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
     }
 
     public PropertyOptions PropertyOptions {
