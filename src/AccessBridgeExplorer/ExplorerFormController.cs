@@ -393,15 +393,6 @@ namespace AccessBridgeExplorer {
       var privateMembers = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic;
       var name = evt.Name;
 
-      // Create menu item (fixed font for alignment)
-      var item = new ToolStripMenuItem();
-      item.Font = new Font("Lucida Console", _view.EventsMenu.Font.SizeInPoints, _view.EventsMenu.Font.Style, GraphicsUnit.Point);
-      char mnemonicCharacter = (char)(index < 10 ? '0' + index : 'A' + index - 10);
-      item.Text = string.Format("&{0} - {1}", mnemonicCharacter, name);
-      item.CheckOnClick = true;
-      item.CheckState = CheckState.Unchecked;
-      _view.EventsMenu.DropDownItems.Add(item);
-
       // Find event handler
       var handlerMethod = GetType().GetMethod("EventsOn" + evt.Name, privateMembers);
       if (handlerMethod == null) {
@@ -410,9 +401,10 @@ namespace AccessBridgeExplorer {
       }
       var handlerDelegate = Delegate.CreateDelegate(evt.EventHandlerType, this, handlerMethod);
 
-      // Create click handler
-      item.CheckedChanged += (sender, args) => {
-        if (item.Checked) {
+      // Create persistent user setting
+      var userSetting = new BoolUserSetting(_userSettings, "accessBridge.events." + name, false);
+      Action<bool> apply = value => {
+        if (value) {
           // Add handler
           evt.AddEventHandler(_accessBridge.Events, handlerDelegate);
         } else {
@@ -420,6 +412,26 @@ namespace AccessBridgeExplorer {
           evt.RemoveEventHandler(_accessBridge.Events, handlerDelegate);
         }
       };
+      userSetting.Changed += (sender, args) => {
+        apply(args.NewValue);
+      };
+      // Settings are already loaded, so we won't get a "Loaded" event, so
+      // we ensure the event handler is setup if needed.
+      if (userSetting.Value != userSetting.DefaultValue) {
+        apply(userSetting.Value);
+      }
+
+      // Create menu item (fixed font for alignment)
+      var item = new ToolStripMenuItem();
+      item.Font = new Font("Lucida Console", _view.EventsMenu.Font.SizeInPoints, _view.EventsMenu.Font.Style, GraphicsUnit.Point);
+      char mnemonicCharacter = (char)(index < 10 ? '0' + index : 'A' + index - 10);
+      item.Text = string.Format("&{0} - {1}", mnemonicCharacter, name);
+      item.CheckOnClick = true;
+      item.Checked = userSetting.Value;
+      item.CheckedChanged += (sender, args) => {
+        userSetting.Value = item.Checked;
+      };
+      _view.EventsMenu.DropDownItems.Add(item);
     }
 
     private void CreatePropertyOptionsMenuItems() {
