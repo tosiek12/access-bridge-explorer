@@ -44,6 +44,9 @@ namespace AccessBridgeExplorer {
     private readonly UserSetting<OverlayDisplayType> _overlayDisplayType;
     private readonly UserSetting<PropertyOptions> _propertyOptions;
     private readonly UserSetting<bool> _autoDetectApplicationsEnabled;
+    private readonly UserSetting<int> _collectionSizeLimit;
+    private readonly UserSetting<int> _textLineCountLimit;
+    private readonly UserSetting<int> _textLineLengthLimit;
     private Rectangle? _overlayWindowRectangle;
     private bool _disposed;
     private int _eventId;
@@ -56,13 +59,25 @@ namespace AccessBridgeExplorer {
       _navigation = new ExplorerFormNavigation();
       _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
 
-      _userSettings.Loaded += UserSettings_OnLoaded;
       _userSettings.Error += UserSettings_OnError;
 
       _overlayDisplayType = new OverlayDisplayTypeSetting(this);
       _overlayActivation = new OverlayActivationSetting(this);
       _propertyOptions = new PropertyOptionsSetting(this);
       _autoDetectApplicationsEnabled = new AutoDetectApplicationsSetting(this);
+
+      _collectionSizeLimit = new IntUserSetting(_userSettings, "accessBridge.collections.size.limit", _accessBridge.CollectionSizeLimit);
+      _collectionSizeLimit.Sync += (sender, args) => {
+        _accessBridge.CollectionSizeLimit = args.Value;
+      };
+      _textLineCountLimit = new IntUserSetting(_userSettings, "accessBridge.text.lineCount.limit", _accessBridge.TextLineCountLimit);
+      _textLineCountLimit.Sync += (sender, args) => {
+        _accessBridge.TextLineCountLimit = args.Value;
+      };
+      _textLineLengthLimit = new IntUserSetting(_userSettings, "accessBridge.text.lineLength.limit", _accessBridge.TextLineLengthLimit);
+      _textLineLengthLimit.Sync += (sender, args) => {
+        _accessBridge.TextLineLengthLimit = args.Value;
+      };
     }
 
     private class OverlayDisplayTypeSetting : EnumUserSetting<OverlayDisplayType> {
@@ -240,15 +255,6 @@ namespace AccessBridgeExplorer {
         // discover the list of JVMs by the time we enumerate all windows.
         _accessBridge.Initialize();
       });
-    }
-
-    private void UserSettings_OnLoaded(object sender, EventArgs eventArgs) {
-      if (_disposed)
-        return;
-
-      _accessBridge.CollectionSizeLimit = _userSettings.GetIntValue("collections.size.limit", _accessBridge.CollectionSizeLimit);
-      _accessBridge.TextLineCountLimit = _userSettings.GetIntValue("text.lineCount.limit", _accessBridge.TextLineCountLimit);
-      _accessBridge.TextLineLengthLimit = _userSettings.GetIntValue("text.lineLength.limit", _accessBridge.TextLineLengthLimit);
     }
 
     private void UserSettings_OnError(object sender, ErrorEventArgs errorEventArgs) {
@@ -453,9 +459,9 @@ namespace AccessBridgeExplorer {
         char mnemonicCharacter = (char)('A' + index);
         var text = string.Format("&{0} - {1} elements", mnemonicCharacter, size);
         CreateLimitSizeItem(_view.LimitCollectionSizesMenu, text, size,
-          _accessBridge.CollectionSizeLimit,
+          _collectionSizeLimit.Value,
           x => {
-            _accessBridge.CollectionSizeLimit = x;
+            _collectionSizeLimit.Value = x;
           });
         index++;
       }
@@ -467,9 +473,9 @@ namespace AccessBridgeExplorer {
         char mnemonicCharacter = (char)('A' + index);
         var text = string.Format("&{0} - {1} lines", mnemonicCharacter, size);
         CreateLimitSizeItem(_view.LimitTextLineCountMenu, text, size,
-          _accessBridge.TextLineCountLimit,
+          _textLineCountLimit.Value,
           x => {
-            _accessBridge.TextLineCountLimit = x;
+            _textLineCountLimit.Value = x;
           });
         index++;
       }
@@ -481,9 +487,9 @@ namespace AccessBridgeExplorer {
         char mnemonicCharacter = (char)('A' + index);
         var text = string.Format("&{0} - {1} characters", mnemonicCharacter, size);
         CreateLimitSizeItem(_view.LimitTextLineLengthsMenu, text, size,
-          _accessBridge.TextLineLengthLimit,
+          _textLineLengthLimit.Value,
           x => {
-            _accessBridge.TextLineLengthLimit = x;
+            _textLineLengthLimit.Value = x;
           });
         index++;
       }
@@ -516,7 +522,6 @@ namespace AccessBridgeExplorer {
         return;
 
       _userSettings.Error -= UserSettings_OnError;
-      _userSettings.Loaded -= UserSettings_OnLoaded;
 
       _hideOverlayOnFocusLost.Cancel();
       _delayedRefreshTree.Cancel();
