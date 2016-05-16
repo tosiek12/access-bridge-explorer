@@ -65,8 +65,10 @@ namespace AccessBridgeExplorer {
 
       _overlayEnabledSetting = new BoolUserSetting(userSetting, "overlay.enabled", true);
       _overlayEnabledSetting.Changed += (sender, args) => {
+        if (_disposed)
+          return;
         _view.EnableOverlayMenuItem.Checked = args.NewValue;
-        UpdateOverlayActivationMenuItems();
+        UpdateOverlayMenuItems();
       };
 
       _overlayActivationSetting = new OverlayActivationSetting(this);
@@ -94,9 +96,7 @@ namespace AccessBridgeExplorer {
         Sync += (sender, args) => {
           if (controller._disposed)
             return;
-          controller._view.ShowTooltipAndOverlayMenuItem.Checked = (args.Value == OverlayDisplayType.OverlayAndTooltip);
-          controller._view.ShowTooltipOnlyMenuItem.Checked = (args.Value == OverlayDisplayType.TooltipOnly);
-          controller._view.ShowOverlayOnlyMenuItem.Checked = (args.Value == OverlayDisplayType.OverlayOnly);
+          controller.UpdateOverlayMenuItems();
         };
       }
     }
@@ -256,7 +256,7 @@ namespace AccessBridgeExplorer {
         _view.EventsMenu.Enabled = true;
         _view.PropertiesMenu.Enabled = true;
         _view.LimitCollectionSizesMenu.Enabled = true;
-        UpdateOverlayActivationMenuItems();
+        UpdateOverlayMenuItems();
 
         LogMessage("Ready!");
       };
@@ -283,11 +283,26 @@ namespace AccessBridgeExplorer {
       LogErrorMessage(errorEventArgs.GetException());
     }
 
-    private void UpdateOverlayActivationMenuItems() {
+    private void UpdateOverlayMenuItems() {
+      bool enabled = _view.EnableOverlayMenuItem.Checked;
+
       _view.ActivateOverlayOnTreeSelectionMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnTreeSelection) != 0;
       _view.ActivateOverlayOnComponentSelectionMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnComponentSelection) != 0;
       _view.ActivateOverlayOnFocusMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnFocusGained) != 0;
       _view.ActivateOverlayOnActiveDescendantMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnActiveDescendantChanged) != 0;
+
+      _view.ShowTooltipAndOverlayMenuItem.Checked = (_overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayAndTooltip);
+      _view.ShowTooltipOnlyMenuItem.Checked = (_overlayDisplayTypeSetting.Value == OverlayDisplayType.TooltipOnly);
+      _view.ShowOverlayOnlyMenuItem.Checked = (_overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayOnly);
+
+      _view.ActivateOverlayOnTreeSelectionMenu.Enabled = enabled;
+      _view.ActivateOverlayOnComponentSelectionMenu.Enabled = enabled;
+      _view.ActivateOverlayOnFocusMenu.Enabled = enabled;
+      _view.ActivateOverlayOnActiveDescendantMenu.Enabled = enabled;
+
+      _view.ShowTooltipAndOverlayMenuItem.Enabled = enabled;
+      _view.ShowTooltipOnlyMenuItem.Enabled = enabled;
+      _view.ShowOverlayOnlyMenuItem.Enabled = enabled;
 
       // Update overlay button (which applies only to tree activation).
       var button = _view.EnableOverlayButton;
@@ -1222,7 +1237,7 @@ namespace AccessBridgeExplorer {
         }
       }
 
-      UpdateOverlayActivationMenuItems();
+      UpdateOverlayMenuItems();
     }
 
     private bool FlagActivated(OverlayActivation before, OverlayActivation after, OverlayActivation flag) {
