@@ -670,12 +670,12 @@ namespace WindowsAccessBridgeInterop {
                 var reader = new AccessibleTextReader(this, textInfo.charCount);
                 var lines = reader
                   .ReadFullLines(AccessBridge.TextLineLengthLimit)
-                  .Where(x => !x.Continuation)
+                  .Where(x => !x.IsContinuation)
                   .Take(AccessBridge.TextLineCountLimit);
                 foreach (var lineData in lines) {
                   var lineEndOffset = lineData.Offset + lineData.Text.Length - 1;
                   var name = string.Format("Line {0} [{1}, {2}]", lineData.Number + 1, lineData.Offset, lineEndOffset);
-                  var value = MakePrintable(lineData.Text) + (lineData.Incomplete ? "..." : "");
+                  var value = MakePrintable(lineData.Text) + (lineData.IsComplete ? "" : "...");
                   textGroup.AddProperty(name, value);
                   isEmpty = false;
                 }

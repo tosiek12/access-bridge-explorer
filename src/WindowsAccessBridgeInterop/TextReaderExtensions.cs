@@ -43,14 +43,38 @@ namespace WindowsAccessBridgeInterop {
       /// Specifies if this line is a continuation information from a previous
       /// line that was too long too fit into a single instance.
       /// </summary>
-      public bool Continuation { get; set; }
+      public bool IsContinuation { get; set; }
 
       /// <summary>
       /// Specifies if this line is too long to fit in a single instance.
-      /// The next entry will have the <see cref="Continuation"/> property set
+      /// The next entry will have the <see cref="IsContinuation"/> property set
       /// to <code>true</code>.
       /// </summary>
-      public bool Incomplete { get; set; }
+      public bool IsComplete { get; set; }
+    }
+
+    public class LineContents {
+      private readonly string _text;
+      private readonly bool _endOfLine;
+      private readonly bool _endOfFile;
+
+      public LineContents(string text, bool endOfLine, bool endOfFile) {
+        _text = text;
+        _endOfLine = endOfLine;
+        _endOfFile = endOfFile;
+      }
+
+      public string Text {
+        get { return _text; }
+      }
+
+      public bool EndOfLine {
+        get { return _endOfLine; }
+      }
+
+      public bool EndOfFile {
+        get { return _endOfFile; }
+      }
     }
 
     /// <summary>
@@ -70,27 +94,27 @@ namespace WindowsAccessBridgeInterop {
     public static IEnumerable<LineData> ReadFullLines(this TextReader reader, int maxLineLength) {
       var index = 0;
       var lineNumber = 0;
-      var continuation = false;
+      var isContinuation = false;
       while (true) {
         var lineOffset = index;
-        var lineText = reader.ReadFullLine(maxLineLength);
-        if (lineText == null)
+        var lineContents = reader.ReadFullLine(maxLineLength);
+        if (lineContents == null)
           yield break;
 
-        var complete = lineText[lineText.Length - 1] == '\n';
+        var isComplete = lineContents.EndOfFile || lineContents.EndOfLine;
         yield return new LineData {
           Offset = lineOffset,
           Number = lineNumber,
-          Text = lineText,
-          Continuation = continuation,
-          Incomplete = !complete
+          Text = lineContents.Text,
+          IsContinuation = isContinuation,
+          IsComplete = isComplete
         };
-        index += lineText.Length;
-        if (complete) {
-          continuation = false;
+        index += lineContents.Text.Length;
+        if (isComplete) {
+          isContinuation = false;
           lineNumber++;
         } else {
-          continuation = true;
+          isContinuation = true;
         }
       }
     }
@@ -101,7 +125,7 @@ namespace WindowsAccessBridgeInterop {
     /// character. Returns <code>null</code> if the end of the stream has been
     /// reached.
     /// </summary>
-    public static string ReadFullLine(this TextReader reader) {
+    public static LineContents ReadFullLine(this TextReader reader) {
       return ReadFullLine(reader, int.MaxValue);
     }
 
@@ -115,18 +139,29 @@ namespace WindowsAccessBridgeInterop {
     /// cref="ReadFullLine(System.IO.TextReader, int)"/> .
     /// Returns <code>null</code> if the end of the stream has been reached.
     /// </summary>. 
-    public static string ReadFullLine(this TextReader reader, int maxLength) {
+    public static LineContents ReadFullLine(this TextReader reader, int maxLength) {
+      if (maxLength == 0) {
+        return new LineContents("", false, false);
+      }
+
+      bool endOfFile = false;
+      bool endOfLine = false;
       var sb = new StringBuilder();
       while (sb.Length < maxLength) {
         var ch = reader.Read();
-        if (ch < 0)
+        if (ch < 0) {
+          endOfFile = true;
           break;
+        }
         sb.Append((char)ch);
-        if (ch == '\n')
+        if (ch == '\n') {
+          endOfLine = true;
           break;
+        }
       }
-      if (sb.Length > 0)
-        return sb.ToString();
+      if (sb.Length > 0) {
+        return new LineContents(sb.ToString(), endOfLine, endOfFile);
+      }
       return null;
     }
   }
