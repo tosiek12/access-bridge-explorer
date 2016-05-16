@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Text;
 using WindowsAccessBridgeInterop;
 using AccessBridgeExplorer.Utils;
 
@@ -69,10 +70,27 @@ namespace AccessBridgeExplorer {
     }
 
     public override string GetNodeSubItemAt(PropertyNode node, int index) {
-      return ValueToString(node);
+      return PropertyNodeValueToString(node);
     }
 
-    private static string ValueToString(PropertyNode propertyNode) {
+    public static string PropertyNodeValueToString(PropertyNode propertyNode) {
+      var text = ValueToStringImpl(propertyNode);
+      var sb = new StringBuilder();
+      foreach (var c in text) {
+        sb.Append(TranslateChar(c));
+      }
+      return sb.ToString();
+    }
+
+    private static string TranslateChar(char c) {
+      if (c == '\r') return "\\r";
+      if (c == '\n') return "\\n";
+      if (c == '\t') return "\\t";
+      if (char.IsControl(c)) return "*";
+      return c.ToString();
+    }
+
+    private static string ValueToStringImpl(PropertyNode propertyNode) {
       var value = propertyNode.Value;
       string valueText;
       if (value == null) {

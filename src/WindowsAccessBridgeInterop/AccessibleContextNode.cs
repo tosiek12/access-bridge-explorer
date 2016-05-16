@@ -968,6 +968,12 @@ namespace WindowsAccessBridgeInterop {
         // Limit string sizes to avoid making the tooltip too big
         const int stringMaxLength = 60;
         list.AddProperty("Role", LimitStringSize(info.role, stringMaxLength));
+        if ((options & PropertyOptions.AccessibleText) != 0) {
+          if (info.accessibleText != 0) {
+            var text = GetTextExtract();
+            list.AddProperty("Text", text);
+          }
+        }
         list.AddProperty("Name", LimitStringSize(info.name, stringMaxLength));
         list.AddProperty("Description", LimitStringSize(info.description, stringMaxLength));
         list.AddProperty("Name (JAWS algorithm)", LimitStringSize(GetVirtualAccessibleName(), stringMaxLength));
@@ -1014,6 +1020,16 @@ namespace WindowsAccessBridgeInterop {
         return "<Error>";
       }
       return sb.ToString();
+    }
+
+    private string GetTextExtract() {
+      var point = new Point(0, 0);
+      AccessibleTextInfo textInfo;
+      if (Failed(AccessBridge.Functions.GetAccessibleTextInfo(JvmId, _ac, out textInfo, point.X, point.Y))) {
+        return "<Error>";
+      }
+      AccessibleTextReader reader = new AccessibleTextReader(this, textInfo.charCount);
+      return reader.ReadLine();
     }
 
     protected static bool Failed(bool accessBridgeReturnValue) {

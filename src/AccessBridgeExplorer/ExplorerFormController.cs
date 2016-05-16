@@ -1373,7 +1373,7 @@ namespace AccessBridgeExplorer {
         foreach (var x in node.GetToolTipProperties(PropertyOptions)) {
           if (sb.Length > 0)
             sb.Append("\r\n");
-          sb.AppendFormat("{0}: {1}", x.Name, x.Value);
+          sb.AppendFormat("{0}: {1}", x.Name, PropertyListTreeViewModel.PropertyNodeValueToString(x));
         }
         _tooltipWindow.AutoSize = true;
         _tooltipWindow.Label.Text = string.Format("{0}", sb);
