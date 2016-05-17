@@ -98,6 +98,7 @@
     </Compile>
     <Compile Include="PropertyListTreeViewModel.cs" />
     <Compile Include="Utils\Settings\BoolUserSetting.cs" />
+    <Compile Include="Utils\Settings\EnumFlagsUserSettings.cs" />
     <Compile Include="Utils\Settings\EnumUserSetting.cs" />
     <Compile Include="Utils\Settings\IntUserSetting.cs" />
     <Compile Include="Utils\Settings\IUserSettings.cs" />

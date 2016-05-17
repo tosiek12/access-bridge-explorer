@@ -101,7 +101,7 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    private class OverlayActivationSetting : EnumUserSetting<OverlayActivation> {
+    private class OverlayActivationSetting : EnumFlagsUserSetting<OverlayActivation> {
       public OverlayActivationSetting(ExplorerFormController controller) :
         base(controller._userSettings, "overlay.activation", OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection) {
         Changed += (sender, args) => {
@@ -119,7 +119,7 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    private class PropertyOptionsSetting : EnumUserSetting<PropertyOptions> {
+    private class PropertyOptionsSetting : EnumFlagsUserSetting<PropertyOptions> {
       private const PropertyOptions DefaultPropertyOptions = PropertyOptions.AccessibleContextInfo |
         PropertyOptions.AccessibleIcons |
         PropertyOptions.AccessibleKeyBindings |
