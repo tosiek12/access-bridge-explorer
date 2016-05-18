@@ -40,7 +40,7 @@ namespace AccessBridgeExplorer {
     private readonly SingleDelayedTask _hideOverlayOnFocusLost = new SingleDelayedTask();
     private readonly HwndCache _windowCache = new HwndCache();
 
-    private readonly UserSetting<bool> _autoDetectApplicationsEnabledSetting;
+    private readonly AutoDetectApplicationsSetting _autoDetectApplicationsEnabledSetting;
     private readonly UserSetting<OverlayActivation> _overlayActivationSetting;
     private readonly UserSetting<OverlayDisplayType> _overlayDisplayTypeSetting;
     private readonly UserSetting<PropertyOptions> _propertyOptionsSetting;
@@ -50,6 +50,7 @@ namespace AccessBridgeExplorer {
     private readonly UserSetting<int> _textLineLengthLimitSetting;
 
     private Rectangle? _overlayWindowRectangle;
+    private AccessibleNode _overlayWindowNode;
     private bool _disposed;
     private int _eventId;
     private int _messageId;
@@ -68,6 +69,13 @@ namespace AccessBridgeExplorer {
         if (_disposed)
           return;
         _view.EnableOverlayMenuItem.Checked = args.NewValue;
+        if (!args.NewValue) {
+          HideOverlayWindow();
+          HideTooltipWindow();
+        } else {
+          ShowOverlayWindow();
+          ShowTooltipWindow();
+        }
         UpdateOverlayMenuItems();
       };
 
@@ -165,6 +173,7 @@ namespace AccessBridgeExplorer {
           if (controller._disposed)
             return;
 
+          controller._view.AutoDetectApplicationsMenuItem.Checked = args.Value;
           if (controller._accessBridge.IsLoaded) {
             if (args.Value) {
               controller._accessBridge.Events.FocusGained += AccessBridgeEvents_OnFocusGained;
@@ -284,7 +293,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void UpdateOverlayMenuItems() {
-      bool enabled = _view.EnableOverlayMenuItem.Checked;
+      bool enabled = _overlayEnabledSetting.Value;
 
       _view.ActivateOverlayOnTreeSelectionMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnTreeSelection) != 0;
       _view.ActivateOverlayOnComponentSelectionMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnComponentSelection) != 0;
@@ -304,9 +313,10 @@ namespace AccessBridgeExplorer {
       _view.ShowTooltipOnlyMenuItem.Enabled = enabled;
       _view.ShowOverlayOnlyMenuItem.Enabled = enabled;
 
+      _view.EnableOverlayMenuItem.Checked = enabled;
       // Update overlay button (which applies only to tree activation).
       var button = _view.EnableOverlayButton;
-      button.Checked = _overlayEnabledSetting.Value;
+      button.Checked = enabled;
       if (button.Checked) {
         button.ForeColor = Color.FromArgb(128, 255, 128);
       } else {
@@ -813,7 +823,7 @@ namespace AccessBridgeExplorer {
       }
       _view.StatusLabel.Text = @"Ready.";
       HideOverlayWindow();
-      HideToolTip();
+      HideTooltipWindow();
       _navigation.Clear();
     }
 
@@ -960,7 +970,7 @@ namespace AccessBridgeExplorer {
         _hideOverlayOnFocusLost.Post(TimeSpan.FromMilliseconds(100), () => {
           UiAction(() => {
             HideOverlayWindow();
-            HideToolTip();
+            HideTooltipWindow();
           });
         });
       });
@@ -987,14 +997,24 @@ namespace AccessBridgeExplorer {
         return;
       }
 
-      _overlayWindowRectangle = node.GetScreenRectangle();
+      SetOverlayNode(node);
       if (_overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayOnly) {
         ShowOverlayWindow();
       }
 
       if (_overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayTypeSetting.Value == OverlayDisplayType.TooltipOnly) {
-        ShowTooltipWindow(node);
+        ShowTooltipWindow();
       }
+    }
+
+    private void SetOverlayNode(AccessibleNode node) {
+      _overlayWindowRectangle = null;
+      _overlayWindowNode = null;
+
+      UiAction(() => {
+        _overlayWindowRectangle = node == null ? null : node.GetScreenRectangle();
+        _overlayWindowNode = node;
+      });
     }
 
     private void PostRefreshTree() {
@@ -1049,7 +1069,7 @@ namespace AccessBridgeExplorer {
       var node = _view.AccessibilityTree.SelectedNode;
       if (node != null) {
         _view.AccessibilityTree.SelectedNode = null;
-        _overlayWindowRectangle = null;
+        SetOverlayNode(null);
         ShowOverlayWindow();
         _view.AccessibleComponentPropertyListView.Clear();
       }
@@ -1071,15 +1091,15 @@ namespace AccessBridgeExplorer {
 
       var nodeModel = treeNode.Tag as AccessibleNodeModel;
       if (nodeModel == null) {
-        _overlayWindowRectangle = null;
+        SetOverlayNode(null);
         ShowOverlayWindow();
         _view.AccessibleComponentPropertyListView.Clear();
         return;
       }
 
-      _overlayWindowRectangle = null;
+      SetOverlayNode(null);
       UiAction(() => {
-        _overlayWindowRectangle = nodeModel.AccessibleNode.GetScreenRectangle();
+        SetOverlayNode(nodeModel.AccessibleNode);
         var propertyList = nodeModel.AccessibleNode.GetProperties(PropertyOptions);
         _view.AccessibleComponentPropertyListView.SetPropertyList(propertyList);
       });
@@ -1145,7 +1165,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void ComponentPropertyListView_AccessibleRectInfoSelected(object sender, AccessibleRectInfoSelectedEventArgs e) {
-      _overlayWindowRectangle = e.AccessibleRectInfo.Rectangle;
+      SetOverlayNode(e.AccessibleRectInfo.AccessibleNode);
       UpdateOverlayDisplay(e.AccessibleRectInfo.AccessibleNode, OverlayActivation.OnComponentSelection);
     }
 
@@ -1157,15 +1177,6 @@ namespace AccessBridgeExplorer {
       if (node.Level >= 2) {
         node.EnsureVisible();
       }
-    }
-
-    private void ShowTooltipWindow(AccessibleNode node) {
-      if (_overlayWindowRectangle == null) {
-        HideToolTip();
-        return;
-      }
-
-      ShowToolTip(_overlayWindowRectangle.Value.Location, node);
     }
 
     private void ShowOverlayWindow() {
@@ -1204,9 +1215,24 @@ namespace AccessBridgeExplorer {
       _overlayWindow.Size = rect.Size;
     }
 
+    private void ShowTooltipWindow() {
+      if (_overlayWindowRectangle == null) {
+        HideTooltipWindow();
+        return;
+      }
+
+      ShowToolTip(_overlayWindowRectangle.Value.Location, _overlayWindowNode);
+    }
+
     public void HideOverlayWindow() {
       _overlayWindow.Location = new Point(-10, -10);
       _overlayWindow.Size = new Size(0, 0);
+    }
+
+    public void HideTooltipWindow() {
+      _tooltipWindow.Label.Text = "";
+      _tooltipWindow.Location = new Point(-10, -10);
+      _tooltipWindow.Size = new Size(0, 0);
     }
 
     public void EnableOverlayActivationFlag(OverlayActivation value, bool enabled) {
@@ -1219,7 +1245,7 @@ namespace AccessBridgeExplorer {
       // Update UI
       if (_overlayActivationSetting.Value == OverlayActivation.None) {
         HideOverlayWindow();
-        HideToolTip();
+        HideTooltipWindow();
       }
 
       // Update event handlers
@@ -1281,7 +1307,7 @@ namespace AccessBridgeExplorer {
     }
 
     public void ShowOverlayForNodePath(NodePath path) {
-      _overlayWindowRectangle = UiCompute(() => path.LeafNode.GetScreenRectangle());
+      SetOverlayNode(path.LeafNode);
       ShowOverlayWindow();
     }
 
@@ -1386,15 +1412,9 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    public void HideToolTip() {
-      _tooltipWindow.Label.Text = "";
-      _tooltipWindow.Location = new Point(-10, -10);
-      _tooltipWindow.Size = new Size(0, 0);
-    }
-
     public void OnFocusLost() {
       HideOverlayWindow();
-      HideToolTip();
+      HideTooltipWindow();
     }
 
     public void OnFocusGained() {

@@ -246,7 +246,7 @@ namespace AccessBridgeExplorer {
     private void MainForm_MouseCaptureChanged(object sender, EventArgs e) {
       Cursor = Cursors.Default;
       _capturing = false;
-      _controller.HideToolTip();
+      _controller.HideTooltipWindow();
     }
 
     private void MainForm_MouseMove(object sender, MouseEventArgs e) {
@@ -257,7 +257,7 @@ namespace AccessBridgeExplorer {
         _controller.ShowOverlayForNodePath(nodePath);
       } else {
         _controller.HideOverlayWindow();
-        _controller.HideToolTip();
+        _controller.HideTooltipWindow();
       }
     }
 
@@ -432,6 +432,10 @@ namespace AccessBridgeExplorer {
 
     ToolStripMenuItem IExplorerFormView.LimitTextLineLengthsMenu {
       get { return _limitTextLineLengthsMenu; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.AutoDetectApplicationsMenuItem {
+      get { return autoDetectApplicationsMenuItem; }
     }
 
     ToolStripMenuItem IExplorerFormView.EnableOverlayMenuItem {

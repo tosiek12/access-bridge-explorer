@@ -41,6 +41,8 @@ namespace AccessBridgeExplorer {
     ToolStripMenuItem LimitTextLineCountMenu { get; }
     ToolStripMenuItem LimitTextLineLengthsMenu { get; }
 
+    ToolStripMenuItem AutoDetectApplicationsMenuItem { get; }
+
     ToolStripMenuItem EnableOverlayMenuItem { get; }
     ToolStripButton EnableOverlayButton { get; }
 
