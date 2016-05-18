@@ -13,6 +13,9 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace AccessBridgeExplorer.Utils.Settings {
   public class EnumUserSetting<T> : UserSettingBase<T> {
@@ -27,8 +30,8 @@ namespace AccessBridgeExplorer.Utils.Settings {
       }
       _key = key;
       _defaultValue = defaultValue;
-      _getter = (k, v) => (T)(object)UserSettings.GetIntValue(k, (int)(object)v);
-      _setter = (k, v) => UserSettings.SetIntValue(k, (int)(object)v);
+      _getter = (k, v) => FromStringValue(UserSettings.GetValue(k, ""));
+      _setter = (k, v) => UserSettings.SetValue(k, ToStringValue(v));
     }
 
     public override Func<string, T, T> Getter {
@@ -45,6 +48,26 @@ namespace AccessBridgeExplorer.Utils.Settings {
 
     public override T DefaultValue {
       get { return _defaultValue; }
+    }
+
+    private IEnumerable<KeyValuePair<T, string>> GetEnumValues() {
+      return typeof (T)
+        .GetFields(BindingFlags.Static | BindingFlags.Public)
+        .Select(x => new KeyValuePair<T, string>((T)x.GetValue(null), x.Name));
+    }
+
+    private T FromStringValue(string value) {
+      var enumValue = GetEnumValues().Where(x => x.Value == value).Select(x => x.Key).ToList();
+      if (enumValue.Any())
+        return enumValue.First();
+      return DefaultValue;
+    }
+
+    private string ToStringValue(T value) {
+      var enumValue = GetEnumValues().Where(x => Equals(x.Key, value)).Select(x => x.Value).ToList();
+      if (enumValue.Any())
+        return enumValue.First();
+      return "";
     }
   }
 }
