@@ -103,12 +103,14 @@
     <Compile Include="Utils\Settings\IntUserSetting.cs" />
     <Compile Include="Utils\Settings\IUserSettings.cs" />
     <Compile Include="Utils\Settings\ChangedEventArgs.cs" />
+    <Compile Include="Utils\Settings\SettingValueChangedEventArgs.cs" />
     <Compile Include="Utils\Settings\StringUserSetting.cs" />
     <Compile Include="Utils\Settings\SyncEventArgs.cs" />
     <Compile Include="Utils\Settings\UserSetting.cs" />
     <Compile Include="Utils\Settings\UserSettingBase.cs" />
     <Compile Include="Utils\Settings\UserSettingImpl.cs" />
     <Compile Include="Utils\Settings\UserSettings.cs" />
+    <Compile Include="Utils\Settings\UserSettingsExtensions.cs" />
     <Compile Include="Utils\TreeListViewNodeArgs.cs" />
     <Compile Include="Utils\TreeListView.cs" />
     <Compile Include="Utils\TreeListViewModel.cs" />

@@ -16,6 +16,13 @@ using System;
 
 namespace AccessBridgeExplorer.Utils.Settings {
   public abstract class UserSetting<T> {
+    /// <summary>
+    /// The unique key of the setting
+    /// </summary>
+    public abstract string Key { get; }
+    /// <summary>
+    /// The current value of the setting
+    /// </summary>
     public abstract T Value { get; set; }
 
     /// <summary>

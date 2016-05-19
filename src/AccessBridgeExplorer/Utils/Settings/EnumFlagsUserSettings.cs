@@ -41,6 +41,10 @@ namespace AccessBridgeExplorer.Utils.Settings {
     public override event EventHandler<ChangedEventArgs<T>> Changed;
     public override event EventHandler<SyncEventArgs<T>> Sync;
 
+    public override string Key {
+      get { return _key; }
+    }
+
     public override T Value {
       get {
         long result = 0;

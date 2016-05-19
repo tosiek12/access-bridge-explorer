@@ -15,7 +15,10 @@
 namespace AccessBridgeExplorer.Utils.Settings {
   public class IntUserSetting : UserSettingImpl<int> {
     public IntUserSetting(IUserSettings userSettings, string key, int defaultValue) :
-      base(userSettings, userSettings.GetIntValue, userSettings.SetIntValue, key, defaultValue) {
+      base(userSettings, key, defaultValue,
+        userSettings.GetIntValue,
+        userSettings.SetIntValue,
+        s => UserSettingsExtensions.ConvertIntValue(s, defaultValue)) {
     }
   }
 }

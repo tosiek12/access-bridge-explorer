@@ -16,20 +16,18 @@ using System;
 using System.IO;
 
 namespace AccessBridgeExplorer.Utils.Settings {
+  /// <summary>
+  /// Abstraction over a central dictionary of settings, with eventing model
+  /// for load/save/changes.
+  /// </summary>
   public interface IUserSettings {
     event EventHandler<ErrorEventArgs> Error;
     event EventHandler Loaded;
     event EventHandler Saving;
-
-    void SetValue(string key, string value);
-    void SetIntValue(string key, int value);
-    void SetBoolValue(string key, bool value);
+    event EventHandler<SettingValueChangedEventArgs> ValueChanged;
 
     string GetValue(string key, string defaultValue);
-    int GetIntValue(string key, int defaultValue);
-    bool GetBoolValue(string key, bool defaultValue);
-
-    void Remove(string key);
+    void SetValue(string key, string defaultValue, string value);
 
     void Load();
     void Save();

@@ -33,6 +33,7 @@ namespace AccessBridgeExplorer.Utils.Settings {
     public event EventHandler<ErrorEventArgs> Error;
     public event EventHandler Loaded;
     public event EventHandler Saving;
+    public event EventHandler<SettingValueChangedEventArgs> ValueChanged;
 
     public void Load() {
       Wrap("Error loading settings", () => {
@@ -70,33 +71,24 @@ namespace AccessBridgeExplorer.Utils.Settings {
       });
     }
 
-    public void SetValue(string key, string value) {
+    public void SetValue(string key, string defaultValue, string value) {
       CheckValidKey(key);
       CheckValidValue(value);
 
-      if (string.IsNullOrEmpty(value)) {
-        _values.Remove(key);
+      string previousValue;
+      _values.TryGetValue(key, out previousValue);
+      if (Equals(previousValue, value)) {
+        // No-op
         return;
       }
 
-      string previousValue;
-      if (_values.TryGetValue(key, out previousValue)) {
-        if (previousValue == value) {
-          // No-op
-          return;
-        }
+      if (Equals(defaultValue, value)) {
+        _values.Remove(key);
+      } else {
+        _values[key] = value;
       }
-
-      _values[key] = value;
+      OnValueChanged(new SettingValueChangedEventArgs(this, key, previousValue, value));
       Save();
-    }
-
-    public void SetIntValue(string key, int value) {
-      SetValue(key, value.ToString());
-    }
-
-    public void SetBoolValue(string key, bool value) {
-      SetValue(key, value ? "true" : "false");
     }
 
     public string GetValue(string key, string defaultValue) {
@@ -105,32 +97,6 @@ namespace AccessBridgeExplorer.Utils.Settings {
         return value;
       }
       return defaultValue;
-    }
-
-    public int GetIntValue(string key, int defaultValue) {
-      var value = GetValue(key, null);
-      if (value == null) {
-        return defaultValue;
-      }
-      int result;
-      if (!int.TryParse(value, out result)) {
-        return defaultValue;
-      }
-      return result;
-    }
-
-    public bool GetBoolValue(string key, bool defaultValue) {
-      var value = GetValue(key, null);
-      if (value == null) {
-        return defaultValue;
-      }
-
-      return value == "true" ? true : value == "false" ? false : defaultValue;
-    }
-
-    public void Remove(string key) {
-      _values.Remove(key);
-      Save();
     }
 
     private static void CheckValidValue(string value) {
@@ -222,6 +188,11 @@ namespace AccessBridgeExplorer.Utils.Settings {
     protected virtual void OnSaving() {
       var handler = Saving;
       if (handler != null) handler(this, EventArgs.Empty);
+    }
+
+    protected virtual void OnValueChanged(SettingValueChangedEventArgs e) {
+      var handler = ValueChanged;
+      if (handler != null) handler(this, e);
     }
   }
 }

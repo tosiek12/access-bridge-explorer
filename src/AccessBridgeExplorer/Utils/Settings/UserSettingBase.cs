@@ -24,6 +24,12 @@ namespace AccessBridgeExplorer.Utils.Settings {
         OnLoaded();
         OnSync(new SyncEventArgs<T>(this, Value));
       };
+      _userSettings.ValueChanged += (sender, args) => {
+        if (Equals(Key, args.Key)) {
+          OnChanged(new ChangedEventArgs<T>(this, ConvertValue(args.PreviousValue), ConvertValue(args.NewValue)));
+          OnSync(new SyncEventArgs<T>(this, Value));
+        }
+      };
     }
 
     public override event EventHandler<SyncEventArgs<T>> Sync;
@@ -34,30 +40,17 @@ namespace AccessBridgeExplorer.Utils.Settings {
       get { return _userSettings; }
     }
 
-    public abstract string Key { get; }
-
     public abstract T DefaultValue { get; }
+
+    public abstract T ConvertValue(string value);
 
     public abstract Func<string, T, T> Getter { get; }
 
-    public abstract Action<string, T> Setter { get; }
+    public abstract Action<string, T, T> Setter { get; }
 
     public override T Value {
       get { return Getter(Key, DefaultValue); }
-      set {
-        var oldValue = Value;
-        if (Equals(value, oldValue)) {
-          return;
-        }
-
-        if (Equals(value, DefaultValue)) {
-          _userSettings.Remove(Key);
-        } else {
-          Setter(Key, value);
-        }
-        OnChanged(new ChangedEventArgs<T>(this, oldValue, value));
-        OnSync(new SyncEventArgs<T>(this, value));
-      }
+      set { Setter(Key, DefaultValue, value); }
     }
 
     protected virtual void OnChanged(ChangedEventArgs<T> e) {

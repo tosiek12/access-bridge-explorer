@@ -17,23 +17,32 @@ using System;
 namespace AccessBridgeExplorer.Utils.Settings {
   public class UserSettingImpl<T> : UserSettingBase<T> {
     private readonly Func<string, T, T> _getter;
-    private readonly Action<string, T> _setter;
+    private readonly Action<string, T, T> _setter;
+    private readonly Func<string, T> _convertValue;
     private readonly string _key;
     private readonly T _defaultValue;
 
-    public UserSettingImpl(IUserSettings userSettings, Func<string, T, T> getter, Action<string, T> setter, string key, T defaultValue) :
+    public UserSettingImpl(IUserSettings userSettings, string key, T defaultValue,
+      Func<string, T, T> getter,
+      Action<string, T, T> setter,
+      Func<string, T> convertValue) :
       base(userSettings) {
       _getter = getter;
       _setter = setter;
+      _convertValue = convertValue;
       _key = key;
       _defaultValue = defaultValue;
+    }
+
+    public override T ConvertValue(string value) {
+      return _convertValue(value);
     }
 
     public override Func<string, T, T> Getter {
       get { return _getter; }
     }
 
-    public override Action<string, T> Setter {
+    public override Action<string, T, T> Setter {
       get { return _setter; }
     }
 

@@ -22,7 +22,7 @@ namespace AccessBridgeExplorer.Utils.Settings {
     private readonly string _key;
     private readonly T _defaultValue;
     private readonly Func<string, T, T> _getter;
-    private readonly Action<string, T> _setter;
+    private readonly Action<string, T, T> _setter;
 
     public EnumUserSetting(IUserSettings userSettings, string key, T defaultValue) : base(userSettings) {
       if (!typeof(T).IsEnum) {
@@ -30,15 +30,19 @@ namespace AccessBridgeExplorer.Utils.Settings {
       }
       _key = key;
       _defaultValue = defaultValue;
-      _getter = (k, v) => FromStringValue(UserSettings.GetValue(k, ""));
-      _setter = (k, v) => UserSettings.SetValue(k, ToStringValue(v));
+      _getter = (k, d) => FromStringValue(UserSettings.GetValue(k, ""));
+      _setter = (k, d, v) => UserSettings.SetValue(k, ToStringValue(d), ToStringValue(v));
+    }
+
+    public override T ConvertValue(string value) {
+      return FromStringValue(value);
     }
 
     public override Func<string, T, T> Getter {
       get { return _getter; }
     }
 
-    public override Action<string, T> Setter {
+    public override Action<string, T, T> Setter {
       get { return _setter; }
     }
 

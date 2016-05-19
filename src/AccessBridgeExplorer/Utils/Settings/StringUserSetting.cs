@@ -15,7 +15,10 @@
 namespace AccessBridgeExplorer.Utils.Settings {
   public class StringUserSetting : UserSettingImpl<string> {
     public StringUserSetting(IUserSettings userSettings, string key, string defaultValue) :
-      base(userSettings, userSettings.GetValue, userSettings.SetValue, key, defaultValue) {
+      base(userSettings, key, defaultValue,
+        userSettings.GetValue,
+        userSettings.SetValue,
+        s => s) {
     }
   }
 }
