@@ -18,24 +18,24 @@ namespace AccessBridgeExplorer.Utils.Settings {
   public class UserSettingImpl<T> : UserSettingBase<T> {
     private readonly Func<string, T, T> _getter;
     private readonly Action<string, T, T> _setter;
-    private readonly Func<string, T> _convertValue;
+    private readonly Func<string, T> _stringConverter;
     private readonly string _key;
     private readonly T _defaultValue;
 
     public UserSettingImpl(IUserSettings userSettings, string key, T defaultValue,
       Func<string, T, T> getter,
       Action<string, T, T> setter,
-      Func<string, T> convertValue) :
+      Func<string, T> stringConverter) :
       base(userSettings) {
       _getter = getter;
       _setter = setter;
-      _convertValue = convertValue;
+      _stringConverter = stringConverter;
       _key = key;
       _defaultValue = defaultValue;
     }
 
-    public override T ConvertValue(string value) {
-      return _convertValue(value);
+    public override T ConvertString(string value) {
+      return _stringConverter(value);
     }
 
     public override Func<string, T, T> Getter {

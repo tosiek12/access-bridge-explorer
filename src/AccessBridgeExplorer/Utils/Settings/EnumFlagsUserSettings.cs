@@ -17,6 +17,10 @@ using System.Collections.Generic;
 using System.Reflection;
 
 namespace AccessBridgeExplorer.Utils.Settings {
+  /// <summary>
+  /// A user setting whose value is a enum that has the <see cref="FlagsAttribute"/>.
+  /// Each flag is stored as a boolean sub-settings.
+  /// </summary>
   public class EnumFlagsUserSetting<T> : UserSetting<T> {
     private readonly IUserSettings _userSettings;
     private readonly string _key;
@@ -66,33 +70,28 @@ namespace AccessBridgeExplorer.Utils.Settings {
           bool isSet = (flags & ToLong(x.Key)) != 0;
           x.Value.Value = isSet;
         }
-
-        OnChanged(new ChangedEventArgs<T>(this, previous, value));
-        OnSync(new SyncEventArgs<T>(this, value));
       }
     }
 
     private void CreateUserSettings() {
-      int index = 0;
       foreach (var field in typeof(T).GetFields(BindingFlags.Static | BindingFlags.Public)) {
-        CreateUserSetting(field, index);
-        index++;
+        CreateUserSetting(field);
       }
     }
 
-    private void CreateUserSetting(FieldInfo field, int index) {
-      var name = field.Name;
-      T value = (T)field.GetValue(null);
-      var setting = new BoolUserSetting(_userSettings, _key + "." + name, (ToLong(_defaultValue) & ToLong(value)) != 0);
-      _settings.Add(value, setting);
-    }
+    private void CreateUserSetting(FieldInfo field) {
+      var key = _key + "." + field.Name;
+      T flagValue = (T)field.GetValue(null);
+      var setting = new BoolUserSetting(_userSettings, key, (ToLong(_defaultValue) & ToLong(flagValue)) != 0);
+      _settings.Add(flagValue, setting);
 
-    private long ToLong(T value) {
-      return Convert.ToInt64(value);
-    }
-
-    private static T FromLong(long result) {
-      return (T)Enum.ToObject(typeof(T), result);
+      _userSettings.ValueChanged += (sender, args) => {
+        if (Equals(args.Key, key)) {
+          var previousValue = FromLong(ToLong(Value) ^ ToLong(flagValue));
+          OnChanged(new ChangedEventArgs<T>(this, previousValue, Value));
+          OnSync(new SyncEventArgs<T>(this, Value));
+        }
+      };
     }
 
     protected virtual void OnChanged(ChangedEventArgs<T> e) {
@@ -108,6 +107,14 @@ namespace AccessBridgeExplorer.Utils.Settings {
     protected virtual void OnSync(SyncEventArgs<T> e) {
       var handler = Sync;
       if (handler != null) handler(this, e);
+    }
+
+    private static long ToLong(T value) {
+      return Convert.ToInt64(value);
+    }
+
+    private static T FromLong(long result) {
+      return (T)Enum.ToObject(typeof(T), result);
     }
   }
 }

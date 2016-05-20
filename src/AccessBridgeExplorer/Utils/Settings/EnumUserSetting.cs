@@ -34,7 +34,7 @@ namespace AccessBridgeExplorer.Utils.Settings {
       _setter = (k, d, v) => UserSettings.SetValue(k, ToStringValue(d), ToStringValue(v));
     }
 
-    public override T ConvertValue(string value) {
+    public override T ConvertString(string value) {
       return FromStringValue(value);
     }
 

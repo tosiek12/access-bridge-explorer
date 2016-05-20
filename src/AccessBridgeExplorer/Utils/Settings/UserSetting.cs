@@ -15,6 +15,9 @@
 using System;
 
 namespace AccessBridgeExplorer.Utils.Settings {
+  /// <summary>
+  /// Abstraction over a user setting with a unique key and a strongly typed value.
+  /// </summary>
   public abstract class UserSetting<T> {
     /// <summary>
     /// The unique key of the setting

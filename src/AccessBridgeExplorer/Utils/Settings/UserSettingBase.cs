@@ -26,7 +26,7 @@ namespace AccessBridgeExplorer.Utils.Settings {
       };
       _userSettings.ValueChanged += (sender, args) => {
         if (Equals(Key, args.Key)) {
-          OnChanged(new ChangedEventArgs<T>(this, ConvertValue(args.PreviousValue), ConvertValue(args.NewValue)));
+          OnChanged(new ChangedEventArgs<T>(this, ConvertString(args.PreviousValue), ConvertString(args.NewValue)));
           OnSync(new SyncEventArgs<T>(this, Value));
         }
       };
@@ -42,7 +42,7 @@ namespace AccessBridgeExplorer.Utils.Settings {
 
     public abstract T DefaultValue { get; }
 
-    public abstract T ConvertValue(string value);
+    public abstract T ConvertString(string value);
 
     public abstract Func<string, T, T> Getter { get; }
 

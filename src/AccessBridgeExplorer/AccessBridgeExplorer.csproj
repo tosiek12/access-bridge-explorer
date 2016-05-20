@@ -111,6 +111,8 @@
     <Compile Include="Utils\Settings\UserSettingImpl.cs" />
     <Compile Include="Utils\Settings\UserSettings.cs" />
     <Compile Include="Utils\Settings\UserSettingsExtensions.cs" />
+    <Compile Include="Utils\Settings\WeakDelegateList.cs" />
+    <Compile Include="Utils\Settings\WeakEventHandlers.cs" />
     <Compile Include="Utils\TreeListViewNodeArgs.cs" />
     <Compile Include="Utils\TreeListView.cs" />
     <Compile Include="Utils\TreeListViewModel.cs" />
