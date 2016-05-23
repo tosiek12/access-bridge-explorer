@@ -31,5 +31,6 @@ namespace AccessBridgeExplorer.Utils.Settings {
 
     void Load();
     void Save();
+    void Clear();
   }
 }

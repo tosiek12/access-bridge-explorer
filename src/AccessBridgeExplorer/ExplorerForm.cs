@@ -368,6 +368,26 @@ namespace AccessBridgeExplorer {
       }
     }
 
+    private void resetAllOptionsMenuItem_Click(object sender, EventArgs e) {
+      var result = MessageBox.Show(this,
+        "Are you sure you want to reset all options to their default values?\r\n\r\n(A Restart will be required)",
+        "Reset all options",
+        MessageBoxButtons.YesNo,
+        MessageBoxIcon.Question,
+        MessageBoxDefaultButton.Button2);
+      if (result == DialogResult.No) {
+        return;
+      }
+
+      _userSettings.Clear();
+
+      MessageBox.Show(this,
+        "Please restart the application for changes to take effect",
+        "Reset all options",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Information);
+    }
+
     #region IExplorerFormView
 
     string IExplorerFormView.Caption {

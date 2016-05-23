@@ -90,6 +90,15 @@ namespace AccessBridgeExplorer.Utils.Settings {
       });
     }
 
+    public void Clear() {
+      Wrap("Error deleting options file", () => {
+        var path = GetFilePath();
+        if (File.Exists(path)) {
+          File.Delete(path);
+        }
+      });
+    }
+
     public void SetValue(string key, string defaultValue, string value) {
       CheckValidKey(key);
       CheckValidValue(value);

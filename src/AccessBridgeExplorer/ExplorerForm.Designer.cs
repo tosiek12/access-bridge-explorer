@@ -57,6 +57,8 @@ namespace AccessBridgeExplorer {
       this._limitTextLineLengthsMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.separator5 = new System.Windows.Forms.ToolStripSeparator();
       this.componentOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.enableOverlayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
       this.activateOverlayOnTreeSelectionMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.activateOverlayOnComponentSelectionMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.activateOverlayOnFocusMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -118,8 +120,8 @@ namespace AccessBridgeExplorer {
       this.clearEventsButton = new System.Windows.Forms.ToolStripButton();
       this.notificationPanel = new AccessBridgeExplorer.NotificationPanel();
       this.updateChecker = new AccessBridgeExplorer.UpdateChecker(this.components);
-      this.enableOverlayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+      this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
+      this.resetAllOptionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
       this.mainToolStrip.SuspendLayout();
@@ -235,7 +237,9 @@ namespace AccessBridgeExplorer {
             this._limitTextLineLengthsMenu,
             this.separator5,
             this.componentOverlayToolStripMenuItem,
-            this.autoDetectApplicationsMenuItem});
+            this.autoDetectApplicationsMenuItem,
+            this.toolStripMenuItem5,
+            this.resetAllOptionsMenuItem});
       this.optionsMenu.Name = "optionsMenu";
       this.optionsMenu.Size = new System.Drawing.Size(61, 20);
       this.optionsMenu.Text = "&Options";
@@ -298,6 +302,18 @@ namespace AccessBridgeExplorer {
       this.componentOverlayToolStripMenuItem.Name = "componentOverlayToolStripMenuItem";
       this.componentOverlayToolStripMenuItem.Size = new System.Drawing.Size(250, 22);
       this.componentOverlayToolStripMenuItem.Text = "Component Overlay";
+      // 
+      // enableOverlayMenuItem
+      // 
+      this.enableOverlayMenuItem.CheckOnClick = true;
+      this.enableOverlayMenuItem.Name = "enableOverlayMenuItem";
+      this.enableOverlayMenuItem.Size = new System.Drawing.Size(275, 22);
+      this.enableOverlayMenuItem.Text = "Enable";
+      // 
+      // toolStripMenuItem4
+      // 
+      this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+      this.toolStripMenuItem4.Size = new System.Drawing.Size(272, 6);
       // 
       // activateOverlayOnTreeSelectionMenuItem
       // 
@@ -427,7 +443,7 @@ namespace AccessBridgeExplorer {
       this.aboutMenuItem.Text = "&About";
       this.aboutMenuItem.Click += new System.EventHandler(this.aboutMenuItem_Click);
       // 
-      // activateOverlayOnTreeSelectionButton
+      // _enableOverlayButton
       // 
       this._enableOverlayButton.BackColor = System.Drawing.SystemColors.ButtonFace;
       this._enableOverlayButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
@@ -871,17 +887,17 @@ namespace AccessBridgeExplorer {
       this.updateChecker.UpdateInfoAvailable += new System.EventHandler<AccessBridgeExplorer.UpdateInfoArgs>(this.updateChecker_UpdateInfoAvailable);
       this.updateChecker.UpdateInfoError += new System.EventHandler<System.IO.ErrorEventArgs>(this.updateChecker_UpdateInfoError);
       // 
-      // enabledOverlayMenuItem
+      // toolStripMenuItem5
       // 
-      this.enableOverlayMenuItem.CheckOnClick = true;
-      this.enableOverlayMenuItem.Name = "enableOverlayMenuItem";
-      this.enableOverlayMenuItem.Size = new System.Drawing.Size(275, 22);
-      this.enableOverlayMenuItem.Text = "Enable";
+      this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+      this.toolStripMenuItem5.Size = new System.Drawing.Size(247, 6);
       // 
-      // toolStripMenuItem4
+      // resetAllOptionsMenuItem
       // 
-      this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-      this.toolStripMenuItem4.Size = new System.Drawing.Size(272, 6);
+      this.resetAllOptionsMenuItem.Name = "resetAllOptionsMenuItem";
+      this.resetAllOptionsMenuItem.Size = new System.Drawing.Size(250, 22);
+      this.resetAllOptionsMenuItem.Text = "Reset all options";
+      this.resetAllOptionsMenuItem.Click += new System.EventHandler(this.resetAllOptionsMenuItem_Click);
       // 
       // ExplorerForm
       // 
@@ -1022,6 +1038,8 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripMenuItem activateOverlayOnActiveDescendantMenuItem;
     private System.Windows.Forms.ToolStripMenuItem enableOverlayMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
+    private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
+    private System.Windows.Forms.ToolStripMenuItem resetAllOptionsMenuItem;
   }
 }
 
