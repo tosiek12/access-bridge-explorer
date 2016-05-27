@@ -22,10 +22,6 @@ namespace AccessBridgeExplorer.Utils.Settings {
   public class UserSettings : IUserSettings {
     private readonly string _directoryName;
     private readonly Dictionary<string, string> _values = new Dictionary<string, string>();
-    private readonly WeakEventHandlers _savingHandlers = new WeakEventHandlers();
-    private readonly WeakEventHandlers<ErrorEventArgs> _errorHandlers = new WeakEventHandlers<ErrorEventArgs>();
-    private readonly WeakEventHandlers _loadedHandlers = new WeakEventHandlers();
-    private readonly WeakEventHandlers<SettingValueChangedEventArgs> _valueChangeHandlers = new WeakEventHandlers<SettingValueChangedEventArgs>();
 
     public UserSettings(string directoryName) {
       if (string.IsNullOrWhiteSpace(directoryName)) {
@@ -34,25 +30,10 @@ namespace AccessBridgeExplorer.Utils.Settings {
       _directoryName = directoryName;
     }
 
-    public event EventHandler<ErrorEventArgs> Error {
-      add { _errorHandlers.Add(value); }
-      remove { _errorHandlers.Remove(value); }
-    }
-
-    public event EventHandler Loaded {
-      add { _loadedHandlers.Add(value); }
-      remove { _loadedHandlers.Remove(value); }
-    }
-
-    public event EventHandler Saving {
-      add { _savingHandlers.Add(value); }
-      remove { _savingHandlers.Remove(value); }
-    }
-
-    public event EventHandler<SettingValueChangedEventArgs> ValueChanged {
-      add { _valueChangeHandlers.Add(value); }
-      remove { _valueChangeHandlers.Remove(value); }
-    }
+    public event EventHandler<ErrorEventArgs> Error;
+    public event EventHandler Loaded;
+    public event EventHandler Saving;
+    public event EventHandler<SettingValueChangedEventArgs> ValueChanged;
 
     public void Load() {
       Wrap("Error loading settings", () => {
@@ -207,19 +188,23 @@ namespace AccessBridgeExplorer.Utils.Settings {
     }
 
     protected virtual void OnError(ErrorEventArgs e) {
-      _errorHandlers.ForEach(x => x(this, e));
+      var handler = Error;
+      if (handler != null) handler(this, e);
     }
 
     protected virtual void OnLoaded() {
-      _loadedHandlers.ForEach(x => x(this, EventArgs.Empty));
+      var handler = Loaded;
+      if (handler != null) handler(this, EventArgs.Empty);
     }
 
     protected virtual void OnSaving() {
-      _savingHandlers.ForEach(x => x(this, EventArgs.Empty));
+      var handler = Saving;
+      if (handler != null) handler(this, EventArgs.Empty);
     }
 
     protected virtual void OnValueChanged(SettingValueChangedEventArgs e) {
-      _valueChangeHandlers.ForEach(x => x(this, e));
+      var handler = ValueChanged;
+      if (handler != null) handler(this, e);
     }
   }
 }
