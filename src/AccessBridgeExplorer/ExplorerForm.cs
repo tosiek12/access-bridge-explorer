@@ -86,17 +86,17 @@ namespace AccessBridgeExplorer {
     }
 
     private void garbageCollectButton_Click(object sender, EventArgs e) {
-      JavaObjectHandle.FlushReleaseQueue();
       for (var i = 0; i < 3; i++) {
         GC.Collect();
         GC.WaitForPendingFinalizers();
       }
+      _controller.ReleaseActiveObjects(true);
     }
 
     private void memoryRefreshTimer_Tick(object sender, EventArgs e) {
+      _controller.ReleaseActiveObjects(false);
       RefreshObjectsStatus();
       RefreshMemoryStatus();
-      JavaObjectHandle.FlushReleaseQueue();
     }
 
     private void RefreshObjectsStatus() {
@@ -254,10 +254,6 @@ namespace AccessBridgeExplorer {
           e.Graphics.FillRectangle(new SolidBrush(e.Item.ForeColor), bounds);
         }
       }
-    }
-
-    private void autoDetectApplicationsMenuItem_CheckChanged(object sender, EventArgs e) {
-      _controller.EnableAutoDetect(autoDetectApplicationsMenuItem.Checked);
     }
 
     private void catpureButton_MouseDown(object sender, MouseEventArgs e) {
@@ -485,6 +481,10 @@ namespace AccessBridgeExplorer {
 
     ToolStripMenuItem IExplorerFormView.AutoDetectApplicationsMenuItem {
       get { return autoDetectApplicationsMenuItem; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.AutoReleaseInactiveObjectsMenuItem {
+      get { return autoReleaseInactiveObjectsMenuItem; }
     }
 
     ToolStripMenuItem IExplorerFormView.EnableOverlayMenuItem {

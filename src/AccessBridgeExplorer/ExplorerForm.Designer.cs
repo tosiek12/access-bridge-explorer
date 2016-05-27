@@ -55,7 +55,6 @@ namespace AccessBridgeExplorer {
       this._limitCollectionsCountMenu = new System.Windows.Forms.ToolStripMenuItem();
       this._limitTextLineCountsMenu = new System.Windows.Forms.ToolStripMenuItem();
       this._limitTextLineLengthsMenu = new System.Windows.Forms.ToolStripMenuItem();
-      this._limitTextBufferLengthMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.separator5 = new System.Windows.Forms.ToolStripSeparator();
       this.componentOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.enableOverlayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -127,6 +126,9 @@ namespace AccessBridgeExplorer {
       this.memoryRefreshTimer = new System.Windows.Forms.Timer(this.components);
       this.notificationPanel = new AccessBridgeExplorer.NotificationPanel();
       this.updateChecker = new AccessBridgeExplorer.UpdateChecker(this.components);
+      this.advancedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this._limitTextBufferLengthMenu = new System.Windows.Forms.ToolStripMenuItem();
+      this.autoReleaseInactiveObjectsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
       this.mainToolStrip.SuspendLayout();
@@ -176,7 +178,7 @@ namespace AccessBridgeExplorer {
       // 
       this.exitMenuItem.Name = "exitMenuItem";
       this.exitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.X)));
-      this.exitMenuItem.Size = new System.Drawing.Size(129, 22);
+      this.exitMenuItem.Size = new System.Drawing.Size(152, 22);
       this.exitMenuItem.Text = "E&xit";
       this.exitMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
       // 
@@ -240,10 +242,10 @@ namespace AccessBridgeExplorer {
             this._limitCollectionsCountMenu,
             this._limitTextLineCountsMenu,
             this._limitTextLineLengthsMenu,
-            this._limitTextBufferLengthMenu,
             this.separator5,
             this.componentOverlayToolStripMenuItem,
             this.autoDetectApplicationsMenuItem,
+            this.advancedToolStripMenuItem,
             this.toolStripMenuItem5,
             this.resetAllOptionsMenuItem});
       this.optionsMenu.Name = "optionsMenu";
@@ -286,12 +288,6 @@ namespace AccessBridgeExplorer {
       this._limitTextLineLengthsMenu.Name = "_limitTextLineLengthsMenu";
       this._limitTextLineLengthsMenu.Size = new System.Drawing.Size(250, 22);
       this._limitTextLineLengthsMenu.Text = "Limit text &lines to";
-      // 
-      // _limitTextBufferLengthMenu
-      // 
-      this._limitTextBufferLengthMenu.Name = "_limitTextBufferLengthMenu";
-      this._limitTextBufferLengthMenu.Size = new System.Drawing.Size(250, 22);
-      this._limitTextBufferLengthMenu.Text = "Limit &other text to";
       // 
       // separator5
       // 
@@ -392,13 +388,11 @@ namespace AccessBridgeExplorer {
       // autoDetectApplicationsMenuItem
       // 
       this.autoDetectApplicationsMenuItem.Checked = true;
-      this.autoDetectApplicationsMenuItem.CheckOnClick = true;
       this.autoDetectApplicationsMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
       this.autoDetectApplicationsMenuItem.Name = "autoDetectApplicationsMenuItem";
       this.autoDetectApplicationsMenuItem.Size = new System.Drawing.Size(250, 22);
       this.autoDetectApplicationsMenuItem.Text = "&Auto-detect running applications";
       this.autoDetectApplicationsMenuItem.ToolTipText = "Automatically refresh the Accessibility Tree when new applications are detected";
-      this.autoDetectApplicationsMenuItem.CheckedChanged += new System.EventHandler(this.autoDetectApplicationsMenuItem_CheckChanged);
       // 
       // toolStripMenuItem5
       // 
@@ -836,9 +830,9 @@ namespace AccessBridgeExplorer {
       // 
       this._eventListPage.Controls.Add(this._eventList);
       this._eventListPage.Controls.Add(this.eventsToolStrip);
-      this._eventListPage.Location = new System.Drawing.Point(4, 22);
+      this._eventListPage.Location = new System.Drawing.Point(4, 24);
       this._eventListPage.Name = "_eventListPage";
-      this._eventListPage.Size = new System.Drawing.Size(1000, 213);
+      this._eventListPage.Size = new System.Drawing.Size(1000, 211);
       this._eventListPage.TabIndex = 0;
       this._eventListPage.Text = "Accessibility Events";
       this._eventListPage.UseVisualStyleBackColor = true;
@@ -860,7 +854,7 @@ namespace AccessBridgeExplorer {
       this._eventList.Location = new System.Drawing.Point(25, 0);
       this._eventList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this._eventList.Name = "_eventList";
-      this._eventList.Size = new System.Drawing.Size(975, 213);
+      this._eventList.Size = new System.Drawing.Size(975, 211);
       this._eventList.TabIndex = 5;
       this._eventList.UseCompatibleStateImageBehavior = false;
       this._eventList.View = System.Windows.Forms.View.Details;
@@ -908,7 +902,7 @@ namespace AccessBridgeExplorer {
             this.clearEventsButton});
       this.eventsToolStrip.Location = new System.Drawing.Point(0, 0);
       this.eventsToolStrip.Name = "eventsToolStrip";
-      this.eventsToolStrip.Size = new System.Drawing.Size(25, 213);
+      this.eventsToolStrip.Size = new System.Drawing.Size(25, 211);
       this.eventsToolStrip.TabIndex = 0;
       this.eventsToolStrip.TabStop = true;
       this.eventsToolStrip.Text = "Events";
@@ -950,6 +944,27 @@ namespace AccessBridgeExplorer {
       this.updateChecker.Url = "https://google.github.io/access-bridge-explorer/latest_version.txt";
       this.updateChecker.UpdateInfoAvailable += new System.EventHandler<AccessBridgeExplorer.UpdateInfoArgs>(this.updateChecker_UpdateInfoAvailable);
       this.updateChecker.UpdateInfoError += new System.EventHandler<System.IO.ErrorEventArgs>(this.updateChecker_UpdateInfoError);
+      // 
+      // advancedToolStripMenuItem
+      // 
+      this.advancedToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._limitTextBufferLengthMenu,
+            this.autoReleaseInactiveObjectsMenuItem});
+      this.advancedToolStripMenuItem.Name = "advancedToolStripMenuItem";
+      this.advancedToolStripMenuItem.Size = new System.Drawing.Size(250, 22);
+      this.advancedToolStripMenuItem.Text = "Advanced";
+      // 
+      // _limitTextBufferLengthMenu
+      // 
+      this._limitTextBufferLengthMenu.Name = "_limitTextBufferLengthMenu";
+      this._limitTextBufferLengthMenu.Size = new System.Drawing.Size(272, 22);
+      this._limitTextBufferLengthMenu.Text = "Limit &names to";
+      // 
+      // autoReleaseMenuItem
+      // 
+      this.autoReleaseInactiveObjectsMenuItem.Name = "autoReleaseInactiveObjectsMenuItem";
+      this.autoReleaseInactiveObjectsMenuItem.Size = new System.Drawing.Size(226, 22);
+      this.autoReleaseInactiveObjectsMenuItem.Text = "Auto-release inactive objects";
       // 
       // ExplorerForm
       // 
@@ -1096,7 +1111,9 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripDropDownButton garbageCollectButton;
     private System.Windows.Forms.Timer memoryRefreshTimer;
     private System.Windows.Forms.ToolStripStatusLabel memoryStatusLabel;
+    private System.Windows.Forms.ToolStripMenuItem advancedToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem _limitTextBufferLengthMenu;
+    private System.Windows.Forms.ToolStripMenuItem autoReleaseInactiveObjectsMenuItem;
   }
 }
 

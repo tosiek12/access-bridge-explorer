@@ -41,6 +41,7 @@ namespace AccessBridgeExplorer {
     private readonly HwndCache _windowCache = new HwndCache();
 
     private readonly AutoDetectApplicationsSetting _autoDetectApplicationsEnabledSetting;
+    private readonly AutoReleaseInactiveObjectSetting _autoReleaseInactiveObjectSetting;
     private readonly OverlayActivationSetting _overlayActivationSetting;
     private readonly UserSetting<OverlayDisplayType> _overlayDisplayTypeSetting;
     private readonly UserSetting<PropertyOptions> _propertyOptionsSetting;
@@ -84,6 +85,7 @@ namespace AccessBridgeExplorer {
       _overlayDisplayTypeSetting = new OverlayDisplayTypeSetting(this);
       _propertyOptionsSetting = new PropertyOptionsSetting(this);
       _autoDetectApplicationsEnabledSetting = new AutoDetectApplicationsSetting(this);
+      _autoReleaseInactiveObjectSetting = new AutoReleaseInactiveObjectSetting(this);
 
       _collectionSizeLimitSetting = new IntUserSetting(_userSettings, "accessBridge.collections.size.limit", _accessBridge.CollectionSizeLimit);
       _collectionSizeLimitSetting.Sync += (sender, args) => {
@@ -167,6 +169,7 @@ namespace AccessBridgeExplorer {
       public AutoDetectApplicationsSetting(ExplorerFormController controller) :
         base(controller._userSettings, "runningApplications.autoDetect", true) {
         _controller = controller;
+
         controller._accessBridge.Initilized += (sender, args) => {
           if (controller._disposed)
             return;
@@ -188,6 +191,10 @@ namespace AccessBridgeExplorer {
               controller._accessBridge.Events.JavaShutdown -= AccessBridgeEvents_JavaShutdown;
             }
           }
+        };
+
+        _controller._view.AutoDetectApplicationsMenuItem.Click += (sender, args) => {
+          Value = !_controller._view.AutoDetectApplicationsMenuItem.Checked;
         };
       }
 
@@ -211,6 +218,28 @@ namespace AccessBridgeExplorer {
           return;
 
         _controller.PostRefreshTree();
+      }
+    }
+
+    private class AutoReleaseInactiveObjectSetting : BoolUserSetting {
+      private readonly ExplorerFormController _controller;
+
+      public AutoReleaseInactiveObjectSetting(ExplorerFormController controller) :
+        base(controller._userSettings, "javaObjects.autoRelease", true) {
+        _controller = controller;
+
+        controller._view.AutoReleaseInactiveObjectsMenuItem.Checked = Value;
+
+        Sync += (sender, args) => {
+          if (controller._disposed)
+            return;
+
+          controller._view.AutoReleaseInactiveObjectsMenuItem.Checked = args.Value;
+        };
+
+        _controller._view.AutoReleaseInactiveObjectsMenuItem.Click += (sender, args) => {
+          Value = !_controller._view.AutoReleaseInactiveObjectsMenuItem.Checked;
+        };
       }
     }
 
@@ -261,7 +290,6 @@ namespace AccessBridgeExplorer {
 
       LogMessage("Initializing Java Access Bridge and enumerating active Java application windows.");
       _accessBridge.Initilized += (sender, args) => {
-        EnableAutoDetect(_autoDetectApplicationsEnabledSetting.Value);
         CreateEventMenuItems();
         CreatePropertyOptionsMenuItems();
         CreateLimitCollectionSizesMenuItems();
@@ -1306,10 +1334,6 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    public void EnableAutoDetect(bool enabled) {
-      _autoDetectApplicationsEnabledSetting.Value = enabled;
-    }
-
     /// <summary>
     /// Return the <see cref="NodePath"/> of a node given a location on screen.
     /// Return <code>null</code> if there is no node at that location.
@@ -1656,6 +1680,12 @@ namespace AccessBridgeExplorer {
 
       public IEnumerable<AccessibleWindow> Windows {
         get { return _cache.Values.Where(x => x != null); }
+      }
+    }
+
+    public void ReleaseActiveObjects(bool force) {
+      if (force || _autoReleaseInactiveObjectSetting.Value) {
+        JavaObjectHandle.FlushReleaseQueue();
       }
     }
   }
