@@ -82,6 +82,12 @@ namespace AccessBridgeExplorer.Utils.Settings {
     private void CreateUserSetting(FieldInfo field) {
       var key = _key + "." + field.Name;
       T flagValue = (T)field.GetValue(null);
+
+      // Skip the "Default"/"None" flag value if present
+      if (ToLong(flagValue) == 0) {
+        return;
+      }
+
       var setting = new BoolUserSetting(_userSettings, key, (ToLong(_defaultValue) & ToLong(flagValue)) != 0);
       _settings.Add(flagValue, setting);
 
