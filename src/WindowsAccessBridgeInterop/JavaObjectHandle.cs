@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace WindowsAccessBridgeInterop {
   /// <summary>
@@ -33,6 +34,19 @@ namespace WindowsAccessBridgeInterop {
     private readonly JOBJECT64 _handle;
     private readonly bool _isLegacy;
     private bool _disposed;
+    /// <summary>
+    /// Counter of the number of object handles that have been wrapped into
+    /// a <see cref="JavaObjectHandle"/> and not yet released either by the
+    /// GC or by calling <see cref="Dispose()"/>.
+    /// </summary>
+    private static long _activeCount;
+    /// <summary>
+    /// Note: It looks like the windows access bridge DLL is not quite
+    /// multi-thread safe, so we use a queue to store java objects to be
+    /// released. The queue must be flushed by calling <see
+    /// cref="FlushReleaseQueue"/>.
+    /// </summary>
+    private static List<ReleaseData> _releaseQueue = new List<ReleaseData>();
 
     public JavaObjectHandle(int jvmId, JOBJECT64 handle) {
       _jvmId = jvmId;
@@ -41,6 +55,7 @@ namespace WindowsAccessBridgeInterop {
       if (handle.Value == 0) {
         GC.SuppressFinalize(this);
       }
+      RecordActivation(handle);
     }
 
     public JavaObjectHandle(int jvmId, JOBJECT32 handle)
@@ -49,18 +64,6 @@ namespace WindowsAccessBridgeInterop {
 
     ~JavaObjectHandle() {
       Dispose(false);
-    }
-
-    public void Dispose() {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
-
-    public void Dispose(bool disposing) {
-      if (_disposed)
-        return;
-      EnqueueRelease(_jvmId, _handle, _isLegacy);
-      _disposed = true;
     }
 
     public int JvmId {
@@ -83,19 +86,44 @@ namespace WindowsAccessBridgeInterop {
       get { return _handle.Value == 0; }
     }
 
+    public void Dispose() {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    public void Dispose(bool disposing) {
+      if (_disposed)
+        return;
+      RecordDeactivation(_handle);
+      EnqueueRelease(_jvmId, _handle, _isLegacy);
+      _disposed = true;
+    }
+
+    private static void RecordActivation(JOBJECT64 handle) {
+      if (handle.Value != 0) {
+        Interlocked.Increment(ref _activeCount);
+      }
+    }
+
+    private static void RecordDeactivation(JOBJECT64 handle) {
+      if (handle.Value != 0) {
+        Interlocked.Decrement(ref _activeCount);
+      }
+    }
+
+    public static long ActiveContextCount {
+      get { return _activeCount; }
+    }
+
+    public static long InactiveContextCount {
+      get { return _releaseQueue.Count; }
+    }
+
     private struct ReleaseData {
       public int JvmId;
       public JOBJECT64 Handle;
       public bool IsLegacy;
     }
-
-    /// <summary>
-    /// Note: It looks like the windows access bridge DLL is not quite
-    /// multi-thread safe, so we use a queue to store java objects to be
-    /// released. The queue must be flushed by calling <see
-    /// cref="FlushReleaseQueue"/>.
-    /// </summary>
-    private static List<ReleaseData> _releaseQueue = new List<ReleaseData>();
 
     private static void EnqueueRelease(int jvmid, JOBJECT64 handle, bool isLegacy) {
       // Skip NULL handles, they don't need to be released.
