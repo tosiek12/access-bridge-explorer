@@ -23,7 +23,6 @@ namespace WindowsAccessBridgeInterop {
   /// Wrapper for an accessible context returned by the Java Access Bridge.
   /// </summary>
   public class AccessibleContextNode : AccessibleNode {
-    const int TextBufferSize = 256;
     private readonly JavaObjectHandle _ac;
     private Lazy<AccessibleContextInfo> _info;
     private readonly List<Lazy<AccessibleNode>> _childList = new List<Lazy<AccessibleNode>>();
@@ -584,7 +583,7 @@ namespace WindowsAccessBridgeInterop {
         if ((info.accessibleInterfaces & AccessibleInterfaces.cAccessibleValueInterface) != 0) {
           var group = list.AddGroup("Value");
           group.LoadChildren = () => {
-            var sb = new StringBuilder(TextBufferSize);
+            var sb = new StringBuilder(AccessBridge.TextBufferLengthLimit);
 
             if (Failed(AccessBridge.Functions.GetCurrentAccessibleValueFromContext(JvmId, _ac, sb, (short)sb.Capacity))) {
               sb.Clear();
@@ -881,7 +880,7 @@ namespace WindowsAccessBridgeInterop {
       if (Succeeded(AccessBridge.Functions.GetAccessibleTextLineBounds(JvmId, _ac, index, out start, out end))) {
         list.AddProperty("Line bounds", string.Format("[{0},{1}]", start, end));
         if (start >= 0 && end > start) {
-          var buffer = new char[TextBufferSize];
+          var buffer = new char[AccessBridge.TextBufferLengthLimit];
           end = Math.Min(start + buffer.Length, end);
           if (Succeeded(AccessBridge.Functions.GetAccessibleTextRange(JvmId, _ac, start, end, buffer, (short)buffer.Length))) {
             list.AddProperty("Line text", new string(buffer, 0, end - start));
@@ -1015,7 +1014,7 @@ namespace WindowsAccessBridgeInterop {
     /// algorithm used by the Jaws screen reader.
     /// </summary>
     private string GetVirtualAccessibleName() {
-      var sb = new StringBuilder(TextBufferSize);
+      var sb = new StringBuilder(AccessBridge.TextBufferLengthLimit);
       if (Failed(AccessBridge.Functions.GetVirtualAccessibleName(JvmId, _ac, sb, sb.Capacity))) {
         return "<Error>";
       }

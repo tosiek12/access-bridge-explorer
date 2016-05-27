@@ -55,6 +55,7 @@ namespace AccessBridgeExplorer {
       this._limitCollectionsCountMenu = new System.Windows.Forms.ToolStripMenuItem();
       this._limitTextLineCountsMenu = new System.Windows.Forms.ToolStripMenuItem();
       this._limitTextLineLengthsMenu = new System.Windows.Forms.ToolStripMenuItem();
+      this._limitTextBufferLengthMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.separator5 = new System.Windows.Forms.ToolStripSeparator();
       this.componentOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.enableOverlayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,6 +69,8 @@ namespace AccessBridgeExplorer {
       this.showOverlayOnlyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.showTooltipOnlyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.autoDetectApplicationsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
+      this.resetAllOptionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
       this.viewHelpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -78,6 +81,9 @@ namespace AccessBridgeExplorer {
       this._enableOverlayButton = new System.Windows.Forms.ToolStripButton();
       this.statusBarStrip = new System.Windows.Forms.StatusStrip();
       this._statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+      this.javaObjectsStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+      this.memoryStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+      this.garbageCollectButton = new System.Windows.Forms.ToolStripDropDownButton();
       this.mainToolStrip = new System.Windows.Forms.ToolStrip();
       this.navigateBackwardButton = new System.Windows.Forms.ToolStripSplitButton();
       this.navigateForwardButton = new System.Windows.Forms.ToolStripSplitButton();
@@ -87,7 +93,7 @@ namespace AccessBridgeExplorer {
       this.separator2 = new System.Windows.Forms.ToolStripSeparator();
       this.separator3 = new System.Windows.Forms.ToolStripSeparator();
       this.showHelpButton = new System.Windows.Forms.ToolStripButton();
-      this.refreshTimer = new System.Windows.Forms.Timer(this.components);
+      this._initialTreeRefreshTimer = new System.Windows.Forms.Timer(this.components);
       this.topSplitContainer = new System.Windows.Forms.SplitContainer();
       this._topLevelTabControl = new System.Windows.Forms.TabControl();
       this._accessibilityTreePage = new System.Windows.Forms.TabPage();
@@ -118,10 +124,9 @@ namespace AccessBridgeExplorer {
       this.eventNewValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.eventsToolStrip = new System.Windows.Forms.ToolStrip();
       this.clearEventsButton = new System.Windows.Forms.ToolStripButton();
+      this.memoryRefreshTimer = new System.Windows.Forms.Timer(this.components);
       this.notificationPanel = new AccessBridgeExplorer.NotificationPanel();
       this.updateChecker = new AccessBridgeExplorer.UpdateChecker(this.components);
-      this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
-      this.resetAllOptionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
       this.mainToolStrip.SuspendLayout();
@@ -235,6 +240,7 @@ namespace AccessBridgeExplorer {
             this._limitCollectionsCountMenu,
             this._limitTextLineCountsMenu,
             this._limitTextLineLengthsMenu,
+            this._limitTextBufferLengthMenu,
             this.separator5,
             this.componentOverlayToolStripMenuItem,
             this.autoDetectApplicationsMenuItem,
@@ -280,6 +286,12 @@ namespace AccessBridgeExplorer {
       this._limitTextLineLengthsMenu.Name = "_limitTextLineLengthsMenu";
       this._limitTextLineLengthsMenu.Size = new System.Drawing.Size(250, 22);
       this._limitTextLineLengthsMenu.Text = "Limit text &lines to";
+      // 
+      // _limitTextBufferLengthMenu
+      // 
+      this._limitTextBufferLengthMenu.Name = "_limitTextBufferLengthMenu";
+      this._limitTextBufferLengthMenu.Size = new System.Drawing.Size(250, 22);
+      this._limitTextBufferLengthMenu.Text = "Limit &other text to";
       // 
       // separator5
       // 
@@ -388,6 +400,18 @@ namespace AccessBridgeExplorer {
       this.autoDetectApplicationsMenuItem.ToolTipText = "Automatically refresh the Accessibility Tree when new applications are detected";
       this.autoDetectApplicationsMenuItem.CheckedChanged += new System.EventHandler(this.autoDetectApplicationsMenuItem_CheckChanged);
       // 
+      // toolStripMenuItem5
+      // 
+      this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+      this.toolStripMenuItem5.Size = new System.Drawing.Size(247, 6);
+      // 
+      // resetAllOptionsMenuItem
+      // 
+      this.resetAllOptionsMenuItem.Name = "resetAllOptionsMenuItem";
+      this.resetAllOptionsMenuItem.Size = new System.Drawing.Size(250, 22);
+      this.resetAllOptionsMenuItem.Text = "Reset all options";
+      this.resetAllOptionsMenuItem.Click += new System.EventHandler(this.resetAllOptionsMenuItem_Click);
+      // 
       // helpMenu
       // 
       this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -458,7 +482,10 @@ namespace AccessBridgeExplorer {
       // 
       this.statusBarStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
       this.statusBarStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._statusLabel});
+            this._statusLabel,
+            this.javaObjectsStatusLabel,
+            this.memoryStatusLabel,
+            this.garbageCollectButton});
       this.statusBarStrip.Location = new System.Drawing.Point(0, 711);
       this.statusBarStrip.Name = "statusBarStrip";
       this.statusBarStrip.Padding = new System.Windows.Forms.Padding(1, 0, 17, 0);
@@ -469,8 +496,39 @@ namespace AccessBridgeExplorer {
       // _statusLabel
       // 
       this._statusLabel.Name = "_statusLabel";
-      this._statusLabel.Size = new System.Drawing.Size(42, 17);
+      this._statusLabel.Size = new System.Drawing.Size(804, 17);
+      this._statusLabel.Spring = true;
       this._statusLabel.Text = "Ready.";
+      this._statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // javaObjectsStatusLabel
+      // 
+      this.javaObjectsStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.javaObjectsStatusLabel.Name = "javaObjectsStatusLabel";
+      this.javaObjectsStatusLabel.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
+      this.javaObjectsStatusLabel.Size = new System.Drawing.Size(82, 17);
+      this.javaObjectsStatusLabel.Text = "(placeholder)";
+      this.javaObjectsStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // memoryStatusLabel
+      // 
+      this.memoryStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.memoryStatusLabel.Name = "memoryStatusLabel";
+      this.memoryStatusLabel.Size = new System.Drawing.Size(77, 17);
+      this.memoryStatusLabel.Text = "(placeholder)";
+      this.memoryStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // garbageCollectButton
+      // 
+      this.garbageCollectButton.BackColor = System.Drawing.SystemColors.Control;
+      this.garbageCollectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.garbageCollectButton.Image = ((System.Drawing.Image)(resources.GetObject("garbageCollectButton.Image")));
+      this.garbageCollectButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.garbageCollectButton.Name = "garbageCollectButton";
+      this.garbageCollectButton.ShowDropDownArrow = false;
+      this.garbageCollectButton.Size = new System.Drawing.Size(27, 20);
+      this.garbageCollectButton.Text = "GC";
+      this.garbageCollectButton.Click += new System.EventHandler(this.garbageCollectButton_Click);
       // 
       // mainToolStrip
       // 
@@ -562,10 +620,10 @@ namespace AccessBridgeExplorer {
       this.showHelpButton.Text = "Help";
       this.showHelpButton.Click += new System.EventHandler(this.showHelpButton_Click);
       // 
-      // refreshTimer
+      // _initialTreeRefreshTimer
       // 
-      this.refreshTimer.Enabled = true;
-      this.refreshTimer.Tick += new System.EventHandler(this.refreshTimer_Tick);
+      this._initialTreeRefreshTimer.Enabled = true;
+      this._initialTreeRefreshTimer.Tick += new System.EventHandler(this.initialTreeRefreshTimer_Tick);
       // 
       // topSplitContainer
       // 
@@ -867,6 +925,12 @@ namespace AccessBridgeExplorer {
       this.clearEventsButton.TextAlign = System.Drawing.ContentAlignment.TopLeft;
       this.clearEventsButton.Click += new System.EventHandler(this.clearEventsButton_Click);
       // 
+      // memoryRefreshTimer
+      // 
+      this.memoryRefreshTimer.Enabled = true;
+      this.memoryRefreshTimer.Interval = 200;
+      this.memoryRefreshTimer.Tick += new System.EventHandler(this.memoryRefreshTimer_Tick);
+      // 
       // notificationPanel
       // 
       this.notificationPanel.AccessibleName = "Notification Panel";
@@ -886,18 +950,6 @@ namespace AccessBridgeExplorer {
       this.updateChecker.Url = "https://google.github.io/access-bridge-explorer/latest_version.txt";
       this.updateChecker.UpdateInfoAvailable += new System.EventHandler<AccessBridgeExplorer.UpdateInfoArgs>(this.updateChecker_UpdateInfoAvailable);
       this.updateChecker.UpdateInfoError += new System.EventHandler<System.IO.ErrorEventArgs>(this.updateChecker_UpdateInfoError);
-      // 
-      // toolStripMenuItem5
-      // 
-      this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-      this.toolStripMenuItem5.Size = new System.Drawing.Size(247, 6);
-      // 
-      // resetAllOptionsMenuItem
-      // 
-      this.resetAllOptionsMenuItem.Name = "resetAllOptionsMenuItem";
-      this.resetAllOptionsMenuItem.Size = new System.Drawing.Size(250, 22);
-      this.resetAllOptionsMenuItem.Text = "Reset all options";
-      this.resetAllOptionsMenuItem.Click += new System.EventHandler(this.resetAllOptionsMenuItem_Click);
       // 
       // ExplorerForm
       // 
@@ -965,7 +1017,7 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStrip mainToolStrip;
     private System.Windows.Forms.ToolStripButton _refreshButton;
     private System.Windows.Forms.ToolStripButton _findComponentButton;
-    private System.Windows.Forms.Timer refreshTimer;
+    private System.Windows.Forms.Timer _initialTreeRefreshTimer;
     private System.Windows.Forms.SplitContainer topSplitContainer;
     private System.Windows.Forms.SplitContainer mainSplitContainer;
     private System.Windows.Forms.ToolStripMenuItem _eventsMenu;
@@ -1040,6 +1092,11 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
     private System.Windows.Forms.ToolStripMenuItem resetAllOptionsMenuItem;
+    private System.Windows.Forms.ToolStripStatusLabel javaObjectsStatusLabel;
+    private System.Windows.Forms.ToolStripDropDownButton garbageCollectButton;
+    private System.Windows.Forms.Timer memoryRefreshTimer;
+    private System.Windows.Forms.ToolStripStatusLabel memoryStatusLabel;
+    private System.Windows.Forms.ToolStripMenuItem _limitTextBufferLengthMenu;
   }
 }
 

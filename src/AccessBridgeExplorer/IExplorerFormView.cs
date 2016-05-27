@@ -40,6 +40,7 @@ namespace AccessBridgeExplorer {
     ToolStripMenuItem LimitCollectionSizesMenu { get; }
     ToolStripMenuItem LimitTextLineCountMenu { get; }
     ToolStripMenuItem LimitTextLineLengthsMenu { get; }
+    ToolStripMenuItem LimitTextBufferLengthMenu { get; }
 
     ToolStripMenuItem AutoDetectApplicationsMenuItem { get; }
 

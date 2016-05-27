@@ -36,6 +36,7 @@ namespace WindowsAccessBridgeInterop {
       CollectionSizeLimit = 100;
       TextLineCountLimit = 200;
       TextLineLengthLimit = 200;
+      TextBufferLengthLimit = 1024;
     }
 
     public AccessBridgeFunctions Functions {
@@ -79,6 +80,7 @@ namespace WindowsAccessBridgeInterop {
     public int CollectionSizeLimit { get; set; }
     public int TextLineCountLimit { get; set; }
     public int TextLineLengthLimit { get; set; }
+    public int TextBufferLengthLimit { get; set; }
 
     public event EventHandler Initilized;
     public event EventHandler Disposed;

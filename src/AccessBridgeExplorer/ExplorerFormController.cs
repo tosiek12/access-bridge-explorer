@@ -41,13 +41,14 @@ namespace AccessBridgeExplorer {
     private readonly HwndCache _windowCache = new HwndCache();
 
     private readonly AutoDetectApplicationsSetting _autoDetectApplicationsEnabledSetting;
-    private readonly UserSetting<OverlayActivation> _overlayActivationSetting;
+    private readonly OverlayActivationSetting _overlayActivationSetting;
     private readonly UserSetting<OverlayDisplayType> _overlayDisplayTypeSetting;
     private readonly UserSetting<PropertyOptions> _propertyOptionsSetting;
     private readonly UserSetting<bool> _overlayEnabledSetting;
     private readonly UserSetting<int> _collectionSizeLimitSetting;
     private readonly UserSetting<int> _textLineCountLimitSetting;
     private readonly UserSetting<int> _textLineLengthLimitSetting;
+    private readonly UserSetting<int> _textBufferLengthLimit;
 
     private Rectangle? _overlayWindowRectangle;
     private AccessibleNode _overlayWindowNode;
@@ -95,6 +96,10 @@ namespace AccessBridgeExplorer {
       _textLineLengthLimitSetting = new IntUserSetting(_userSettings, "accessBridge.text.lineLength.limit", _accessBridge.TextLineLengthLimit);
       _textLineLengthLimitSetting.Sync += (sender, args) => {
         _accessBridge.TextLineLengthLimit = args.Value;
+      };
+      _textBufferLengthLimit = new IntUserSetting(_userSettings, "accessBridge.text.bufferLength.limit", _accessBridge.TextBufferLengthLimit);
+      _textBufferLengthLimit.Sync += (sender, args) => {
+        _accessBridge.TextBufferLengthLimit = args.Value;
       };
     }
 
@@ -262,6 +267,7 @@ namespace AccessBridgeExplorer {
         CreateLimitCollectionSizesMenuItems();
         CreateLimitTextLineCountMenuItems();
         CreateLimitTextLineLengthsMenuItems();
+        CreateLimitTextBufferLengthMenuItems();
         _view.EventsMenu.Enabled = true;
         _view.PropertiesMenu.Enabled = true;
         _view.LimitCollectionSizesMenu.Enabled = true;
@@ -545,6 +551,20 @@ namespace AccessBridgeExplorer {
           _textLineLengthLimitSetting.Value,
           x => {
             _textLineLengthLimitSetting.Value = x;
+          });
+        index++;
+      }
+    }
+
+    private void CreateLimitTextBufferLengthMenuItems() {
+      int index = 0;
+      foreach (var size in new[] { 40, 80, 120, 256, 512, 1024, 2048, 8192 }) {
+        char mnemonicCharacter = (char)('A' + index);
+        var text = string.Format("&{0} - {1} characters", mnemonicCharacter, size);
+        CreateLimitSizeItem(_view.LimitTextBufferLengthMenu, text, size,
+          _textBufferLengthLimit.Value,
+          x => {
+            _textBufferLengthLimit.Value = x;
           });
         index++;
       }

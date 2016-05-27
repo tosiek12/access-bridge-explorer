@@ -83,10 +83,35 @@ namespace AccessBridgeExplorer {
     private void Application_Idle(object sender, EventArgs eventArgs) {
       UpdateNavigationState();
       UpdateNotificationMenu();
-      int count = JavaObjectHandle.FlushReleaseQueue();
-      if (count > 0) {
-        // testing
-        //_controller.LogMessage("Released {0} java objects after finalization", count);
+    }
+
+    private void garbageCollectButton_Click(object sender, EventArgs e) {
+      JavaObjectHandle.FlushReleaseQueue();
+      for (var i = 0; i < 3; i++) {
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+      }
+    }
+
+    private void memoryRefreshTimer_Tick(object sender, EventArgs e) {
+      RefreshObjectsStatus();
+      RefreshMemoryStatus();
+      JavaObjectHandle.FlushReleaseQueue();
+    }
+
+    private void RefreshObjectsStatus() {
+      var text = string.Format("Active Java Objects: {0:n0}, Inactive: {1:n0}",
+        JavaObjectHandle.ActiveContextCount,
+        JavaObjectHandle.InactiveContextCount);
+      if (javaObjectsStatusLabel.Text != text) {
+        javaObjectsStatusLabel.Text = text;
+      }
+    }
+
+    private void RefreshMemoryStatus() {
+      var text = string.Format("Mem: {0:n0} MB", GC.GetTotalMemory(false) / 1024 / 1024);
+      if (memoryStatusLabel.Text != text) {
+        memoryStatusLabel.Text = text;
       }
     }
 
@@ -270,8 +295,8 @@ namespace AccessBridgeExplorer {
       Capture = false;
     }
 
-    private void refreshTimer_Tick(object sender, EventArgs e) {
-      refreshTimer.Stop();
+    private void initialTreeRefreshTimer_Tick(object sender, EventArgs e) {
+      _initialTreeRefreshTimer.Stop();
       _controller.RefreshTree();
     }
 
@@ -452,6 +477,10 @@ namespace AccessBridgeExplorer {
 
     ToolStripMenuItem IExplorerFormView.LimitTextLineLengthsMenu {
       get { return _limitTextLineLengthsMenu; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.LimitTextBufferLengthMenu {
+      get { return _limitTextBufferLengthMenu; }
     }
 
     ToolStripMenuItem IExplorerFormView.AutoDetectApplicationsMenuItem {
