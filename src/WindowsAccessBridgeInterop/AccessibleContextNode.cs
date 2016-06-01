@@ -235,10 +235,7 @@ namespace WindowsAccessBridgeInterop {
 
     public override Rectangle? GetScreenRectangle() {
       var info = GetInfo();
-      if (info.width >= 0 && info.height >= 0) {
-        return new Rectangle(info.x, info.y, info.width, info.height);
-      }
-      return null;
+      return new Rectangle(info.x, info.y, info.width, info.height);
     }
 
     public override void FetchSubTree() {
@@ -969,8 +966,7 @@ namespace WindowsAccessBridgeInterop {
         list.AddProperty("Role", LimitStringSize(info.role, stringMaxLength));
         if ((options & PropertyOptions.AccessibleText) != 0) {
           if (info.accessibleText != 0) {
-            var text = GetTextExtract();
-            list.AddProperty("Text", text);
+            list.AddProperty("Text", LimitStringSize(GetTextExtract(), stringMaxLength));
           }
         }
         list.AddProperty("Name", LimitStringSize(info.name, stringMaxLength));
@@ -990,7 +986,7 @@ namespace WindowsAccessBridgeInterop {
 
     private static string LimitStringSize(string value, int maxLength) {
       if (string.IsNullOrEmpty(value))
-        return value;
+        return "";
       if (value.Length < maxLength)
         return value;
 
@@ -1027,8 +1023,10 @@ namespace WindowsAccessBridgeInterop {
       if (Failed(AccessBridge.Functions.GetAccessibleTextInfo(JvmId, _ac, out textInfo, point.X, point.Y))) {
         return "<Error>";
       }
-      AccessibleTextReader reader = new AccessibleTextReader(this, textInfo.charCount);
-      return reader.ReadLine();
+
+      using (var reader = new AccessibleTextReader(this, textInfo.charCount)) {
+        return reader.ReadLine();
+      }
     }
 
     protected static bool Failed(bool accessBridgeReturnValue) {

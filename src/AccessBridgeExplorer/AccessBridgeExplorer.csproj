@@ -177,6 +177,7 @@
     </Compile>
     <Compile Include="UpdateInfoArgs.cs" />
     <Compile Include="Model\AccessibleNodeModel.cs" />
+    <Compile Include="Utils\ScreenUtils.cs" />
     <Compile Include="Utils\User32Utils.cs" />
     <Compile Include="Utils\Settings\UserSettingsProvider.cs" />
     <Compile Include="Utils\WindowsHotKeyHandler.cs" />

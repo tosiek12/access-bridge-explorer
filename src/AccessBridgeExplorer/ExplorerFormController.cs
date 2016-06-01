@@ -279,13 +279,13 @@ namespace AccessBridgeExplorer {
       _overlayWindow.TopMost = true;
       _overlayWindow.Visible = true;
       _overlayWindow.Size = new Size(0, 0);
-      _overlayWindow.Location = new Point(-10, -10);
+      _overlayWindow.Location = ScreenUtils.InvisibleLocation();
       _overlayWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
 
       _tooltipWindow.TopMost = true;
       _tooltipWindow.Visible = true;
       _tooltipWindow.Size = new Size(0, 0);
-      _tooltipWindow.Location = new Point(-10, -10);
+      _tooltipWindow.Location = ScreenUtils.InvisibleLocation();
       _tooltipWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
 
       LogMessage("Initializing Java Access Bridge and enumerating active Java application windows.");
@@ -1248,17 +1248,7 @@ namespace AccessBridgeExplorer {
       // w=600, h=3000] is cropped to [x=10, y=-2000, w=600, h=1200]. This
       // results in a window that is not visible (y + height < 0).
       // to workaround that issue, we do some math. to make the rectable visible.
-      var rect = _overlayWindowRectangle.Value;
-      var invisibleX = rect.X < 0 ? -rect.X : 0;
-      if (invisibleX > 0) {
-        rect.X = 0;
-        rect.Width -= invisibleX;
-      }
-      var invisibleY = rect.Y < 0 ? -rect.Y : 0;
-      if (invisibleY > 0) {
-        rect.Y = 0;
-        rect.Height -= invisibleY;
-      }
+      var rect = ScreenUtils.FitToScreen(_overlayWindowRectangle.Value);
       _overlayWindow.Location = rect.Location;
       _overlayWindow.Size = rect.Size;
     }
@@ -1273,13 +1263,13 @@ namespace AccessBridgeExplorer {
     }
 
     public void HideOverlayWindow() {
-      _overlayWindow.Location = new Point(-10, -10);
+      _overlayWindow.Location = ScreenUtils.InvisibleLocation();
       _overlayWindow.Size = new Size(0, 0);
     }
 
     public void HideTooltipWindow() {
       _tooltipWindow.Label.Text = "";
-      _tooltipWindow.Location = new Point(-10, -10);
+      _tooltipWindow.Location = ScreenUtils.InvisibleLocation();
       _tooltipWindow.Size = new Size(0, 0);
     }
 
@@ -1447,12 +1437,9 @@ namespace AccessBridgeExplorer {
         }
         _tooltipWindow.AutoSize = true;
         _tooltipWindow.Label.Text = string.Format("{0}", sb);
-        _tooltipWindow.Location = new Point(
-          Math.Max(0, screenPoint.X - _tooltipWindow.Size.Width - 16),
-          Math.Max(0, screenPoint.Y - _tooltipWindow.Size.Height / 2));
-        //_tooltipWindow.Location = new Point(
-        //  Math.Max(0, screenPoint.X + 20),
-        //  Math.Max(0, screenPoint.Y - _tooltipWindow.Size.Height / 2));
+        _tooltipWindow.Location = ScreenUtils.EnsureVisible(new Point(
+          screenPoint.X - _tooltipWindow.Size.Width - 16,
+          screenPoint.Y - _tooltipWindow.Size.Height / 2));
       });
     }
 
