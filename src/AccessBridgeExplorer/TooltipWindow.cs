@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using AccessBridgeExplorer.Utils;
@@ -21,11 +20,27 @@ namespace AccessBridgeExplorer {
   public partial class TooltipWindow : Form {
     public TooltipWindow() {
       InitializeComponent();
+      AllowTransparency = true;
+      Opacity = 0.9;
     }
 
-    protected override void OnShown(EventArgs e) {
-      base.OnShown(e);
-      User32Utils.SetTransparentLayeredWindowStyle(new HandleRef(this, this.Handle), 230);
+    protected override CreateParams CreateParams {
+      get {
+        var result = base.CreateParams;
+        result.ExStyle |= (int)User32Utils.WindowStylesEx.WS_EX_TOOLWINDOW;
+        result.ExStyle |= (int)User32Utils.WindowStylesEx.WS_EX_TRANSPARENT;
+        result.ExStyle |= (int)User32Utils.WindowStylesEx.WS_EX_NOACTIVATE;
+        result.ExStyle |= (int)User32Utils.WindowStylesEx.WS_EX_LAYERED;
+        return result;
+      }
+    }
+
+    protected override void CreateHandle() {
+      base.CreateHandle();
+      // Note: We need this because the Form.TopMost property does not respect
+      // the "ShowWithoutActivation" flag, meaning the window will steal the
+      // focus every time it is made visible.
+      User32Utils.SetTopMost(new HandleRef(this, this.Handle), true);
     }
 
     protected override bool ShowWithoutActivation {

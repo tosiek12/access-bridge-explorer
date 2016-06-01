@@ -13,11 +13,30 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace AccessBridgeExplorer.Utils {
   public static class User32Utils {
+
+    public static void SetTopMost(HandleRef handleRef, bool value) {
+      var key = value ? HWND_TOPMOST : HWND_NOTOPMOST;
+      var result = SetWindowPos(handleRef, key, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+      if (!result) {
+        Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+      }
+    }
+
+    public static void DebugWindowStyleEx(HandleRef handleRef) {
+      var wl = (WindowStylesEx)GetWindowLong(handleRef.Handle, GWL.ExStyle);
+      if (wl == 0) {
+        Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+      }
+      Debug.WriteLine("StyleEx: {0}", wl);
+    }
+
+
     /// <summary>
     /// Change the window style of the window so that the window is transparent and layered,
     /// meaning that, in addition to being transparent, all mouse events "go through" the
@@ -45,6 +64,10 @@ namespace AccessBridgeExplorer.Utils {
       wl = wl | WindowStylesEx.WS_EX_LAYERED;
       SetWindowExStyle(handleRef, wl);
 
+      SetTransparency(handleRef, alpha);
+    }
+
+    public static void SetTransparency(HandleRef handleRef, byte alpha) {
       var bresult = SetLayeredWindowAttributes(handleRef.Handle, 0, alpha, (uint)LWA.Alpha);
       if (!bresult) {
         Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
@@ -226,6 +249,13 @@ namespace AccessBridgeExplorer.Utils {
       Alpha = 0x2
     }
 
+    public static HandleRef HWND_TOPMOST = new HandleRef((object)null, new IntPtr(-1));
+    public static HandleRef HWND_NOTOPMOST = new HandleRef((object)null, new IntPtr(-2));
+
+    public const int SWP_NOSIZE = 1;
+    public const int SWP_NOMOVE = 2;
+    public const int SWP_NOZORDER = 4;
+    public const int SWP_NOACTIVATE = 16;
 
     [DllImport("user32.dll", EntryPoint = "GetWindowLong", SetLastError = true)]
     public static extern int GetWindowLong(IntPtr hWnd, GWL nIndex);
@@ -236,5 +266,7 @@ namespace AccessBridgeExplorer.Utils {
     [DllImport("user32.dll", EntryPoint = "SetLayeredWindowAttributes", SetLastError = true)]
     public static extern bool SetLayeredWindowAttributes(IntPtr hWnd, uint crKey, byte alpha, uint dwFlags);
 
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    public static extern bool SetWindowPos(HandleRef hWnd, HandleRef hWndInsertAfter, int x, int y, int cx, int cy, int flags);
   }
 }

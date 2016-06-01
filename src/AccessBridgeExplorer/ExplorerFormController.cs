@@ -272,17 +272,13 @@ namespace AccessBridgeExplorer {
       _view.AccessibleComponentPropertyListView.AccessibleRectInfoSelected += ComponentPropertyListView_AccessibleRectInfoSelected;
       _view.AccessibleComponentPropertyListView.Error += ComponentPropertyListView_Error;
 
-      _overlayWindow.TopMost = true;
       _overlayWindow.Visible = false;
       _overlayWindow.Size = new Size(0, 0);
       _overlayWindow.Location = ScreenUtils.InvisibleLocation();
-      //_overlayWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
 
-      _tooltipWindow.TopMost = true;
       _tooltipWindow.Visible = false;
       _tooltipWindow.Size = new Size(0, 0);
       _tooltipWindow.Location = ScreenUtils.InvisibleLocation();
-      //_tooltipWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
 
       LogMessage("Initializing Java Access Bridge and enumerating active Java application windows.");
       _accessBridge.Initilized += (sender, args) => {
@@ -1380,11 +1376,10 @@ namespace AccessBridgeExplorer {
         Debug.Assert(_overlayWindowNode != null);
         Debug.Assert(_overlayWindowRectangle != null);
 
-        _overlayWindow.Bounds = ScreenUtils.FitToScreen(_overlayWindowRectangle.Value);
         if (!_overlayWindow.Visible) {
-          _overlayWindow.TopMost = true;
           _overlayWindow.Visible = true;
         }
+        _overlayWindow.Bounds = ScreenUtils.FitToScreen(_overlayWindowRectangle.Value);
       });
     }
 
@@ -1402,13 +1397,12 @@ namespace AccessBridgeExplorer {
             sb.Append("\r\n");
           sb.AppendFormat("{0}: {1}", x.Name, PropertyListTreeViewModel.PropertyNodeValueToString(x));
         }
+        if (!_tooltipWindow.Visible) {
+          _tooltipWindow.Visible = true;
+        }
         _tooltipWindow.AutoSize = true;
         _tooltipWindow.Label.Text = string.Format("{0}", sb);
         _tooltipWindow.Location = ScreenUtils.EnsureVisible(new Point(screenPoint.X - _tooltipWindow.Size.Width - 16, screenPoint.Y - _tooltipWindow.Size.Height / 2));
-        if (!_tooltipWindow.Visible) {
-          _tooltipWindow.TopMost = true;
-          _tooltipWindow.Visible = true;
-        }
       });
     }
 
