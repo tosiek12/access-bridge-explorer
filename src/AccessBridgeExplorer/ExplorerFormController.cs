@@ -51,8 +51,10 @@ namespace AccessBridgeExplorer {
     private readonly UserSetting<int> _textLineLengthLimitSetting;
     private readonly UserSetting<int> _textBufferLengthLimit;
 
-    private Rectangle? _overlayWindowRectangle;
+    private OverlayActivationSource _overlayWindowActivationSource;
     private AccessibleNode _overlayWindowNode;
+    private Rectangle? _overlayWindowRectangle;
+    private bool _viewIsActive;
     private bool _disposed;
     private int _eventId;
     private int _messageId;
@@ -71,13 +73,7 @@ namespace AccessBridgeExplorer {
         if (_disposed)
           return;
         _view.EnableOverlayMenuItem.Checked = args.NewValue;
-        if (!args.NewValue) {
-          HideOverlayWindow();
-          HideTooltipWindow();
-        } else {
-          ShowOverlayWindow();
-          ShowTooltipWindow();
-        }
+        UpdateOverlayWindows();
         UpdateOverlayMenuItems();
       };
 
@@ -118,7 +114,7 @@ namespace AccessBridgeExplorer {
 
     private class OverlayActivationSetting : EnumFlagsUserSetting<OverlayActivation> {
       public OverlayActivationSetting(ExplorerFormController controller) :
-        base(controller._userSettings, "overlay.activation", OverlayActivation.OnTreeSelection | OverlayActivation.OnComponentSelection) {
+        base(controller._userSettings, "overlay.activation", OverlayActivation.OnTreeViewSelection | OverlayActivation.OnPropertyListSelection) {
         Changed += (sender, args) => {
           if (controller._disposed)
             return;
@@ -277,16 +273,16 @@ namespace AccessBridgeExplorer {
       _view.AccessibleComponentPropertyListView.Error += ComponentPropertyListView_Error;
 
       _overlayWindow.TopMost = true;
-      _overlayWindow.Visible = true;
+      _overlayWindow.Visible = false;
       _overlayWindow.Size = new Size(0, 0);
       _overlayWindow.Location = ScreenUtils.InvisibleLocation();
-      _overlayWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
+      //_overlayWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
 
       _tooltipWindow.TopMost = true;
-      _tooltipWindow.Visible = true;
+      _tooltipWindow.Visible = false;
       _tooltipWindow.Size = new Size(0, 0);
       _tooltipWindow.Location = ScreenUtils.InvisibleLocation();
-      _tooltipWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
+      //_tooltipWindow.Shown += (sender, args) => _view.AccessibilityTree.Focus();
 
       LogMessage("Initializing Java Access Bridge and enumerating active Java application windows.");
       _accessBridge.Initilized += (sender, args) => {
@@ -329,10 +325,10 @@ namespace AccessBridgeExplorer {
     private void UpdateOverlayMenuItems() {
       bool enabled = _overlayEnabledSetting.Value;
 
-      _view.ActivateOverlayOnTreeSelectionMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnTreeSelection) != 0;
-      _view.ActivateOverlayOnComponentSelectionMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnComponentSelection) != 0;
-      _view.ActivateOverlayOnFocusMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnFocusGained) != 0;
-      _view.ActivateOverlayOnActiveDescendantMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnActiveDescendantChanged) != 0;
+      _view.ActivateOverlayOnTreeSelectionMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnTreeViewSelection) != 0;
+      _view.ActivateOverlayOnComponentSelectionMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnPropertyListSelection) != 0;
+      _view.ActivateOverlayOnFocusMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnAccessibleComponentFocus) != 0;
+      _view.ActivateOverlayOnActiveDescendantMenu.Checked = (_overlayActivationSetting.Value & OverlayActivation.OnAccessibleActiveDescendantChanged) != 0;
 
       _view.ShowTooltipAndOverlayMenuItem.Checked = (_overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayAndTooltip);
       _view.ShowTooltipOnlyMenuItem.Checked = (_overlayDisplayTypeSetting.Value == OverlayDisplayType.TooltipOnly);
@@ -862,17 +858,19 @@ namespace AccessBridgeExplorer {
     }
 
     private void RefreshTree(IList<AccessibleJvm> jvms) {
-      _view.AccessibilityTree.BeginUpdate();
-      try {
-        _view.AccessibilityTree.Nodes.Clear();
-        UpdateTree(jvms);
-      } finally {
-        _view.AccessibilityTree.EndUpdate();
-      }
-      _view.StatusLabel.Text = @"Ready.";
-      HideOverlayWindow();
-      HideTooltipWindow();
-      _navigation.Clear();
+      UiAction(() => {
+        _view.AccessibilityTree.BeginUpdate();
+        try {
+          _view.AccessibilityTree.Nodes.Clear();
+          UpdateTree(jvms);
+        } finally {
+          _view.AccessibilityTree.EndUpdate();
+        }
+        _view.AccessibleComponentPropertyListView.Clear();
+        _navigation.Clear();
+        SetOverlayNode(null, OverlayActivationSource.TreeViewSelection);
+        _view.StatusLabel.Text = @"Ready.";
+      });
     }
 
     private void UpdateTree(IList<AccessibleJvm> jvms) {
@@ -1002,14 +1000,21 @@ namespace AccessBridgeExplorer {
 
     private void AccessBridgeEvents_OverlayActivation_OnActiveDescendantChanged(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldactivedescendent, JavaObjectHandle newactivedescendent) {
       UiAction(() => {
-        UpdateOverlayDisplay(newactivedescendent, OverlayActivation.OnActiveDescendantChanged);
+        SetOverlayNode(WrapHandle(newactivedescendent), OverlayActivationSource.AccessibleActiveDescendantChanged);
       });
+    }
+
+    private AccessibleNode WrapHandle(JavaObjectHandle handle) {
+      if (handle.IsNull)
+        return null;
+
+      return new AccessibleContextNode(_accessBridge, handle);
     }
 
     private void AccessBridgeEvents_OverlayActivation_OnFocusGained(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
       UiAction(() => {
         _hideOverlayOnFocusLost.Cancel();
-        UpdateOverlayDisplay(source, OverlayActivation.OnFocusGained);
+        SetOverlayNode(WrapHandle(source), OverlayActivationSource.AccessibleComponentFocus);
       });
     }
 
@@ -1017,8 +1022,7 @@ namespace AccessBridgeExplorer {
       UiAction(() => {
         _hideOverlayOnFocusLost.Post(TimeSpan.FromMilliseconds(100), () => {
           UiAction(() => {
-            HideOverlayWindow();
-            HideTooltipWindow();
+            SetOverlayNode(null, OverlayActivationSource.AccessibleComponentFocus);
           });
         });
       });
@@ -1028,41 +1032,59 @@ namespace AccessBridgeExplorer {
       //TODO
     }
 
-    private void UpdateOverlayDisplay(JavaObjectHandle source, OverlayActivation activation) {
-      if (source.IsNull) {
+    private void UpdateOverlayWindows() {
+      if (!ActivationSourceEnabled(_overlayWindowActivationSource) || _overlayWindowNode == null || _overlayWindowRectangle == null) {
+        HideOverlayWindow();
+        HideTooltipWindow();
         return;
       }
 
-      UpdateOverlayDisplay(new AccessibleContextNode(_accessBridge, source), activation);
-    }
-
-    private void UpdateOverlayDisplay(AccessibleNode node, OverlayActivation activation) {
-      if (!_overlayEnabledSetting.Value) {
-        return;
-      }
-
-      if ((_overlayActivationSetting.Value & activation) == 0) {
-        return;
-      }
-
-      SetOverlayNode(node);
-      if (_overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayOnly) {
+      // Show overlay and/or tooltip depending on overlay type setting
+      if (_overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayAndTooltip ||
+          _overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayOnly) {
         ShowOverlayWindow();
       }
 
-      if (_overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayAndTooltip || _overlayDisplayTypeSetting.Value == OverlayDisplayType.TooltipOnly) {
-        ShowTooltipWindow();
+      if (_overlayDisplayTypeSetting.Value == OverlayDisplayType.OverlayAndTooltip ||
+          _overlayDisplayTypeSetting.Value == OverlayDisplayType.TooltipOnly) {
+        ShowToolTipWindow();
       }
     }
 
-    private void SetOverlayNode(AccessibleNode node) {
-      _overlayWindowRectangle = null;
-      _overlayWindowNode = null;
-
-      UiAction(() => {
-        _overlayWindowRectangle = node == null ? null : node.GetScreenRectangle();
+    private void SetOverlayNode(AccessibleNode node, OverlayActivationSource activationSource) {
+      // Record the new node if the source is enabled
+      if (ActivationSourceEnabled(activationSource)) {
         _overlayWindowNode = node;
-      });
+        _overlayWindowActivationSource = activationSource;
+        _overlayWindowRectangle = node == null ? null : node.GetScreenRectangle();
+        UpdateOverlayWindows();
+      }
+    }
+
+    private bool ActivationSourceEnabled(OverlayActivationSource activationSource) {
+      switch (activationSource) {
+        case OverlayActivationSource.TreeViewSelection:
+          return _overlayEnabledSetting.Value &&
+            _overlayActivationSetting.Value.HasFlag(OverlayActivation.OnTreeViewSelection) &&
+            _viewIsActive;
+
+        case OverlayActivationSource.PropertyListSelection:
+          return _overlayEnabledSetting.Value &&
+            _overlayActivationSetting.Value.HasFlag(OverlayActivation.OnPropertyListSelection) &&
+            _viewIsActive;
+
+        case OverlayActivationSource.AccessibleComponentFocus:
+          return _overlayEnabledSetting.Value && _overlayActivationSetting.Value.HasFlag(OverlayActivation.OnAccessibleComponentFocus);
+
+        case OverlayActivationSource.AccessibleActiveDescendantChanged:
+          return _overlayEnabledSetting.Value && _overlayActivationSetting.Value.HasFlag(OverlayActivation.OnAccessibleActiveDescendantChanged);
+
+        case OverlayActivationSource.MouseCapture:
+          return true;
+
+        default:
+          return false;
+      }
     }
 
     private void PostRefreshTree() {
@@ -1090,13 +1112,7 @@ namespace AccessBridgeExplorer {
     }
 
     private IEnumerable<AccessibleJvm> GetAccessibleJvmsFromTree() {
-      return _view.AccessibilityTree.Nodes
-        .AsList()
-        .Select(x => x.Tag)
-        .Where(x => x != null)
-        .OfType<AccessibleNodeModel>()
-        .Select(x => x.AccessibleNode)
-        .OfType<AccessibleJvm>();
+      return _view.AccessibilityTree.Nodes.AsList().Select(x => x.Tag).Where(x => x != null).OfType<AccessibleNodeModel>().Select(x => x.AccessibleNode).OfType<AccessibleJvm>();
     }
 
     private void DisposeTreeNode(TreeNode node) {
@@ -1113,23 +1129,11 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    public void ClearSelectedNode() {
-      var node = _view.AccessibilityTree.SelectedNode;
-      if (node != null) {
-        _view.AccessibilityTree.SelectedNode = null;
-        SetOverlayNode(null);
-        ShowOverlayWindow();
-        _view.AccessibleComponentPropertyListView.Clear();
-      }
-    }
-
     private void AccessibilityTree_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
       var node = e.Node.Tag as NodeModel;
       if (node == null)
         return;
-      UiAction(() => {
-        node.BeforeExpand(sender, e);
-      });
+      UiAction(() => { node.BeforeExpand(sender, e); });
     }
 
     private void AccessibilityTree_AfterSelect(object sender, TreeViewEventArgs e) {
@@ -1137,28 +1141,22 @@ namespace AccessBridgeExplorer {
       if (treeNode == null)
         return;
 
-      var nodeModel = treeNode.Tag as AccessibleNodeModel;
-      if (nodeModel == null) {
-        SetOverlayNode(null);
-        ShowOverlayWindow();
-        _view.AccessibleComponentPropertyListView.Clear();
-        return;
-      }
-
-      SetOverlayNode(null);
       UiAction(() => {
-        SetOverlayNode(nodeModel.AccessibleNode);
+        var nodeModel = treeNode.Tag as AccessibleNodeModel;
+        if (nodeModel == null) {
+          SetOverlayNode(null, OverlayActivationSource.TreeViewSelection);
+          _view.AccessibleComponentPropertyListView.Clear();
+          return;
+        }
+
+        SetOverlayNode(nodeModel.AccessibleNode, OverlayActivationSource.TreeViewSelection);
+
         var propertyList = nodeModel.AccessibleNode.GetProperties(PropertyOptions);
         _view.AccessibleComponentPropertyListView.SetPropertyList(propertyList);
-      });
+        EnsureTreeNodeVisible(treeNode);
 
-      EnsureTreeNodeVisible(treeNode);
-      UpdateOverlayDisplay(nodeModel.AccessibleNode, OverlayActivation.OnTreeSelection);
-
-      UiAction(() => {
         var navigationEntry = new NavigationEntry {
-          Description = string.Format("Navigate to \"{0}\"", nodeModel.AccessibleNode.GetTitle()),
-          Action = () => SelectTreeNode(nodeModel.AccessibleNode),
+          Description = string.Format("Navigate to \"{0}\"", nodeModel.AccessibleNode.GetTitle()), Action = () => SelectTreeNode(nodeModel.AccessibleNode),
         };
         _navigation.AddNavigationAction(navigationEntry);
       });
@@ -1174,7 +1172,7 @@ namespace AccessBridgeExplorer {
         return;
 
       UiAction(() => {
-        UpdateOverlayDisplay(nodeModel.AccessibleNode, OverlayActivation.OnTreeSelection);
+        SetOverlayNode(nodeModel.AccessibleNode, OverlayActivationSource.TreeViewSelection);
       });
     }
 
@@ -1208,13 +1206,14 @@ namespace AccessBridgeExplorer {
         _view.AccessibleComponentPropertyListView.SetPropertyList(propertyList);
 
         // Update the overlay window
-        UpdateOverlayDisplay(nodeModel.AccessibleNode, OverlayActivation.OnTreeSelection);
+        SetOverlayNode(nodeModel.AccessibleNode, OverlayActivationSource.TreeViewSelection);
       });
     }
 
     private void ComponentPropertyListView_AccessibleRectInfoSelected(object sender, AccessibleRectInfoSelectedEventArgs e) {
-      SetOverlayNode(e.AccessibleRectInfo.AccessibleNode);
-      UpdateOverlayDisplay(e.AccessibleRectInfo.AccessibleNode, OverlayActivation.OnComponentSelection);
+      UiAction(() => {
+        SetOverlayNode(e.AccessibleRectInfo.AccessibleNode, OverlayActivationSource.PropertyListSelection);
+      });
     }
 
     private void ComponentPropertyListView_Error(object sender, PropertyGroupErrorEventArgs e) {
@@ -1227,50 +1226,17 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    private void ShowOverlayWindow() {
-      if (_overlayWindowRectangle == null) {
-        HideOverlayWindow();
-        return;
-      }
-
-      if (!_overlayWindow.Visible) {
-        _overlayWindow.TopMost = true;
-        _overlayWindow.Visible = true;
-      }
-
-      // Note: The _overlayWindowRectangle value comes from the Java Access
-      // Bridge for a given accessible component. Sometimes, the component has
-      // bounds that extend outside of the visible screen (for example, an
-      // editor embedded in a viewport will report negative values for y index
-      // when scrolled down to the end of the text). On the other side, Windows
-      // (or WinForms) limits the size of windows to the height/width of the
-      // desktop. So, an a 1600x1200 screen, a rectangle of [x=10, y=-2000,
-      // w=600, h=3000] is cropped to [x=10, y=-2000, w=600, h=1200]. This
-      // results in a window that is not visible (y + height < 0).
-      // to workaround that issue, we do some math. to make the rectable visible.
-      var rect = ScreenUtils.FitToScreen(_overlayWindowRectangle.Value);
-      _overlayWindow.Location = rect.Location;
-      _overlayWindow.Size = rect.Size;
-    }
-
-    private void ShowTooltipWindow() {
-      if (_overlayWindowRectangle == null) {
-        HideTooltipWindow();
-        return;
-      }
-
-      ShowToolTip(_overlayWindowRectangle.Value.Location, _overlayWindowNode);
-    }
-
     public void HideOverlayWindow() {
-      _overlayWindow.Location = ScreenUtils.InvisibleLocation();
-      _overlayWindow.Size = new Size(0, 0);
+      _overlayWindow.Visible = false;
+      //_overlayWindow.Location = ScreenUtils.InvisibleLocation();
+      //_overlayWindow.Size = new Size(0, 0);
     }
 
     public void HideTooltipWindow() {
       _tooltipWindow.Label.Text = "";
-      _tooltipWindow.Location = ScreenUtils.InvisibleLocation();
-      _tooltipWindow.Size = new Size(0, 0);
+      _tooltipWindow.Visible = false;
+      //_tooltipWindow.Location = ScreenUtils.InvisibleLocation();
+      //_tooltipWindow.Size = new Size(0, 0);
     }
 
     public void EnableOverlayActivationFlag(OverlayActivation value, bool enabled) {
@@ -1280,20 +1246,14 @@ namespace AccessBridgeExplorer {
     private void UpdateOverlayActivation(OverlayActivation previous) {
       _hideOverlayOnFocusLost.Cancel();
 
-      // Update UI
-      if (_overlayActivationSetting.Value == OverlayActivation.None) {
-        HideOverlayWindow();
-        HideTooltipWindow();
-      }
-
       // Update event handlers
       if (_accessBridge.IsLoaded) {
-        if (FlagActivated(previous, _overlayActivationSetting.Value, OverlayActivation.OnFocusGained | OverlayActivation.OnActiveDescendantChanged)) {
+        if (FlagActivated(previous, _overlayActivationSetting.Value, OverlayActivation.OnAccessibleComponentFocus | OverlayActivation.OnAccessibleActiveDescendantChanged)) {
           _accessBridge.Events.FocusGained += AccessBridgeEvents_OverlayActivation_OnFocusGained;
           _accessBridge.Events.FocusLost += AccessBridgeEvents_OverlayActivation_OnFocusLost;
           _accessBridge.Events.JavaShutdown += AccessBridgeEvents_OverlayActivation_OnJavaShutdown;
           _accessBridge.Events.PropertyActiveDescendentChange += AccessBridgeEvents_OverlayActivation_OnActiveDescendantChanged;
-        } else if (FlagDeactivated(previous, _overlayActivationSetting.Value, OverlayActivation.OnFocusGained | OverlayActivation.OnActiveDescendantChanged)) {
+        } else if (FlagDeactivated(previous, _overlayActivationSetting.Value, OverlayActivation.OnAccessibleComponentFocus | OverlayActivation.OnAccessibleActiveDescendantChanged)) {
           _accessBridge.Events.FocusGained -= AccessBridgeEvents_OverlayActivation_OnFocusGained;
           _accessBridge.Events.FocusLost -= AccessBridgeEvents_OverlayActivation_OnFocusLost;
           _accessBridge.Events.JavaShutdown -= AccessBridgeEvents_OverlayActivation_OnJavaShutdown;
@@ -1301,6 +1261,8 @@ namespace AccessBridgeExplorer {
         }
       }
 
+      // Update UI
+      UpdateOverlayWindows();
       UpdateOverlayMenuItems();
     }
 
@@ -1333,16 +1295,8 @@ namespace AccessBridgeExplorer {
         // Note: We should never have more than one window because
         // AccessibleWindow uses WindowFromPoint to filter out themselves if
         // needed.
-        return GetAccessibleJvmsFromTree()
-          .Select(node => node.GetNodePathAt(screenPoint))
-          .Where(x => x != null)
-          .FirstOrDefault();
+        return GetAccessibleJvmsFromTree().Select(node => node.GetNodePathAt(screenPoint)).Where(x => x != null).FirstOrDefault();
       });
-    }
-
-    public void ShowOverlayForNodePath(NodePath path) {
-      SetOverlayNode(path.LeafNode);
-      ShowOverlayWindow();
     }
 
     public void SelectNodeAtPoint(Point screenPoint) {
@@ -1421,14 +1375,27 @@ namespace AccessBridgeExplorer {
       return null;
     }
 
-    public void ShowToolTip(Point screenPoint, NodePath nodePath) {
+    private void ShowOverlayWindow() {
       UiAction(() => {
-        ShowToolTip(screenPoint, nodePath.LeafNode);
+        Debug.Assert(_overlayWindowNode != null);
+        Debug.Assert(_overlayWindowRectangle != null);
+
+        _overlayWindow.Bounds = ScreenUtils.FitToScreen(_overlayWindowRectangle.Value);
+        if (!_overlayWindow.Visible) {
+          _overlayWindow.TopMost = true;
+          _overlayWindow.Visible = true;
+        }
       });
     }
 
-    public void ShowToolTip(Point screenPoint, AccessibleNode node) {
+    private void ShowToolTipWindow() {
       UiAction(() => {
+        Debug.Assert(_overlayWindowNode != null);
+        Debug.Assert(_overlayWindowRectangle != null);
+
+        var screenPoint = _overlayWindowRectangle.Value.Location;
+        var node = _overlayWindowNode;
+
         var sb = new StringBuilder();
         foreach (var x in node.GetToolTipProperties(PropertyOptions)) {
           if (sb.Length > 0)
@@ -1437,169 +1404,103 @@ namespace AccessBridgeExplorer {
         }
         _tooltipWindow.AutoSize = true;
         _tooltipWindow.Label.Text = string.Format("{0}", sb);
-        _tooltipWindow.Location = ScreenUtils.EnsureVisible(new Point(
-          screenPoint.X - _tooltipWindow.Size.Width - 16,
-          screenPoint.Y - _tooltipWindow.Size.Height / 2));
+        _tooltipWindow.Location = ScreenUtils.EnsureVisible(new Point(screenPoint.X - _tooltipWindow.Size.Width - 16, screenPoint.Y - _tooltipWindow.Size.Height / 2));
+        if (!_tooltipWindow.Visible) {
+          _tooltipWindow.TopMost = true;
+          _tooltipWindow.Visible = true;
+        }
       });
     }
 
     public void OnFocusLost() {
-      HideOverlayWindow();
-      HideTooltipWindow();
+      _viewIsActive = false;
+      UpdateOverlayWindows();
     }
 
     public void OnFocusGained() {
-      ShowOverlayWindow();
+      _viewIsActive = true;
+      UpdateOverlayWindows();
     }
 
     #region Event Handlers
+
     // ReSharper disable UnusedMember.Local
     // ReSharper disable UnusedParameter.Local
     private void EventsOnPropertyChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source, string property, string oldValue, string newValue) {
       // Note: It seems this event is never fired. Maybe this is from older JDKs?
-      LogNodeEvent(string.Format("PropertyChange: {0}", property),
-        () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldValue, newValue),
-        () => ShowEventDialog(
-          new AccessibleContextNode(_accessBridge, source),
-          "Old value", oldValue,
-          "New value", newValue));
+      LogNodeEvent(string.Format("PropertyChange: {0}", property), () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldValue, newValue), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source), "Old value", oldValue, "New value", newValue));
     }
 
     private void EventsOnPropertyVisibleDataChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("PropertyVisibleDataChange",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("PropertyVisibleDataChange", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnPropertyValueChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source, string oldValue, string newValue) {
-      LogNodeEvent("PropertyVisibleDataChange",
-        () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldValue, newValue),
-        () => ShowEventDialog(
-          new AccessibleContextNode(_accessBridge, source),
-          "Old value", oldValue,
-          "New value", newValue));
+      LogNodeEvent("PropertyVisibleDataChange", () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldValue, newValue), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source), "Old value", oldValue, "New value", newValue));
     }
 
     private void EventsOnPropertyTextChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("PropertyTextChange",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("PropertyTextChange", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnPropertyStateChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source, string oldState, string newState) {
-      LogNodeEvent("PropertyStateChange",
-        () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldState, newState),
-        () => ShowEventDialog(
-          new AccessibleContextNode(_accessBridge, source),
-          "Old state", oldState,
-          "New state", newState));
+      LogNodeEvent("PropertyStateChange", () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldState, newState), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source), "Old state", oldState, "New state", newState));
     }
 
     private void EventsOnPropertySelectionChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("PropertySelectionChange",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("PropertySelectionChange", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnPropertyNameChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source, string oldName, string newName) {
-      LogNodeEvent("PropertyNameChange",
-        () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldName, newName),
-        () => ShowEventDialog(
-          new AccessibleContextNode(_accessBridge, source),
-          "Old name", oldName,
-          "New name", newName));
+      LogNodeEvent("PropertyNameChange", () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldName, newName), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source), "Old name", oldName, "New name", newName));
     }
 
     private void EventsOnPropertyDescriptionChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source, string oldDescription, string newDescription) {
-      LogNodeEvent("PropertyDescriptionChange",
-        () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldDescription, newDescription),
-        () => ShowEventDialog(
-          new AccessibleContextNode(_accessBridge, source),
-          "Old description", oldDescription,
-          "New description", newDescription));
+      LogNodeEvent("PropertyDescriptionChange", () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldDescription, newDescription), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source), "Old description", oldDescription, "New description", newDescription));
     }
 
     private void EventsOnPropertyCaretChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source, int oldPosition, int newPosition) {
-      LogNodeEvent("PropertyCaretChange",
-        () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldPosition.ToString(), newPosition.ToString()),
-        () => ShowEventDialog(
-          new AccessibleContextNode(_accessBridge, source),
-          "Old position", oldPosition.ToString(),
-          "New position", newPosition.ToString()));
+      LogNodeEvent("PropertyCaretChange", () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldPosition.ToString(), newPosition.ToString()), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source), "Old position", oldPosition.ToString(), "New position", newPosition.ToString()));
     }
 
     private void EventsOnPropertyActiveDescendentChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldActiveDescendent, JavaObjectHandle newActiveDescendent) {
-      LogNodeEvent("PropertyActiveDescendentChange",
-        () => Tuple.Create(
-          new AccessibleContextNode(_accessBridge, source),
-          new AccessibleContextNode(_accessBridge, oldActiveDescendent).GetTitle(),
-          new AccessibleContextNode(_accessBridge, newActiveDescendent).GetTitle()),
-        () => {
-          ShowEventDialog(
-            new AccessibleContextNode(_accessBridge, source),
-            new AccessibleContextNode(_accessBridge, oldActiveDescendent),
-            new AccessibleContextNode(_accessBridge, newActiveDescendent));
-        });
+      LogNodeEvent("PropertyActiveDescendentChange", () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), new AccessibleContextNode(_accessBridge, oldActiveDescendent).GetTitle(), new AccessibleContextNode(_accessBridge, newActiveDescendent).GetTitle()), () => { ShowEventDialog(new AccessibleContextNode(_accessBridge, source), new AccessibleContextNode(_accessBridge, oldActiveDescendent), new AccessibleContextNode(_accessBridge, newActiveDescendent)); });
     }
 
     private void EventsOnPropertyChildChange(int vmId, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldChild, JavaObjectHandle newChild) {
-      LogNodeEvent("PropertyChildChange",
-        () => Tuple.Create(
-          new AccessibleContextNode(_accessBridge, source),
-          new AccessibleContextNode(_accessBridge, oldChild).GetTitle(),
-          new AccessibleContextNode(_accessBridge, newChild).GetTitle()),
-        () => ShowEventDialog(
-          new AccessibleContextNode(_accessBridge, source),
-          new AccessibleContextNode(_accessBridge, oldChild),
-          new AccessibleContextNode(_accessBridge, newChild)));
+      LogNodeEvent("PropertyChildChange", () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), new AccessibleContextNode(_accessBridge, oldChild).GetTitle(), new AccessibleContextNode(_accessBridge, newChild).GetTitle()), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source), new AccessibleContextNode(_accessBridge, oldChild), new AccessibleContextNode(_accessBridge, newChild)));
     }
 
     private void EventsOnMouseReleased(int vmId, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("MouseReleased",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("MouseReleased", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnMousePressed(int vmId, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("MousePressed",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("MousePressed", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnMouseExited(int vmId, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("MouseExited",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("MouseExited", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnMouseEntered(int vmId, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("MouseEntered",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("MouseEntered", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnMouseClicked(int vmId, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("MouseClicked",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("MouseClicked", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnCaretUpdate(int vmId, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("CaretUpdate",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("CaretUpdate", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnFocusGained(int vmId, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("FocusGained",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("FocusGained", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnFocusLost(int vmId, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("FocusLost",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("FocusLost", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnJavaShutdown(int jvmId) {
@@ -1607,51 +1508,36 @@ namespace AccessBridgeExplorer {
     }
 
     private void EventsOnMenuCanceled(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("MenuCanceled",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("MenuCanceled", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnMenuDeselected(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("MenuDeselected",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("MenuDeselected", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnMenuSelected(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("MenuSelected",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("MenuSelected", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnPopupMenuCanceled(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("PopupMenuCanceled",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("PopupMenuCanceled", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnPopupMenuWillBecomeInvisible(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("PopupMenuWillBecomeInvisible",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("PopupMenuWillBecomeInvisible", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnPopupMenuWillBecomeVisible(int vmid, JavaObjectHandle evt, JavaObjectHandle source) {
-      LogNodeEvent("PopupMenuWillBecomeVisible",
-        () => new AccessibleContextNode(_accessBridge, source),
-        () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
+      LogNodeEvent("PopupMenuWillBecomeVisible", () => new AccessibleContextNode(_accessBridge, source), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source)));
     }
 
     private void EventsOnPropertyTableModelChange(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldValue, string newValue) {
-      LogNodeEvent("PropertyTableModelChange",
-        () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldValue, newValue),
-        () => ShowEventDialog(
-          new AccessibleContextNode(_accessBridge, source),
-          "Old value", oldValue,
-          "New value", newValue));
+      LogNodeEvent("PropertyTableModelChange", () => Tuple.Create(new AccessibleContextNode(_accessBridge, source), oldValue, newValue), () => ShowEventDialog(new AccessibleContextNode(_accessBridge, source), "Old value", oldValue, "New value", newValue));
     }
+
     // ReSharper restore UnusedParameter.Local
     // ReSharper restore UnusedMember.Local
+
     #endregion
 
     public class HwndCache {
@@ -1675,15 +1561,45 @@ namespace AccessBridgeExplorer {
         JavaObjectHandle.FlushReleaseQueue();
       }
     }
+
+    public void StartMouseCapture() {
+      UiAction(() => {
+        RefreshTree();
+        SetOverlayNode(null, OverlayActivationSource.MouseCapture);
+      });
+    }
+
+    public void StopMouseCapture() {
+      UiAction(() => {
+        SetOverlayNode(null, OverlayActivationSource.MouseCapture);
+      });
+    }
+
+    public void MouseCaptureMove(Point screenPoint) {
+      UiAction(() => {
+        var nodePath = GetNodePathAt(screenPoint);
+        var node = nodePath == null ? null : nodePath.LeafNode;
+        SetOverlayNode(node, OverlayActivationSource.MouseCapture);
+      });
+    }
   }
 
   [Flags]
   public enum OverlayActivation {
     None = 0x0,
-    OnTreeSelection = 0x01,
-    OnComponentSelection = 0x02,
-    OnFocusGained = 0x04,
-    OnActiveDescendantChanged = 0x08,
+    OnTreeViewSelection = 0x01,
+    OnPropertyListSelection = 0x02,
+    OnAccessibleComponentFocus = 0x04,
+    OnAccessibleActiveDescendantChanged = 0x08,
+  }
+
+  public enum OverlayActivationSource {
+    None,
+    TreeViewSelection,
+    PropertyListSelection,
+    MouseCapture,
+    AccessibleComponentFocus,
+    AccessibleActiveDescendantChanged,
   }
 
   public enum OverlayDisplayType {

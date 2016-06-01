@@ -29,18 +29,19 @@ namespace AccessBridgeExplorer.Utils {
         Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
       }
 
-      wl = wl | WindowStylesEx.WS_EX_TOOLWINDOW | WindowStylesEx.WS_EX_TRANSPARENT;
+      wl = wl | WindowStylesEx.WS_EX_TOOLWINDOW | WindowStylesEx.WS_EX_TRANSPARENT | WindowStylesEx.WS_EX_NOACTIVATE;
       SetWindowExStyle(handleRef, wl);
 
-      // Note: Due to a limitation/bug(?) in Windows 7, we need to set the "WS_EX_LAYERED"
-      // style after the other 2 styles above. Also, the "SetWindowLong" call will fail
-      // with a return value of 0, but GetLastError will return 0 (meaning success).
-      //
+      // WS_EX_LAYERED style:
       // See https://msdn.microsoft.com/en-us/library/windows/desktop/ms632599(v=vs.85).aspx#layered
       // However, if the layered window has the WS_EX_TRANSPARENT extended
       // window style, the shape of the layered window will be ignored and the
       // mouse events will be passed to other windows underneath the layered
       // window.
+      //
+      // Note: Due to a limitation/bug(?) in Windows 7, we need to set the "WS_EX_LAYERED"
+      // style after the other 2 styles above. Also, the "SetWindowLong" call will fail
+      // with a return value of 0, but GetLastError will return 0 (meaning success).
       wl = wl | WindowStylesEx.WS_EX_LAYERED;
       SetWindowExStyle(handleRef, wl);
 

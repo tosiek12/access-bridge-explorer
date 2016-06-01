@@ -208,22 +208,22 @@ namespace AccessBridgeExplorer {
 
     private void activateOverlayOnTreeSelectionMenuItem_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnTreeSelectionMenuItem.Checked;
-      _controller.EnableOverlayActivationFlag(OverlayActivation.OnTreeSelection, enable);
+      _controller.EnableOverlayActivationFlag(OverlayActivation.OnTreeViewSelection, enable);
     }
 
     private void activateOverlayOnComponentSelectionMenuItem_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnComponentSelectionMenuItem.Checked;
-      _controller.EnableOverlayActivationFlag(OverlayActivation.OnComponentSelection, enable);
+      _controller.EnableOverlayActivationFlag(OverlayActivation.OnPropertyListSelection, enable);
     }
 
     private void activateOverlayOnFocusMenuItem_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnFocusMenuItem.Checked;
-      _controller.EnableOverlayActivationFlag(OverlayActivation.OnFocusGained, enable);
+      _controller.EnableOverlayActivationFlag(OverlayActivation.OnAccessibleComponentFocus, enable);
     }
 
     private void activateOverlayOnActiveDescendantMenuItem_Click(object sender, EventArgs e) {
       var enable = !activateOverlayOnActiveDescendantMenuItem.Checked;
-      _controller.EnableOverlayActivationFlag(OverlayActivation.OnActiveDescendantChanged, enable);
+      _controller.EnableOverlayActivationFlag(OverlayActivation.OnAccessibleActiveDescendantChanged, enable);
     }
 
     private void showTooltipAndOverlayMenuItem_Click(object sender, EventArgs e) {
@@ -257,8 +257,7 @@ namespace AccessBridgeExplorer {
     }
 
     private void catpureButton_MouseDown(object sender, MouseEventArgs e) {
-      _controller.ClearSelectedNode();
-      _controller.RefreshTree();
+      _controller.StartMouseCapture();
       _capturing = true;
       Cursor = Cursors.Cross;
       Capture = true;
@@ -267,19 +266,14 @@ namespace AccessBridgeExplorer {
     private void MainForm_MouseCaptureChanged(object sender, EventArgs e) {
       Cursor = Cursors.Default;
       _capturing = false;
-      _controller.HideTooltipWindow();
+      _controller.StopMouseCapture();
     }
 
     private void MainForm_MouseMove(object sender, MouseEventArgs e) {
-      var screenPoint = PointToScreen(e.Location);
-      var nodePath = _controller.GetNodePathAt(screenPoint);
-      if (nodePath != null) {
-        _controller.ShowToolTip(screenPoint, nodePath);
-        _controller.ShowOverlayForNodePath(nodePath);
-      } else {
-        _controller.HideOverlayWindow();
-        _controller.HideTooltipWindow();
-      }
+      if (!_capturing)
+        return;
+
+      _controller.MouseCaptureMove(PointToScreen(e.Location));
     }
 
     private void MainForm_MouseUp(object sender, MouseEventArgs e) {
