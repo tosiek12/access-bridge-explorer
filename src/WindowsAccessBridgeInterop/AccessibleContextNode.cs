@@ -235,6 +235,9 @@ namespace WindowsAccessBridgeInterop {
 
     public override Rectangle? GetScreenRectangle() {
       var info = GetInfo();
+      if (info.x == -1 && info.y == -1 && info.width == -1 && info.height == -1) {
+        return null;
+      }
       return new Rectangle(info.x, info.y, info.width, info.height);
     }
 
