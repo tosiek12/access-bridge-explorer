@@ -12,13 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Drawing;
 using System.Windows.Forms;
 using AccessBridgeExplorer.Utils;
 
 namespace AccessBridgeExplorer {
   public interface IExplorerFormView {
+
     string Caption { get; }
 
+    Point CursorPosition { get; }
+    WindowsHotKeyHandlerFactory WindowsHotKeyHandlerFactory { get; }
     IMessageQueue MessageQueue { get; }
 
     ToolStripButton RefreshButton { get; }
@@ -56,6 +60,9 @@ namespace AccessBridgeExplorer {
     ToolStripMenuItem ShowTooltipAndOverlayMenuItem { get; }
     ToolStripMenuItem ShowTooltipOnlyMenuItem { get; }
     ToolStripMenuItem ShowOverlayOnlyMenuItem { get; }
+
+    ToolStripMenuItem EnableCaptureHookMenuItem { get; }
+    ToolStripMenuItem EnableOverlayHookMenuItem { get; }
 
     ToolStripStatusLabel StatusLabel { get; }
 

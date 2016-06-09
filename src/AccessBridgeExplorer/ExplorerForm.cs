@@ -23,15 +23,8 @@ using AccessBridgeExplorer.Utils.Settings;
 
 namespace AccessBridgeExplorer {
   public partial class ExplorerForm : Form, IExplorerFormView, IMessageQueue {
-    /// <summary>
-    /// Capture the "Ctrl+\" keyboard combination
-    /// Note: OemPipe: Used for miscellaneous characters; it can vary by keyboard.
-    /// For the US standard keyboard, the '\|' key
-    /// </summary>
-    private const Keys CaptureKey = Keys.Control | Keys.OemPipe;
-
     private readonly IUserSettings _userSettings;
-    private readonly WindowsHotKeyHandler _hotKeyHandler;
+    private readonly WindowsHotKeyHandlerFactory _handlerFactory;
     private readonly ExplorerFormController _controller;
     private readonly PropertyListView _accessibleComponentPropertyListViewView;
     private readonly UserSetting<bool> _automaticallyCheckForUpdateSetting;
@@ -41,11 +34,10 @@ namespace AccessBridgeExplorer {
 
     public ExplorerForm() {
       InitializeComponent();
+      _handlerFactory = new WindowsHotKeyHandlerFactory(this);
       _userSettings = UserSettingsProvider.Instance;
       _accessibleComponentPropertyListViewView = new PropertyListView(_accessibleContextPropertyList, _propertyImageList);
       _controller = new ExplorerFormController(this, _userSettings);
-      _hotKeyHandler = new WindowsHotKeyHandler();
-      _hotKeyHandler.KeyPressed += HotKeyHandler_KeyPressed;
 
       _automaticallyCheckForUpdateSetting = new BoolUserSetting(_userSettings, "update.autoCheck", true);
       _automaticallyCheckForUpdateSetting.Sync += (sender, args) => {
@@ -71,11 +63,6 @@ namespace AccessBridgeExplorer {
         _controller.LogIntroMessages();
         _userSettings.Load();
         _controller.Initialize();
-        try {
-          _hotKeyHandler.Register(this, 1, CaptureKey);
-        } catch (Exception ex) {
-          _controller.LogErrorMessage(ex);
-        }
         Application.Idle += Application_Idle;
       });
     }
@@ -147,13 +134,6 @@ namespace AccessBridgeExplorer {
           UpdateNavigationState();
         };
       });
-    }
-
-    private void HotKeyHandler_KeyPressed(object sender, EventArgs eventArgs) {
-      _controller.RefreshTree();
-
-      var screenPoint = MousePosition;
-      _controller.SelectNodeAtPoint(screenPoint);
     }
 
     private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -293,7 +273,6 @@ namespace AccessBridgeExplorer {
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
       Application.Idle -= Application_Idle;
       _controller.Dispose();
-      _hotKeyHandler.Dispose();
     }
 
     private void MainForm_Activated(object sender, EventArgs e) {
@@ -409,6 +388,14 @@ namespace AccessBridgeExplorer {
       get { return Text; }
     }
 
+    Point IExplorerFormView.CursorPosition {
+      get { return Cursor.Position; }
+    }
+
+    WindowsHotKeyHandlerFactory IExplorerFormView.WindowsHotKeyHandlerFactory {
+      get { return _handlerFactory; }
+    }
+
     IMessageQueue IExplorerFormView.MessageQueue {
       get { return this; }
     }
@@ -515,6 +502,14 @@ namespace AccessBridgeExplorer {
 
     ToolStripMenuItem IExplorerFormView.ShowOverlayOnlyMenuItem {
       get { return showOverlayOnlyMenuItem; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.EnableCaptureHookMenuItem {
+      get { return enableCaptureHookMenuItem; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.EnableOverlayHookMenuItem {
+      get { return enableOverlayHookMenuItem; }
     }
 
     ToolStripStatusLabel IExplorerFormView.StatusLabel {

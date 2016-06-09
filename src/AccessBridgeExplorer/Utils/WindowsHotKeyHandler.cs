@@ -18,76 +18,71 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace AccessBridgeExplorer.Utils {
-  public class WindowsHotKeyHandler : IMessageFilter, IDisposable {
-    private Control _control;
-    private int _id;
+  public class WindowsHotKeyHandler : IWindowsHotKeyHandler, IMessageFilter {
+    private readonly IWin32Window _control;
+    private readonly int _id;
+    private readonly Keys _keys;
+    private bool _isActive;
+
     // ReSharper disable once InconsistentNaming
     private const uint WM_HOTKEY = 0x312;
 
-    [Flags]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public enum Modifiers : uint {
-      MOD_ALT = 0x1,
-      MOD_CONTROL = 0x2,
-      MOD_SHIFT = 0x4,
-      MOD_WIN = 0x8,
+    public WindowsHotKeyHandler(IWin32Window owner, int id, Keys keys) {
+      _control = owner;
+      _id = id;
+      _keys = keys;
     }
 
     public event EventHandler KeyPressed;
+
+    public bool IsRegistered {
+      get { return _isActive; }
+      set {
+        if (value) {
+          Register();
+        } else {
+          Unregister();
+        }
+      }
+    }
 
     public void Dispose() {
       Unregister();
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="control"></param>
-    /// <param name="id">The identifier of the hot key. If a hot key already
-    /// exists with the same control and id parameters, see Remarks for the
-    /// action taken. An application must specify an id value in the range
-    /// 0x0000 through 0xBFFF. A shared DLL must specify a value in the range
-    /// 0xC000 through 0xFFFF (the range returned by the GlobalAddAtom
-    /// function). To avoid conflicts with hot-key identifiers defined by other
-    /// shared DLLs, a DLL should use the GlobalAddAtom function to obtain the
-    /// hot-key identifier.</param>
-    /// <param name="key"></param>
-    public void Register(Control control, int id, Keys key) {
-      if (_control != null) {
-        throw new InvalidOperationException("Hotkey already registered");
-      }
+    private void Register() {
+      if (_isActive)
+        return;
 
       Application.AddMessageFilter(this);
       try {
         var modifiers = default(Modifiers);
-        if ((key & Keys.Shift) != 0) modifiers |= Modifiers.MOD_SHIFT;
-        if ((key & Keys.Control) != 0) modifiers |= Modifiers.MOD_CONTROL;
-        if ((key & Keys.Alt) != 0) modifiers |= Modifiers.MOD_ALT;
+        if ((_keys & Keys.Shift) != 0) modifiers |= Modifiers.MOD_SHIFT;
+        if ((_keys & Keys.Control) != 0) modifiers |= Modifiers.MOD_CONTROL;
+        if ((_keys & Keys.Alt) != 0) modifiers |= Modifiers.MOD_ALT;
         //if ((key & Keys.Win) != 0) modifiers |= Modifiers.MOD_WIN;
 
         // Register the hotkey
-        if (RegisterHotKey(control.Handle, id, (uint) modifiers, key & Keys.KeyCode) == 0) {
+        if (RegisterHotKey(_control.Handle, _id, (uint)modifiers, _keys & Keys.KeyCode) == 0) {
           ThrowLastWin32Error("Error registering global hotkey");
         }
+        _isActive = true;
       } catch {
         Application.RemoveMessageFilter(this);
         throw;
       }
-      _control = control;
-      _id = id;
     }
 
-    public void Unregister() {
-      if (_control == null)
+    private void Unregister() {
+      if (!_isActive)
         return;
 
       if (UnregisterHotKey(_control.Handle, _id) == 0) {
         ThrowLastWin32Error("Error unregistering global hotkey");
       }
+      _isActive = false;
 
       Application.RemoveMessageFilter(this);
-      _control = null;
-      _id = 0;
     }
 
     private static void ThrowLastWin32Error(string message) {
@@ -127,6 +122,15 @@ namespace AccessBridgeExplorer.Utils {
       OnKeyPressed();
       // TODO: Never eat the keystroke?
       return false;
+    }
+
+    [Flags]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public enum Modifiers : uint {
+      MOD_ALT = 0x1,
+      MOD_CONTROL = 0x2,
+      MOD_SHIFT = 0x4,
+      MOD_WIN = 0x8,
     }
   }
 }

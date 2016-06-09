@@ -97,6 +97,7 @@
       <DependentUpon>ExceptionForm.cs</DependentUpon>
     </Compile>
     <Compile Include="PropertyListTreeViewModel.cs" />
+    <Compile Include="Utils\IWindowsHotKeyHandler.cs" />
     <Compile Include="Utils\Settings\BoolUserSetting.cs" />
     <Compile Include="Utils\Settings\EnumFlagsUserSettings.cs" />
     <Compile Include="Utils\Settings\EnumUserSetting.cs" />
@@ -181,6 +182,7 @@
     <Compile Include="Utils\User32Utils.cs" />
     <Compile Include="Utils\Settings\UserSettingsProvider.cs" />
     <Compile Include="Utils\WindowsHotKeyHandler.cs" />
+    <Compile Include="Utils\WindowsHotKeyHandlerFactory.cs" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>

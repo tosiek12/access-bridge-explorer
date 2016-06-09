@@ -40,6 +40,9 @@ namespace AccessBridgeExplorer {
     private readonly SingleDelayedTask _hideOverlayOnFocusLost = new SingleDelayedTask();
     private readonly HwndCache _windowCache = new HwndCache();
 
+    private readonly IWindowsHotKeyHandler _captureKeyHandler;
+    private readonly IWindowsHotKeyHandler _enableOverlayKeyHandler;
+
     private readonly AutoDetectApplicationsSetting _autoDetectApplicationsEnabledSetting;
     private readonly AutoReleaseInactiveObjectSetting _autoReleaseInactiveObjectSetting;
     private readonly OverlayActivationSetting _overlayActivationSetting;
@@ -66,6 +69,21 @@ namespace AccessBridgeExplorer {
       _navigation = new ExplorerFormNavigation();
       _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
 
+      _captureKeyHandler = _view.WindowsHotKeyHandlerFactory.CreateHandler(1, Keys.Control | Keys.OemPipe);
+      _captureKeyHandler.KeyPressed += (sender, eventArgs) => {
+        if (_disposed)
+          return;
+        RefreshTree();
+        SelectNodeAtPoint(_view.CursorPosition);
+      };
+
+      _enableOverlayKeyHandler = _view.WindowsHotKeyHandlerFactory.CreateHandler(2, Keys.Control | Keys.Shift | Keys.OemPipe);
+      _enableOverlayKeyHandler.KeyPressed += (sender, args) => {
+        if (_disposed)
+          return;
+        _overlayEnabledSetting.Value = !_overlayEnabledSetting.Value;
+      };
+
       _userSettings.Error += UserSettings_OnError;
 
       _overlayEnabledSetting = new BoolUserSetting(userSetting, "overlay.enabled", true);
@@ -75,6 +93,38 @@ namespace AccessBridgeExplorer {
         _view.EnableOverlayMenuItem.Checked = args.NewValue;
         UpdateOverlayWindows();
         UpdateOverlayMenuItems();
+      };
+
+      var enableCaptureHookSetting = new BoolUserSetting(userSetting, "overlay.capture.hook", true);
+      enableCaptureHookSetting.Sync += (sender, args) => {
+        if (_disposed)
+          return;
+
+        try {
+          _captureKeyHandler.IsRegistered = args.Value;
+        } catch (Exception ex) {
+          LogErrorMessage(ex);
+        }
+        _view.EnableCaptureHookMenuItem.Checked = _captureKeyHandler.IsRegistered;
+      };
+      _view.EnableCaptureHookMenuItem.Click += (sender, args) => {
+        enableCaptureHookSetting.Value = !enableCaptureHookSetting.Value;
+      };
+
+      var enableOverlayHookSetting = new BoolUserSetting(userSetting, "overlay.enable.hook", true);
+      enableOverlayHookSetting.Sync += (sender, args) => {
+        if (_disposed)
+          return;
+
+        try {
+          _enableOverlayKeyHandler.IsRegistered = args.Value;
+        } catch (Exception ex) {
+          LogErrorMessage(ex);
+        }
+        _view.EnableOverlayHookMenuItem.Checked = _enableOverlayKeyHandler.IsRegistered;
+      };
+      _view.EnableOverlayHookMenuItem.Click += (sender, args) => {
+        enableOverlayHookSetting.Value = !enableOverlayHookSetting.Value;
       };
 
       _overlayActivationSetting = new OverlayActivationSetting(this);
@@ -623,6 +673,10 @@ namespace AccessBridgeExplorer {
 
       DisposeTreeNodeList(_view.AccessibilityTree.Nodes);
       _accessBridge.Dispose();
+
+      _captureKeyHandler.Dispose();
+      _enableOverlayKeyHandler.Dispose();
+
       _disposed = true;
     }
 
