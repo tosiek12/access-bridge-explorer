@@ -35,15 +35,15 @@ namespace WindowsAccessBridgeInterop {
     public abstract bool DoAccessibleActions(int vmid, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
     public abstract bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, out AccessibleActions actions);
     /// <summary>
-    /// Returns the accessible context of the 'th child of
-    /// the component associated to . Returns an
-    /// null accessible context if there is no such child.
+    /// Returns the accessible context of the <paramref name="i" />'th child of
+    /// the component associated to <paramref name="ac" />. Returns an
+    /// <code>null</code> accessible context if there is no such child.
     /// </summary>
     public abstract JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i);
     public abstract bool GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
     public abstract bool GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac);
     /// <summary>
-    /// Retrieves the  of the component
+    /// Retrieves the <see cref="AccessibleContextInfo" /> of the component
     /// corresponding to the given accessible context.
     /// </summary>
     public abstract bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info);
@@ -57,7 +57,7 @@ namespace WindowsAccessBridgeInterop {
     public abstract bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings);
     /// <summary>
     /// Returns the accessible context of the parent of the component associated
-    /// to . Returns an null accessible
+    /// to <paramref name="ac" />. Returns an <code>null</code> accessible
     /// context if there is no parent.
     /// </summary>
     public abstract JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac);
@@ -116,13 +116,13 @@ namespace WindowsAccessBridgeInterop {
     public abstract bool IsAccessibleTableColumnSelected(int vmid, JavaObjectHandle table, int column);
     public abstract bool IsAccessibleTableRowSelected(int vmid, JavaObjectHandle table, int row);
     /// <summary>
-    /// Returns true if the given window handle belongs to a Java
+    /// Returns <code>true</code> if the given window handle belongs to a Java
     /// application.
     /// </summary>
     public abstract bool IsJavaWindow(WindowHandle window);
     /// <summary>
-    /// Returns true if both java object handles reference the same
-    /// object. Note that the function may return false for
+    /// Returns <code>true</code> if both java object handles reference the same
+    /// object. Note that the function may return <cdoe>false</cdoe> for
     /// tansient objects, e.g. for items of tables/list/trees.
     /// </summary>
     public abstract bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2);

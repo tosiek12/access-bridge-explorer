@@ -65,7 +65,7 @@ namespace CodeGen.Definitions {
 
       var summary = element.Element("summary");
       return new XmlDocDefinition {
-        Summary = summary != null ? summary.Value : ""
+        Summary = summary != null ? summary.ToString() : ""
       };
     }
   }

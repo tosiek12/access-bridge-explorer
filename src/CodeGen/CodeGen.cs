@@ -346,7 +346,7 @@ namespace CodeGen {
     }
 
     private void WriteApplicationFunction(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition definition) {
-      WrtieXmlDocDefinition(sourceWriter, definition.XmlDocDefinition);
+      WriteXmlDocDefinition(sourceWriter, definition.XmlDocDefinition);
       sourceWriter.WriteIndent();
       sourceWriter.Write("public abstract ");
       WriteFunctionSignature(model, sourceWriter, definition);
@@ -355,26 +355,21 @@ namespace CodeGen {
     }
 
     private void WriteApplicationEvent(SourceCodeWriter sourceWriter, EventDefinition eventDefinition) {
-      WrtieXmlDocDefinition(sourceWriter, eventDefinition.XmlDocDefinition);
+      WriteXmlDocDefinition(sourceWriter, eventDefinition.XmlDocDefinition);
       sourceWriter.WriteLine("public abstract event {0}EventHandler {0};", eventDefinition.Name);
     }
 
-    private static void WrtieXmlDocDefinition(SourceCodeWriter sourceWriter, XmlDocDefinition def) {
+    private static void WriteXmlDocDefinition(SourceCodeWriter sourceWriter, XmlDocDefinition def) {
       if (def != null && def.Summary != null) {
         var lines = def.Summary.Split('\n');
-        int index = 0;
         foreach (var line in lines) {
           sourceWriter.WriteIndent();
           sourceWriter.Write("/// ");
-          if (index == 0) {
-            sourceWriter.Write("<summary>");
-          }
-          sourceWriter.Write(line.Trim());
-          if (index == lines.Length - 1) {
-            sourceWriter.Write("</summary>");
-          }
+          // Hack: Replace XML DOC references from CodeGen assembly to relative to source references.
+          var lineText = line.Replace("<see cref=\"T:CodeGen.Interop.NativeStructures.", "<see cref=\"");
+          lineText = lineText.Trim();
+          sourceWriter.Write(lineText);
           sourceWriter.WriteLine();
-          index++;
         }
       }
     }
