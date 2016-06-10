@@ -31,9 +31,26 @@ namespace CodeGen.Interop {
     /// </summary>
     void Windows_run();
 
+    /// <summary>
+    /// Returns <code>true</code> if the given window handle belongs to a Java
+    /// application.
+    /// </summary>
     bool IsJavaWindow(WindowHandle window);
+    /// <summary>
+    /// Returns <code>true</code> if both java object handles reference the same
+    /// object. Note that the function may return <cdoe>false</cdoe> for
+    /// tansient objects, e.g. for items of tables/list/trees.
+    /// </summary>
     bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2);
+    /// <summary>
+    /// Retrieves the accessible context of the root component of a given window
+    /// handle.
+    /// </summary>
     StatusResult GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac);
+    /// <summary>
+    /// Returns the window handle corresponding to given root component
+    /// accessible context.
+    /// </summary>
     WindowHandle GetHWNDFromAccessibleContext(int vmid, JavaObjectHandle ac);
 
     /// <summary>
@@ -45,9 +62,27 @@ namespace CodeGen.Interop {
     /// </summary>
     StatusResult GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
 
+    /// <summary>
+    /// Retrieves the accessible context of the input focus component of the
+    /// given window handle.
+    /// </summary>
     StatusResult GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac);
+    /// <summary>
+    /// Retrieves the <see cref="AccessibleContextInfo"/> of the component
+    /// corresponding to the given accessible context.
+    /// </summary>
     StatusResult GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, [Out] AccessibleContextInfo info);
+    /// <summary>
+    /// Returns the accessible context of the <paramref name="i"/>'th child of
+    /// the component associated to <paramref name="ac"/>. Returns an
+    /// <code>null</code> accessible context if there is no such child.
+    /// </summary>
     JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i);
+    /// <summary>
+    /// Returns the accessible context of the parent of the component associated
+    /// to <paramref name="ac"/>. Returns an <code>null</code> accessible
+    /// context if there is no parent.
+    /// </summary>
     JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac);
 
     #region AccessibleRelationSet
@@ -185,19 +220,43 @@ namespace CodeGen.Interop {
     event PropertyChangeEventHandler PropertyChange;
 
     /// <summary>
-    /// Invoked when a JVM has shutdown.
+    /// Occurs when a JVM has shutdown.
     /// </summary>
     event JavaShutdownEventHandler JavaShutdown;
 
+    /// <summary>
+    /// Occurs when an accessible component has gained the input focus.
+    /// </summary>
     event FocusGainedEventHandler FocusGained;
+    /// <summary>
+    /// Occurs when an accessible component has lost the input focus.
+    /// </summary>
     event FocusLostEventHandler FocusLost;
 
+    /// <summary>
+    /// Occurs when the caret location inside an accessible text component has changed.
+    /// </summary>
     event CaretUpdateEventHandler CaretUpdate;
 
+    /// <summary>
+    /// Occurs when the mouse button has been clicked on an accessible component.
+    /// </summary>
     event MouseClickedEventHandler MouseClicked;
+    /// <summary>
+    /// Occurs when the mouse cursor has moved over the region of an accessible component.
+    /// </summary>
     event MouseEnteredEventHandler MouseEntered;
+    /// <summary>
+    /// Occurs when the mouse cursor has exited the region of an accessible component.
+    /// </summary>
     event MouseExitedEventHandler MouseExited;
+    /// <summary>
+    /// Occurs when the mouse button has been pressed of an accessible component.
+    /// </summary>
     event MousePressedEventHandler MousePressed;
+    /// <summary>
+    /// Occurs when the mouse button has been released of an accessible component.
+    /// </summary>
     event MouseReleasedEventHandler MouseReleased;
 
     event MenuCanceledEventHandler MenuCanceled;
@@ -216,6 +275,9 @@ namespace CodeGen.Interop {
     event PropertyCaretChangeEventHandler PropertyCaretChange;
     event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange;
     event PropertyChildChangeEventHandler PropertyChildChange;
+    /// <summary>
+    /// Occurs the active/selected item of a tree/list/table has changed.
+    /// </summary>
     event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange;
 
     event PropertyTableModelChangeEventHandler PropertyTableModelChange;

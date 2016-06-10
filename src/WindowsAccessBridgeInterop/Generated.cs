@@ -34,9 +34,18 @@ namespace WindowsAccessBridgeInterop {
     public abstract void ClearAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel);
     public abstract bool DoAccessibleActions(int vmid, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
     public abstract bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, out AccessibleActions actions);
+    /// <summary>
+    /// Returns the accessible context of the 'th child of
+    /// the component associated to . Returns an
+    /// null accessible context if there is no such child.
+    /// </summary>
     public abstract JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i);
     public abstract bool GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
     public abstract bool GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac);
+    /// <summary>
+    /// Retrieves the  of the component
+    /// corresponding to the given accessible context.
+    /// </summary>
     public abstract bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info);
     public abstract bool GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac);
     public abstract bool GetAccessibleHyperlink(int vmid, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo);
@@ -46,6 +55,11 @@ namespace WindowsAccessBridgeInterop {
     public abstract int GetAccessibleHypertextLinkIndex(int vmid, JavaObjectHandle hypertext, int nIndex);
     public abstract bool GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons);
     public abstract bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings);
+    /// <summary>
+    /// Returns the accessible context of the parent of the component associated
+    /// to . Returns an null accessible
+    /// context if there is no parent.
+    /// </summary>
     public abstract JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac);
     public abstract bool GetAccessibleRelationSet(int vmid, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo);
     public abstract int GetAccessibleSelectionCountFromContext(int vmid, JavaObjectHandle asel);
@@ -82,6 +96,10 @@ namespace WindowsAccessBridgeInterop {
     public abstract JavaObjectHandle GetActiveDescendent(int vmid, JavaObjectHandle ac);
     public abstract bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
     public abstract bool GetCurrentAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
+    /// <summary>
+    /// Returns the window handle corresponding to given root component
+    /// accessible context.
+    /// </summary>
     public abstract WindowHandle GetHWNDFromAccessibleContext(int vmid, JavaObjectHandle ac);
     public abstract bool GetMaximumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
     public abstract bool GetMinimumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
@@ -97,7 +115,16 @@ namespace WindowsAccessBridgeInterop {
     public abstract bool IsAccessibleChildSelectedFromContext(int vmid, JavaObjectHandle asel, int i);
     public abstract bool IsAccessibleTableColumnSelected(int vmid, JavaObjectHandle table, int column);
     public abstract bool IsAccessibleTableRowSelected(int vmid, JavaObjectHandle table, int row);
+    /// <summary>
+    /// Returns true if the given window handle belongs to a Java
+    /// application.
+    /// </summary>
     public abstract bool IsJavaWindow(WindowHandle window);
+    /// <summary>
+    /// Returns true if both java object handles reference the same
+    /// object. Note that the function may return false for
+    /// tansient objects, e.g. for items of tables/list/trees.
+    /// </summary>
     public abstract bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2);
     public abstract void RemoveAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i);
     public abstract void SelectAllAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel);
@@ -112,24 +139,51 @@ namespace WindowsAccessBridgeInterop {
   /// Common (i.e. legacy and non-legacy)  abstraction over <code>WindowsAccessBridge DLL</code> events
   /// </summary>
   public abstract class AccessBridgeEvents : IDisposable {
+    /// <summary>
+    /// Occurs when the caret location inside an accessible text component has changed.
+    /// </summary>
     public abstract event CaretUpdateEventHandler CaretUpdate;
+    /// <summary>
+    /// Occurs when an accessible component has gained the input focus.
+    /// </summary>
     public abstract event FocusGainedEventHandler FocusGained;
+    /// <summary>
+    /// Occurs when an accessible component has lost the input focus.
+    /// </summary>
     public abstract event FocusLostEventHandler FocusLost;
     /// <summary>
-    /// Invoked when a JVM has shutdown.
+    /// Occurs when a JVM has shutdown.
     /// </summary>
     public abstract event JavaShutdownEventHandler JavaShutdown;
     public abstract event MenuCanceledEventHandler MenuCanceled;
     public abstract event MenuDeselectedEventHandler MenuDeselected;
     public abstract event MenuSelectedEventHandler MenuSelected;
+    /// <summary>
+    /// Occurs when the mouse button has been clicked on an accessible component.
+    /// </summary>
     public abstract event MouseClickedEventHandler MouseClicked;
+    /// <summary>
+    /// Occurs when the mouse cursor has moved over the region of an accessible component.
+    /// </summary>
     public abstract event MouseEnteredEventHandler MouseEntered;
+    /// <summary>
+    /// Occurs when the mouse cursor has exited the region of an accessible component.
+    /// </summary>
     public abstract event MouseExitedEventHandler MouseExited;
+    /// <summary>
+    /// Occurs when the mouse button has been pressed of an accessible component.
+    /// </summary>
     public abstract event MousePressedEventHandler MousePressed;
+    /// <summary>
+    /// Occurs when the mouse button has been released of an accessible component.
+    /// </summary>
     public abstract event MouseReleasedEventHandler MouseReleased;
     public abstract event PopupMenuCanceledEventHandler PopupMenuCanceled;
     public abstract event PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible;
     public abstract event PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible;
+    /// <summary>
+    /// Occurs the active/selected item of a tree/list/table has changed.
+    /// </summary>
     public abstract event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange;
     public abstract event PropertyCaretChangeEventHandler PropertyCaretChange;
     /// <summary>
