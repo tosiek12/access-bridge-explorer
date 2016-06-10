@@ -1092,12 +1092,6 @@ namespace AccessBridgeExplorer {
           _overlayDisplayTypeSetting.Value == OverlayDisplayType.TooltipOnly) {
         ShowToolTipWindow();
       }
-
-      if (_synchronizeTreeSetting.Value) {
-        _synchronizeTreeTask.Post(TimeSpan.FromMilliseconds(100), () => {
-          SelectTreeNode(_overlayWindowNode);
-        });
-      }
     }
 
     private void SetOverlayNode(AccessibleNode node, OverlayActivationSource activationSource) {
@@ -1107,6 +1101,15 @@ namespace AccessBridgeExplorer {
         _overlayWindowActivationSource = activationSource;
         _overlayWindowRectangle = node == null ? null : node.GetScreenRectangle();
         UpdateOverlayWindows();
+
+        if (_synchronizeTreeSetting.Value) {
+          if (activationSource == OverlayActivationSource.MouseCapture ||
+              activationSource == OverlayActivationSource.AccessibleActiveDescendantChanged ||
+              activationSource == OverlayActivationSource.AccessibleComponentFocus)
+          _synchronizeTreeTask.Post(TimeSpan.FromMilliseconds(100), () => {
+            SelectTreeNode(_overlayWindowNode);
+          });
+        }
       }
     }
 
