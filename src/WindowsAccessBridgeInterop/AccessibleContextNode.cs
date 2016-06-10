@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -249,6 +250,15 @@ namespace WindowsAccessBridgeInterop {
     }
 
     public override NodePath GetNodePathAt(Point screenPoint) {
+      return GetNodePathAtWorker(screenPoint);
+      //return GetNodePathAtUsingAccessBridge(screenPoint);
+    }
+
+    /// <summary>
+    /// Return the <see cref="NodePath"/> of a node given a location on screen.
+    /// Return <code>null</code> if there is no node at that location.
+    /// </summary>
+    public NodePath GetNodePathAtWorker(Point screenPoint) {
       // Bail out early if the node is not visible
       var info = GetInfo();
       if (info.states != null && info.states.IndexOf("showing", StringComparison.InvariantCulture) < 0) {
@@ -268,11 +278,18 @@ namespace WindowsAccessBridgeInterop {
       return base.GetNodePathAt(screenPoint);
     }
 
-#if false
     /// <summary>
-    /// Experimental implementation using <see cref="AccessBridgeFunctions.GetAccessibleContextAt"/>
+    /// Return the <see cref="NodePath"/> of a node given a location on screen.
+    /// Return <code>null</code> if there is no node at that location.
+    /// 
+    /// Note: Experimental implementation using <see
+    /// cref="AccessBridgeFunctions.GetAccessibleContextAt"/>
+    /// 
+    /// Note: The problem with this experimental implementation is that there is
+    /// no way to select what component to return if there are overlapping
+    /// components.
     /// </summary>
-    private NodePath GetNodePathAtUsingAccessBridge(Point screenPoint) {
+    public NodePath GetNodePathAtUsingAccessBridge(Point screenPoint) {
       JavaObjectHandle childHandle;
       if (Failed(AccessBridge.Functions.GetAccessibleContextAt(JvmId, _ac, screenPoint.X, screenPoint.Y, out childHandle))) {
         return null;
@@ -298,7 +315,6 @@ namespace WindowsAccessBridgeInterop {
       }
       return path;
     }
-#endif
 
     public override string GetTitle() {
       var info = GetInfo();
