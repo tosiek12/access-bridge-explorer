@@ -1,4 +1,5 @@
 ﻿// Copyright 2015 Google Inc. All Rights Reserved.
+// Copyright 2015 Google Inc. All Rights Reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +39,7 @@ namespace AccessBridgeExplorer {
     private readonly TooltipWindow _tooltipWindow = new TooltipWindow();
     private readonly SingleDelayedTask _delayedRefreshTree = new SingleDelayedTask();
     private readonly SingleDelayedTask _hideOverlayOnFocusLost = new SingleDelayedTask();
+    private readonly SingleDelayedTask _synchronizeTreeTask = new SingleDelayedTask();
     private readonly HwndCache _windowCache = new HwndCache();
 
     private readonly IWindowsHotKeyHandler _captureKeyHandler;
@@ -105,6 +107,9 @@ namespace AccessBridgeExplorer {
           return;
 
         _view.SynchronizeTreeMenuItem.Checked = args.Value;
+        if (!args.Value) {
+          _synchronizeTreeTask.Cancel();
+        }
       };
       _view.SynchronizeTreeMenuItem.Click += (sender, args) => {
         _synchronizeTreeSetting.Value = !_synchronizeTreeSetting.Value;
@@ -683,6 +688,7 @@ namespace AccessBridgeExplorer {
 
       _hideOverlayOnFocusLost.Cancel();
       _delayedRefreshTree.Cancel();
+      _synchronizeTreeTask.Cancel();
 
       DisposeTreeNodeList(_view.AccessibilityTree.Nodes);
       _accessBridge.Dispose();
@@ -1088,7 +1094,9 @@ namespace AccessBridgeExplorer {
       }
 
       if (_synchronizeTreeSetting.Value) {
-        SelectTreeNode(_overlayWindowNode);
+        _synchronizeTreeTask.Post(TimeSpan.FromMilliseconds(100), () => {
+          SelectTreeNode(_overlayWindowNode);
+        });
       }
     }
 
