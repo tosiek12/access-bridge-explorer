@@ -155,10 +155,6 @@ namespace WindowsAccessBridgeInterop {
       return JvmId == other.JvmId;
     }
 
-    public virtual void FetchSubTree() {
-      // Nothing to do by default
-    }
-
     /// <summary>
     /// Return the index of this node in its parent, <code>-1</code> if the
     /// value is unknown. This is useful when node equality does not work

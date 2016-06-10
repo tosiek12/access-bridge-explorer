@@ -12,27 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace WindowsAccessBridgeInterop {
-  public class NodePath {
-    private readonly Stack<AccessibleNode> _nodes = new Stack<AccessibleNode>();
-
-    public int Count {
-      get { return _nodes.Count; }
-    }
+  /// <summary>
+  /// Represents a path from a root node to a leaf node.
+  /// </summary>
+  public class NodePath : IEnumerable<AccessibleNode> {
+    private readonly List<AccessibleNode> _nodes = new List<AccessibleNode>();
 
     public AccessibleNode LeafNode {
-      get { return _nodes.Last(); }
+      get {
+        return _nodes.LastOrDefault();
+      }
     }
 
     public void AddParent(AccessibleNode accessibleNode) {
-      _nodes.Push(accessibleNode);
+      _nodes.Insert(0, accessibleNode);
     }
 
-    public AccessibleNode Pop() {
-      return _nodes.Pop();
+    public NodePathCursor CreateCursor() {
+      return new NodePathCursor(_nodes, 0, _nodes.Count);
+    }
+
+    public IEnumerator<AccessibleNode> GetEnumerator() {
+      return _nodes.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() {
+      return GetEnumerator();
     }
   }
 }

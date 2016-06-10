@@ -242,13 +242,6 @@ namespace WindowsAccessBridgeInterop {
       return new Rectangle(info.x, info.y, info.width, info.height);
     }
 
-    public override void FetchSubTree() {
-      //GetInfo();
-      //foreach (var child in GetChildren()) {
-      //  child.FetchSubTree();
-      //}
-    }
-
     public override NodePath GetNodePathAt(Point screenPoint) {
       return GetNodePathAtWorker(screenPoint);
       //return GetNodePathAtUsingAccessBridge(screenPoint);

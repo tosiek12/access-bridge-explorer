@@ -14,6 +14,7 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
+using WindowsAccessBridgeInterop;
 
 namespace AccessBridgeExplorer.Model {
   public abstract class NodeModel {
@@ -53,6 +54,33 @@ namespace AccessBridgeExplorer.Model {
     public void ResetChildren(TreeNode treeNode) {
       _treeNode.Nodes.Clear();
       SetupTreeNode(treeNode);
+    }
+
+    public static void RefreshNode(TreeNode treeNode) {
+      var nodeModel = treeNode.Tag as AccessibleNodeModel;
+      if (nodeModel == null)
+        return;
+
+      // First thing first; Tell the node to forget about what it knows
+      nodeModel.AccessibleNode.Refresh();
+
+      // Update the treeview children so they get refreshed
+      var expanded = treeNode.IsExpanded;
+      if (expanded) {
+        treeNode.Collapse();
+      }
+      nodeModel.ResetChildren(treeNode);
+      if (expanded) {
+        treeNode.Expand();
+      }
+    }
+
+    public static AccessibleNode GetAccessibleNode(TreeNode treeNode) {
+      var nodeModel = treeNode.Tag as AccessibleNodeModel;
+      if (nodeModel == null)
+        return null;
+
+      return nodeModel.AccessibleNode;
     }
   }
 }

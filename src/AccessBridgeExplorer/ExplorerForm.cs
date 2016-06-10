@@ -504,6 +504,10 @@ namespace AccessBridgeExplorer {
       get { return showOverlayOnlyMenuItem; }
     }
 
+    ToolStripMenuItem IExplorerFormView.SynchronizeTreeMenuItem {
+      get { return synchonizeTreeMenuItem; }
+    }
+
     ToolStripMenuItem IExplorerFormView.EnableCaptureHookMenuItem {
       get { return enableCaptureHookMenuItem; }
     }

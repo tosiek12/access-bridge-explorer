@@ -45,10 +45,11 @@ namespace AccessBridgeExplorer {
 
     private readonly AutoDetectApplicationsSetting _autoDetectApplicationsEnabledSetting;
     private readonly AutoReleaseInactiveObjectSetting _autoReleaseInactiveObjectSetting;
+    private readonly UserSetting<bool> _overlayEnabledSetting;
     private readonly OverlayActivationSetting _overlayActivationSetting;
     private readonly UserSetting<OverlayDisplayType> _overlayDisplayTypeSetting;
+    private readonly UserSetting<bool> _synchronizeTreeSetting;
     private readonly UserSetting<PropertyOptions> _propertyOptionsSetting;
-    private readonly UserSetting<bool> _overlayEnabledSetting;
     private readonly UserSetting<int> _collectionSizeLimitSetting;
     private readonly UserSetting<int> _textLineCountLimitSetting;
     private readonly UserSetting<int> _textLineLengthLimitSetting;
@@ -95,6 +96,20 @@ namespace AccessBridgeExplorer {
         UpdateOverlayMenuItems();
       };
 
+      _overlayActivationSetting = new OverlayActivationSetting(this);
+      _overlayDisplayTypeSetting = new OverlayDisplayTypeSetting(this);
+
+      _synchronizeTreeSetting = new BoolUserSetting(userSetting, "overlay.synchronize.tree", true);
+      _synchronizeTreeSetting.Sync += (sender, args) => {
+        if (_disposed)
+          return;
+
+        _view.SynchronizeTreeMenuItem.Checked = args.Value;
+      };
+      _view.SynchronizeTreeMenuItem.Click += (sender, args) => {
+        _synchronizeTreeSetting.Value = !_synchronizeTreeSetting.Value;
+      };
+
       var enableCaptureHookSetting = new BoolUserSetting(userSetting, "overlay.capture.hook", true);
       enableCaptureHookSetting.Sync += (sender, args) => {
         if (_disposed)
@@ -127,8 +142,6 @@ namespace AccessBridgeExplorer {
         enableOverlayHookSetting.Value = !enableOverlayHookSetting.Value;
       };
 
-      _overlayActivationSetting = new OverlayActivationSetting(this);
-      _overlayDisplayTypeSetting = new OverlayDisplayTypeSetting(this);
       _propertyOptionsSetting = new PropertyOptionsSetting(this);
       _autoDetectApplicationsEnabledSetting = new AutoDetectApplicationsSetting(this);
       _autoReleaseInactiveObjectSetting = new AutoReleaseInactiveObjectSetting(this);
@@ -929,32 +942,6 @@ namespace AccessBridgeExplorer {
       if (_view.AccessibilityTree.Nodes.Count == 0) {
         _view.AccessibilityTree.Nodes.Add("No application detected. Try presssing Refresh again.");
       }
-
-#if false
-      TestExceptionForm();
-#endif
-    }
-
-    private void TestExceptionForm() {
-      try {
-        ThrowException<int>();
-      } catch (Exception e1) {
-        try {
-          Test<string>.ThrowInvalidException(e1);
-        } catch (Exception e2) {
-          LogErrorMessage(e2);
-        }
-      }
-    }
-
-    private static void ThrowException<T>() {
-      throw new ApplicationException("Test");
-    }
-
-    private class Test<T> {
-      public static void ThrowInvalidException(Exception e1) {
-        throw new InvalidOperationException("Invalid Op", e1);
-      }
     }
 
     private class JvmNodesOperations : IncrementalUpdateOperations<TreeNode, AccessibleJvm> {
@@ -1099,6 +1086,10 @@ namespace AccessBridgeExplorer {
           _overlayDisplayTypeSetting.Value == OverlayDisplayType.TooltipOnly) {
         ShowToolTipWindow();
       }
+
+      if (_synchronizeTreeSetting.Value) {
+        SelectTreeNode(_overlayWindowNode);
+      }
     }
 
     private void SetOverlayNode(AccessibleNode node, OverlayActivationSource activationSource) {
@@ -1206,7 +1197,8 @@ namespace AccessBridgeExplorer {
         EnsureTreeNodeVisible(treeNode);
 
         var navigationEntry = new NavigationEntry {
-          Description = string.Format("Navigate to \"{0}\"", nodeModel.AccessibleNode.GetTitle()), Action = () => SelectTreeNode(nodeModel.AccessibleNode),
+          Description = string.Format("Navigate to \"{0}\"", nodeModel.AccessibleNode.GetTitle()),
+          Action = () => SelectTreeNode(nodeModel.AccessibleNode),
         };
         _navigation.AddNavigationAction(navigationEntry);
       });
@@ -1229,34 +1221,22 @@ namespace AccessBridgeExplorer {
     private void AccessibilityTree_KeyDown(object sender, KeyEventArgs keyEventArgs) {
       if (keyEventArgs.KeyCode != Keys.Return)
         return;
-      var treeNode = _view.AccessibilityTree.SelectedNode;
-      if (treeNode == null)
-        return;
 
-      var nodeModel = _view.AccessibilityTree.SelectedNode.Tag as AccessibleNodeModel;
-      if (nodeModel == null)
+      var selectedNode = _view.AccessibilityTree.SelectedNode;
+      if (selectedNode == null)
         return;
 
       UiAction(() => {
-        // First thing first; Tell the node to forget about what it knows
-        nodeModel.AccessibleNode.Refresh();
+        NodeModel.RefreshNode(selectedNode);
+        var accessibleNode = NodeModel.GetAccessibleNode(selectedNode);
+        if (accessibleNode != null) {
+          // Update the property list
+          var propertyList = accessibleNode.GetProperties(PropertyOptions);
+          _view.AccessibleComponentPropertyListView.SetPropertyList(propertyList);
 
-        // Update the treeview children so they get refreshed
-        var expanded = treeNode.IsExpanded;
-        if (expanded) {
-          treeNode.Collapse();
+          // Update the overlay window
+          SetOverlayNode(accessibleNode, OverlayActivationSource.TreeViewSelection);
         }
-        nodeModel.ResetChildren(treeNode);
-        if (expanded) {
-          treeNode.Expand();
-        }
-
-        // Update the property list
-        var propertyList = nodeModel.AccessibleNode.GetProperties(PropertyOptions);
-        _view.AccessibleComponentPropertyListView.SetPropertyList(propertyList);
-
-        // Update the overlay window
-        SetOverlayNode(nodeModel.AccessibleNode, OverlayActivationSource.TreeViewSelection);
       });
     }
 
@@ -1350,13 +1330,15 @@ namespace AccessBridgeExplorer {
     }
 
     public void SelectNodeAtPoint(Point screenPoint) {
-      var nodePath = GetNodePathAt(screenPoint);
-      if (nodePath == null) {
-        LogMessage("No Accessible component found at mouse location {0}", screenPoint);
-        return;
-      }
-      SelectTreeNode(nodePath);
-      _view.AccessibilityTree.Focus();
+      UiAction(() => {
+        var nodePath = GetNodePathAt(screenPoint);
+        if (nodePath == null) {
+          LogMessage("No Accessible component found at mouse location {0}", screenPoint);
+          return;
+        }
+        SelectTreeNode(nodePath);
+        _view.AccessibilityTree.Focus();
+      });
     }
 
     public void SelectTreeNode(AccessibleNode childNode) {
@@ -1366,46 +1348,125 @@ namespace AccessBridgeExplorer {
           path.AddParent(childNode);
           childNode = childNode.GetParent();
         }
+
+        // Set the "manageDescendants" flag where needed
+        var managedDescendants = false;
+        foreach (var node in path.OfType<AccessibleContextNode>()) {
+          if (!managedDescendants && node.GetInfo().states.Contains("manages descendants")) {
+            managedDescendants = true;
+          }
+          if (managedDescendants) {
+            node.SetManagedDescendant(managedDescendants);
+          }
+        }
         SelectTreeNode(path);
       });
     }
 
-    public void SelectTreeNode(NodePath nodePath) {
-      UiAction(() => {
-        TreeNode lastFoundTreeNode = null;
-        // Pop each node and find it in the corresponding collection
-        var parentNodeList = _view.AccessibilityTree.Nodes;
-        while (nodePath.Count > 0) {
-          var childNode = nodePath.Pop();
+    private void SelectTreeNode(NodePath nodePath) {
+      if (nodePath.LeafNode == null)
+        return;
 
-          var childTreeNode = FindTreeNodeInList(parentNodeList, childNode);
-          if (childTreeNode == null) {
-            LogMessage("Error finding child node in node list: {0}", childNode);
-            break;
-          }
-          lastFoundTreeNode = childTreeNode;
+      // Note: Unfortunately, we have to implement a few heuristics to deal
+      // with the Access Bridge API peculiarities:
+      //
+      // * Child node of list/tree/tables are transient, meaning we can't rely
+      // on the built-in (always correct) java object handle equality. The
+      // solution is to look for a node with the same role/name in the list of
+      // children.
+      //
+      // * Sometimes, there are more nodes when enumerating nodes from the
+      // leaf child to the root node, then when going the other way around. An
+      // example of this are "tree" components: they sometimes have a "hidden"
+      // root node that is not visible when enumeratin children, but it is
+      // visible when going from children to parent.
+      //
+      // * Sometimes, the tree view is out of date wrt to the underlying
+      // accessible context. The solution is to re-fetch the nodes when we
+      // fail to find the node path.
+      //
+      // * Sometimes, the list of top level nodes (JVM and Windows) is not up
+      // to date so we won't find the top level window (root node) contained
+      // in the node path.
 
-          if (nodePath.Count == 0) {
-            // Expand the whole subtree to force each node to refresh their value
-            // in case the sub-tree disappears from the accessible application
-            // (e.g. in the case of an ephemeral window).
-            childNode.FetchSubTree();
-            break;
-          }
-
-          childTreeNode.Expand();
-          parentNodeList = childTreeNode.Nodes;
+      TreeNode parentTreeNode = null;
+      var parentNodeList = _view.AccessibilityTree.Nodes;
+      for (var pathCursor = nodePath.CreateCursor(); pathCursor.IsValid; pathCursor.MoveNext()) {
+        if (parentTreeNode != null) {
+          parentTreeNode.Expand();
         }
 
-        if (lastFoundTreeNode != null) {
-          _view.AccessibilityTree.SelectedNode = lastFoundTreeNode;
-          EnsureTreeNodeVisible(lastFoundTreeNode);
+        var treeNode = FindTreeNodeInList(parentNodeList, pathCursor.Node);
+        if (treeNode == null) {
+          // If we can't find the node, it is possible the path contains an "extra"
+          // node that is not visible when enumerating children. Try to skip it
+          // and see what happens.
+          var tempNode = FindTreeNode(parentNodeList, pathCursor.Clone().MoveNext());
+          if (tempNode != null)
+            continue;
         }
-      });
+
+        if (treeNode == null) {
+          if (parentTreeNode != null) {
+            NodeModel.RefreshNode(parentTreeNode);
+            treeNode = FindTreeNodeInList(parentNodeList, pathCursor.Node);
+            if (treeNode == null) {
+              // If we can't find the node, it is possible the path contains an "extra"
+              // node that is not visible when enumerating children. Try to skip it
+              // and see what happens.
+              var tempNode = FindTreeNode(parentNodeList, pathCursor.Clone().MoveNext());
+              if (tempNode != null)
+                continue;
+            }
+          }
+        }
+
+        if (treeNode == null) {
+          LogMessage("Error finding child node in node list: {0}", pathCursor.Node);
+          break;
+        }
+
+        parentTreeNode = treeNode;
+        parentNodeList = parentTreeNode.Nodes;
+      }
+
+      if (parentTreeNode != null) {
+        _view.AccessibilityTree.SelectedNode = parentTreeNode;
+        EnsureTreeNodeVisible(parentTreeNode);
+      }
+    }
+
+    public TreeNode FindTreeNode(TreeNodeCollection parentNodes, NodePathCursor cursor) {
+      TreeNode parentNode = null;
+      for (; cursor.IsValid; cursor.MoveNext()) {
+        if (parentNode != null) {
+          parentNode.Expand();
+        }
+
+        var treeNode = FindTreeNodeInList(parentNodes, cursor.Node);
+        if (treeNode == null)
+          return null;
+
+        parentNode = treeNode;
+        parentNodes = treeNode.Nodes;
+      }
+      return parentNode;
     }
 
     private TreeNode FindTreeNodeInList(TreeNodeCollection list, AccessibleNode node) {
-      // Sequential search (for Jvm, Window nodes).
+      // Search by child index and equality
+      var childIndex = node.GetIndexInParent();
+      if (childIndex >= 0 && childIndex < list.Count) {
+        var treeNode = list[childIndex];
+        var nodeModel = treeNode.Tag as AccessibleNodeModel;
+        if (nodeModel != null && nodeModel.AccessibleNode != null) {
+          if (nodeModel.AccessibleNode.Equals(node)) {
+            return treeNode;
+          }
+        }
+      }
+
+      // Sequential search by equality (for Jvm, Window nodes).
       foreach (TreeNode treeNode in list) {
         var childNode = treeNode.Tag as AccessibleNodeModel;
         if (childNode == null)
@@ -1417,9 +1478,14 @@ namespace AccessBridgeExplorer {
       }
 
       // Search by child index (for transient nodes)
-      var childIndex = node.GetIndexInParent();
       if (childIndex >= 0 && childIndex < list.Count) {
-        return list[childIndex];
+        var treeNode = list[childIndex];
+        var nodeModel = treeNode.Tag as AccessibleNodeModel;
+        if (nodeModel != null && nodeModel.AccessibleNode != null) {
+          if (nodeModel.AccessibleNode.GetTitle() == node.GetTitle()) {
+            return treeNode;
+          }
+        }
       }
 
       return null;
