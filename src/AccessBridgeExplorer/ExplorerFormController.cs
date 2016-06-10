@@ -1055,7 +1055,7 @@ namespace AccessBridgeExplorer {
     }
 
     private AccessibleNode WrapHandle(JavaObjectHandle handle) {
-      if (handle.IsNull)
+      if (handle == null)
         return null;
 
       return new AccessibleContextNode(_accessBridge, handle);
