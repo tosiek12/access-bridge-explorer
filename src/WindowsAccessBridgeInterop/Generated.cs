@@ -29,132 +29,129 @@ namespace WindowsAccessBridgeInterop {
   /// Common (i.e. legacy and non-legacy) abstraction over <code>WindowsAccessBridge DLL</code> functions
   /// </summary>
   public abstract class AccessBridgeFunctions {
-    public abstract bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info);
-    /// <summary>
-    /// Initialization, needs to be called before any other entry point.
-    /// </summary>
-    public abstract void Windows_run();
-    public abstract bool IsJavaWindow(WindowHandle window);
-    public abstract bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2);
-    public abstract bool GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac);
-    public abstract WindowHandle GetHWNDFromAccessibleContext(int vmid, JavaObjectHandle ac);
-    public abstract bool GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
-    public abstract bool GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac);
-    public abstract bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info);
-    public abstract JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i);
-    public abstract JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac);
-    public abstract bool GetAccessibleRelationSet(int vmid, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo);
-    public abstract bool GetAccessibleHypertext(int vmid, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo);
     public abstract bool ActivateAccessibleHyperlink(int vmid, JavaObjectHandle accessibleContext, JavaObjectHandle accessibleHyperlink);
-    public abstract int GetAccessibleHyperlinkCount(int vmid, JavaObjectHandle accessibleContext);
-    public abstract bool GetAccessibleHypertextExt(int vmid, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo);
-    public abstract int GetAccessibleHypertextLinkIndex(int vmid, JavaObjectHandle hypertext, int nIndex);
-    public abstract bool GetAccessibleHyperlink(int vmid, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo);
-    public abstract bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings);
-    public abstract bool GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons);
-    public abstract bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, out AccessibleActions actions);
-    public abstract bool DoAccessibleActions(int vmid, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
-    public abstract bool GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y);
-    public abstract bool GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index);
-    public abstract bool GetAccessibleTextSelectionInfo(int vmid, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection);
-    public abstract bool GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes);
-    public abstract bool GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index);
-    public abstract bool GetAccessibleTextLineBounds(int vmid, JavaObjectHandle at, int index, out int startIndex, out int endIndex);
-    public abstract bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, [Out]char[] text, short len);
-    public abstract bool GetCurrentAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
-    public abstract bool GetMaximumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
-    public abstract bool GetMinimumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
     public abstract void AddAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i);
     public abstract void ClearAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel);
-    public abstract JavaObjectHandle GetAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i);
+    public abstract bool DoAccessibleActions(int vmid, JavaObjectHandle accessibleContext, ref AccessibleActionsToDo actionsToDo, out int failure);
+    public abstract bool GetAccessibleActions(int vmid, JavaObjectHandle accessibleContext, out AccessibleActions actions);
+    public abstract JavaObjectHandle GetAccessibleChildFromContext(int vmid, JavaObjectHandle ac, int i);
+    public abstract bool GetAccessibleContextAt(int vmid, JavaObjectHandle acParent, int x, int y, out JavaObjectHandle ac);
+    public abstract bool GetAccessibleContextFromHWND(WindowHandle window, out int vmid, out JavaObjectHandle ac);
+    public abstract bool GetAccessibleContextInfo(int vmid, JavaObjectHandle ac, out AccessibleContextInfo info);
+    public abstract bool GetAccessibleContextWithFocus(WindowHandle window, out int vmid, out JavaObjectHandle ac);
+    public abstract bool GetAccessibleHyperlink(int vmid, JavaObjectHandle hypertext, int nIndex, out AccessibleHyperlinkInfo hyperlinkInfo);
+    public abstract int GetAccessibleHyperlinkCount(int vmid, JavaObjectHandle accessibleContext);
+    public abstract bool GetAccessibleHypertext(int vmid, JavaObjectHandle accessibleContext, out AccessibleHypertextInfo hypertextInfo);
+    public abstract bool GetAccessibleHypertextExt(int vmid, JavaObjectHandle accessibleContext, int nStartIndex, out AccessibleHypertextInfo hypertextInfo);
+    public abstract int GetAccessibleHypertextLinkIndex(int vmid, JavaObjectHandle hypertext, int nIndex);
+    public abstract bool GetAccessibleIcons(int vmid, JavaObjectHandle accessibleContext, out AccessibleIcons icons);
+    public abstract bool GetAccessibleKeyBindings(int vmid, JavaObjectHandle accessibleContext, out AccessibleKeyBindings keyBindings);
+    public abstract JavaObjectHandle GetAccessibleParentFromContext(int vmid, JavaObjectHandle ac);
+    public abstract bool GetAccessibleRelationSet(int vmid, JavaObjectHandle accessibleContext, out AccessibleRelationSetInfo relationSetInfo);
     public abstract int GetAccessibleSelectionCountFromContext(int vmid, JavaObjectHandle asel);
-    public abstract bool IsAccessibleChildSelectedFromContext(int vmid, JavaObjectHandle asel, int i);
-    public abstract void RemoveAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i);
-    public abstract void SelectAllAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel);
-    public abstract bool GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo);
+    public abstract JavaObjectHandle GetAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i);
     public abstract bool GetAccessibleTableCellInfo(int vmid, JavaObjectHandle at, int row, int column, out AccessibleTableCellInfo tableCellInfo);
-    public abstract bool GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
-    public abstract bool GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
-    public abstract JavaObjectHandle GetAccessibleTableRowDescription(int vmid, JavaObjectHandle acParent, int row);
-    public abstract JavaObjectHandle GetAccessibleTableColumnDescription(int vmid, JavaObjectHandle acParent, int column);
-    public abstract int GetAccessibleTableRowSelectionCount(int vmid, JavaObjectHandle table);
-    public abstract bool IsAccessibleTableRowSelected(int vmid, JavaObjectHandle table, int row);
-    public abstract bool GetAccessibleTableRowSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections);
-    public abstract int GetAccessibleTableColumnSelectionCount(int vmid, JavaObjectHandle table);
-    public abstract bool IsAccessibleTableColumnSelected(int vmid, JavaObjectHandle table, int column);
-    public abstract bool GetAccessibleTableColumnSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections);
-    /// <summary>
-    /// Return the row number for a cell at a given index
-    /// </summary>
-    public abstract int GetAccessibleTableRow(int vmid, JavaObjectHandle table, int index);
     /// <summary>
     /// Return the column number for a cell at a given index
     /// </summary>
     public abstract int GetAccessibleTableColumn(int vmid, JavaObjectHandle table, int index);
+    public abstract JavaObjectHandle GetAccessibleTableColumnDescription(int vmid, JavaObjectHandle acParent, int column);
+    public abstract bool GetAccessibleTableColumnHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
+    public abstract int GetAccessibleTableColumnSelectionCount(int vmid, JavaObjectHandle table);
+    public abstract bool GetAccessibleTableColumnSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections);
     /// <summary>
     /// Return the index of a cell at a given row and column
     /// </summary>
     public abstract int GetAccessibleTableIndex(int vmid, JavaObjectHandle table, int row, int column);
-    public abstract bool SetTextContents(int vmid, JavaObjectHandle ac, string text);
+    public abstract bool GetAccessibleTableInfo(int vmid, JavaObjectHandle ac, out AccessibleTableInfo tableInfo);
+    /// <summary>
+    /// Return the row number for a cell at a given index
+    /// </summary>
+    public abstract int GetAccessibleTableRow(int vmid, JavaObjectHandle table, int index);
+    public abstract JavaObjectHandle GetAccessibleTableRowDescription(int vmid, JavaObjectHandle acParent, int row);
+    public abstract bool GetAccessibleTableRowHeader(int vmid, JavaObjectHandle acParent, out AccessibleTableInfo tableInfo);
+    public abstract int GetAccessibleTableRowSelectionCount(int vmid, JavaObjectHandle table);
+    public abstract bool GetAccessibleTableRowSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections);
+    public abstract bool GetAccessibleTextAttributes(int vmid, JavaObjectHandle at, int index, out AccessibleTextAttributesInfo attributes);
+    public abstract bool GetAccessibleTextInfo(int vmid, JavaObjectHandle at, out AccessibleTextInfo textInfo, int x, int y);
+    public abstract bool GetAccessibleTextItems(int vmid, JavaObjectHandle at, out AccessibleTextItemsInfo textItems, int index);
+    public abstract bool GetAccessibleTextLineBounds(int vmid, JavaObjectHandle at, int index, out int startIndex, out int endIndex);
+    public abstract bool GetAccessibleTextRange(int vmid, JavaObjectHandle at, int start, int end, [Out]char[] text, short len);
+    public abstract bool GetAccessibleTextRect(int vmid, JavaObjectHandle at, out AccessibleTextRectInfo rectInfo, int index);
+    public abstract bool GetAccessibleTextSelectionInfo(int vmid, JavaObjectHandle at, out AccessibleTextSelectionInfo textSelection);
+    public abstract JavaObjectHandle GetActiveDescendent(int vmid, JavaObjectHandle ac);
+    public abstract bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
+    public abstract bool GetCurrentAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
+    public abstract WindowHandle GetHWNDFromAccessibleContext(int vmid, JavaObjectHandle ac);
+    public abstract bool GetMaximumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
+    public abstract bool GetMinimumAccessibleValueFromContext(int vmid, JavaObjectHandle av, StringBuilder value, short len);
+    public abstract int GetObjectDepth(int vmid, JavaObjectHandle ac);
     public abstract JavaObjectHandle GetParentWithRole(int vmid, JavaObjectHandle ac, string role);
     public abstract JavaObjectHandle GetParentWithRoleElseRoot(int vmid, JavaObjectHandle ac, string role);
-    public abstract JavaObjectHandle GetTopLevelObject(int vmid, JavaObjectHandle ac);
-    public abstract int GetObjectDepth(int vmid, JavaObjectHandle ac);
-    public abstract JavaObjectHandle GetActiveDescendent(int vmid, JavaObjectHandle ac);
-    public abstract bool GetVirtualAccessibleName(int vmid, JavaObjectHandle ac, StringBuilder name, int len);
     public abstract bool GetTextAttributesInRange(int vmid, JavaObjectHandle accessibleContext, int startIndex, int endIndex, out AccessibleTextAttributesInfo attributes, out short len);
-    public abstract bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
-    public abstract int GetVisibleChildrenCount(int vmid, JavaObjectHandle accessibleContext);
+    public abstract JavaObjectHandle GetTopLevelObject(int vmid, JavaObjectHandle ac);
+    public abstract bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info);
+    public abstract bool GetVirtualAccessibleName(int vmid, JavaObjectHandle ac, StringBuilder name, int len);
     public abstract bool GetVisibleChildren(int vmid, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children);
+    public abstract int GetVisibleChildrenCount(int vmid, JavaObjectHandle accessibleContext);
+    public abstract bool IsAccessibleChildSelectedFromContext(int vmid, JavaObjectHandle asel, int i);
+    public abstract bool IsAccessibleTableColumnSelected(int vmid, JavaObjectHandle table, int column);
+    public abstract bool IsAccessibleTableRowSelected(int vmid, JavaObjectHandle table, int row);
+    public abstract bool IsJavaWindow(WindowHandle window);
+    public abstract bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2);
+    public abstract void RemoveAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel, int i);
+    public abstract void SelectAllAccessibleSelectionFromContext(int vmid, JavaObjectHandle asel);
+    public abstract bool SetTextContents(int vmid, JavaObjectHandle ac, string text);
+    /// <summary>
+    /// Initialization, needs to be called before any other entry point.
+    /// </summary>
+    public abstract void Windows_run();
   }
 
   /// <summary>
   /// Common (i.e. legacy and non-legacy)  abstraction over <code>WindowsAccessBridge DLL</code> events
   /// </summary>
   public abstract class AccessBridgeEvents : IDisposable {
-    /// <summary>
-    /// Unused.
-    /// </summary>
-    public abstract event PropertyChangeEventHandler PropertyChange;
+    public abstract event CaretUpdateEventHandler CaretUpdate;
+    public abstract event FocusGainedEventHandler FocusGained;
+    public abstract event FocusLostEventHandler FocusLost;
     /// <summary>
     /// Invoked when a JVM has shutdown.
     /// </summary>
     public abstract event JavaShutdownEventHandler JavaShutdown;
-    public abstract event FocusGainedEventHandler FocusGained;
-    public abstract event FocusLostEventHandler FocusLost;
-    public abstract event CaretUpdateEventHandler CaretUpdate;
+    public abstract event MenuCanceledEventHandler MenuCanceled;
+    public abstract event MenuDeselectedEventHandler MenuDeselected;
+    public abstract event MenuSelectedEventHandler MenuSelected;
     public abstract event MouseClickedEventHandler MouseClicked;
     public abstract event MouseEnteredEventHandler MouseEntered;
     public abstract event MouseExitedEventHandler MouseExited;
     public abstract event MousePressedEventHandler MousePressed;
     public abstract event MouseReleasedEventHandler MouseReleased;
-    public abstract event MenuCanceledEventHandler MenuCanceled;
-    public abstract event MenuDeselectedEventHandler MenuDeselected;
-    public abstract event MenuSelectedEventHandler MenuSelected;
     public abstract event PopupMenuCanceledEventHandler PopupMenuCanceled;
     public abstract event PopupMenuWillBecomeInvisibleEventHandler PopupMenuWillBecomeInvisible;
     public abstract event PopupMenuWillBecomeVisibleEventHandler PopupMenuWillBecomeVisible;
-    public abstract event PropertyNameChangeEventHandler PropertyNameChange;
-    public abstract event PropertyDescriptionChangeEventHandler PropertyDescriptionChange;
-    public abstract event PropertyStateChangeEventHandler PropertyStateChange;
-    public abstract event PropertyValueChangeEventHandler PropertyValueChange;
-    public abstract event PropertySelectionChangeEventHandler PropertySelectionChange;
-    public abstract event PropertyTextChangeEventHandler PropertyTextChange;
-    public abstract event PropertyCaretChangeEventHandler PropertyCaretChange;
-    public abstract event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange;
-    public abstract event PropertyChildChangeEventHandler PropertyChildChange;
     public abstract event PropertyActiveDescendentChangeEventHandler PropertyActiveDescendentChange;
+    public abstract event PropertyCaretChangeEventHandler PropertyCaretChange;
+    /// <summary>
+    /// Unused.
+    /// </summary>
+    public abstract event PropertyChangeEventHandler PropertyChange;
+    public abstract event PropertyChildChangeEventHandler PropertyChildChange;
+    public abstract event PropertyDescriptionChangeEventHandler PropertyDescriptionChange;
+    public abstract event PropertyNameChangeEventHandler PropertyNameChange;
+    public abstract event PropertySelectionChangeEventHandler PropertySelectionChange;
+    public abstract event PropertyStateChangeEventHandler PropertyStateChange;
     public abstract event PropertyTableModelChangeEventHandler PropertyTableModelChange;
+    public abstract event PropertyTextChangeEventHandler PropertyTextChange;
+    public abstract event PropertyValueChangeEventHandler PropertyValueChange;
+    public abstract event PropertyVisibleDataChangeEventHandler PropertyVisibleDataChange;
 
     public abstract void Dispose();
   }
 
   #region Delegate types for events defined in AccessBridgeEvents
-  /// <summary>Delegate type for <code>PropertyChange</code> event</summary>
-  public delegate void PropertyChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string property, string oldValue, string newValue);
-
-  /// <summary>Delegate type for <code>JavaShutdown</code> event</summary>
-  public delegate void JavaShutdownEventHandler(int vmid);
+  /// <summary>Delegate type for <code>CaretUpdate</code> event</summary>
+  public delegate void CaretUpdateEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
 
   /// <summary>Delegate type for <code>FocusGained</code> event</summary>
   public delegate void FocusGainedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
@@ -162,8 +159,17 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>Delegate type for <code>FocusLost</code> event</summary>
   public delegate void FocusLostEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
 
-  /// <summary>Delegate type for <code>CaretUpdate</code> event</summary>
-  public delegate void CaretUpdateEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  /// <summary>Delegate type for <code>JavaShutdown</code> event</summary>
+  public delegate void JavaShutdownEventHandler(int vmid);
+
+  /// <summary>Delegate type for <code>MenuCanceled</code> event</summary>
+  public delegate void MenuCanceledEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Delegate type for <code>MenuDeselected</code> event</summary>
+  public delegate void MenuDeselectedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Delegate type for <code>MenuSelected</code> event</summary>
+  public delegate void MenuSelectedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
 
   /// <summary>Delegate type for <code>MouseClicked</code> event</summary>
   public delegate void MouseClickedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
@@ -180,15 +186,6 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>Delegate type for <code>MouseReleased</code> event</summary>
   public delegate void MouseReleasedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
 
-  /// <summary>Delegate type for <code>MenuCanceled</code> event</summary>
-  public delegate void MenuCanceledEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
-
-  /// <summary>Delegate type for <code>MenuDeselected</code> event</summary>
-  public delegate void MenuDeselectedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
-
-  /// <summary>Delegate type for <code>MenuSelected</code> event</summary>
-  public delegate void MenuSelectedEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
-
   /// <summary>Delegate type for <code>PopupMenuCanceled</code> event</summary>
   public delegate void PopupMenuCanceledEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
 
@@ -198,38 +195,41 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>Delegate type for <code>PopupMenuWillBecomeVisible</code> event</summary>
   public delegate void PopupMenuWillBecomeVisibleEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
 
-  /// <summary>Delegate type for <code>PropertyNameChange</code> event</summary>
-  public delegate void PropertyNameChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldName, string newName);
-
-  /// <summary>Delegate type for <code>PropertyDescriptionChange</code> event</summary>
-  public delegate void PropertyDescriptionChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldDescription, string newDescription);
-
-  /// <summary>Delegate type for <code>PropertyStateChange</code> event</summary>
-  public delegate void PropertyStateChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldState, string newState);
-
-  /// <summary>Delegate type for <code>PropertyValueChange</code> event</summary>
-  public delegate void PropertyValueChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldValue, string newValue);
-
-  /// <summary>Delegate type for <code>PropertySelectionChange</code> event</summary>
-  public delegate void PropertySelectionChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
-
-  /// <summary>Delegate type for <code>PropertyTextChange</code> event</summary>
-  public delegate void PropertyTextChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  /// <summary>Delegate type for <code>PropertyActiveDescendentChange</code> event</summary>
+  public delegate void PropertyActiveDescendentChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldActiveDescendent, JavaObjectHandle newActiveDescendent);
 
   /// <summary>Delegate type for <code>PropertyCaretChange</code> event</summary>
   public delegate void PropertyCaretChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, int oldPosition, int newPosition);
 
-  /// <summary>Delegate type for <code>PropertyVisibleDataChange</code> event</summary>
-  public delegate void PropertyVisibleDataChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+  /// <summary>Delegate type for <code>PropertyChange</code> event</summary>
+  public delegate void PropertyChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string property, string oldValue, string newValue);
 
   /// <summary>Delegate type for <code>PropertyChildChange</code> event</summary>
   public delegate void PropertyChildChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldChild, JavaObjectHandle newChild);
 
-  /// <summary>Delegate type for <code>PropertyActiveDescendentChange</code> event</summary>
-  public delegate void PropertyActiveDescendentChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, JavaObjectHandle oldActiveDescendent, JavaObjectHandle newActiveDescendent);
+  /// <summary>Delegate type for <code>PropertyDescriptionChange</code> event</summary>
+  public delegate void PropertyDescriptionChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldDescription, string newDescription);
+
+  /// <summary>Delegate type for <code>PropertyNameChange</code> event</summary>
+  public delegate void PropertyNameChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldName, string newName);
+
+  /// <summary>Delegate type for <code>PropertySelectionChange</code> event</summary>
+  public delegate void PropertySelectionChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Delegate type for <code>PropertyStateChange</code> event</summary>
+  public delegate void PropertyStateChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldState, string newState);
 
   /// <summary>Delegate type for <code>PropertyTableModelChange</code> event</summary>
   public delegate void PropertyTableModelChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle src, string oldValue, string newValue);
+
+  /// <summary>Delegate type for <code>PropertyTextChange</code> event</summary>
+  public delegate void PropertyTextChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
+
+  /// <summary>Delegate type for <code>PropertyValueChange</code> event</summary>
+  public delegate void PropertyValueChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source, string oldValue, string newValue);
+
+  /// <summary>Delegate type for <code>PropertyVisibleDataChange</code> event</summary>
+  public delegate void PropertyVisibleDataChangeEventHandler(int vmid, JavaObjectHandle evt, JavaObjectHandle source);
 
   #endregion
 

@@ -37,12 +37,6 @@ namespace CodeGen.Definitions {
       return model;
     }
 
-    private void CollectFunctions(WindowsAccessBridgeModel model) {
-      var type = typeof(WindowsAccessBridgeDefinition);
-      var functions = type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
-      model.Functions.AddRange(functions.Where(f => !f.IsSpecialName).Select(f => CollectFunction(f)));
-    }
-
     private XmlDocCommentCollector OpenXmlDocComment(WindowsAccessBridgeModel model) {
       var type = typeof (WindowsAccessBridgeDefinition);
       var path = type.Assembly.Location;
@@ -55,10 +49,16 @@ namespace CodeGen.Definitions {
       }
     }
 
+    private void CollectFunctions(WindowsAccessBridgeModel model) {
+      var type = typeof(WindowsAccessBridgeDefinition);
+      var functions = type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
+      model.Functions.AddRange(functions.Where(f => !f.IsSpecialName).OrderBy(f => f.Name).Select(f => CollectFunction(f)));
+    }
+
     private void CollectEvents(WindowsAccessBridgeModel model) {
       var type = typeof(WindowsAccessBridgeDefinition);
       var events = type.GetEvents(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
-      model.Events.AddRange(events.Select(x => CollectEvent(x)));
+      model.Events.AddRange(events.OrderBy(f => f.Name).Select(x => CollectEvent(x)));
     }
 
     private void CollectEnums(WindowsAccessBridgeModel model) {
@@ -66,7 +66,7 @@ namespace CodeGen.Definitions {
       var types = typeof(WindowsAccessBridgeDefinition).Assembly.GetExportedTypes()
         .Where(t => t.Namespace == sampleType.Namespace)
         .Where(t => t.IsValueType && t.IsEnum);
-      model.Enums.AddRange(types.Select(t => CollectEnum(t)));
+      model.Enums.AddRange(types.OrderBy(f => f.Name).Select(t => CollectEnum(t)));
     }
 
     private void CollectStructs(WindowsAccessBridgeModel model) {
@@ -74,7 +74,7 @@ namespace CodeGen.Definitions {
       var types = typeof(WindowsAccessBridgeDefinition).Assembly.GetExportedTypes()
         .Where(t => t.Namespace == sampleStruct.Namespace)
         .Where(t => t.IsValueType && !t.IsEnum);
-      model.Structs.AddRange(types.Select(t => CollectStruct(t)));
+      model.Structs.AddRange(types.OrderBy(f => f.Name).Select(t => CollectStruct(t)));
     }
 
     private void CollectClasses(WindowsAccessBridgeModel model) {
@@ -82,7 +82,7 @@ namespace CodeGen.Definitions {
       var types = typeof(WindowsAccessBridgeDefinition).Assembly.GetExportedTypes()
         .Where(t => t.Namespace == sampleStruct.Namespace)
         .Where(t => t.IsClass);
-      model.Classes.AddRange(types.Select(t => CollectClass(t)));
+      model.Classes.AddRange(types.OrderBy(f => f.Name).Select(t => CollectClass(t)));
     }
 
     private StructDefinition CollectStruct(Type type) {
