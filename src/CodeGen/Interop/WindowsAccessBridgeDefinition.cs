@@ -26,6 +26,9 @@ namespace CodeGen.Interop {
   /// </summary>
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public interface WindowsAccessBridgeDefinition {
+    /// <summary>
+    /// Initialization, needs to be called before any other entry point.
+    /// </summary>
     void Windows_run();
 
     bool IsJavaWindow(WindowHandle window);
@@ -176,8 +179,14 @@ namespace CodeGen.Interop {
 
     #region Event handling routines
 
+    /// <summary>
+    /// Unused.
+    /// </summary>
     event PropertyChangeEventHandler PropertyChange;
 
+    /// <summary>
+    /// Invoked when a JVM has shutdown.
+    /// </summary>
     event JavaShutdownEventHandler JavaShutdown;
 
     event FocusGainedEventHandler FocusGained;

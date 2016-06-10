@@ -151,7 +151,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Common (i.e. legacy and non-legacy) abstraction over <code>WindowsAccessBridge DLL</code> functions");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public abstract partial class AccessBridgeFunctions {{");
+      sourceWriter.WriteLine("public abstract class AccessBridgeFunctions {{");
       sourceWriter.IncIndent();
       foreach (var function in model.Functions) {
         WriteApplicationFunction(model, sourceWriter, function);
@@ -166,7 +166,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Common (i.e. legacy and non-legacy)  abstraction over <code>WindowsAccessBridge DLL</code> events");
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("public abstract partial class AccessBridgeEvents : IDisposable {{");
+      sourceWriter.WriteLine("public abstract class AccessBridgeEvents : IDisposable {{");
       sourceWriter.IncIndent();
       foreach (var eventDefinition in model.Events) {
         WriteApplicationEvent(sourceWriter, eventDefinition);
@@ -297,7 +297,7 @@ namespace CodeGen {
       sourceWriter.WriteLine("/// <summary>");
       sourceWriter.WriteLine("/// Container of {0} WindowAccessBridge DLL entry points", GetLegacySuffix(sourceWriter));
       sourceWriter.WriteLine("/// </summary>");
-      sourceWriter.WriteLine("internal partial class AccessBridgeEntryPoints{0} {{", GetLegacySuffix(sourceWriter));
+      sourceWriter.WriteLine("internal class AccessBridgeEntryPoints{0} {{", GetLegacySuffix(sourceWriter));
       sourceWriter.IncIndent();
 
       sourceWriter.WriteLine("#region Functions");
@@ -346,6 +346,7 @@ namespace CodeGen {
     }
 
     private void WriteApplicationFunction(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition definition) {
+      WrtieXmlDocDefinition(sourceWriter, definition.XmlDocDefinition);
       sourceWriter.WriteIndent();
       sourceWriter.Write("public abstract ");
       WriteFunctionSignature(model, sourceWriter, definition);
@@ -354,7 +355,28 @@ namespace CodeGen {
     }
 
     private void WriteApplicationEvent(SourceCodeWriter sourceWriter, EventDefinition eventDefinition) {
+      WrtieXmlDocDefinition(sourceWriter, eventDefinition.XmlDocDefinition);
       sourceWriter.WriteLine("public abstract event {0}EventHandler {0};", eventDefinition.Name);
+    }
+
+    private static void WrtieXmlDocDefinition(SourceCodeWriter sourceWriter, XmlDocDefinition def) {
+      if (def != null && def.Summary != null) {
+        var lines = def.Summary.Split('\n');
+        int index = 0;
+        foreach (var line in lines) {
+          sourceWriter.WriteIndent();
+          sourceWriter.Write("/// ");
+          if (index == 0) {
+            sourceWriter.Write("<summary>");
+          }
+          sourceWriter.Write(line.Trim());
+          if (index == lines.Length - 1) {
+            sourceWriter.Write("</summary>");
+          }
+          sourceWriter.WriteLine();
+          index++;
+        }
+      }
     }
 
     private void WriteApplicationFunctionImplementation(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, FunctionDefinition definition) {

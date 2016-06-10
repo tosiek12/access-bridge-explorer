@@ -29,6 +29,8 @@ namespace CodeGen.Definitions {
       set { _parameters = value; }
     }
 
+    public XmlDocDefinition XmlDocDefinition { get; set; }
+
 
     public override string ToString() {
       var sb = new StringBuilder();

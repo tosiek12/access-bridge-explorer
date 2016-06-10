@@ -33,6 +33,11 @@ namespace WindowsAccessBridgeInterop {
 
     #region Function implementations
 
+    public override bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
+      var result = EntryPoints.GetVersionInfo(vmid, out info);
+      return Succeeded(result);
+    }
+
     public override void Windows_run() {
       EntryPoints.Windows_run();
     }
@@ -473,11 +478,6 @@ namespace WindowsAccessBridgeInterop {
         children = Wrap(vmid, childrenTemp);
       else
         children = default(VisibleChildrenInfo);
-      return Succeeded(result);
-    }
-
-    public override bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info) {
-      var result = EntryPoints.GetVersionInfo(vmid, out info);
       return Succeeded(result);
     }
 
@@ -1493,8 +1493,9 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Container of Legacy WindowAccessBridge DLL entry points
   /// </summary>
-  internal partial class AccessBridgeEntryPointsLegacy {
+  internal class AccessBridgeEntryPointsLegacy {
     #region Functions
+    public GetVersionInfoFP GetVersionInfo { get; set; }
     public Windows_runFP Windows_run { get; set; }
     public IsJavaWindowFP IsJavaWindow { get; set; }
     public IsSameObjectFP IsSameObject { get; set; }
@@ -1559,7 +1560,6 @@ namespace WindowsAccessBridgeInterop {
     public GetCaretLocationFP GetCaretLocation { get; set; }
     public GetVisibleChildrenCountFP GetVisibleChildrenCount { get; set; }
     public GetVisibleChildrenFP GetVisibleChildren { get; set; }
-    public GetVersionInfoFP GetVersionInfo { get; set; }
     #endregion
 
     #region Event functions
@@ -1593,6 +1593,8 @@ namespace WindowsAccessBridgeInterop {
     #endregion
 
     #region Function delegate types
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfo info);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate void Windows_runFP();
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -1721,8 +1723,6 @@ namespace WindowsAccessBridgeInterop {
     public delegate int GetVisibleChildrenCountFP(int vmid, JOBJECT32 accessibleContext);
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public delegate BOOL GetVisibleChildrenFP(int vmid, JOBJECT32 accessibleContext, int startIndex, out VisibleChildrenInfoNativeLegacy children);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public delegate BOOL GetVersionInfoFP(int vmid, out AccessBridgeVersionInfo info);
     #endregion
 
     #region Event delegate types

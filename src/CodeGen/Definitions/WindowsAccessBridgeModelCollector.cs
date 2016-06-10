@@ -18,14 +18,17 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using CodeGen.Interop;
+using System.Xml.Linq;
 using CodeGen.Interop.NativeStructures;
 using WindowsAccessBridgeDefinition = CodeGen.Interop.WindowsAccessBridgeDefinition;
 
 namespace CodeGen.Definitions {
   public class WindowsAccessBridgeModelCollector {
+    private XmlDocCommentCollector _xmlDoc;
+
     public WindowsAccessBridgeModel CollectModel() {
       var model = new Definitions.WindowsAccessBridgeModel();
+      _xmlDoc = OpenXmlDocComment(model);
       CollectFunctions(model);
       CollectEvents(model);
       CollectEnums(model);
@@ -38,6 +41,18 @@ namespace CodeGen.Definitions {
       var type = typeof(WindowsAccessBridgeDefinition);
       var functions = type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
       model.Functions.AddRange(functions.Where(f => !f.IsSpecialName).Select(f => CollectFunction(f)));
+    }
+
+    private XmlDocCommentCollector OpenXmlDocComment(WindowsAccessBridgeModel model) {
+      var type = typeof (WindowsAccessBridgeDefinition);
+      var path = type.Assembly.Location;
+      var xmlDocFile = Path.ChangeExtension(path, ".xml");
+      using (var file = File.OpenRead(xmlDocFile)) {
+        var doc = XDocument.Load(file);
+        var result = new XmlDocCommentCollector();
+        result.Document = doc;
+        return result;
+      }
     }
 
     private void CollectEvents(WindowsAccessBridgeModel model) {
@@ -115,7 +130,8 @@ namespace CodeGen.Definitions {
       return new FunctionDefinition {
         Name = methodInfo.Name,
         ReturnType = ConvertType(methodInfo.ReturnType),
-        Parameters = CollectParameters(methodInfo.GetParameters()).ToList()
+        Parameters = CollectParameters(methodInfo.GetParameters()).ToList(),
+        XmlDocDefinition = _xmlDoc.CreateMethodDefinition(methodInfo)
       };
     }
 
@@ -133,7 +149,8 @@ namespace CodeGen.Definitions {
       return new EventDefinition {
         Name = eventInfo.Name,
         Type = ConvertType(eventInfo.EventHandlerType),
-        DelegateFunction = CollectDelegateType(eventInfo.EventHandlerType)
+        DelegateFunction = CollectDelegateType(eventInfo.EventHandlerType),
+        XmlDocDefinition = _xmlDoc.CreateEventDefinition(eventInfo)
       };
     }
 

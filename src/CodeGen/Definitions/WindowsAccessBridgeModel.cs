@@ -24,6 +24,7 @@ namespace CodeGen.Definitions {
     private readonly List<EnumDefinition> _enums = new List<EnumDefinition>();
     private readonly List<StructDefinition> _structs = new List<StructDefinition>();
     private readonly List<ClassDefinition> _classes = new List<ClassDefinition>();
+    private XmlDocCommentCollector _xmlDoc = new XmlDocCommentCollector();
 
     public List<FunctionDefinition> Functions {
       get { return _functions; }
@@ -43,6 +44,10 @@ namespace CodeGen.Definitions {
 
     public List<ClassDefinition> Classes {
       get { return _classes; }
+    }
+
+    public XmlDocCommentCollector XmlDoc {
+      get { return _xmlDoc; }
     }
 
     public bool IsStructName(string name) {

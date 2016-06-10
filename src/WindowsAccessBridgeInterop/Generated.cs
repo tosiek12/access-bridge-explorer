@@ -28,7 +28,11 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Common (i.e. legacy and non-legacy) abstraction over <code>WindowsAccessBridge DLL</code> functions
   /// </summary>
-  public abstract partial class AccessBridgeFunctions {
+  public abstract class AccessBridgeFunctions {
+    public abstract bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info);
+    /// <summary>
+    /// Initialization, needs to be called before any other entry point.
+    /// </summary>
     public abstract void Windows_run();
     public abstract bool IsJavaWindow(WindowHandle window);
     public abstract bool IsSameObject(int vmid, JavaObjectHandle obj1, JavaObjectHandle obj2);
@@ -79,8 +83,17 @@ namespace WindowsAccessBridgeInterop {
     public abstract int GetAccessibleTableColumnSelectionCount(int vmid, JavaObjectHandle table);
     public abstract bool IsAccessibleTableColumnSelected(int vmid, JavaObjectHandle table, int column);
     public abstract bool GetAccessibleTableColumnSelections(int vmid, JavaObjectHandle table, int count, [Out]int[] selections);
+    /// <summary>
+    /// Return the row number for a cell at a given index
+    /// </summary>
     public abstract int GetAccessibleTableRow(int vmid, JavaObjectHandle table, int index);
+    /// <summary>
+    /// Return the column number for a cell at a given index
+    /// </summary>
     public abstract int GetAccessibleTableColumn(int vmid, JavaObjectHandle table, int index);
+    /// <summary>
+    /// Return the index of a cell at a given row and column
+    /// </summary>
     public abstract int GetAccessibleTableIndex(int vmid, JavaObjectHandle table, int row, int column);
     public abstract bool SetTextContents(int vmid, JavaObjectHandle ac, string text);
     public abstract JavaObjectHandle GetParentWithRole(int vmid, JavaObjectHandle ac, string role);
@@ -93,14 +106,19 @@ namespace WindowsAccessBridgeInterop {
     public abstract bool GetCaretLocation(int vmid, JavaObjectHandle ac, out AccessibleTextRectInfo rectInfo, int index);
     public abstract int GetVisibleChildrenCount(int vmid, JavaObjectHandle accessibleContext);
     public abstract bool GetVisibleChildren(int vmid, JavaObjectHandle accessibleContext, int startIndex, out VisibleChildrenInfo children);
-    public abstract bool GetVersionInfo(int vmid, out AccessBridgeVersionInfo info);
   }
 
   /// <summary>
   /// Common (i.e. legacy and non-legacy)  abstraction over <code>WindowsAccessBridge DLL</code> events
   /// </summary>
-  public abstract partial class AccessBridgeEvents : IDisposable {
+  public abstract class AccessBridgeEvents : IDisposable {
+    /// <summary>
+    /// Unused.
+    /// </summary>
     public abstract event PropertyChangeEventHandler PropertyChange;
+    /// <summary>
+    /// Invoked when a JVM has shutdown.
+    /// </summary>
     public abstract event JavaShutdownEventHandler JavaShutdown;
     public abstract event FocusGainedEventHandler FocusGained;
     public abstract event FocusLostEventHandler FocusLost;

@@ -12,15 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace CodeGen.Definitions {
   public class EventDefinition {
     public string Name { get; set; }
     public TypeReference Type { get; set; }
     public FunctionDefinition DelegateFunction { get; set; }
+    public XmlDocDefinition XmlDocDefinition { get; set; }
   }
 }
