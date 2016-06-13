@@ -302,7 +302,7 @@ namespace WindowsAccessBridgeInterop {
         if (node is AccessibleContextNode) {
           ((AccessibleContextNode)node).GetInfo();
         }
-        path.AddParent(node);
+        path.AddRoot(node);
         if (node.Equals(this))
           break;
       }

@@ -125,7 +125,7 @@ namespace WindowsAccessBridgeInterop {
       if (childPaths.Count == 0) {
         if (rectangle.Value.Contains(screenPoint)) {
           var path = new Path<AccessibleNode>();
-          path.AddParent(this);
+          path.AddRoot(this);
           return path;
         }
         return null;
@@ -134,7 +134,7 @@ namespace WindowsAccessBridgeInterop {
         // smallest one makes sense as it is most likely the most specific
         // result.
         var result = childPaths[0];
-        result.AddParent(this);
+        result.AddRoot(this);
         return result;
       }
     }

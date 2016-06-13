@@ -15,6 +15,10 @@
 using System.Collections.Generic;
 
 namespace WindowsAccessBridgeInterop {
+  /// <summary>
+  /// Ability to move in a path, or in a subset of a path, without mutating
+  /// the path itself.
+  /// </summary>
   public class PathCursor<T> {
     private readonly List<T> _items;
     private readonly int _start;

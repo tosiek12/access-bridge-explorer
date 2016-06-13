@@ -1106,9 +1106,9 @@ namespace AccessBridgeExplorer {
           if (activationSource == OverlayActivationSource.MouseCapture ||
               activationSource == OverlayActivationSource.AccessibleActiveDescendantChanged ||
               activationSource == OverlayActivationSource.AccessibleComponentFocus)
-          _synchronizeTreeTask.Post(TimeSpan.FromMilliseconds(100), () => {
-            SelectTreeNode(_overlayWindowNode);
-          });
+            _synchronizeTreeTask.Post(TimeSpan.FromMilliseconds(100), () => {
+              SelectTreeNode(_overlayWindowNode);
+            });
         }
       }
     }
@@ -1354,29 +1354,9 @@ namespace AccessBridgeExplorer {
 
     public void SelectTreeNode(AccessibleNode childNode) {
       UiAction(() => {
-        var path = BuildNodePath(childNode);
+        var path = childNode.BuildNodePath();
         SelectTreeNode(path);
       });
-    }
-
-    private static Path<AccessibleNode> BuildNodePath(AccessibleNode childNode) {
-      var path = new Path<AccessibleNode>();
-      while (childNode != null) {
-        path.AddParent(childNode);
-        childNode = childNode.GetParent();
-      }
-
-      // Set the "manageDescendants" flag where needed
-      var managedDescendants = false;
-      foreach (var node in path.OfType<AccessibleContextNode>()) {
-        if (!managedDescendants && node.GetInfo().states.Contains("manages descendants")) {
-          managedDescendants = true;
-        }
-        if (managedDescendants) {
-          node.SetManagedDescendant(managedDescendants);
-        }
-      }
-      return path;
     }
 
     private void SelectTreeNode(Path<AccessibleNode> nodePath) {
@@ -1404,22 +1384,34 @@ namespace AccessBridgeExplorer {
       // * Sometimes, the list of top level nodes (JVM and Windows) is not up
       // to date so we won't find the top level window (root node) contained
       // in the node path.
-      if (!SelectTreeNodeWorker(nodePath)) {
+      var treePath = FindNodeInTree(nodePath);
+      if (treePath.Count == 0 || !ReferenceEquals(nodePath.Leaf, treePath.Leaf.Node)) {
         // We may not know about all top level windows. Refresh
         // the list, *then* recompute the node path, as the access bridge
         // has been internally auto-updating itself with the list of
         // known top level windows.
         var jvms = EnumJvms();
         UpdateTree(jvms);
-        var newNodePath = BuildNodePath(nodePath.Leaf);
-        if (!SelectTreeNodeWorker(newNodePath)) {
+
+        // Try again with new node path
+        var newNodePath = nodePath.Leaf.BuildNodePath();
+        treePath = FindNodeInTree(newNodePath);
+        if (treePath.Count == 0 || !ReferenceEquals(newNodePath.Leaf, treePath.Leaf.Node)) {
           LogMessage("Error locating node \"{0}\" in accessibility tree", newNodePath.Leaf);
         }
       }
+
+      // We may have a partial match or a full match, in any case, select the
+      // most relevant node in the tree and make it visible.
+      if (treePath.Count > 0) {
+        _view.AccessibilityTree.SelectedNode = treePath.Leaf.TreeNode;
+        EnsureTreeNodeVisible(treePath.Leaf.TreeNode);
+      }
     }
 
-    private bool SelectTreeNodeWorker(Path<AccessibleNode> nodePath) {
-      var foundNode = false;
+    private Path<TreeNodeEntry> FindNodeInTree(Path<AccessibleNode> nodePath) {
+      var result = new Path<TreeNodeEntry>();
+
       TreeNode parentTreeNode = null;
       var parentNodeList = _view.AccessibilityTree.Nodes;
       for (var pathCursor = nodePath.CreateCursor(); pathCursor.IsValid; pathCursor.MoveNext()) {
@@ -1436,6 +1428,8 @@ namespace AccessBridgeExplorer {
             continue;
 
           if (parentTreeNode != null) {
+            // If we still didn't find the node, try refreshing the sub-tree
+            // and try again.
             NodeModel.RefreshNode(parentTreeNode);
             treeNode = FindTreeNodeInList(parentNodeList, pathCursor.Node);
             if (treeNode == null) {
@@ -1448,20 +1442,66 @@ namespace AccessBridgeExplorer {
           }
         }
 
-        foundNode = treeNode != null;
-        if (!foundNode) {
+#if false
+        if (treeNode == null) {
+          if (parentTreeNode != null) {
+            foreach (var childTreeNode in FlattenSubTree(parentTreeNode).Take(1024)) {
+              var foundNode = TreeNodeEquals(childTreeNode, pathCursor.Node);
+              if (foundNode != null) {
+                var stack = new List<TreeNode>();
+                treeNode = childTreeNode;
+                for (var temp = childTreeNode.Parent; temp != null && temp.Parent != parentTreeNode; temp = temp.Parent) {
+                  stack.Add(temp);
+                }
+                stack.Reverse();
+                foreach (var temp in stack) {
+                  result.AddLeaf(new TreeNodeEntry(temp, ((AccessibleNodeModel)temp.Tag).AccessibleNode));
+                }
+              }
+            }
+          }
+        }
+#endif
+
+        if (treeNode == null) {
           break;
         }
+        result.AddLeaf(new TreeNodeEntry(treeNode, pathCursor.Node));
         parentTreeNode = treeNode;
         parentNodeList = parentTreeNode.Nodes;
       }
 
-      if (parentTreeNode != null) {
-        _view.AccessibilityTree.SelectedNode = parentTreeNode;
-        EnsureTreeNodeVisible(parentTreeNode);
+      return result;
+    }
+
+    private struct TreeNodeEntry {
+      private readonly TreeNode _treeNode;
+      private readonly AccessibleNode _node;
+
+      public TreeNodeEntry(TreeNode treeNode, AccessibleNode node) {
+        _treeNode = treeNode;
+        _node = node;
       }
 
-      return foundNode;
+      public TreeNode TreeNode {
+        get { return _treeNode; }
+      }
+
+      public AccessibleNode Node {
+        get { return _node; }
+      }
+    }
+
+    private IEnumerable<TreeNode> FlattenSubTree(TreeNode node) {
+      var queue = new Queue<TreeNode>();
+      queue.Enqueue(node);
+      while (queue.Count > 0) {
+        node = queue.Dequeue();
+        yield return node;
+        foreach (TreeNode child in node.Nodes) {
+          queue.Enqueue(child);
+        }
+      }
     }
 
     private TreeNode FindTreeNodeInSubTree(TreeNodeCollection parentNodes, PathCursor<AccessibleNode> cursor) {
@@ -1486,11 +1526,8 @@ namespace AccessBridgeExplorer {
       var childIndex = node.GetIndexInParent();
       if (childIndex >= 0 && childIndex < list.Count) {
         var treeNode = list[childIndex];
-        var nodeModel = treeNode.Tag as AccessibleNodeModel;
-        if (nodeModel != null && nodeModel.AccessibleNode != null) {
-          if (nodeModel.AccessibleNode.Equals(node)) {
-            return treeNode;
-          }
+        if (TreeNodeEquals(treeNode, node) != null) {
+          return treeNode;
         }
       }
 
@@ -1508,14 +1545,31 @@ namespace AccessBridgeExplorer {
       // Search by child index (for transient nodes)
       if (childIndex >= 0 && childIndex < list.Count) {
         var treeNode = list[childIndex];
-        var nodeModel = treeNode.Tag as AccessibleNodeModel;
-        if (nodeModel != null && nodeModel.AccessibleNode != null) {
-          if (nodeModel.AccessibleNode.GetTitle() == node.GetTitle()) {
-            return treeNode;
-          }
+        if (TreeNodeWeakEquals(treeNode, node) != null) {
+          return treeNode;
         }
       }
 
+      return null;
+    }
+
+    private AccessibleNode TreeNodeEquals(TreeNode treeNode, AccessibleNode node) {
+      var nodeModel = treeNode.Tag as AccessibleNodeModel;
+      if (nodeModel != null && nodeModel.AccessibleNode != null) {
+        if (nodeModel.AccessibleNode.Equals(node)) {
+          return nodeModel.AccessibleNode;
+        }
+      }
+      return null;
+    }
+
+    private AccessibleNode TreeNodeWeakEquals(TreeNode treeNode, AccessibleNode node) {
+      var nodeModel = treeNode.Tag as AccessibleNodeModel;
+      if (nodeModel != null && nodeModel.AccessibleNode != null) {
+        if (nodeModel.AccessibleNode.GetTitle() == node.GetTitle()) {
+          return nodeModel.AccessibleNode;
+        }
+      }
       return null;
     }
 
@@ -1564,7 +1618,7 @@ namespace AccessBridgeExplorer {
       UpdateOverlayWindows();
     }
 
-    #region Event Handlers
+#region Event Handlers
 
     // ReSharper disable UnusedMember.Local
     // ReSharper disable UnusedParameter.Local
@@ -1680,7 +1734,7 @@ namespace AccessBridgeExplorer {
     // ReSharper restore UnusedParameter.Local
     // ReSharper restore UnusedMember.Local
 
-    #endregion
+#endregion
 
     public class HwndCache {
       private readonly ConcurrentDictionary<IntPtr, AccessibleWindow> _cache = new ConcurrentDictionary<IntPtr, AccessibleWindow>();

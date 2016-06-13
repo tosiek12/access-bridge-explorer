@@ -31,9 +31,21 @@ namespace WindowsAccessBridgeInterop {
       get { return _items.LastOrDefault(); }
     }
 
-    public void AddParent(T accessibleNode) {
+    public int Count {
+      get { return _items.Count; }
+    }
+
+    public void AddRoot(T item) {
       //TODO: Make this more efficient (N^2 when adding parents).
-      _items.Insert(0, accessibleNode);
+      _items.Insert(0, item);
+    }
+
+    public void AddLeaf(T item) {
+      _items.Add(item);
+    }
+
+    public void RemoveLeaf() {
+      _items.RemoveAt(_items.Count - 1);
     }
 
     public PathCursor<T> CreateCursor() {

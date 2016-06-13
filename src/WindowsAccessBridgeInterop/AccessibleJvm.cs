@@ -106,7 +106,7 @@ namespace WindowsAccessBridgeInterop {
       // needed.
       Debug.Assert(windows.Count == 1);
       var result = windows[0];
-      result.AddParent(this);
+      result.AddRoot(this);
       return result;
     }
   }
