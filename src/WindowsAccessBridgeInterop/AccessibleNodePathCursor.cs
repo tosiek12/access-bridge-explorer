@@ -15,13 +15,13 @@
 using System.Collections.Generic;
 
 namespace WindowsAccessBridgeInterop {
-  public class NodePathCursor {
+  public class AccessibleNodePathCursor {
     private readonly List<AccessibleNode> _nodes;
     private readonly int _start;
     private readonly int _end;
     private int _index;
 
-    public NodePathCursor(List<AccessibleNode> nodes, int start, int end) {
+    public AccessibleNodePathCursor(List<AccessibleNode> nodes, int start, int end) {
       _nodes = nodes;
       _start = start;
       _end = end;
@@ -41,18 +41,18 @@ namespace WindowsAccessBridgeInterop {
       get { return Node != null; }
     }
 
-    public NodePathCursor Clone() {
-      return new NodePathCursor(_nodes, _index, _end);
+    public AccessibleNodePathCursor Clone() {
+      return new AccessibleNodePathCursor(_nodes, _index, _end);
     }
 
-    public NodePathCursor MoveNext() {
+    public AccessibleNodePathCursor MoveNext() {
       if (_index < _end) {
         _index++;
       }
       return this;
     }
 
-    public NodePathCursor MovePrevious() {
+    public AccessibleNodePathCursor MovePrevious() {
       if (_index >= _start) {
         _index--;
       }

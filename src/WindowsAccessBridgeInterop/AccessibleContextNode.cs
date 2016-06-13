@@ -242,16 +242,16 @@ namespace WindowsAccessBridgeInterop {
       return new Rectangle(info.x, info.y, info.width, info.height);
     }
 
-    public override NodePath GetNodePathAt(Point screenPoint) {
+    public override AccessibleNodePath GetNodePathAt(Point screenPoint) {
       return GetNodePathAtWorker(screenPoint);
       //return GetNodePathAtUsingAccessBridge(screenPoint);
     }
 
     /// <summary>
-    /// Return the <see cref="NodePath"/> of a node given a location on screen.
+    /// Return the <see cref="AccessibleNodePath"/> of a node given a location on screen.
     /// Return <code>null</code> if there is no node at that location.
     /// </summary>
-    public NodePath GetNodePathAtWorker(Point screenPoint) {
+    public AccessibleNodePath GetNodePathAtWorker(Point screenPoint) {
       // Bail out early if the node is not visible
       var info = GetInfo();
       if (info.states != null && info.states.IndexOf("showing", StringComparison.InvariantCulture) < 0) {
@@ -272,7 +272,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     /// <summary>
-    /// Return the <see cref="NodePath"/> of a node given a location on screen.
+    /// Return the <see cref="AccessibleNodePath"/> of a node given a location on screen.
     /// Return <code>null</code> if there is no node at that location.
     /// 
     /// Note: Experimental implementation using <see
@@ -282,7 +282,7 @@ namespace WindowsAccessBridgeInterop {
     /// no way to select what component to return if there are overlapping
     /// components.
     /// </summary>
-    public NodePath GetNodePathAtUsingAccessBridge(Point screenPoint) {
+    public AccessibleNodePath GetNodePathAtUsingAccessBridge(Point screenPoint) {
       JavaObjectHandle childHandle;
       if (Failed(AccessBridge.Functions.GetAccessibleContextAt(JvmId, _ac, screenPoint.X, screenPoint.Y, out childHandle))) {
         return null;
@@ -296,7 +296,7 @@ namespace WindowsAccessBridgeInterop {
       Debug.WriteLine("Child found: {0}-{1}-{2}-{3}", childNode.GetInfo().x, childNode.GetInfo().y,
         childNode.GetInfo().width, childNode.GetInfo().height);
 
-      var path = new NodePath();
+      var path = new AccessibleNodePath();
       for (AccessibleNode node = childNode; node != null; node = node.GetParent()) {
         /*DEBUG*/
         if (node is AccessibleContextNode) {

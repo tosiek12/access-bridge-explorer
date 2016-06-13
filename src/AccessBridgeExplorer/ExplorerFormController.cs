@@ -1328,10 +1328,10 @@ namespace AccessBridgeExplorer {
     }
 
     /// <summary>
-    /// Return the <see cref="NodePath"/> of a node given a location on screen.
+    /// Return the <see cref="AccessibleNodePath"/> of a node given a location on screen.
     /// Return <code>null</code> if there is no node at that location.
     /// </summary>
-    public NodePath GetNodePathAt(Point screenPoint) {
+    public AccessibleNodePath GetNodePathAt(Point screenPoint) {
       return UiCompute(() => {
         // Note: We should never have more than one window because
         // AccessibleWindow uses WindowFromPoint to filter out themselves if
@@ -1359,8 +1359,8 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private static NodePath BuildNodePath(AccessibleNode childNode) {
-      var path = new NodePath();
+    private static AccessibleNodePath BuildNodePath(AccessibleNode childNode) {
+      var path = new AccessibleNodePath();
       while (childNode != null) {
         path.AddParent(childNode);
         childNode = childNode.GetParent();
@@ -1379,7 +1379,7 @@ namespace AccessBridgeExplorer {
       return path;
     }
 
-    private void SelectTreeNode(NodePath nodePath) {
+    private void SelectTreeNode(AccessibleNodePath nodePath) {
       if (nodePath.LeafNode == null)
         return;
 
@@ -1418,7 +1418,7 @@ namespace AccessBridgeExplorer {
       }
     }
 
-    private bool SelectTreeNodeWorker(NodePath nodePath) {
+    private bool SelectTreeNodeWorker(AccessibleNodePath nodePath) {
       var foundNode = false;
       TreeNode parentTreeNode = null;
       var parentNodeList = _view.AccessibilityTree.Nodes;
@@ -1432,7 +1432,7 @@ namespace AccessBridgeExplorer {
           // If we can't find the node, it is possible the path contains an "extra"
           // node that is not visible when enumerating children. Try to skip it
           // and see what happens.
-          if (FindTreeNode(parentNodeList, pathCursor.Clone().MoveNext()) != null)
+          if (FindTreeNodeInSubTree(parentNodeList, pathCursor.Clone().MoveNext()) != null)
             continue;
 
           if (parentTreeNode != null) {
@@ -1442,7 +1442,7 @@ namespace AccessBridgeExplorer {
               // If we can't find the node, it is possible the path contains an "extra"
               // node that is not visible when enumerating children. Try to skip it
               // and see what happens.
-              if (FindTreeNode(parentNodeList, pathCursor.Clone().MoveNext()) != null)
+              if (FindTreeNodeInSubTree(parentNodeList, pathCursor.Clone().MoveNext()) != null)
                 continue;
             }
           }
@@ -1464,7 +1464,7 @@ namespace AccessBridgeExplorer {
       return foundNode;
     }
 
-    public TreeNode FindTreeNode(TreeNodeCollection parentNodes, NodePathCursor cursor) {
+    private TreeNode FindTreeNodeInSubTree(TreeNodeCollection parentNodes, AccessibleNodePathCursor cursor) {
       TreeNode parentNode = null;
       for (; cursor.IsValid; cursor.MoveNext()) {
         if (parentNode != null) {

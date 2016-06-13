@@ -76,7 +76,7 @@ namespace WindowsAccessBridgeInterop {
       return sb.ToString();
     }
 
-    public override NodePath GetNodePathAt(Point screenPoint) {
+    public override AccessibleNodePath GetNodePathAt(Point screenPoint) {
       // Bail out early if Windows says this window does not contain "screenPoint"
       // See http://blogs.msdn.com/b/oldnewthing/archive/2010/12/30/10110077.aspx
       // Multi monitor notes:

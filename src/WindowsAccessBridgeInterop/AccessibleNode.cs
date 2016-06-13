@@ -99,10 +99,10 @@ namespace WindowsAccessBridgeInterop {
     }
 
     /// <summary>
-    /// Return the <see cref="NodePath"/> of a node given a location on screen.
+    /// Return the <see cref="AccessibleNodePath"/> of a node given a location on screen.
     /// Return <code>null</code> if there is no node at that location.
     /// </summary>
-    public virtual NodePath GetNodePathAt(Point screenPoint) {
+    public virtual AccessibleNodePath GetNodePathAt(Point screenPoint) {
       // Bail early if this node is not visible
       var rectangle = GetScreenRectangle();
       if (rectangle == null)
@@ -124,7 +124,7 @@ namespace WindowsAccessBridgeInterop {
       // If no children, return our path if we contain the screenPoint.
       if (childPaths.Count == 0) {
         if (rectangle.Value.Contains(screenPoint)) {
-          var path = new NodePath();
+          var path = new AccessibleNodePath();
           path.AddParent(this);
           return path;
         }

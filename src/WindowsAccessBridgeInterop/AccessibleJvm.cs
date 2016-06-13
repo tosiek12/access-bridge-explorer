@@ -93,10 +93,10 @@ namespace WindowsAccessBridgeInterop {
     }
 
     /// <summary>
-    /// Return the <see cref="NodePath"/> of a node given a location on screen.
+    /// Return the <see cref="AccessibleNodePath"/> of a node given a location on screen.
     /// Return <code>null</code> if there is no node at that location.
     /// </summary>
-    public override NodePath GetNodePathAt(Point screenPoint) {
+    public override AccessibleNodePath GetNodePathAt(Point screenPoint) {
       var windows = _windows.Select(x => x.GetNodePathAt(screenPoint)).Where(x => x != null).ToList();
       if (windows.Count == 0)
         return null;

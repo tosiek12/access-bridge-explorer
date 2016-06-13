@@ -55,8 +55,8 @@
     <Compile Include="JavaObjectHandle.cs" />
     <Compile Include="JOBJECT32.cs" />
     <Compile Include="JOBJECT64.cs" />
-    <Compile Include="NodePath.cs" />
-    <Compile Include="NodePathCursor.cs" />
+    <Compile Include="AccessibleNodePath.cs" />
+    <Compile Include="AccessibleNodePathCursor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyGroup.cs" />
     <Compile Include="PropertyList.cs" />
