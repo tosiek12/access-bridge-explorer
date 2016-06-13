@@ -1354,24 +1354,29 @@ namespace AccessBridgeExplorer {
 
     public void SelectTreeNode(AccessibleNode childNode) {
       UiAction(() => {
-        var path = new NodePath();
-        while (childNode != null) {
-          path.AddParent(childNode);
-          childNode = childNode.GetParent();
-        }
-
-        // Set the "manageDescendants" flag where needed
-        var managedDescendants = false;
-        foreach (var node in path.OfType<AccessibleContextNode>()) {
-          if (!managedDescendants && node.GetInfo().states.Contains("manages descendants")) {
-            managedDescendants = true;
-          }
-          if (managedDescendants) {
-            node.SetManagedDescendant(managedDescendants);
-          }
-        }
+        var path = BuildNodePath(childNode);
         SelectTreeNode(path);
       });
+    }
+
+    private static NodePath BuildNodePath(AccessibleNode childNode) {
+      var path = new NodePath();
+      while (childNode != null) {
+        path.AddParent(childNode);
+        childNode = childNode.GetParent();
+      }
+
+      // Set the "manageDescendants" flag where needed
+      var managedDescendants = false;
+      foreach (var node in path.OfType<AccessibleContextNode>()) {
+        if (!managedDescendants && node.GetInfo().states.Contains("manages descendants")) {
+          managedDescendants = true;
+        }
+        if (managedDescendants) {
+          node.SetManagedDescendant(managedDescendants);
+        }
+      }
+      return path;
     }
 
     private void SelectTreeNode(NodePath nodePath) {
@@ -1399,7 +1404,22 @@ namespace AccessBridgeExplorer {
       // * Sometimes, the list of top level nodes (JVM and Windows) is not up
       // to date so we won't find the top level window (root node) contained
       // in the node path.
+      if (!SelectTreeNodeWorker(nodePath)) {
+        // We may not know about all top level windows. Refresh
+        // the list, *then* recompute the node path, as the access bridge
+        // has been internally auto-updating itself with the list of
+        // known top level windows.
+        var jvms = EnumJvms();
+        UpdateTree(jvms);
+        var newNodePath = BuildNodePath(nodePath.LeafNode);
+        if (!SelectTreeNodeWorker(newNodePath)) {
+          LogMessage("Error locating node \"{0}\" in accessibility tree", newNodePath.LeafNode);
+        }
+      }
+    }
 
+    private bool SelectTreeNodeWorker(NodePath nodePath) {
+      var foundNode = false;
       TreeNode parentTreeNode = null;
       var parentNodeList = _view.AccessibilityTree.Nodes;
       for (var pathCursor = nodePath.CreateCursor(); pathCursor.IsValid; pathCursor.MoveNext()) {
@@ -1412,12 +1432,9 @@ namespace AccessBridgeExplorer {
           // If we can't find the node, it is possible the path contains an "extra"
           // node that is not visible when enumerating children. Try to skip it
           // and see what happens.
-          var tempNode = FindTreeNode(parentNodeList, pathCursor.Clone().MoveNext());
-          if (tempNode != null)
+          if (FindTreeNode(parentNodeList, pathCursor.Clone().MoveNext()) != null)
             continue;
-        }
 
-        if (treeNode == null) {
           if (parentTreeNode != null) {
             NodeModel.RefreshNode(parentTreeNode);
             treeNode = FindTreeNodeInList(parentNodeList, pathCursor.Node);
@@ -1425,18 +1442,16 @@ namespace AccessBridgeExplorer {
               // If we can't find the node, it is possible the path contains an "extra"
               // node that is not visible when enumerating children. Try to skip it
               // and see what happens.
-              var tempNode = FindTreeNode(parentNodeList, pathCursor.Clone().MoveNext());
-              if (tempNode != null)
+              if (FindTreeNode(parentNodeList, pathCursor.Clone().MoveNext()) != null)
                 continue;
             }
           }
         }
 
-        if (treeNode == null) {
-          LogMessage("Error finding child node in node list: {0}", pathCursor.Node);
+        foundNode = treeNode != null;
+        if (!foundNode) {
           break;
         }
-
         parentTreeNode = treeNode;
         parentNodeList = parentTreeNode.Nodes;
       }
@@ -1445,6 +1460,8 @@ namespace AccessBridgeExplorer {
         _view.AccessibilityTree.SelectedNode = parentTreeNode;
         EnsureTreeNodeVisible(parentTreeNode);
       }
+
+      return foundNode;
     }
 
     public TreeNode FindTreeNode(TreeNodeCollection parentNodes, NodePathCursor cursor) {
@@ -1465,7 +1482,7 @@ namespace AccessBridgeExplorer {
     }
 
     private TreeNode FindTreeNodeInList(TreeNodeCollection list, AccessibleNode node) {
-      // Search by child index and equality
+      // Search by child index and check for equality
       var childIndex = node.GetIndexInParent();
       if (childIndex >= 0 && childIndex < list.Count) {
         var treeNode = list[childIndex];
