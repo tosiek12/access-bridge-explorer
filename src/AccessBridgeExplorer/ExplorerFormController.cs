@@ -1331,7 +1331,7 @@ namespace AccessBridgeExplorer {
     /// Return the <see cref="AccessibleNodePath"/> of a node given a location on screen.
     /// Return <code>null</code> if there is no node at that location.
     /// </summary>
-    public AccessibleNodePath GetNodePathAt(Point screenPoint) {
+    public Path<AccessibleNode> GetNodePathAt(Point screenPoint) {
       return UiCompute(() => {
         // Note: We should never have more than one window because
         // AccessibleWindow uses WindowFromPoint to filter out themselves if
@@ -1359,8 +1359,8 @@ namespace AccessBridgeExplorer {
       });
     }
 
-    private static AccessibleNodePath BuildNodePath(AccessibleNode childNode) {
-      var path = new AccessibleNodePath();
+    private static Path<AccessibleNode> BuildNodePath(AccessibleNode childNode) {
+      var path = new Path<AccessibleNode>();
       while (childNode != null) {
         path.AddParent(childNode);
         childNode = childNode.GetParent();
@@ -1379,8 +1379,8 @@ namespace AccessBridgeExplorer {
       return path;
     }
 
-    private void SelectTreeNode(AccessibleNodePath nodePath) {
-      if (nodePath.LeafNode == null)
+    private void SelectTreeNode(Path<AccessibleNode> nodePath) {
+      if (nodePath.Leaf == null)
         return;
 
       // Note: Unfortunately, we have to implement a few heuristics to deal
@@ -1411,14 +1411,14 @@ namespace AccessBridgeExplorer {
         // known top level windows.
         var jvms = EnumJvms();
         UpdateTree(jvms);
-        var newNodePath = BuildNodePath(nodePath.LeafNode);
+        var newNodePath = BuildNodePath(nodePath.Leaf);
         if (!SelectTreeNodeWorker(newNodePath)) {
-          LogMessage("Error locating node \"{0}\" in accessibility tree", newNodePath.LeafNode);
+          LogMessage("Error locating node \"{0}\" in accessibility tree", newNodePath.Leaf);
         }
       }
     }
 
-    private bool SelectTreeNodeWorker(AccessibleNodePath nodePath) {
+    private bool SelectTreeNodeWorker(Path<AccessibleNode> nodePath) {
       var foundNode = false;
       TreeNode parentTreeNode = null;
       var parentNodeList = _view.AccessibilityTree.Nodes;
@@ -1464,7 +1464,7 @@ namespace AccessBridgeExplorer {
       return foundNode;
     }
 
-    private TreeNode FindTreeNodeInSubTree(TreeNodeCollection parentNodes, AccessibleNodePathCursor cursor) {
+    private TreeNode FindTreeNodeInSubTree(TreeNodeCollection parentNodes, PathCursor<AccessibleNode> cursor) {
       TreeNode parentNode = null;
       for (; cursor.IsValid; cursor.MoveNext()) {
         if (parentNode != null) {
@@ -1720,7 +1720,7 @@ namespace AccessBridgeExplorer {
     public void MouseCaptureMove(Point screenPoint) {
       UiAction(() => {
         var nodePath = GetNodePathAt(screenPoint);
-        var node = nodePath == null ? null : nodePath.LeafNode;
+        var node = nodePath == null ? null : nodePath.Leaf;
         SetOverlayNode(node, OverlayActivationSource.MouseCapture);
       });
     }

@@ -15,25 +15,25 @@
 using System.Collections.Generic;
 
 namespace WindowsAccessBridgeInterop {
-  public class AccessibleNodePathCursor {
-    private readonly List<AccessibleNode> _nodes;
+  public class PathCursor<T> {
+    private readonly List<T> _items;
     private readonly int _start;
     private readonly int _end;
     private int _index;
 
-    public AccessibleNodePathCursor(List<AccessibleNode> nodes, int start, int end) {
-      _nodes = nodes;
+    public PathCursor(List<T> items, int start, int end) {
+      _items = items;
       _start = start;
       _end = end;
       _index = start;
     }
 
-    public AccessibleNode Node {
+    public T Node {
       get {
         if (_start <= _index && _index < _end) {
-          return _nodes[_index];
+          return _items[_index];
         }
-        return null;
+        return default(T);
       }
     }
 
@@ -41,18 +41,18 @@ namespace WindowsAccessBridgeInterop {
       get { return Node != null; }
     }
 
-    public AccessibleNodePathCursor Clone() {
-      return new AccessibleNodePathCursor(_nodes, _index, _end);
+    public PathCursor<T> Clone() {
+      return new PathCursor<T>(_items, _index, _end);
     }
 
-    public AccessibleNodePathCursor MoveNext() {
+    public PathCursor<T> MoveNext() {
       if (_index < _end) {
         _index++;
       }
       return this;
     }
 
-    public AccessibleNodePathCursor MovePrevious() {
+    public PathCursor<T> MovePrevious() {
       if (_index >= _start) {
         _index--;
       }

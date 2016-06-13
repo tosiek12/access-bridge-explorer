@@ -102,7 +102,7 @@ namespace WindowsAccessBridgeInterop {
     /// Return the <see cref="AccessibleNodePath"/> of a node given a location on screen.
     /// Return <code>null</code> if there is no node at that location.
     /// </summary>
-    public virtual AccessibleNodePath GetNodePathAt(Point screenPoint) {
+    public virtual Path<AccessibleNode> GetNodePathAt(Point screenPoint) {
       // Bail early if this node is not visible
       var rectangle = GetScreenRectangle();
       if (rectangle == null)
@@ -114,7 +114,7 @@ namespace WindowsAccessBridgeInterop {
         .Where(x => x != null)
         .OrderBy(x => {
           // Order by surface size so that smaller (i.e. more specific) nodes is picked first.
-          var rect = x.LeafNode.GetScreenRectangle();
+          var rect = x.Leaf.GetScreenRectangle();
           if (rect == null)
             return int.MaxValue;
           return rect.Value.Width * rect.Value.Height;
@@ -124,7 +124,7 @@ namespace WindowsAccessBridgeInterop {
       // If no children, return our path if we contain the screenPoint.
       if (childPaths.Count == 0) {
         if (rectangle.Value.Contains(screenPoint)) {
-          var path = new AccessibleNodePath();
+          var path = new Path<AccessibleNode>();
           path.AddParent(this);
           return path;
         }

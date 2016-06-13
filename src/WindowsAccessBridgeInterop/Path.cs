@@ -1,4 +1,4 @@
-// Copyright 2015 Google Inc. All Rights Reserved.
+// Copyright 2016 Google Inc. All Rights Reserved.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,25 +20,28 @@ namespace WindowsAccessBridgeInterop {
   /// <summary>
   /// Represents a path from a root node to a leaf node.
   /// </summary>
-  public class AccessibleNodePath : IEnumerable<AccessibleNode> {
-    private readonly List<AccessibleNode> _nodes = new List<AccessibleNode>();
+  public class Path<T> : IEnumerable<T> {
+    private readonly List<T> _items = new List<T>();
 
-    public AccessibleNode LeafNode {
-      get {
-        return _nodes.LastOrDefault();
-      }
+    public T Root {
+      get { return _items.FirstOrDefault(); }
     }
 
-    public void AddParent(AccessibleNode accessibleNode) {
-      _nodes.Insert(0, accessibleNode);
+    public T Leaf {
+      get { return _items.LastOrDefault(); }
     }
 
-    public AccessibleNodePathCursor CreateCursor() {
-      return new AccessibleNodePathCursor(_nodes, 0, _nodes.Count);
+    public void AddParent(T accessibleNode) {
+      //TODO: Make this more efficient (N^2 when adding parents).
+      _items.Insert(0, accessibleNode);
     }
 
-    public IEnumerator<AccessibleNode> GetEnumerator() {
-      return _nodes.GetEnumerator();
+    public PathCursor<T> CreateCursor() {
+      return new PathCursor<T>(_items, 0, _items.Count);
+    }
+
+    public IEnumerator<T> GetEnumerator() {
+      return _items.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator() {
