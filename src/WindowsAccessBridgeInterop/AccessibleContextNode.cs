@@ -81,7 +81,7 @@ namespace WindowsAccessBridgeInterop {
     /// <param name="count"></param>
     /// <returns></returns>
     private int LimitSize(int count) {
-      return Math.Min(AccessBridge.CollectionSizeLimit, count);
+      return Math.Max(0, Math.Min(AccessBridge.CollectionSizeLimit, count));
     }
 
     /// <summary>
