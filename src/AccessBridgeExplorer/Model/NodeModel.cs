@@ -61,7 +61,8 @@ namespace AccessBridgeExplorer.Model {
       if (nodeModel == null)
         return;
 
-      // First thing first; Tell the node to forget about what it knows
+      // First thing first: tell the accessible node to forget about what it
+      // knows
       nodeModel.AccessibleNode.Refresh();
 
       // Update the treeview children so they get refreshed

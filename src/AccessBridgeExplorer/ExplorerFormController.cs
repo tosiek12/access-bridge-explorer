@@ -1395,7 +1395,7 @@ namespace AccessBridgeExplorer {
       // to date so we won't find the top level window (root node) contained
       // in the node path.
       var treePath = FindNodeInTree(nodePath);
-      if (treePath.Count == 0 || !ReferenceEquals(nodePath.Leaf, treePath.Leaf.Node)) {
+      if (treePath.Count == 0 || !ReferenceEquals(nodePath.Leaf, treePath.Leaf.AccessibleNode)) {
         // We may not know about all top level windows. Refresh
         // the list, *then* recompute the node path, as the access bridge
         // has been internally auto-updating itself with the list of
@@ -1404,12 +1404,22 @@ namespace AccessBridgeExplorer {
         UpdateTree(jvms);
 
         // Try again with new node path
-        var newNodePath = nodePath.Leaf.BuildNodePath();
-        treePath = FindNodeInTree(newNodePath);
-        if (treePath.Count == 0 || !ReferenceEquals(newNodePath.Leaf, treePath.Leaf.Node)) {
-          if (_synchronizeTreeLogErrorsSetting.Value) {
-            LogMessage("Error locating node \"{0}\" in accessibility tree", newNodePath.Leaf);
+        nodePath = nodePath.Leaf.BuildNodePath();
+        treePath = FindNodeInTree(nodePath);
+        if (treePath.Count == 0 || !ReferenceEquals(nodePath.Leaf, treePath.Leaf.AccessibleNode)) {
+          // Last option: refresh the top level window node, and try again. This is
+          // required because sometimes new children appear (or disappear).
+          var topLevelWindow = treePath.FirstOrDefault(x => x.AccessibleNode is AccessibleWindow);
+          if (topLevelWindow.TreeNode != null) {
+            NodeModel.RefreshNode(topLevelWindow.TreeNode);
+            treePath = FindNodeInTree(nodePath);
           }
+        }
+      }
+
+      if (treePath.Count == 0 || !ReferenceEquals(nodePath.Leaf, treePath.Leaf.AccessibleNode)) {
+        if (_synchronizeTreeLogErrorsSetting.Value) {
+          LogMessage("Error locating node \"{0}\" in accessibility tree", nodePath.Leaf);
         }
       }
 
@@ -1488,19 +1498,19 @@ namespace AccessBridgeExplorer {
 
     private struct TreeNodeEntry {
       private readonly TreeNode _treeNode;
-      private readonly AccessibleNode _node;
+      private readonly AccessibleNode _accessibleNode;
 
-      public TreeNodeEntry(TreeNode treeNode, AccessibleNode node) {
+      public TreeNodeEntry(TreeNode treeNode, AccessibleNode accessibleNode) {
         _treeNode = treeNode;
-        _node = node;
+        _accessibleNode = accessibleNode;
       }
 
       public TreeNode TreeNode {
         get { return _treeNode; }
       }
 
-      public AccessibleNode Node {
-        get { return _node; }
+      public AccessibleNode AccessibleNode {
+        get { return _accessibleNode; }
       }
     }
 
