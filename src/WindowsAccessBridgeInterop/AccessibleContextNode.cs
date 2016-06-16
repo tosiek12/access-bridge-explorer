@@ -248,7 +248,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     /// <summary>
-    /// Return the <see cref="AccessibleNodePath"/> of a node given a location on screen.
+    /// Return the <see cref="Path{AccessibleNodePath}"/> of a node given a location on screen.
     /// Return <code>null</code> if there is no node at that location.
     /// </summary>
     public Path<AccessibleNode> GetNodePathAtWorker(Point screenPoint) {
@@ -272,8 +272,9 @@ namespace WindowsAccessBridgeInterop {
     }
 
     /// <summary>
-    /// Return the <see cref="AccessibleNodePath"/> of a node given a location on screen.
-    /// Return <code>null</code> if there is no node at that location.
+    /// Return the <see cref="Path{AccessibleNode}"/> of a node given a location
+    /// on screen. Return <code>null</code> if there is no node at that
+    /// location.
     /// 
     /// Note: Experimental implementation using <see
     /// cref="AccessBridgeFunctions.GetAccessibleContextAt"/>

@@ -72,6 +72,7 @@ namespace AccessBridgeExplorer {
       _userSettings = userSetting;
       _navigation = new ExplorerFormNavigation();
       _accessibleNodeModelResources = new AccessibleNodeModelResources(_view.AccessibilityTree);
+      _userSettings.Error += UserSettings_OnError;
 
       _captureKeyHandler = _view.WindowsHotKeyHandlerFactory.CreateHandler(1, Keys.Control | Keys.OemPipe);
       _captureKeyHandler.KeyPressed += (sender, eventArgs) => {
@@ -87,8 +88,6 @@ namespace AccessBridgeExplorer {
           return;
         _overlayEnabledSetting.Value = !_overlayEnabledSetting.Value;
       };
-
-      _userSettings.Error += UserSettings_OnError;
 
       _overlayEnabledSetting = new BoolUserSetting(userSetting, "overlay.enabled", true);
       _overlayEnabledSetting.Changed += (sender, args) => {
