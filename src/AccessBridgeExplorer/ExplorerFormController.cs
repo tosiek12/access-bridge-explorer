@@ -1417,6 +1417,7 @@ namespace AccessBridgeExplorer {
         }
       }
 
+      // If didn't find the node we were looking for, log an error message
       if (treePath.Count == 0 || !ReferenceEquals(nodePath.Leaf, treePath.Leaf.AccessibleNode)) {
         if (_synchronizeTreeLogErrorsSetting.Value) {
           LogMessage("Error locating node \"{0}\" in accessibility tree", nodePath.Leaf);
