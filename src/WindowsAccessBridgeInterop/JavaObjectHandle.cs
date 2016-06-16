@@ -49,12 +49,12 @@ namespace WindowsAccessBridgeInterop {
     private static List<ReleaseData> _releaseQueue = new List<ReleaseData>();
 
     public JavaObjectHandle(int jvmId, JOBJECT64 handle) {
-      if (handle.Value == 0) {
-        throw new ArgumentException("Java Object Handle is null", "handle");
-      }
       _jvmId = jvmId;
       _handle = handle;
       _isLegacy = false;
+      if (handle.Value == 0) {
+        GC.SuppressFinalize(this);
+      }
       RecordActivation(handle);
     }
 
@@ -64,23 +64,6 @@ namespace WindowsAccessBridgeInterop {
 
     ~JavaObjectHandle() {
       Dispose(false);
-    }
-
-    public void Dispose() {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
-
-    public void Dispose(bool disposing) {
-      if (_disposed)
-        return;
-      RecordDeactivation(_handle);
-      if (disposing) {
-        ReleaseJavaObject(_jvmId, _handle, _isLegacy);
-      } else {
-        EnqueueRelease(_jvmId, _handle, _isLegacy);
-      }
-      _disposed = true;
     }
 
     public int JvmId {
@@ -99,18 +82,33 @@ namespace WindowsAccessBridgeInterop {
       get { return _disposed; }
     }
 
-    // ReSharper disable once UnusedParameter.Local
-    private static void RecordActivation(JOBJECT64 handle) {
-      Debug.Assert(handle.Value != 0);
-
-      Interlocked.Increment(ref _activeCount);
+    public bool IsNull {
+      get { return _handle.Value == 0; }
     }
 
-    // ReSharper disable once UnusedParameter.Local
-    private static void RecordDeactivation(JOBJECT64 handle) {
-      Debug.Assert(handle.Value != 0);
+    public void Dispose() {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
 
-      Interlocked.Decrement(ref _activeCount);
+    public void Dispose(bool disposing) {
+      if (_disposed)
+        return;
+      RecordDeactivation(_handle);
+      EnqueueRelease(_jvmId, _handle, _isLegacy);
+      _disposed = true;
+    }
+
+    private static void RecordActivation(JOBJECT64 handle) {
+      if (handle.Value != 0) {
+        Interlocked.Increment(ref _activeCount);
+      }
+    }
+
+    private static void RecordDeactivation(JOBJECT64 handle) {
+      if (handle.Value != 0) {
+        Interlocked.Decrement(ref _activeCount);
+      }
     }
 
     public static long ActiveContextCount {
@@ -128,7 +126,9 @@ namespace WindowsAccessBridgeInterop {
     }
 
     private static void EnqueueRelease(int jvmid, JOBJECT64 handle, bool isLegacy) {
-      Debug.Assert(handle.Value != 0);
+      // Skip NULL handles, they don't need to be released.
+      if (handle.Value == 0)
+        return;
 
       lock (_releaseQueue) {
         _releaseQueue.Add(new ReleaseData {

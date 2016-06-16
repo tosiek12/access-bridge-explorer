@@ -33,15 +33,11 @@ namespace WindowsAccessBridgeInterop {
     }
 
     private JavaObjectHandle Wrap(int vmid, JOBJECT32 handle) {
-      if (handle.Value == 0)
-        return null;
       return new JavaObjectHandle(vmid, handle);
     }
 
     // ReSharper disable once UnusedParameter.Local
     private JOBJECT32 Unwrap(int vmid, JavaObjectHandle objectHandle) {
-      if (objectHandle == null)
-        return JOBJECT32.Zero;
       return objectHandle.HandleLegacy;
     }
   }

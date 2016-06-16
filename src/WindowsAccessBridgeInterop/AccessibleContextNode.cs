@@ -57,7 +57,7 @@ namespace WindowsAccessBridgeInterop {
     public override AccessibleNode GetParent() {
       ThrowIfDisposed();
       var parentAc = AccessBridge.Functions.GetAccessibleParentFromContext(JvmId, _ac);
-      if (parentAc == null) {
+      if (parentAc.IsNull) {
         return null;
       }
 
@@ -183,7 +183,7 @@ namespace WindowsAccessBridgeInterop {
       ThrowIfDisposed();
 
       var childhandle = AccessBridge.Functions.GetAccessibleChildFromContext(JvmId, _ac, i);
-      if (childhandle == null) {
+      if (childhandle.IsNull) {
         throw new ApplicationException(string.Format("Error retrieving accessible context for child {0}", i));
       }
 
@@ -204,7 +204,7 @@ namespace WindowsAccessBridgeInterop {
       if (selCount > 0) {
         for (var selIndex = 0; selIndex < LimitSize(selCount); selIndex++) {
           var selectedContext = AccessBridge.Functions.GetAccessibleSelectionFromContext(JvmId, _ac, selIndex);
-          if (selectedContext != null) {
+          if (!selectedContext.IsNull) {
             var selectedNode = new AccessibleContextNode(AccessBridge, selectedContext);
             if (selectedNode.GetInfo().indexInParent == childIndex) {
               return selectedNode;
@@ -289,7 +289,7 @@ namespace WindowsAccessBridgeInterop {
         return null;
       }
 
-      if (childHandle == null) {
+      if (childHandle.IsNull) {
         return null;
       }
 
@@ -338,7 +338,7 @@ namespace WindowsAccessBridgeInterop {
     }
 
     protected override void AddProperties(PropertyList list, PropertyOptions options) {
-      if (_ac == null) {
+      if (AccessibleContextHandle.IsNull) {
         list.AddProperty("<None>", "No accessible context");
         return;
       }
@@ -388,7 +388,7 @@ namespace WindowsAccessBridgeInterop {
     private void AddParentContextProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.ParentContext) != 0) {
         var parentContext = AccessBridge.Functions.GetAccessibleParentFromContext(JvmId, _ac);
-        if (parentContext != null) {
+        if (!parentContext.IsNull) {
           var group = list.AddGroup("Parent");
           group.LoadChildren = () => {
             AddSubContextProperties(@group.Children, options, parentContext);
@@ -420,7 +420,7 @@ namespace WindowsAccessBridgeInterop {
     private void AddTopLevelWindowProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.TopLevelWindowInfo) != 0) {
         var topLevel = AccessBridge.Functions.GetTopLevelObject(JvmId, _ac);
-        if (topLevel != null) {
+        if (!topLevel.IsNull) {
           var group = list.AddGroup("Top level window");
           group.LoadChildren = () => {
             AddSubContextProperties(group.Children, options, topLevel);
@@ -432,7 +432,7 @@ namespace WindowsAccessBridgeInterop {
     private void AddActiveDescendentProperties(PropertyList list, PropertyOptions options) {
       if ((options & PropertyOptions.ActiveDescendent) != 0) {
         var descendant = AccessBridge.Functions.GetActiveDescendent(JvmId, _ac);
-        if (descendant != null) {
+        if (!descendant.IsNull) {
           var group = list.AddGroup("Active Descendant");
           group.LoadChildren = () => {
             AddSubContextProperties(group.Children, options, descendant);

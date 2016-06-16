@@ -29,8 +29,6 @@ namespace WindowsAccessBridgeInterop {
     }
 
     private JavaObjectHandle Wrap(int vmid, JOBJECT64 handle) {
-      if (handle.Value == 0)
-        return null;
       return new JavaObjectHandle(vmid, handle);
     }
   }
