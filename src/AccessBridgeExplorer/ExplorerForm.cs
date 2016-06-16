@@ -505,7 +505,11 @@ namespace AccessBridgeExplorer {
     }
 
     ToolStripMenuItem IExplorerFormView.SynchronizeTreeMenuItem {
-      get { return synchonizeTreeMenuItem; }
+      get { return synchronizeTreeMenuItem; }
+    }
+
+    ToolStripMenuItem IExplorerFormView.SynchronizeTreeLogErrorsMenuItem {
+      get { return synchronizeTreeLogErrorsMenuItem; }
     }
 
     ToolStripMenuItem IExplorerFormView.EnableCaptureHookMenuItem {

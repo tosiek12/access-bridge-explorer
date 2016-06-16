@@ -63,6 +63,8 @@ namespace AccessBridgeExplorer {
       this.showOverlayOnlyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.showTooltipOnlyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
+      this.synchronizeTreeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripSeparator();
       this.enableCaptureHookMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.enableOverlayHookMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
@@ -132,8 +134,8 @@ namespace AccessBridgeExplorer {
       this.memoryRefreshTimer = new System.Windows.Forms.Timer(this.components);
       this.notificationPanel = new AccessBridgeExplorer.NotificationPanel();
       this.updateChecker = new AccessBridgeExplorer.UpdateChecker(this.components);
-      this.synchonizeTreeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripSeparator();
+      this.synchronizeTreeLogErrorsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem9 = new System.Windows.Forms.ToolStripSeparator();
       this.mainMenuStrip.SuspendLayout();
       this.statusBarStrip.SuspendLayout();
       this.mainToolStrip.SuspendLayout();
@@ -280,7 +282,7 @@ namespace AccessBridgeExplorer {
             this.showOverlayOnlyMenuItem,
             this.showTooltipOnlyMenuItem,
             this.toolStripMenuItem7,
-            this.synchonizeTreeMenuItem,
+            this.synchronizeTreeMenuItem,
             this.toolStripMenuItem8,
             this.enableCaptureHookMenuItem,
             this.enableOverlayHookMenuItem});
@@ -367,6 +369,17 @@ namespace AccessBridgeExplorer {
       this.toolStripMenuItem7.Name = "toolStripMenuItem7";
       this.toolStripMenuItem7.Size = new System.Drawing.Size(272, 6);
       // 
+      // synchonizeTreeMenuItem
+      // 
+      this.synchronizeTreeMenuItem.Name = "synchronizeTreeMenuItem";
+      this.synchronizeTreeMenuItem.Size = new System.Drawing.Size(275, 22);
+      this.synchronizeTreeMenuItem.Text = "Synchonize Tree";
+      // 
+      // toolStripMenuItem8
+      // 
+      this.toolStripMenuItem8.Name = "toolStripMenuItem8";
+      this.toolStripMenuItem8.Size = new System.Drawing.Size(272, 6);
+      // 
       // enableCaptureHookMenuItem
       // 
       this.enableCaptureHookMenuItem.Name = "enableCaptureHookMenuItem";
@@ -393,7 +406,9 @@ namespace AccessBridgeExplorer {
             this._limitTextBufferLengthMenu,
             this.separator5,
             this.autoReleaseInactiveObjectsMenuItem,
-            this.autoDetectApplicationsMenuItem});
+            this.autoDetectApplicationsMenuItem,
+            this.toolStripMenuItem9,
+            this.synchronizeTreeLogErrorsMenuItem});
       this.advancedToolStripMenuItem.Name = "advancedToolStripMenuItem";
       this.advancedToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
       this.advancedToolStripMenuItem.Text = "Advanced";
@@ -993,16 +1008,16 @@ namespace AccessBridgeExplorer {
       this.updateChecker.UpdateInfoAvailable += new System.EventHandler<AccessBridgeExplorer.UpdateInfoArgs>(this.updateChecker_UpdateInfoAvailable);
       this.updateChecker.UpdateInfoError += new System.EventHandler<System.IO.ErrorEventArgs>(this.updateChecker_UpdateInfoError);
       // 
-      // synchonizeTreeMenuItem
+      // synchronizeTreeLogErrorsMenuItem
       // 
-      this.synchonizeTreeMenuItem.Name = "synchonizeTreeMenuItem";
-      this.synchonizeTreeMenuItem.Size = new System.Drawing.Size(275, 22);
-      this.synchonizeTreeMenuItem.Text = "Synchonize Tree";
+      this.synchronizeTreeLogErrorsMenuItem.Name = "synchronizeTreeLogErrorsMenuItem";
+      this.synchronizeTreeLogErrorsMenuItem.Size = new System.Drawing.Size(250, 22);
+      this.synchronizeTreeLogErrorsMenuItem.Text = "Log synchronize tree errors";
       // 
-      // toolStripMenuItem8
+      // toolStripMenuItem9
       // 
-      this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-      this.toolStripMenuItem8.Size = new System.Drawing.Size(272, 6);
+      this.toolStripMenuItem9.Name = "toolStripMenuItem9";
+      this.toolStripMenuItem9.Size = new System.Drawing.Size(247, 6);
       // 
       // ExplorerForm
       // 
@@ -1155,8 +1170,10 @@ namespace AccessBridgeExplorer {
     private System.Windows.Forms.ToolStripMenuItem _limitTextLineLengthsMenu;
     private System.Windows.Forms.ToolStripSeparator separator5;
     private System.Windows.Forms.ToolStripMenuItem autoDetectApplicationsMenuItem;
-    private System.Windows.Forms.ToolStripMenuItem synchonizeTreeMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem synchronizeTreeMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem8;
+    private System.Windows.Forms.ToolStripSeparator toolStripMenuItem9;
+    private System.Windows.Forms.ToolStripMenuItem synchronizeTreeLogErrorsMenuItem;
   }
 }
 

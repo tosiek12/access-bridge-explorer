@@ -62,6 +62,7 @@ namespace AccessBridgeExplorer {
     ToolStripMenuItem ShowOverlayOnlyMenuItem { get; }
 
     ToolStripMenuItem SynchronizeTreeMenuItem { get; }
+    ToolStripMenuItem SynchronizeTreeLogErrorsMenuItem { get; }
 
     ToolStripMenuItem EnableCaptureHookMenuItem { get; }
     ToolStripMenuItem EnableOverlayHookMenuItem { get; }

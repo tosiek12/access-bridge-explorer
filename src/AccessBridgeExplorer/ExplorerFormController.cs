@@ -51,6 +51,7 @@ namespace AccessBridgeExplorer {
     private readonly OverlayActivationSetting _overlayActivationSetting;
     private readonly UserSetting<OverlayDisplayType> _overlayDisplayTypeSetting;
     private readonly UserSetting<bool> _synchronizeTreeSetting;
+    private readonly UserSetting<bool> _synchronizeTreeLogErrorsSetting;
     private readonly UserSetting<PropertyOptions> _propertyOptionsSetting;
     private readonly UserSetting<int> _collectionSizeLimitSetting;
     private readonly UserSetting<int> _textLineCountLimitSetting;
@@ -113,6 +114,16 @@ namespace AccessBridgeExplorer {
       };
       _view.SynchronizeTreeMenuItem.Click += (sender, args) => {
         _synchronizeTreeSetting.Value = !_synchronizeTreeSetting.Value;
+      };
+
+      _synchronizeTreeLogErrorsSetting = new BoolUserSetting(userSetting, "overlay.synchronize.tree.log.errors", false);
+      _synchronizeTreeLogErrorsSetting.Sync += (sender, args) => {
+        if (_disposed)
+          return;
+        _view.SynchronizeTreeLogErrorsMenuItem.Checked = args.Value;
+      };
+      _view.SynchronizeTreeLogErrorsMenuItem.Click += (sender, args) => {
+        _synchronizeTreeLogErrorsSetting.Value = !_synchronizeTreeLogErrorsSetting.Value;
       };
 
       var enableCaptureHookSetting = new BoolUserSetting(userSetting, "overlay.capture.hook", true);
@@ -1397,7 +1408,9 @@ namespace AccessBridgeExplorer {
         var newNodePath = nodePath.Leaf.BuildNodePath();
         treePath = FindNodeInTree(newNodePath);
         if (treePath.Count == 0 || !ReferenceEquals(newNodePath.Leaf, treePath.Leaf.Node)) {
-          LogMessage("Error locating node \"{0}\" in accessibility tree", newNodePath.Leaf);
+          if (_synchronizeTreeLogErrorsSetting.Value) {
+            LogMessage("Error locating node \"{0}\" in accessibility tree", newNodePath.Leaf);
+          }
         }
       }
 
