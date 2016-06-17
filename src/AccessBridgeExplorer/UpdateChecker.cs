@@ -106,13 +106,17 @@ namespace AccessBridgeExplorer {
         try {
           var webRequest = WebRequest.Create(url);
           using (var response = webRequest.GetResponse()) {
-            using (var stream = response.GetResponseStream())
-            using (var reader = new StreamReader(stream)) {
-              var contents = reader.ReadToEnd();
-              try {
-                return ParseUpdateInfo(contents);
-              } catch (Exception e) {
-                throw new InvalidDataException("Invalid file contents", e);
+            using (var stream = response.GetResponseStream()) {
+              if (stream == null) {
+                throw new ApplicationException("No response from server");
+              }
+              using (var reader = new StreamReader(stream)) {
+                var contents = reader.ReadToEnd();
+                try {
+                  return ParseUpdateInfo(contents);
+                } catch (Exception e) {
+                  throw new InvalidDataException("Invalid file contents", e);
+                }
               }
             }
           }

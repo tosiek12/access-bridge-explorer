@@ -18,6 +18,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace AccessBridgeExplorer.Utils {
+  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public static class User32Utils {
 
     public static void SetTopMost(HandleRef handleRef, bool value) {
@@ -249,8 +250,8 @@ namespace AccessBridgeExplorer.Utils {
       Alpha = 0x2
     }
 
-    public static HandleRef HWND_TOPMOST = new HandleRef((object)null, new IntPtr(-1));
-    public static HandleRef HWND_NOTOPMOST = new HandleRef((object)null, new IntPtr(-2));
+    public static HandleRef HWND_TOPMOST = new HandleRef(null, new IntPtr(-1));
+    public static HandleRef HWND_NOTOPMOST = new HandleRef(null, new IntPtr(-2));
 
     public const int SWP_NOSIZE = 1;
     public const int SWP_NOMOVE = 2;

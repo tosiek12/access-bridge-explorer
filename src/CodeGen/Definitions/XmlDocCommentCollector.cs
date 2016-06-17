@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -22,6 +23,7 @@ namespace CodeGen.Definitions {
     public XDocument Document { get; set; }
 
     public XmlDocDefinition CreateMethodDefinition(MethodInfo methodInfo) {
+      Debug.Assert(methodInfo.DeclaringType != null, "methodInfo.DeclaringType != null");
       var sb = new StringBuilder();
       sb.Append("M:");
       sb.Append(methodInfo.DeclaringType.FullName);
@@ -45,6 +47,7 @@ namespace CodeGen.Definitions {
     }
 
     public XmlDocDefinition CreateEventDefinition(EventInfo eventInfo) {
+      Debug.Assert(eventInfo.DeclaringType != null, "eventInfo.DeclaringType != null");
       var sb = new StringBuilder();
       sb.Append("E:");
       sb.Append(eventInfo.DeclaringType.FullName);
@@ -55,6 +58,7 @@ namespace CodeGen.Definitions {
     }
 
     public XmlDocDefinition CreateMemberDefinition(string id) {
+      Debug.Assert(Document.Root != null, "Document.Root != null");
       var element = Document.Root
         .Descendants("member")
         .Where(x => x.Attribute("name") != null && x.Attribute("name").Value == id)

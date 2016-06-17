@@ -27,12 +27,12 @@ namespace AccessBridgeExplorer {
       textBox.TextChanged += (sender, args) => {
         SetHeightFromText();
       };
-      this.Load += (sender, args) => {
+      Load += (sender, args) => {
         if (!DesignMode) {
           HidePanel();
         }
       };
-      this.Resize += (sender, args) => {
+      Resize += (sender, args) => {
         SetHeightFromText();
       };
     }
@@ -43,14 +43,15 @@ namespace AccessBridgeExplorer {
       textBox.Text = text;
       switch (entry.Icon) {
         case NotificationPanelIcon.Error:
-          pictureBox1.Image = AccessBridgeExplorer.Properties.Resources.ErrorIcon;
+          pictureBox1.Image = Properties.Resources.ErrorIcon;
           break;
         case NotificationPanelIcon.Warning:
-          pictureBox1.Image = AccessBridgeExplorer.Properties.Resources.WarningIcon;
+          pictureBox1.Image = Properties.Resources.WarningIcon;
           break;
+        // ReSharper disable once RedundantCaseLabel
         case NotificationPanelIcon.Info:
         default:
-          pictureBox1.Image = AccessBridgeExplorer.Properties.Resources.InfoIcon;
+          pictureBox1.Image = Properties.Resources.InfoIcon;
           break;
       }
       ShowPanel();
@@ -103,7 +104,7 @@ namespace AccessBridgeExplorer {
         return;
       _resizing = true;
       try {
-        int numLines = this.textBox.GetLineFromCharIndex(this.textBox.TextLength) + 1;
+        int numLines = textBox.GetLineFromCharIndex(textBox.TextLength) + 1;
         var height = textBox.Font.Height * numLines;
         Height = height + 4 + panel1.Padding.Top + panel1.Padding.Bottom;
       } finally {
@@ -130,7 +131,7 @@ namespace AccessBridgeExplorer {
         _currentEntry = null;
         HidePanel();
         textBox.Text = "";
-        pictureBox1.Image = AccessBridgeExplorer.Properties.Resources.InfoIcon;
+        pictureBox1.Image = Properties.Resources.InfoIcon;
       }
     }
   }

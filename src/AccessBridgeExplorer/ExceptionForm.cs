@@ -61,17 +61,22 @@ namespace AccessBridgeExplorer {
     private static void CreateStackStraceNodes(TreeNodeCollection parentList, StackTrace stackTrace) {
       var frames = stackTrace.GetFrames() ?? new StackFrame[0];
       foreach (var frame in frames) {
-        var frameNode = new TreeNode();
 
-        var method = frame.GetMethod() == null
-          ? @"<Unknown method>"
-          : string.Format("{0}.{1}()", frame.GetMethod().ReflectedType.FullName, frame.GetMethod().Name);
+        var methodInfo = frame.GetMethod();
 
-        var location = frame.GetFileName() == null
-          ? ""
-          : string.Format(" - {0}:{1}:{2}", frame.GetFileName(), frame.GetFileLineNumber(), frame.GetFileColumnNumber());
+        var methodText = methodInfo == null ?
+          @"<Unknown method>" :
+          methodInfo.ReflectedType == null ?
+            string.Format("<Unknown Type>.{0}()", methodInfo.Name) :
+            string.Format("{0}.{1}()", methodInfo.ReflectedType.FullName, frame.GetMethod().Name);
 
-        frameNode.Text = string.Format("{0}{1}", method, location);
+        var locationText = frame.GetFileName() == null ?
+          "" :
+          string.Format(" - {0}:{1}:{2}", frame.GetFileName(), frame.GetFileLineNumber(), frame.GetFileColumnNumber());
+
+        var frameNode = new TreeNode {
+          Text = string.Format("{0}{1}", methodText, locationText)
+        };
         parentList.Add(frameNode);
       }
     }

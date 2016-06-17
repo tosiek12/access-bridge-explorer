@@ -15,7 +15,6 @@
 using System;
 using System.Reflection;
 using System.Windows.Forms;
-using AccessBridgeExplorer.Utils;
 using AccessBridgeExplorer.Utils.Settings;
 
 namespace AccessBridgeExplorer {

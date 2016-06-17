@@ -40,7 +40,7 @@ namespace AccessBridgeExplorer {
       // Note: We need this because the Form.TopMost property does not respect
       // the "ShowWithoutActivation" flag, meaning the window will steal the
       // focus every time it is made visible.
-      User32Utils.SetTopMost(new HandleRef(this, this.Handle), true);
+      User32Utils.SetTopMost(new HandleRef(this, Handle), true);
     }
 
     protected override bool ShowWithoutActivation {

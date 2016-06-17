@@ -27,8 +27,8 @@ namespace CodeGen.Definitions {
     private XmlDocCommentCollector _xmlDoc;
 
     public WindowsAccessBridgeModel CollectModel() {
-      var model = new Definitions.WindowsAccessBridgeModel();
-      _xmlDoc = OpenXmlDocComment(model);
+      var model = new WindowsAccessBridgeModel();
+      _xmlDoc = OpenXmlDocComment();
       CollectFunctions(model);
       CollectEvents(model);
       CollectEnums(model);
@@ -37,7 +37,7 @@ namespace CodeGen.Definitions {
       return model;
     }
 
-    private XmlDocCommentCollector OpenXmlDocComment(WindowsAccessBridgeModel model) {
+    private XmlDocCommentCollector OpenXmlDocComment() {
       var type = typeof (WindowsAccessBridgeDefinition);
       var path = type.Assembly.Location;
       var xmlDocFile = Path.ChangeExtension(path, ".xml");

@@ -952,6 +952,7 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
+    // ReSharper disable once UnusedParameter.Local
     private void WriteEnumMembers(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, EnumDefinition definition) {
       sourceWriter.IncIndent();
       definition.Members.ForEach(x => {

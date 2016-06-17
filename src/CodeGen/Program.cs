@@ -13,25 +13,25 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeGen {
   class Program {
     static void Main(string[] args) {
-      var path1 = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"..\..\..\WindowsAccessBridgeInterop\Generated.cs");
+      var programLocation = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+      Debug.Assert(programLocation != null, "programLocation != null");
+
+      var path1 = Path.Combine(programLocation, @"..\..\..\WindowsAccessBridgeInterop\Generated.cs");
       if (args.Length >= 1) {
         path1 = Path.Combine(Environment.CurrentDirectory, args[0]);
       }
-      var path2 = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"..\..\..\WindowsAccessBridgeInterop\Generated.Internal.cs");
+      var path2 = Path.Combine(programLocation, @"..\..\..\WindowsAccessBridgeInterop\Generated.Internal.cs");
       if (args.Length >= 2) {
         path2 = Path.Combine(Environment.CurrentDirectory, args[1]);
       }
-      var path3 = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"..\..\..\WindowsAccessBridgeInterop\Generated.Internal.Legacy.cs");
+      var path3 = Path.Combine(programLocation, @"..\..\..\WindowsAccessBridgeInterop\Generated.Internal.Legacy.cs");
       if (args.Length >= 3) {
         path3 = Path.Combine(Environment.CurrentDirectory, args[2]);
       }

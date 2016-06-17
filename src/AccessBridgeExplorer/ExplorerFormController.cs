@@ -45,7 +45,6 @@ namespace AccessBridgeExplorer {
     private readonly IWindowsHotKeyHandler _captureKeyHandler;
     private readonly IWindowsHotKeyHandler _enableOverlayKeyHandler;
 
-    private readonly AutoDetectApplicationsSetting _autoDetectApplicationsEnabledSetting;
     private readonly AutoReleaseInactiveObjectSetting _autoReleaseInactiveObjectSetting;
     private readonly UserSetting<bool> _overlayEnabledSetting;
     private readonly OverlayActivationSetting _overlayActivationSetting;
@@ -158,7 +157,8 @@ namespace AccessBridgeExplorer {
       };
 
       _propertyOptionsSetting = new PropertyOptionsSetting(this);
-      _autoDetectApplicationsEnabledSetting = new AutoDetectApplicationsSetting(this);
+      // ReSharper disable once UnusedVariable
+      var autoDetectApplicationsEnabledSetting = new AutoDetectApplicationsSetting(this);
       _autoReleaseInactiveObjectSetting = new AutoReleaseInactiveObjectSetting(this);
 
       _collectionSizeLimitSetting = new IntUserSetting(_userSettings, "accessBridge.collections.size.limit", _accessBridge.CollectionSizeLimit);
@@ -182,6 +182,7 @@ namespace AccessBridgeExplorer {
     private class OverlayDisplayTypeSetting : EnumUserSetting<OverlayDisplayType> {
       public OverlayDisplayTypeSetting(ExplorerFormController controller) :
         base(controller._userSettings, "overlay.displayType", OverlayDisplayType.OverlayOnly) {
+        // ReSharper disable once VirtualMemberCallInContructor
         Sync += (sender, args) => {
           if (controller._disposed)
             return;
@@ -193,6 +194,7 @@ namespace AccessBridgeExplorer {
     private class OverlayActivationSetting : EnumFlagsUserSetting<OverlayActivation> {
       public OverlayActivationSetting(ExplorerFormController controller) :
         base(controller._userSettings, "overlay.activation", OverlayActivation.OnTreeViewSelection | OverlayActivation.OnPropertyListSelection) {
+        // ReSharper disable once VirtualMemberCallInContructor
         Changed += (sender, args) => {
           if (controller._disposed)
             return;
@@ -229,6 +231,7 @@ namespace AccessBridgeExplorer {
 
       public PropertyOptionsSetting(ExplorerFormController controller) :
         base(controller._userSettings, "accessibleComponent.displayProperties", DefaultPropertyOptions) {
+        // ReSharper disable once VirtualMemberCallInContructor
         Changed += (sender, args) => {
           // TODO: Refresh accessible component property pane?
           //if (controller._disposed)
@@ -251,6 +254,7 @@ namespace AccessBridgeExplorer {
           OnSync(new SyncEventArgs<bool>(this, Value));
         };
 
+        // ReSharper disable once VirtualMemberCallInContructor
         Sync += (sender, args) => {
           if (controller._disposed)
             return;
@@ -302,8 +306,7 @@ namespace AccessBridgeExplorer {
         base(controller._userSettings, "javaObjects.autoRelease", true) {
         _controller = controller;
 
-        controller._view.AutoReleaseInactiveObjectsMenuItem.Checked = Value;
-
+        // ReSharper disable once VirtualMemberCallInContructor
         Sync += (sender, args) => {
           if (controller._disposed)
             return;
@@ -1338,7 +1341,7 @@ namespace AccessBridgeExplorer {
     }
 
     /// <summary>
-    /// Return the <see cref="AccessibleNodePath"/> of a node given a location on screen.
+    /// Return the <see cref="Path{AccessibleNode}"/> of a node given a location on screen.
     /// Return <code>null</code> if there is no node at that location.
     /// </summary>
     public Path<AccessibleNode> GetNodePathAt(Point screenPoint) {
@@ -1465,27 +1468,6 @@ namespace AccessBridgeExplorer {
           }
         }
 
-#if false
-        if (treeNode == null) {
-          if (parentTreeNode != null) {
-            foreach (var childTreeNode in FlattenSubTree(parentTreeNode).Take(1024)) {
-              var foundNode = TreeNodeEquals(childTreeNode, pathCursor.Node);
-              if (foundNode != null) {
-                var stack = new List<TreeNode>();
-                treeNode = childTreeNode;
-                for (var temp = childTreeNode.Parent; temp != null && temp.Parent != parentTreeNode; temp = temp.Parent) {
-                  stack.Add(temp);
-                }
-                stack.Reverse();
-                foreach (var temp in stack) {
-                  result.AddLeaf(new TreeNodeEntry(temp, ((AccessibleNodeModel)temp.Tag).AccessibleNode));
-                }
-              }
-            }
-          }
-        }
-#endif
-
         if (treeNode == null) {
           break;
         }
@@ -1512,18 +1494,6 @@ namespace AccessBridgeExplorer {
 
       public AccessibleNode AccessibleNode {
         get { return _accessibleNode; }
-      }
-    }
-
-    private IEnumerable<TreeNode> FlattenSubTree(TreeNode node) {
-      var queue = new Queue<TreeNode>();
-      queue.Enqueue(node);
-      while (queue.Count > 0) {
-        node = queue.Dequeue();
-        yield return node;
-        foreach (TreeNode child in node.Nodes) {
-          queue.Enqueue(child);
-        }
       }
     }
 
