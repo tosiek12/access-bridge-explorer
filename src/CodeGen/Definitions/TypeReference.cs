@@ -13,6 +13,10 @@
 // limitations under the License.
 
 namespace CodeGen.Definitions {
+  /// <summary>
+  /// Common abstraction of a <see cref="NameTypeReference"/> and <see
+  /// cref="ArrayTypeReference"/>.
+  /// </summary>
   public abstract class TypeReference {
   }
 }

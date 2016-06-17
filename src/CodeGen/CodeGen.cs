@@ -551,7 +551,7 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteApplicationWrapStructFunctions(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, BaseTypeDefinition definition) {
+    private void WriteApplicationWrapStructFunctions(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, TypeDefinition definition) {
       sourceWriter.WriteIndent();
       sourceWriter.Write("private ");
       sourceWriter.IsNativeTypes = false;
@@ -593,7 +593,7 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteApplicationCopyClassFunctions(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, BaseTypeDefinition definition) {
+    private void WriteApplicationCopyClassFunctions(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, TypeDefinition definition) {
       sourceWriter.WriteIndent();
       sourceWriter.Write("private void CopyWrap(int vmid, ");
       sourceWriter.IsNativeTypes = true;
@@ -629,7 +629,7 @@ namespace CodeGen {
       sourceWriter.WriteLine();
     }
 
-    private void WriteCopyFields(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, string infosrc, string infodest, BaseTypeDefinition definition) {
+    private void WriteCopyFields(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, string infosrc, string infodest, TypeDefinition definition) {
       definition.Fields.ForEach(field => {
         WriteCopyField(model, sourceWriter, infosrc, infodest, "." + field.Name, field.Type);
       });
@@ -930,14 +930,14 @@ namespace CodeGen {
       sourceWriter.WriteLine("}}");
     }
 
-    private void WriteFields(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, BaseTypeDefinition definition) {
+    private void WriteFields(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, TypeDefinition definition) {
       sourceWriter.IncIndent();
       definition.Fields.ForEach(f => WriteField(model, sourceWriter, definition, f));
       sourceWriter.DecIndent();
     }
 
-    private void WriteField(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, BaseTypeDefinition container, FieldDefinition definition) {
-      if (sourceWriter.IsNativeTypes || !model.BaseTypeNeedsWrapper(container)) {
+    private void WriteField(WindowsAccessBridgeModel model, SourceCodeWriter sourceWriter, TypeDefinition container, FieldDefinition definition) {
+      if (sourceWriter.IsNativeTypes || !model.TypeDefinitionNeedsWrapper(container)) {
         if (definition.MarshalAs != null) {
           sourceWriter.WriteIndent();
           sourceWriter.WriteMashalAs(definition.MarshalAs);

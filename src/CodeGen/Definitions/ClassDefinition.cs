@@ -13,6 +13,6 @@
 // limitations under the License.
 
 namespace CodeGen.Definitions {
-  public class ClassDefinition : BaseTypeDefinition {
+  public class ClassDefinition : TypeDefinition {
   }
 }
