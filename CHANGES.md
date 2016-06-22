@@ -8,7 +8,7 @@
 * Add a button to manually force a Garbage Collection in the status bar
 * Improve support for multi-monitor setups
 * Add options (Options | Component Overlay | Hook ...) to enable/disable global
-  keyboard hooks (Ctrl+\ and Ctrl+Shft+\)
+  keyboard hooks (Ctrl+\\ and Ctrl+Shft+\\)
 * Improve CodeGen to support XML doc comments in generated code
 * Add option (Options | Component Overlay | Synchronize Tree) to synchronize
   the Accessibility Tree when the Component Overlay is updated.
