@@ -20,6 +20,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.IO;
 using WindowsAccessBridgeInterop.Win32;
 
 namespace WindowsAccessBridgeInterop {
@@ -195,12 +196,14 @@ namespace WindowsAccessBridgeInterop {
     private static AccessBridgeLibrary LoadLibrary() {
       try {
         AccessBridgeLibrary library;
+        string currentDir;
+        currentDir = Directory.GetCurrentDirectory().ToString();
         if (IntPtr.Size == 4) {
           try {
-            library = new AccessBridgeLibrary("WindowsAccessBridge-32.dll");
+            library = new AccessBridgeLibrary(currentDir + "\\dll\\WindowsAccessBridge-32.dll");
           } catch {
-            try {
-              library = new AccessBridgeLibrary("WindowsAccessBridge.dll");
+            try {    
+              library = new AccessBridgeLibrary(currentDir + "\\dll\\WindowsAccessBridge.dll");
               library.IsLegacy = true;
             } catch {
               // Ignore, we'll trow the initial exception
@@ -210,7 +213,7 @@ namespace WindowsAccessBridgeInterop {
               throw;
           }
         } else if (IntPtr.Size == 8) {
-          library = new AccessBridgeLibrary("WindowsAccessBridge-64.dll");
+          library = new AccessBridgeLibrary(currentDir + "\\dll\\WindowsAccessBridge-64.dll");
         } else {
           throw new InvalidOperationException("Unknown platform.");
         }

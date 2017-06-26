@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Diagnostics;
 using WindowsAccessBridgeInterop;
 using AccessBridgeExplorer.Utils;
 using AccessBridgeExplorer.Utils.Settings;
@@ -541,6 +542,11 @@ namespace AccessBridgeExplorer {
       notificationPanel.ShowNotification(entry);
     }
 
-    #endregion
-  }
+        #endregion
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Execute '%JRE_HOME%\\bin\\jabswitch -enable' first to enable Java Access Bridge (no admin rights required!)","Enable JAB",MessageBoxButtons.OK,MessageBoxIcon.Information);
+        }
+    }
 }

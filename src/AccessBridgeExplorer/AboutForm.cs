@@ -57,5 +57,10 @@ namespace AccessBridgeExplorer {
     private void githubUrlLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
       System.Diagnostics.Process.Start(githubUrlLinkLabel.Text);
     }
-  }
+
+        private void accessBridgePathText_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
 }

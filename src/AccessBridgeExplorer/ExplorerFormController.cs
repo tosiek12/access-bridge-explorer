@@ -751,6 +751,7 @@ namespace AccessBridgeExplorer {
 
     public void LogIntroMessages() {
       LogMessage("{0} allows exploring and interacting with accessibility features of Java applications.", _view.Caption);
+      LogMessage("Execute '%JRE_HOME%\\bin\\jabswitch -enable' first to enable Java Access Bridge (no admin rights required!).", _view.Caption);
       LogMessage("Use the \"{0}\" window to explore accessible components of active Java application windows.", _view.AccessibilityTreePage.Text);
       LogMessage("Use the \"{0}\" toolbar button to refresh the content of the \"{1}\" window.", _view.RefreshButton.Text, _view.AccessibilityTreePage.Text);
       LogMessage("Use the \"{0}\" menu to select event types to capture and display in the \"{1}\" window.", _view.EventsMenu.Text.Replace("&", ""), _view.EventListPage.Text);
